@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Institutional Terminal</title>
+    <title>ExNexus | Institutional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://s3.tradingview.com/tv.js"></script>
 </head>
 <body class="bg-black text-gray-300 text-[11px] overflow-hidden">
-
     <div id="login-screen" class="fixed inset-0 bg-black z-[999] flex items-center justify-center p-6">
         <div class="w-full max-w-sm p-10 bg-[#0a0e12] rounded-2xl border border-[#1c2024] text-center shadow-2xl">
             <div class="mb-8">
@@ -23,43 +21,13 @@
             </div>
         </div>
     </div>
-
     <div id="terminal-screen" class="h-screen flex flex-col" style="display: none;">
         <header class="h-10 border-b border-[#1c2024] flex items-center px-4 bg-[#0a0e12] justify-between">
-            <div class="flex items-center gap-6">
-                <span class="text-sm font-black tracking-tighter text-white"><span class="text-[#00b15d]">Ex</span>Nexus</span>
-                <nav class="flex gap-4 font-bold text-gray-500 uppercase text-[9px]">
-                    <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Trade</span>
-                    <div class="relative group">
-                        <span class="hover:text-white cursor-pointer">Layout ▾</span>
-                        <div class="absolute hidden group-hover:block bg-[#0a0e12] border border-[#1c2024] mt-1 w-24 z-50">
-                            <div onclick="updateLayout(1)" class="p-2 hover:bg-[#1c2024] cursor-pointer text-white">1 Chart</div>
-                            <div onclick="updateLayout(2)" class="p-2 hover:bg-[#1c2024] cursor-pointer text-white">2 Charts</div>
-                            <div onclick="updateLayout(4)" class="p-2 hover:bg-[#1c2024] cursor-pointer text-white">4 Charts</div>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-            <div class="text-[10px] font-bold text-[#00b15d]">● SYSTEM ACTIVE</div>
+            <span class="text-sm font-black tracking-tighter text-white"><span class="text-[#00b15d]">Ex</span>Nexus</span>
+            <div onclick="updateLayout(1)" class="cursor-pointer text-[10px] font-bold text-[#00b15d]">RESET LAYOUT</div>
         </header>
-
         <div class="flex-1 flex overflow-hidden">
-            <aside class="w-56 border-r border-[#1c2024] bg-[#0a0e12] shrink-0">
-                <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-600">Order Book</div>
-                <div class="text-xl font-bold text-[#00b15d] text-center py-8">71,048.00 ↑</div>
-            </aside>
-            <div class="flex-1 flex flex-col bg-black">
-                <div id="tv-layout-grid" class="flex-1 bg-[#1c2024]"></div>
-                <div class="h-40 border-t border-[#1c2024] bg-[#0a0e12] p-3 shrink-0">
-                    <div class="flex gap-4 text-[9px] font-bold text-gray-500 uppercase mb-4">
-                        <span class="text-white border-b border-[#00b15d] pb-1">Positions(0)</span>
-                        <span>Orders(0)</span>
-                    </div>
-                </div>
-            </div>
-            <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4 shrink-0">
-                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest shadow-[0_4px_25px_rgba(0,177,93,0.3)]">Open Long / Buy</button>
-            </aside>
+            <div id="tv-layout-grid" class="flex-1 bg-[#1c2024]"></div>
         </div>
     </div>
     <script src="app.js"></script>
