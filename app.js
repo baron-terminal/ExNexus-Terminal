@@ -1,20 +1,25 @@
-// app.js - SECURE MULTI-CHART CORE
+// app.js - DYNAMIC LOGIN & LAYOUT
 let currentCharts = 4;
 
 function authenticate() {
-    // Basic gate logic - can be expanded with real API checks
-    const pass = document.getElementById('access-pass').value;
-    if(pass.length > 0) {
-        document.getElementById('login-screen').classList.add('hidden');
-        const main = document.getElementById('terminal-screen');
-        main.classList.remove('opacity-0');
+    const user = document.getElementById('user-id').value;
+    const pass = document.getElementById('user-pass').value;
+
+    if(user.length > 0 && pass.length > 0) {
+        // Fade out login, reveal terminal
+        document.getElementById('login-screen').style.display = 'none';
+        const terminal = document.getElementById('terminal-screen');
+        terminal.classList.remove('opacity-0');
+        terminal.style.opacity = '1';
+        
+        document.getElementById('user-display').innerText = SESSION: ${user.toUpperCase()};
         
         if (window.lucide) window.lucide.createIcons();
         
-        // Ensure DOM is ready before injecting TV widgets
-        setTimeout(() => updateLayout(currentCharts), 100);
+        // Final layout render
+        setTimeout(() => updateLayout(currentCharts), 200);
     } else {
-        alert("License Key Required");
+        alert("Please enter both Username and Password.");
     }
 }
 
@@ -27,7 +32,7 @@ function updateLayout(count) {
     const grid = document.getElementById('tv-layout-grid');
     grid.innerHTML = '';
     
-    // Grid logic based on count
+    // Grid geometry logic
     if (count === 1) grid.className = "flex-1 grid grid-cols-1 bg-[#1c2024] gap-[1px]";
     else if (count === 2) grid.className = "flex-1 grid grid-cols-2 bg-[#1c2024] gap-[1px]";
     else grid.className = "flex-1 grid grid-cols-2 grid-rows-2 bg-[#1c2024] gap-[1px]";
@@ -41,7 +46,7 @@ function updateLayout(count) {
 
     if (!document.getElementById('prefs-modal').classList.contains('hidden')) togglePrefs();
     
-    // Initialize Widgets with Unified Green
+    // Inject TradingView Widgets with Unified Green Theme
     setTimeout(() => {
         for (let i = 1; i <= count; i++) {
             new TradingView.widget({
@@ -50,6 +55,7 @@ function updateLayout(count) {
                 "interval": "60",
                 "theme": "dark",
                 "container_id": tv-c${i},
+                "style": "1",
                 "overrides": {
                     "mainSeriesProperties.candleStyle.upColor": "#00b15d",
                     "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d",
@@ -57,5 +63,5 @@ function updateLayout(count) {
                 }
             });
         }
-    }, 50);
+    }, 100);
 }
