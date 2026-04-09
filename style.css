@@ -1,6 +1,9 @@
-body { background: #000; color: #fff; margin: 0; overflow: hidden; }
+/* COMPLETE style.css */
+body { background: #000; color: #fff; margin: 0; overflow: hidden; font-family: sans-serif; }
 .hidden { display: none; }
 .brand-box { width: 100%; max-width: 320px; margin: 0 auto; }
-.input-field { width: 100%; background: #000; border: 1px solid #2d343b; padding: 1rem; border-radius: 0.75rem; color: #fff; outline: none; }
-.btn-primary { width: 100%; background: #00b15d; color: #fff; font-weight: bold; padding: 1rem; border-radius: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-#tv-container { height: 100vh; width: 100vw; }
+.input-field { width: 100%; background: #000; border: 1px solid #2d343b; padding: 1rem; border-radius: 0.75rem; color: #fff; outline: none; transition: border 0.2s; }
+.input-field:focus { border-color: #00b1ff; }
+.btn-primary { width: 100%; background: #00b15d; color: #fff; font-weight: bold; padding: 1rem; border-radius: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; transition: opacity 0.2s; }
+.btn-primary:hover { opacity: 0.9; }
+#tv-container { height: 100%; width: 100%; }
