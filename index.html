@@ -2,81 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ExNexus | Professional Terminal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Trading Command Center</title>
+    <!-- Link to our STYLE file -->
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- Tailwind for quick layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-black text-gray-300 text-[11px] overflow-hidden">
+<body>
 
-    <div class="h-screen flex flex-col">
-        <header class="h-10 border-b border-[#1c2024] flex items-center px-4 bg-[#0a0e12] justify-between shrink-0">
-            <div class="flex items-center gap-6">
-                <span class="text-sm font-black text-white"><span class="text-[#00b15d]">Ex</span>Nexus</span>
-                <nav class="flex gap-4 font-bold text-gray-500 uppercase text-[9px]">
-                    <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Trade</span>
-                    <span class="hover:text-white cursor-pointer">Derivatives</span>
-                    <span class="hover:text-white cursor-pointer">Tools</span>
-                </nav>
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR -->
+        <div class="w-16 sidebar flex flex-col items-center py-6">
+            <div class="text-blue-500 font-bold text-2xl mb-10">M</div>
+            <div class="space-y-8 text-xl cursor-pointer">
+                <div>📊</div>
+                <div>🤖</div>
+                <div>⚙️</div>
             </div>
-            <div class="text-[9px] font-bold text-[#00b15d] uppercase tracking-tighter">● INSTITUTIONAL ACCESS ACTIVE</div>
-        </header>
+        </div>
 
-        <div class="flex-1 flex overflow-hidden">
-            <aside class="w-56 border-r border-[#1c2024] bg-[#0a0e12] shrink-0 flex flex-col">
-                <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-600">Order Book</div>
-                <div class="flex-1 p-2 space-y-1 overflow-hidden font-mono">
-                    <div class="flex justify-between text-red-500/70"><span>72,185.50</span><span>0.124</span></div>
-                    <div class="flex justify-between text-red-500/70"><span>72,184.00</span><span>1.055</span></div>
-                    <div class="text-center py-4 text-white font-bold text-lg border-y border-[#1c2024] my-2">72,148.00 ↑</div>
-                    <div class="flex justify-between text-[#00b15d]/70"><span>72,142.50</span><span>0.482</span></div>
-                    <div class="flex justify-between text-[#00b15d]/70"><span>72,141.00</span><span>2.141</span></div>
+        <!-- MAIN TERMINAL -->
+        <div class="flex-1 flex flex-col">
+            
+            <!-- HEADER -->
+            <header class="h-14 bg-[#161a1e] border-b border-gray-800 flex items-center justify-between px-6">
+                <div class="flex items-center space-x-4">
+                    <span class="text-xs text-gray-400">BYBIT SPOT</span>
+                    <span class="font-bold">BTC / USDT</span>
+                    <span id="btc-price" class="font-mono text-xl">$--,---.--</span>
                 </div>
-            </aside>
-
-            <main class="flex-1 flex flex-col bg-black">
-                <div id="tv-main-chart" class="flex-1 bg-black"></div>
-                
-                <div class="h-44 border-t border-[#1c2024] bg-[#0a0e12] p-3 shrink-0">
-                    <div class="flex gap-4 text-[9px] font-bold text-gray-500 uppercase mb-4">
-                        <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Positions(0)</span>
-                        <span class="cursor-pointer hover:text-gray-300">Open Orders(0)</span>
-                        <span class="cursor-pointer hover:text-gray-300">History</span>
-                    </div>
-                    <div class="h-full flex items-center justify-center text-gray-700 font-bold uppercase tracking-widest text-[9px]">
-                        Awaiting Market Execution...
-                    </div>
-                </div>
-            </main>
-
-            <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4 shrink-0 flex flex-col">
-                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-6">
-                    <button class="flex-1 bg-[#00b15d] text-white py-2 rounded text-[10px] font-black uppercase">Buy / Long</button>
-                    <button class="flex-1 text-gray-500 py-2 rounded text-[10px] font-bold uppercase">Sell / Short</button>
-                </div>
-                
-                <div class="space-y-4 flex-1">
-                    <div class="bg-black border border-[#1c2024] p-3 rounded">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-[8px] text-gray-600 uppercase font-black">Leverage</span>
-                            <span class="text-[#00b15d] text-[9px] font-bold">100.00x</span>
-                        </div>
-                        <input type="range" class="w-full accent-[#00b15d] h-1 bg-[#1c2024] rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    
-                    <div class="bg-black border border-[#1c2024] p-3 rounded">
-                        <div class="text-[8px] text-gray-600 uppercase font-black mb-1">Price</div>
-                        <div class="text-white font-mono text-[12px]">72,148.00 USDT</div>
-                    </div>
-                </div>
-
-                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest shadow-[0_4px_25px_rgba(0,177,93,0.3)] mt-4">
-                    Confirm Order
+                <button class="bg-blue-600 hover:bg-blue-500 px-4 py-1 rounded text-xs font-bold transition">
+                    Connect API
                 </button>
-            </aside>
+            </header>
+
+            <!-- CONTENT AREA -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- CHART HOUSING -->
+                <div class="flex-1 bg-black flex items-center justify-center border-r border-gray-800">
+                    <p class="text-gray-700 font-bold uppercase tracking-widest">Chart Visualization</p>
+                </div>
+
+                <!-- RIGHT PANEL (Execution & AI) -->
+                <div class="w-80 p-4 space-y-4">
+                    <div class="flex space-x-2">
+                        <button class="flex-1 btn-buy py-3">BUY</button>
+                        <button class="flex-1 btn-sell py-3">SELL</button>
+                    </div>
+
+                    <!-- AI ANALYTICS (Future AltFINS Integration) -->
+                    <div class="ai-box mt-10">
+                        <h4 class="text-xs font-bold text-purple-400 uppercase mb-2">AI Intelligence</h4>
+                        <p class="text-[11px] text-gray-400 leading-relaxed italic">
+                            "Connecting to AltFINS via MCP... Awaiting high-probability trade signals."
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Link to our BRAIN file -->
+    <script src="brain.js"></script>
 </body>
 </html>
