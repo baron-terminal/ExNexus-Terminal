@@ -3,81 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Terminal</title>
+    <title>ExNexus Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; height: 100vh; margin: 0; overflow: hidden; }
-        .hidden { display: none; }
-        /* This container forces the SVG to stay perfectly proportional */
-        .brand-box { width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 3/2; }
-        .ex-green { fill: #00b15d; }
-        .nexus-white { fill: #ffffff; }
-        #tv-container { height: 100%; width: 100%; position: absolute; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-3xl border border-[#2d343b] text-center shadow-2xl">
             <div class="brand-box">
-                <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
                     <g transform="translate(150, 60)" text-anchor="middle">
-                        <path d="M-30 -40 L10 45 L-10 45 L-50 -40 Z" fill="#ffffff"/>
-                        <path d="M10 -40 L50 45 L30 45 L-10 -40 Z" fill="#e5e7eb"/>
-                        <path d="M-10 2 L10 40 L30 40 L10 2 Z" fill="#00b1ff"/>
-                        <path d="M-10 2 L-30 40 L-50 40 L-30 2 Z" fill="#00b15d"/>
+                        <path d="M-30-40L10 45L-10 45L-50-40Z" fill="#ffffff"/>
+                        <path d="M10-40L50 45L30 45L-10-40Z" fill="#ffffff"/>
+                        <path d="M-10 2L10 40L30 40L10 2Z" fill="#00b1ff"/>
+                        <path d="M-10 2L-30 40L-50 40L-30 2Z" fill="#00b15d"/>
                     </g>
                     <text x="150" y="145" text-anchor="middle" font-weight="800" font-size="36">
-                        <tspan class="ex-green">Ex</tspan><tspan class="nexus-white">Nexus</tspan>
+                        <tspan fill="#00b15d">Ex</tspan><tspan fill="#ffffff">Nexus</tspan>
                     </text>
                     <line x1="40" y1="165" x2="260" y2="165" stroke="#00b1ff" stroke-width="2" />
                     <text x="150" y="188" text-anchor="middle" fill="#848e9c" font-size="10" letter-spacing="0.4em">TRADING INTELLIGENCE</text>
                 </svg>
             </div>
             <div class="space-y-4 mt-4">
-                <input type="email" class="w-full bg-black border border-[#2d343b] p-4 rounded-xl text-white outline-none focus:border-[#00b1ff]" placeholder="License Email">
-                <button onclick="launch()" class="w-full bg-[#00b15d] hover:bg-[#008f4c] text-white font-bold py-4 rounded-xl uppercase tracking-widest transition-all">Initialize</button>
+                <input type="email" class="input-field" placeholder="License Email">
+                <input type="password" class="input-field" placeholder="Password">
+                <button onclick="launch()" class="btn-primary">Initialize Terminal</button>
             </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen flex flex-col hidden">
-        <header class="h-14 border-b border-[#2d343b] flex items-center px-6 bg-[#0a0e12]">
-            <span class="text-[#00b15d] font-extrabold text-xl">Ex</span><span class="text-white font-extrabold text-xl">Nexus</span>
-        </header>
-        <div class="flex-1 relative bg-black">
-            <div id="tv-container"></div>
-        </div>
+    <div id="terminal-screen" class="h-screen hidden">
+        <div id="tv-container"></div>
     </div>
 
     <script src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-        function launch() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('terminal-screen').classList.remove('hidden');
-            
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "BYBIT:BTCUSDT",
-                "interval": "60",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#0a0e12",
-                "enable_publishing": false,
-                "withdateranges": true,
-                "hide_side_toolbar": false,
-                "allow_symbol_change": true,
-                /* THE BUTTONS ARE HERE */
-                "details": true,
-                "hotlist": true,
-                "calendar": true,
-                "show_popup_button": true,
-                "container_id": "tv-container"
-            });
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
