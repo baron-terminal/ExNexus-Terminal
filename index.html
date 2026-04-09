@@ -3,46 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Pro Terminal</title>
+    <title>ExNexus | Pro Terminal (Unified Green)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-black text-gray-300 text-[11px] overflow-hidden">
 
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-6 bg-black z-50 relative">
-        <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-3xl border border-[#1c2024] text-center shadow-2xl">
-            <div class="brand-box mb-8">
-                <svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
-                    <text x="150" y="60" text-anchor="middle" font-weight="800" font-size="42">
-                        <tspan fill="#00b15d">Ex</tspan><tspan fill="#ffffff">Nexus</tspan>
-                    </text>
-                    <line x1="40" y1="85" x2="260" y2="85" stroke="#00b1ff" stroke-width="2" />
-                    <text x="150" y="110" text-anchor="middle" fill="#848e9c" font-size="10" letter-spacing="0.45em">TRADING INTELLIGENCE</text>
-                </svg>
+    <div id="prefs-modal" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center hidden">
+        <div class="w-[500px] bg-[#1c2024] rounded-lg border border-[#2d343b] shadow-2xl">
+            <div class="flex justify-between items-center p-4 border-b border-[#2d343b]">
+                <span class="text-sm font-bold text-white">Preferences</span>
+                <button onclick="togglePrefs()" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
-            <div class="space-y-4 text-left">
-                <input type="email" class="input-field" placeholder="License Email">
-                <input type="password" class="input-field" placeholder="Password">
-                <button onclick="launch()" class="btn-primary mt-2">Initialize Terminal</button>
+            <div class="flex gap-4 px-4 py-2 text-[10px] font-bold border-b border-[#2d343b] text-gray-500">
+                <span class="hover:text-white cursor-pointer">Trade</span>
+                <span class="hover:text-white cursor-pointer" onclick="switchTab('general')">General</span>
+                <span id="tab-layout" class="text-[#00b15d] border-b border-[#00b15d] pb-1 cursor-pointer" onclick="switchTab('layout')">Layout</span>
+                <span id="tab-charts" class="hover:text-white cursor-pointer" onclick="switchTab('charts')">Multiple charts</span>
             </div>
+            <div id="prefs-content" class="p-6 space-y-6 max-h-[400px] overflow-y-auto">
+                </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen flex flex-col hidden">
-        
+    <div id="terminal-screen" class="h-screen flex flex-col">
         <header class="h-10 border-b border-[#1c2024] flex items-center px-3 bg-[#0a0e12] justify-between">
             <div class="flex items-center gap-4">
                 <div class="flex items-center text-sm mr-4">
                     <span class="text-[#00b15d] font-extrabold">Ex</span><span class="text-white font-extrabold">Nexus</span>
                 </div>
                 <nav class="flex gap-4 font-medium text-gray-400">
-                    <span class="hover:text-white cursor-pointer border-b border-[#00b15d] text-white pb-1">Trade</span>
-                    <span class="hover:text-white cursor-pointer">Markets</span>
-                    <span class="hover:text-white cursor-pointer">Derivatives</span>
-                    <span class="text-[#00b1ff] cursor-pointer font-bold">Bots</span>
+                    <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Trade</span>
                     <span class="hover:text-white cursor-pointer" onclick="toggleDashboard()">Dashboard</span>
                 </nav>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="togglePrefs()" class="text-gray-400 hover:text-[#00b15d]"><i data-lucide="settings" class="w-4 h-4"></i></button>
             </div>
         </header>
 
@@ -50,101 +47,53 @@
             <div class="flex flex-col"><span class="text-white font-bold text-sm">BTCUSDT</span><span class="text-[9px] text-gray-500 uppercase tracking-tighter">Perpetual</span></div>
             <div class="flex flex-col"><span class="text-[#00b15d] font-bold">71,048.00</span><span class="text-[9px] text-gray-500">Mark: 71,072.4</span></div>
             <div class="flex flex-col"><span class="text-gray-500 text-[9px] uppercase">24h Change</span><span class="text-[#00b15d]">+84.30 (+0.11%)</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-[9px] uppercase">24h High</span><span class="text-white">71,988.50</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-[9px] uppercase">Funding Rate</span><span class="text-[#00b1ff]">0.0100%</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-[9px] uppercase">Funding Rate</span><span class="text-[#00b15d]">0.0100%</span></div>
         </div>
 
-        <div class="flex-1 flex overflow-hidden">
-            
-            <aside class="w-56 border-r border-[#1c2024] flex flex-col bg-[#0a0e12]">
-                <div class="p-2 border-b border-[#1c2024] flex justify-between text-[10px] uppercase font-bold text-gray-500">
-                    <span>Order Book</span>
-                    <span>Qty (BTC)</span>
-                </div>
-                <div id="orderbook-list" class="flex-1 overflow-hidden p-2 font-mono">
-                    <div class="flex justify-between text-red-500/80"><span>71,055.5</span><span>0.412</span></div>
-                    <div class="flex justify-between text-red-500/80"><span>71,052.0</span><span>1.080</span></div>
-                    <div class="flex justify-between text-red-500/80"><span>71,050.5</span><span>0.024</span></div>
+        <div id="main-container" class="flex-1 flex overflow-hidden">
+            <aside id="order-book" class="w-56 border-r border-[#1c2024] bg-[#0a0e12] flex flex-col">
+                <div class="p-2 border-b border-[#1c2024] text-[10px] uppercase font-bold text-gray-500">Order Book</div>
+                <div class="flex-1 p-2 font-mono" id="ob-container">
                     <div class="text-lg font-bold text-[#00b15d] text-center my-4 py-1 border-y border-[#1c2024]">71,048.00 ↑</div>
-                    <div class="flex justify-between text-[#00b15d]/80"><span>71,045.5</span><span>2.114</span></div>
-                    <div class="flex justify-between text-[#00b15d]/80"><span>71,042.0</span><span>0.005</span></div>
-                    <div class="flex justify-between text-[#00b15d]/80"><span>71,040.5</span><span>15.22</span></div>
                 </div>
             </aside>
 
-            <div class="flex-1 flex flex-col overflow-hidden bg-black">
-                <div class="flex-1 relative"><div id="tv-container"></div></div>
-                <div class="h-52 border-t border-[#1c2024] bg-[#0a0e12] flex flex-col">
-                    <div class="flex gap-6 p-2 border-b border-[#1c2024] text-[10px] font-bold text-gray-500">
-                        <span class="text-white border-b-2 border-[#00b15d] pb-1 cursor-pointer">Positions(0)</span>
-                        <span class="hover:text-white cursor-pointer">Current Orders(0)</span>
-                        <span class="hover:text-white cursor-pointer">Order History</span>
-                        <span class="hover:text-white cursor-pointer">Trade History</span>
+            <div id="chart-workspace" class="flex-1 flex flex-col bg-black overflow-hidden">
+                <div id="tv-layout-grid" class="flex-1 grid grid-cols-2 grid-rows-2 gap-[1px] bg-[#1c2024]">
+                    <div id="tv-c1" class="bg-black relative"></div>
+                    <div id="tv-c2" class="bg-black relative"></div>
+                    <div id="tv-c3" class="bg-black relative"></div>
+                    <div id="tv-c4" class="bg-black relative"></div>
+                </div>
+                <div class="h-40 border-t border-[#1c2024] bg-[#0a0e12]">
+                    <div class="flex gap-4 p-2 text-[10px] font-bold text-gray-500 border-b border-[#1c2024]">
+                        <span class="text-white border-b-2 border-[#00b15d] pb-1">Positions(0)</span>
+                        <span class="hover:text-white">Current Orders(0)</span>
+                        <span class="hover:text-white">Order History</span>
                     </div>
-                    <div class="grid grid-cols-8 gap-2 p-3 text-[9px] text-gray-500 uppercase tracking-widest border-b border-[#1c2024]">
-                        <span>Contract</span><span>Qty</span><span>Value</span><span>Entry</span><span>Mark</span><span>Liq.</span><span>Unrealized P&L</span><span>Realized P&L</span>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center text-gray-700 text-xs">No active positions to display.</div>
+                    <div class="p-4 text-center text-gray-600 italic">No reporting data available.</div>
                 </div>
             </div>
 
-            <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] flex flex-col p-3 overflow-y-auto">
-                <div class="flex justify-between items-center mb-4 gap-2">
-                    <select class="flex-1 bg-black border border-[#2d343b] p-2 rounded text-[10px] font-bold outline-none text-[#00b1ff]">
-                        <option>Cross 10x</option>
-                        <option>Isolated 1x</option>
-                        <option>Isolated 5x</option>
-                        <option>Isolated 10x</option>
-                        <option>Isolated 20x</option>
-                        <option>Isolated 50x</option>
-                        <option>Isolated 100x</option>
-                    </select>
-                    <div class="text-[9px] text-gray-500 font-bold px-2 py-1 bg-black rounded border border-[#2d343b]">ADJ.</div>
+            <aside id="order-panel" class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-3">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-[10px] font-bold text-[#00b15d]">Isolated 10x</div>
+                    <div class="text-gray-500 hover:text-white cursor-pointer"><i data-lucide="info" class="w-3 h-3"></i></div>
                 </div>
-
-                <div class="flex bg-black p-1 rounded-md mb-4 border border-[#1c2024]">
-                    <button class="flex-1 bg-[#00b15d] text-white py-1.5 rounded text-[10px] font-bold uppercase">Buy</button>
+                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-4">
+                    <button class="flex-1 bg-[#00b15d] text-white py-1.5 rounded text-[10px] font-black uppercase">Buy</button>
                     <button class="flex-1 text-gray-500 py-1.5 rounded text-[10px] font-bold uppercase hover:text-white">Sell</button>
                 </div>
-                
                 <div class="space-y-4">
                     <div>
-                        <div class="text-[9px] text-gray-500 mb-1 font-bold uppercase">Order Type</div>
-                        <select class="w-full bg-black border border-[#2d343b] p-2 rounded text-white outline-none">
-                            <option>Limit</option>
-                            <option>Market</option>
-                            <optgroup label="Conditional">
-                                <option>Take Profit / Stop Loss</option>
-                                <option>Post-Only</option>
-                                <option>GTC (Good Till Cancel)</option>
-                                <option>IOC (Immediate or Cancel)</option>
-                                <option>FOK (Fill or Kill)</option>
-                            </optgroup>
-                        </select>
+                        <div class="text-[9px] text-gray-500 uppercase font-bold mb-1">Price (USDT)</div>
+                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white font-mono" value="71048.00">
                     </div>
-                    
                     <div>
-                        <div class="flex justify-between text-[9px] text-gray-500 mb-1 font-bold uppercase"><span>Order Price</span><span>USDT</span></div>
-                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white text-xs font-mono" value="71048.00">
+                        <div class="text-[9px] text-gray-500 uppercase font-bold mb-1">Quantity (BTC)</div>
+                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white font-mono" placeholder="0.0">
                     </div>
-                    
-                    <div>
-                        <div class="flex justify-between text-[9px] text-gray-500 mb-1 font-bold uppercase"><span>Qty</span><span>BTC</span></div>
-                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white text-xs font-mono" placeholder="0.0">
-                    </div>
-
-                    <div class="py-2">
-                        <div class="flex justify-between text-[8px] text-gray-500 font-bold mb-1"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-                        <div class="h-1 bg-[#1c2024] rounded-full relative">
-                            <div class="absolute left-0 top-0 h-1 bg-[#00b15d] w-0"></div>
-                            <div class="absolute left-0 -top-1 w-3 h-3 bg-white rounded-full border-2 border-[#00b15d] cursor-pointer"></div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 space-y-2">
-                        <button class="w-full bg-[#00b15d] text-white py-3 rounded font-black text-[11px] uppercase tracking-wider hover:opacity-90">Open Long / Buy</button>
-                        <button class="w-full bg-[#f04438] text-white py-3 rounded font-black text-[11px] uppercase tracking-wider hover:opacity-90">Open Short / Sell</button>
-                    </div>
+                    <button class="w-full bg-[#00b15d] text-white py-3 rounded font-black text-[11px] uppercase mt-4 tracking-widest shadow-[0_0_15px_rgba(0,177,93,0.2)]">Open Long / Buy</button>
                 </div>
             </aside>
         </div>
