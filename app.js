@@ -1,25 +1,23 @@
-// app.js - EMERGENCY BYPASS VERSION
 let currentCharts = 4;
 
+// This function will now run no matter what is typed
 function authenticate() {
-    console.log("Attempting to initialize session..."); // Check console for this
-    
-    // EMERGENCY BYPASS: Forces the screen to hide regardless of input
     const loginScreen = document.getElementById('login-screen');
     const terminal = document.getElementById('terminal-screen');
-    
+
     if (loginScreen && terminal) {
+        // 1. Hide Login and Show Terminal
         loginScreen.style.display = 'none';
         terminal.classList.remove('opacity-0');
         terminal.style.opacity = '1';
-        
-        // Ensure icons and charts load
+
+        // 2. Load Icons
         if (window.lucide) window.lucide.createIcons();
-        
-        console.log("Loading charts...");
-        setTimeout(() => updateLayout(currentCharts), 300);
-    } else {
-        console.error("Critical Error: HTML elements not found.");
+
+        // 3. Force Chart Initialization
+        setTimeout(() => {
+            updateLayout(currentCharts);
+        }, 100);
     }
 }
 
@@ -29,6 +27,7 @@ function updateLayout(count) {
     if (!grid) return;
 
     grid.innerHTML = '';
+    // Fix grid columns based on count
     grid.className = flex-1 grid gap-[1px] bg-[#1c2024] ${count === 1 ? 'grid-cols-1' : 'grid-cols-2'};
 
     for (let i = 1; i <= count; i++) {
@@ -38,7 +37,7 @@ function updateLayout(count) {
         grid.appendChild(div);
     }
 
-    // Load TradingView with the Unified Green Theme
+    // Initialize TradingView with Unified Green
     setTimeout(() => {
         if (typeof TradingView !== 'undefined') {
             for (let i = 1; i <= count; i++) {
@@ -55,8 +54,6 @@ function updateLayout(count) {
                     }
                 });
             }
-        } else {
-            console.warn("TradingView library not loaded yet.");
         }
     }, 200);
 }
