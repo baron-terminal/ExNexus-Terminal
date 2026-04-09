@@ -1,15 +1,16 @@
-let currentCharts = 1;
+let currentCharts = 1; // Default to 1 as requested
 
 function authenticate() {
     const user = document.getElementById('user-id').value;
     const pass = document.getElementById('user-pass').value;
 
+    // Login succeeds if both boxes have any text
     if(user && pass) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('terminal-screen').style.display = 'flex';
         setTimeout(() => updateLayout(currentCharts), 200);
     } else {
-        alert("Please enter credentials.");
+        alert("Enter Credentials to Access Terminal");
     }
 }
 
@@ -28,16 +29,18 @@ function updateLayout(count) {
         div.className = "bg-black w-full h-full";
         grid.appendChild(div);
         
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "BYBIT:BTCUSDT",
-            "interval": "60",
-            "theme": "dark",
-            "container_id": tv-c${i},
-            "overrides": {
-                "mainSeriesProperties.candleStyle.upColor": "#00b15d",
-                "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d"
-            }
-        });
+        if (typeof TradingView !== 'undefined') {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BYBIT:BTCUSDT",
+                "interval": "60",
+                "theme": "dark",
+                "container_id": tv-c${i},
+                "overrides": {
+                    "mainSeriesProperties.candleStyle.upColor": "#00b15d",
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d"
+                }
+            });
+        }
     }
 }
