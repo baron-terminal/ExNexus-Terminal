@@ -7,46 +7,52 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css" rel="stylesheet">
     <style>
-        body { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        body { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; margin: 0; }
         .bybit-dark { background-color: #0a0e12; border: 1px solid #2d343b; }
         .hidden { display: none; }
         
-        #tradingview_widget { height: 100%; width: 100%; position: absolute; inset: 0; }
-        
-        /* BRAND COLORS */
-        .ex-text { fill: #00b15d; font-weight: bold; font-size: 24px; }
-        .nexus-text { fill: #ffffff; font-weight: bold; font-size: 24px; }
-        .trading-intel { fill: #848e9c; font-size: 9px; text-transform: uppercase; letter-spacing: 0.25em; }
-        .glowing-line { stroke: #00b1ff; stroke-width: 1.5; filter: drop-shadow(0 0 5px #00b1ff); }
+        /* PREVENT SQUEEZING: Forced Aspect Ratio for the Logo */
+        .logo-wrapper {
+            width: 260px;
+            height: 180px;
+            margin: 0 auto;
+            display: block;
+        }
 
-        /* ANTI-DISTORTION LOGO FIX */
-        .logo-container { width: 280px; height: auto; aspect-ratio: 280 / 180; }
+        /* SVG Colors and Glow */
+        .ex-green { fill: #00b15d; font-weight: bold; font-size: 28px; }
+        .nexus-white { fill: #ffffff; font-weight: bold; font-size: 28px; }
+        .tagline { fill: #848e9c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; }
+        .glow-line { stroke: #00b1ff; stroke-width: 1.5; filter: drop-shadow(0 0 5px #00b1ff); }
+
+        /* Chart Area */
+        #tradingview_widget { height: 100%; width: 100%; position: absolute; inset: 0; }
     </style>
 </head>
 <body>
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-[#000000] z-[100] relative p-6">
-        <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-lg border border-[#2d343b] text-center shadow-2xl">
-            <div class="mb-8 flex justify-center">
-                <svg viewBox="0 0 240 160" class="logo-container">
-                    <g transform="translate(70, 5)">
-                        <path d="M50 10 L90 80 L70 80 L30 10 Z" fill="#e5e7eb" opacity="0.9"/> 
-                        <path d="M10 10 L50 80 L30 80 L-10 10 Z" fill="#ffffff"/> 
-                        <path d="M30 40 L50 75 L70 75 L50 40 Z" fill="#00b1ff"/>
-                        <path d="M30 40 L10 75 L-10 75 L10 40 Z" fill="#00b15d"/>
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-[#000000] relative p-4">
+        <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-xl border border-[#2d343b] shadow-2xl">
+            
+            <div class="logo-wrapper">
+                <svg viewBox="0 0 260 180" width="260" height="180" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(85, 10)">
+                        <path d="M50 10 L90 85 L70 85 L30 10 Z" fill="#e5e7eb" opacity="0.9"/> 
+                        <path d="M10 10 L50 85 L30 85 L-10 10 Z" fill="#ffffff"/> 
+                        <path d="M30 45 L50 80 L70 80 L50 45 Z" fill="#00b1ff"/>
+                        <path d="M30 45 L10 80 L-10 80 L10 45 Z" fill="#00b15d"/>
                     </g>
-                    <g transform="translate(0, 110)">
-                        <text x="50%" text-anchor="middle">
-                            <tspan class="ex-text">Ex</tspan><tspan class="nexus-text tracking-tighter">Nexus</tspan>
-                        </text>
-                    </g>
-                    <line x1="40" y1="125" x2="200" y2="125" class="glowing-line" />
-                    <text x="120" y="145" text-anchor="middle" class="trading-intel">Trading Intelligence</text>
+                    <text x="130" y="130" text-anchor="middle">
+                        <tspan class="ex-green">Ex</tspan><tspan class="nexus-white">Nexus</tspan>
+                    </text>
+                    <line x1="40" y1="145" x2="220" y2="145" class="glow-line" />
+                    <text x="130" y="165" text-anchor="middle" class="tagline">Trading Intelligence</text>
                 </svg>
             </div>
-            <div class="space-y-4">
+
+            <div class="space-y-4 mt-4">
                 <input type="email" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b1ff] text-sm" placeholder="Email">
                 <input type="password" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b15d] text-sm" placeholder="Password">
-                <button onclick="showTerminal()" class="w-full bg-[#00b15d] hover:bg-[#008f4c] text-white font-bold py-3.5 rounded uppercase tracking-widest text-xs transition shadow-lg shadow-green-900/40">Access Terminal</button>
+                <button onclick="showTerminal()" class="w-full bg-[#00b15d] hover:bg-[#008f4c] text-white font-bold py-3.5 rounded uppercase tracking-widest text-xs transition shadow-lg shadow-green-900/40">Enter Secure Terminal</button>
             </div>
         </div>
     </div>
@@ -57,11 +63,9 @@
                 <div class="flex items-center gap-1">
                     <span class="text-[#00b15d] font-bold text-xs">Ex</span><span class="text-white font-bold text-xs">Nexus</span>
                 </div>
-                <div class="h-4 w-[1px] bg-[#2d343b]"></div>
-                <div class="flex gap-3 text-[9px] uppercase font-bold">
+                <div class="flex gap-3 text-[9px] uppercase font-bold ml-4">
                     <span class="text-[#00b15d]">● Binance</span>
                     <span class="text-[#00b15d]">● Bybit</span>
-                    <span class="text-red-500">○ Gate.io Offline</span>
                 </div>
             </div>
         </header>
@@ -70,13 +74,15 @@
             <nav class="w-12 border-r border-[#2d343b] flex flex-col items-center py-4 gap-6 bg-[#000000] shrink-0">
                 <i data-lucide="layout-grid" class="text-[#00b1ff] w-5 h-5 cursor-pointer"></i>
                 <i data-lucide="zap" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer"></i>
-                <i data-lucide="settings" onclick="toggleSettings()" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer"></i>
+                <i data-lucide="settings" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer"></i>
             </nav>
 
             <aside class="w-64 border-r border-[#2d343b] bg-[#000000] shrink-0 overflow-y-auto">
                 <div class="p-2 border-b border-[#2d343b] bg-[#0a0e12]"><span class="text-[9px] font-bold text-[#00b15d]">ARBITRAGE SCANNER</span></div>
                 <div class="p-2">
-                    <div class="p-2 bg-[#0a0e12] rounded border border-[#2d343b]"><span class="text-[10px] font-bold text-white">SOL/USDT +1.82%</span></div>
+                    <div class="p-3 bg-[#0a0e12] rounded border border-[#2d343b] border-l-2 border-l-[#00b15d]">
+                        <div class="flex justify-between font-bold text-[10px] text-white"><span>SOL/USDT</span><span class="text-[#00b15d]">+1.82%</span></div>
+                    </div>
                 </div>
             </aside>
 
@@ -107,7 +113,6 @@
             });
             lucide.createIcons();
         }
-        function toggleSettings() { alert("Settings Panel: Please enter Gate.io Passphrase in the next update."); }
         lucide.createIcons();
     </script>
 </body>
