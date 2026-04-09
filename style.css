@@ -1,1 +1,17 @@
+body {
+    background-color: #000;
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
 
+::-webkit-scrollbar {
+    width: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1c2024;
+}
+
+aside, main {
+    background-color: #0a0e12;
+}
