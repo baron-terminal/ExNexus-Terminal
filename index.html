@@ -85,7 +85,40 @@
             </div>
         </div>
     </div>
+<!-- API MODAL (Hidden by default) -->
+<div id="api-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-[#161a1e] border border-gray-800 w-96 p-6 rounded-xl shadow-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-bold text-white">Connect Exchange</h2>
+            <button onclick="toggleApiModal()" class="text-gray-500 hover:text-white">✕</button>
+        </div>
 
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] text-gray-500 uppercase font-bold">Exchange</label>
+                <select id="ex-name" class="w-full bg-black border border-gray-700 p-2 rounded mt-1 text-sm text-white">
+                    <option value="bybit">Bybit</option>
+                    <option value="binance">Binance (Coming Soon)</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-500 uppercase font-bold">API Key</label>
+                <input id="ex-key" type="text" placeholder="Enter API Key" class="w-full bg-black border border-gray-700 p-2 rounded mt-1 text-sm text-white focus:border-blue-500 outline-none">
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-500 uppercase font-bold">API Secret</label>
+                <input id="ex-secret" type="password" placeholder="Enter API Secret" class="w-full bg-black border border-gray-700 p-2 rounded mt-1 text-sm text-white focus:border-blue-500 outline-none">
+            </div>
+            
+            <button onclick="saveApiKeys()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-4 transition text-sm">
+                Securely Save Keys
+            </button>
+            <p class="text-[9px] text-gray-500 text-center italic">
+                Keys are stored locally in your browser.
+            </p>
+        </div>
+    </div>
+</div>
     <!-- Link to our BRAIN file -->
     <script src="brain.js"></script>
 </body>
