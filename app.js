@@ -1,33 +1,37 @@
 window.onload = function() {
-    setTimeout(() => { loadChart(1); }, 200);
+    // Start with 1 chart immediately
+    toggleLayout(1);
 };
 
-function loadChart(count) {
-    const container = document.getElementById('tv-chart-container');
-    if (!container) return;
-    container.innerHTML = '';
+function toggleLayout(count) {
+    const grid = document.getElementById('main-grid');
     
-    let gridStyle = count === 1 ? "grid-cols-1" : "grid-cols-2 grid-rows-2";
-    container.className = flex-1 grid gap-[1px] bg-[#1c2024] h-full w-full ${gridStyle};
+    // Switch the grid look
+    if (count === 1) {
+        grid.className = "flex-1 grid gap-[1px] bg-[#1c2024] grid-cols-1";
+    } else {
+        grid.className = "flex-1 grid gap-[1px] bg-[#1c2024] grid-cols-2 grid-rows-2";
+    }
 
-    for (let i = 1; i <= count; i++) {
-        const div = document.createElement('div');
-        div.id = chart-v${i};
-        div.className = "bg-black w-full h-full";
-        container.appendChild(div);
-        
-        if (typeof TradingView !== 'undefined') {
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "BYBIT:BTCUSDT",
-                "interval": "60",
-                "theme": "dark",
-                "container_id": chart-v${i},
-                "overrides": {
-                    "mainSeriesProperties.candleStyle.upColor": "#00b15d",
-                    "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d"
-                }
-            });
+    // Show or hide the boxes and load charts
+    for (let i = 1; i <= 4; i++) {
+        const box = document.getElementById(chart-${i});
+        if (i <= count) {
+            box.classList.remove('hidden');
+            // Only load the widget if the box is empty
+            if (box.innerHTML === "") {
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "BYBIT:BTCUSDT",
+                    "interval": "60",
+                    "theme": "dark",
+                    "container_id": chart-${i},
+                    "style": "1",
+                    "overrides": { "mainSeriesProperties.candleStyle.upColor": "#00b15d" }
+                });
+            }
+        } else {
+            box.classList.add('hidden');
         }
     }
 }
