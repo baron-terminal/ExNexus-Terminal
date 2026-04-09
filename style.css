@@ -5,4 +5,11 @@
     background-color: #1c2024;
 }
 input::placeholder {
-    color: #4b5563;
+    color: #374151;
+}
+::-webkit-scrollbar {
+    width: 3px;
+}
+::-webkit-scrollbar-thumb {
+    background: #1c2024;
+}
