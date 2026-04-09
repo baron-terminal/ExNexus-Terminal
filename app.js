@@ -1,42 +1,33 @@
 window.onload = function() {
-    // Starts with 1 chart by default as discussed
-    updateLayout(1);
+    setTimeout(() => { loadChart(1); }, 200);
 };
 
-function updateLayout(count) {
-    const grid = document.getElementById('tv-layout-grid');
-    if (!grid) return;
+function loadChart(count) {
+    const container = document.getElementById('tv-chart-container');
+    if (!container) return;
+    container.innerHTML = '';
     
-    grid.innerHTML = '';
-    
-    // Set grid columns based on layout choice
-    let gridStyle = "grid-cols-1";
-    if (count === 2) gridStyle = "grid-cols-2";
-    if (count === 4) gridStyle = "grid-cols-2 grid-rows-2";
-    
-    grid.className = flex-1 grid gap-[1px] bg-[#1c2024] ${gridStyle};
+    let gridStyle = count === 1 ? "grid-cols-1" : "grid-cols-2 grid-rows-2";
+    container.className = flex-1 grid gap-[1px] bg-[#1c2024] h-full w-full ${gridStyle};
 
     for (let i = 1; i <= count; i++) {
         const div = document.createElement('div');
-        div.id = tv-c${i};
+        div.id = chart-v${i};
         div.className = "bg-black w-full h-full";
-        grid.appendChild(div);
+        container.appendChild(div);
         
-        // Initialize TradingView Widgets
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "BYBIT:BTCUSDT",
-            "interval": "60",
-            "theme": "dark",
-            "container_id": tv-c${i},
-            "style": "1",
-            "locale": "en",
-            "toolbar_bg": "#0a0e12",
-            "overrides": {
-                "mainSeriesProperties.candleStyle.upColor": "#00b15d",
-                "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d",
-                "mainSeriesProperties.candleStyle.wickUpColor": "#00b15d"
-            }
-        });
+        if (typeof TradingView !== 'undefined') {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BYBIT:BTCUSDT",
+                "interval": "60",
+                "theme": "dark",
+                "container_id": chart-v${i},
+                "overrides": {
+                    "mainSeriesProperties.candleStyle.upColor": "#00b15d",
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d"
+                }
+            });
+        }
     }
 }
