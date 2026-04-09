@@ -1,4 +1,3 @@
 body { margin: 0; background: #000; }
-#main-grid { background-color: #1c2024; }
 ::-webkit-scrollbar { width: 2px; }
-::-webkit-scrollbar-thumb { background: #1c2024; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #1c2024; }
