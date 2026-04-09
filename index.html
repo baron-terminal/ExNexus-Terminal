@@ -3,86 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Pro Terminal</title>
+    <title>ExNexus | Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://s3.tradingview.com/tv.js"></script>
 </head>
 <body class="bg-black text-gray-300 text-[11px] overflow-hidden">
 
-    <div id="login-screen" class="fixed inset-0 bg-black z-[500] flex items-center justify-center p-6">
-        <div class="w-full max-w-sm p-10 bg-[#0a0e12] rounded-2xl border border-[#1c2024] shadow-2xl text-center">
+    <div id="login-screen" class="fixed inset-0 bg-black z-[999] flex items-center justify-center">
+        <div class="w-full max-w-sm p-10 bg-[#0a0e12] border border-[#1c2024] rounded-2xl text-center">
             <div class="mb-8">
-                <span class="text-4xl font-black tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</span>
-                <p class="text-[10px] text-gray-500 mt-2 uppercase tracking-[0.4em]">Institutional Access</p>
+                <span class="text-4xl font-black text-white tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</span>
+                <p class="text-[9px] text-gray-500 mt-2 tracking-[0.4em]">PRO TERMINAL</p>
             </div>
             <div class="space-y-4">
-                <div class="text-left">
-                    <label class="text-[9px] uppercase font-bold text-gray-600 ml-1">Username</label>
-                    <input type="text" id="user-id" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white focus:border-[#00b15d] outline-none mt-1" placeholder="Enter ID">
-                </div>
-                <div class="text-left">
-                    <label class="text-[9px] uppercase font-bold text-gray-600 ml-1">Password</label>
-                    <input type="password" id="user-pass" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white focus:border-[#00b15d] outline-none mt-1" placeholder="••••••••">
-                </div>
-                <button onclick="authenticate()" class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest hover:brightness-110 shadow-[0_0_20px_rgba(0,177,93,0.2)] mt-4">Initialize Session</button>
+                <input type="text" id="u" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white outline-none focus:border-[#00b15d]" placeholder="Username">
+                <input type="password" id="p" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white outline-none focus:border-[#00b15d]" placeholder="Password">
+                <button onclick="handleLogin()" class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[10px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,177,93,0.3)]">
+                    Initialize Session
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen flex flex-col opacity-0">
+    <div id="terminal-screen" class="h-screen flex flex-col" style="display: none;">
         <header class="h-10 border-b border-[#1c2024] flex items-center px-4 bg-[#0a0e12] justify-between">
-            <div class="flex items-center gap-6">
-                <span class="text-sm font-black tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</span>
-                <nav class="flex gap-4 font-bold text-gray-500">
-                    <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Trade</span>
-                    <span class="hover:text-white cursor-pointer" onclick="togglePrefs()">Layout</span>
-                </nav>
-            </div>
-            <div id="user-display" class="text-[10px] font-bold text-gray-500"></div>
+            <span class="text-sm font-black"><span class="text-[#00b15d]">Ex</span>Nexus</span>
+            <div class="text-[10px] text-[#00b15d] font-bold">● SYSTEM ACTIVE</div>
         </header>
 
-        <div id="main-container" class="flex-1 flex overflow-hidden">
-            <aside class="w-56 border-r border-[#1c2024] bg-[#0a0e12] shrink-0">
-                <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-600">Order Book</div>
+        <div class="flex-1 flex overflow-hidden">
+            <aside class="w-56 border-r border-[#1c2024] bg-[#0a0e12]">
+                <div class="p-2 border-b border-[#1c2024] text-[9px] font-bold text-gray-600">ORDER BOOK</div>
                 <div class="text-lg font-bold text-[#00b15d] text-center py-6">71,048.00 ↑</div>
             </aside>
-
-            <div class="flex-1 flex flex-col bg-black overflow-hidden">
-                <div id="tv-layout-grid" class="flex-1 grid grid-cols-2 grid-rows-2 gap-[1px] bg-[#1c2024]">
-                    </div>
-                <div class="h-44 border-t border-[#1c2024] bg-[#0a0e12]">
-                     <div class="flex gap-4 p-2 text-[10px] font-bold text-gray-500 border-b border-[#1c2024]">
-                        <span class="text-white border-b-2 border-[#00b15d] pb-1">Positions(0)</span>
-                        <span>Orders(0)</span>
-                    </div>
+            
+            <div class="flex-1 bg-black">
+                <div id="tv-layout-grid" class="h-full grid grid-cols-2 grid-rows-2 gap-[1px] bg-[#1c2024]">
+                    <div id="tv-1" class="bg-black"></div>
+                    <div id="tv-2" class="bg-black"></div>
+                    <div id="tv-3" class="bg-black"></div>
+                    <div id="tv-4" class="bg-black"></div>
                 </div>
             </div>
 
-            <aside id="order-panel" class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4 shrink-0">
-                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-6">
-                    <button class="flex-1 bg-[#00b15d] text-white py-2 rounded text-[10px] font-black uppercase">Buy</button>
-                    <button class="flex-1 text-gray-500 py-2 rounded text-[10px] font-bold uppercase">Sell</button>
-                </div>
-                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-xs uppercase tracking-widest shadow-[0_4px_25px_rgba(0,177,93,0.2)]">Open Long / Buy</button>
+            <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4">
+                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-xs uppercase shadow-[0_4px_20px_rgba(0,177,93,0.2)]">Open Long / Buy</button>
             </aside>
         </div>
     </div>
 
-    <div id="prefs-modal" class="fixed inset-0 bg-black/90 z-[600] hidden flex items-center justify-center">
-        <div class="w-96 bg-[#0a0e12] border border-[#1c2024] p-8 rounded-2xl">
-            <p class="text-[10px] font-black uppercase text-gray-500 mb-6 text-center">Chart Configuration</p>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="updateLayout(1)" class="p-4 border border-[#1c2024] hover:border-[#00b15d] rounded font-bold text-[10px]">1 Chart</button>
-                <button onclick="updateLayout(2)" class="p-4 border border-[#1c2024] hover:border-[#00b15d] rounded font-bold text-[10px]">2 Charts</button>
-                <button onclick="updateLayout(4)" class="p-4 border border-[#00b15d] bg-[#00b15d]/5 rounded font-bold text-[10px] text-[#00b15d]">4 Charts (Grid)</button>
-                <button onclick="updateLayout(5)" class="p-4 border border-[#1c2024] hover:border-[#00b15d] rounded font-bold text-[10px]">5 Charts</button>
-            </div>
-            <button onclick="togglePrefs()" class="w-full mt-8 text-[10px] text-gray-600 hover:text-white uppercase font-bold">Cancel</button>
-        </div>
-    </div>
-
-    <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Emergency Backup in case app.js fails to load
+        function handleLogin() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('terminal-screen').style.display = 'flex';
+            if (typeof initCharts === 'function') initCharts();
+        }
+    </script>
 </body>
 </html>
