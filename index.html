@@ -12,28 +12,23 @@
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-3xl border border-[#2d343b] text-center shadow-2xl">
             
-            <div class="brand-box">
-                <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(150, 65)">
-                        <path d="M-45-45L5 50L-15 50L-65-45ZM15-45L65 50L45 50L-5-45Z" fill="#ffffff"/>
-                        <path d="M0 5L20 45L40 45L20 5Z" fill="#00b1ff"/>
-                        <path d="M0 5L-20 45L-40 45L-20 5Z" fill="#00b15d"/>
-                    </g>
-
-                    <text x="150" y="145" text-anchor="middle" font-weight="800" font-size="36">
+            <div class="brand-box mb-8">
+                <svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+                    <text x="150" y="60" text-anchor="middle" font-weight="800" font-size="42">
                         <tspan fill="#00b15d">Ex</tspan><tspan fill="#ffffff">Nexus</tspan>
                     </text>
                     
-                    <line x1="40" y1="165" x2="260" y2="165" stroke="#00b1ff" stroke-width="2" style="filter: drop-shadow(0 0 5px #00b1ff);" />
-                    <text x="150" y="188" text-anchor="middle" fill="#848e9c" font-size="10" letter-spacing="0.4em">TRADING INTELLIGENCE</text>
+                    <line x1="40" y1="85" x2="260" y2="85" stroke="#00b1ff" stroke-width="2" style="filter: drop-shadow(0 0 5px #00b1ff);" />
+                    
+                    <text x="150" y="110" text-anchor="middle" fill="#848e9c" font-size="11" letter-spacing="0.45em">TRADING INTELLIGENCE</text>
                 </svg>
             </div>
 
-            <div class="space-y-4 mt-6">
+            <div class="space-y-4">
                 <input type="email" class="input-field" placeholder="License Email">
                 <input type="password" class="input-field" placeholder="Password">
                 
-                <button onclick="launch()" class="btn-primary">
+                <button onclick="launch()" class="btn-primary mt-2">
                     Initialize Terminal
                 </button>
             </div>
