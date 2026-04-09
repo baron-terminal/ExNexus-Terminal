@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Pro Terminal</title>
+    <title>ExNexus | Institutional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://s3.tradingview.com/tv.js"></script>
@@ -17,8 +17,8 @@
                 <p class="text-[10px] text-gray-500 mt-2 uppercase tracking-[0.4em]">Institutional Access</p>
             </div>
             <div class="space-y-4">
-                <input type="text" id="user-id" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white outline-none focus:border-[#00b15d]" placeholder="Username">
-                <input type="password" id="user-pass" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white outline-none focus:border-[#00b15d]" placeholder="Password">
+                <input type="text" id="user-id" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white focus:border-[#00b15d] outline-none" placeholder="Username">
+                <input type="password" id="user-pass" class="w-full bg-black border border-[#1c2024] p-3 rounded text-white focus:border-[#00b15d] outline-none" placeholder="Password">
                 <button onclick="authenticate()" class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,177,93,0.3)]">Initialize Session</button>
             </div>
         </div>
@@ -40,7 +40,7 @@
                     </div>
                 </nav>
             </div>
-            <div class="text-[10px] font-bold text-[#00b15d]">● SYSTEM SECURE</div>
+            <div class="text-[10px] font-bold text-[#00b15d]">● SYSTEM ACTIVE</div>
         </header>
 
         <div class="flex-1 flex overflow-hidden">
@@ -48,29 +48,21 @@
                 <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-600">Order Book</div>
                 <div class="text-xl font-bold text-[#00b15d] text-center py-8">71,048.00 ↑</div>
             </aside>
-
-            <div class="flex-1 flex flex-col bg-black relative">
-                <div id="tv-layout-grid" class="flex-1 bg-[#1c2024]">
-                    </div>
+            <div class="flex-1 flex flex-col bg-black">
+                <div id="tv-layout-grid" class="flex-1 bg-[#1c2024]"></div>
                 <div class="h-40 border-t border-[#1c2024] bg-[#0a0e12] p-3 shrink-0">
-                    <div class="flex gap-4 text-[9px] font-bold text-gray-500 uppercase">
+                    <div class="flex gap-4 text-[9px] font-bold text-gray-500 uppercase mb-4">
                         <span class="text-white border-b border-[#00b15d] pb-1">Positions(0)</span>
                         <span>Orders(0)</span>
                     </div>
-                    <div class="text-center text-gray-700 mt-10 font-bold uppercase tracking-tighter">No Active Reporting Data</div>
+                    <div class="text-center text-gray-700 mt-8 font-bold uppercase">No Reporting Data Available</div>
                 </div>
             </div>
-
             <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4 shrink-0">
-                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-6">
-                    <button class="flex-1 bg-[#00b15d] text-white py-2 rounded text-[10px] font-black uppercase">Buy</button>
-                    <button class="flex-1 text-gray-500 py-2 rounded text-[10px] font-bold uppercase">Sell</button>
-                </div>
-                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest shadow-[0_4px_25px_rgba(0,177,93,0.3)]">Open Long / Buy</button>
+                <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-[11px] uppercase tracking-widest">Open Long / Buy</button>
             </aside>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
