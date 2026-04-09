@@ -27,3 +27,12 @@ body {
 /* Buttons */
 .btn-buy { background-color: #00f076; color: black; font-weight: bold; border-radius: 4px; }
 .btn-sell { background-color: #ff3b69; color: white; font-weight: bold; border-radius: 4px; }
+/* Helper class to hide the modal */
+.hidden {
+    display: none !important;
+}
+
+/* Input focus effect */
+input:focus {
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
+}
