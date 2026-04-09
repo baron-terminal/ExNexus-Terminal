@@ -4,9 +4,6 @@
 #tv-layout-grid {
     background-color: #1c2024;
 }
-input::placeholder {
-    color: #374151;
-}
 ::-webkit-scrollbar {
     width: 3px;
 }
