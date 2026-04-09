@@ -1,5 +1,4 @@
-body { background-color: #000; margin: 0; font-family: sans-serif; }
-#tv-chart-container { background-color: #1c2024; }
+body { margin: 0; background: #000; }
+#main-grid { background-color: #1c2024; }
 ::-webkit-scrollbar { width: 2px; }
 ::-webkit-scrollbar-thumb { background: #1c2024; border-radius: 10px; }
-aside { transition: width 0.3s ease; }
