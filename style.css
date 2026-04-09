@@ -1,77 +1,25 @@
-[21:18, 9.4.2026] Dror: function initCharts() {
-    const containers = ['tv-1', 'tv-2', 'tv-3', 'tv-4'];
-    
-    containers.forEach(id => {
-        if (typeof TradingView !== 'undefined') {
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "BYBIT:BTCUSDT",
-                "interval": "60",
-                "theme": "dark",
-                "container_id": id,
-                "overrides": {
-                    "mainSeriesProperties.candleStyle.upColor": "#00b15d",
-                    "mainSeriesProperties.candleStyle.borderUpColor": "#00b15d",
-                    "mainSeriesProperties.candleStyle.wickUpColor": "#00b15d"
-                }
-            });
-        }
-    });
-}
-[21:21, 9.4.2026] Dror: סטייל
-[21:21, 9.4.2026] Dror: /* Core Layout */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #000;
-}
-
-/* Unified ExNexus Green */
 :root {
     --nexus-green: #00b15d;
     --border-color: #1c2024;
     --bg-dark: #0a0e12;
 }
 
-/* Login Screen Stabilization */
-#login-screen {
-    background: radial-gradient(circle at center, #0a0e12 0%, #000 100%);
-    display: flex;
-    transition: opacity 0.5s ease;
+body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background-color: #000;
 }
 
-/* Grid Logic for Charts */
+#login-screen {
+    background: radial-gradient(circle at center, #0a0e12 0%, #000 100%);
+}
+
 #tv-layout-grid {
-    display: grid;
-    width: 100%;
-    height: 100%;
     background-color: var(--border-color);
 }
 
-/* Order Panel Sidebar */
-#order-panel {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-}
-
-/* Buttons and Inputs */
-input::placeholder {
-    color: #4b5563;
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 4px;
-}
-::-webkit-scrollbar-track {
-    background: #000;
 }
 ::-webkit-scrollbar-thumb {
     background: var(--border-color);
