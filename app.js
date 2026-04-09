@@ -9,7 +9,7 @@ function launch() {
     new TradingView.widget({
         "autosize": true,
         "symbol": "BYBIT:BTCUSDT",
-        "interval": "60",
+        "interval": "30",
         "theme": "dark",
         "style": "1",
         "locale": "en",
@@ -19,13 +19,12 @@ function launch() {
         "hide_side_toolbar": false,
         "allow_symbol_change": true,
         "container_id": "tv-container",
-        
-        // --- 🟢 RESTORING THE MISSING INFO 🟢 ---
-        "details": true,    // Restores the right-side price info
-        "hotlist": true,    // Restores gainers/losers
-        "calendar": true,   // Restores economic events
-        "show_popup_button": true,
-        "popup_width": "1000",
-        "popup_height": "650"
+        "details": false,
+        "hotlist": false,
+        "calendar": false,
+        "save_image": false,
+        "studies": [
+            "Volume@tv-basicstudies"
+        ]
     });
 }
