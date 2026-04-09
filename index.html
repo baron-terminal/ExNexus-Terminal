@@ -3,78 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Pro Terminal (Fixed)</title>
+    <title>ExNexus | Unified Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-black text-gray-300 text-[11px] overflow-hidden">
 
-    <div id="prefs-modal" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center hidden">
-        <div class="w-[500px] bg-[#1c2024] rounded-lg border border-[#2d343b] p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-sm font-bold text-white uppercase tracking-widest">Layout Config</span>
-                <button onclick="togglePrefs()" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+    <div id="login-screen" class="fixed inset-0 bg-black z-[200] flex items-center justify-center p-6">
+        <div class="w-full max-w-sm p-8 bg-[#0a0e12] rounded-2xl border border-[#1c2024] shadow-2xl text-center">
+            <div class="mb-6">
+                <span class="text-3xl font-black tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</span>
+                <p class="text-[9px] text-gray-500 mt-2 uppercase tracking-[0.3em]">Institutional Access</p>
             </div>
-            <div class="grid grid-cols-4 gap-2" id="layout-options">
-                <button onclick="updateLayout(1)" class="pref-btn">1 Chart</button>
-                <button onclick="updateLayout(2)" class="pref-btn">2 Charts</button>
-                <button onclick="updateLayout(4)" class="pref-btn active">4 Charts</button>
-                <button onclick="updateLayout(5)" class="pref-btn">5 Charts</button>
+            <div class="space-y-3">
+                <input type="password" id="access-pass" class="w-full bg-black border border-[#1c2024] p-3 rounded text-center text-white focus:border-[#00b15d] outline-none" placeholder="Enter License Key">
+                <button onclick="authenticate()" class="w-full bg-[#00b15d] text-white py-3 rounded font-black text-[10px] uppercase tracking-widest hover:brightness-110">Initialize Session</button>
             </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen flex flex-col">
+    <div id="terminal-screen" class="h-screen flex flex-col opacity-0 transition-opacity duration-500">
         <header class="h-10 border-b border-[#1c2024] flex items-center px-4 bg-[#0a0e12] justify-between">
             <div class="flex items-center gap-6">
-                <div class="text-sm font-black tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</div>
-                <div class="flex gap-4 font-bold text-gray-500">
-                    <span class="text-white border-b border-[#00b15d] pb-1">Trade</span>
+                <span class="text-sm font-black tracking-tighter"><span class="text-[#00b15d]">Ex</span>Nexus</span>
+                <nav class="flex gap-4 font-bold text-gray-500">
+                    <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Trade</span>
                     <span class="hover:text-white cursor-pointer" onclick="togglePrefs()">Layout</span>
-                </div>
+                </nav>
             </div>
-            <div class="flex items-center gap-6 text-[10px] font-bold">
-                <div>BTCUSDT <span class="text-[#00b15d]">71,048.00 ↑</span></div>
-                <div class="text-gray-500">Funding: <span class="text-[#00b15d]">0.0100%</span></div>
+            <div class="flex items-center gap-4 text-[10px] font-bold">
+                <div class="text-[#00b15d]">Live Feed Connected</div>
+                <button onclick="togglePrefs()" class="text-gray-500 hover:text-white"><i data-lucide="layout" class="w-4 h-4"></i></button>
             </div>
         </header>
 
-        <div id="main-container" class="flex-1 flex overflow-hidden">
-            <aside class="w-56 border-r border-[#1c2024] bg-[#0a0e12] flex flex-col">
-                <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-500">Order Book</div>
-                <div class="flex-1 p-2 font-mono" id="ob-container">
-                    <div class="text-lg font-bold text-[#00b15d] text-center my-4 py-1 border-y border-[#1c2024]">71,048.00</div>
+        <div class="flex-1 flex overflow-hidden">
+            <aside class="w-52 border-r border-[#1c2024] bg-[#0a0e12] flex flex-col shrink-0">
+                <div class="p-2 border-b border-[#1c2024] text-[9px] uppercase font-bold text-gray-600">Order Book</div>
+                <div class="flex-1 p-2 font-mono text-center">
+                    <div class="text-lg font-bold text-[#00b15d] py-4">71,048.00 ↑</div>
                 </div>
             </aside>
 
-            <div class="flex-1 flex flex-col bg-black">
+            <div class="flex-1 bg-black flex flex-col">
                 <div id="tv-layout-grid" class="flex-1 grid grid-cols-2 grid-rows-2 gap-[1px] bg-[#1c2024]">
-                    <div id="tv-c1" class="bg-black"></div>
-                    <div id="tv-c2" class="bg-black"></div>
-                    <div id="tv-c3" class="bg-black"></div>
-                    <div id="tv-c4" class="bg-black"></div>
-                </div>
-                <div class="h-44 border-t border-[#1c2024] bg-[#0a0e12]">
-                    <div class="flex gap-4 p-2 text-[10px] font-bold text-gray-500 border-b border-[#1c2024]">
-                        <span class="text-white border-b border-[#00b15d] pb-1">Positions(0)</span>
-                        <span>Orders(0)</span>
                     </div>
-                    <div class="p-8 text-center text-gray-700 italic">No reporting data available.</div>
+                <div class="h-40 border-t border-[#1c2024] bg-[#0a0e12] p-2">
+                    <div class="text-[9px] font-bold text-gray-600 uppercase">Positions(0)</div>
                 </div>
             </div>
 
-            <aside id="order-panel" class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4">
-                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-4">
+            <aside id="order-panel" class="w-72 border-l border-[#1c2024] bg-[#0a0e12] p-4 shrink-0">
+                <div class="flex bg-black p-1 rounded border border-[#1c2024] mb-5">
                     <button class="flex-1 bg-[#00b15d] text-white py-1.5 rounded text-[10px] font-black uppercase">Buy</button>
                     <button class="flex-1 text-gray-500 py-1.5 rounded text-[10px] font-bold uppercase">Sell</button>
                 </div>
                 <div class="space-y-4">
-                    <input type="text" class="w-full bg-black border border-[#2d343b] p-3 rounded text-white font-mono text-xs" value="71048.00">
-                    <input type="text" class="w-full bg-black border border-[#2d343b] p-3 rounded text-white font-mono text-xs" placeholder="Quantity">
-                    <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(0,177,93,0.15)]">Open Long / Buy</button>
+                    <div class="bg-black border border-[#1c2024] p-3 rounded">
+                        <div class="text-[8px] text-gray-600 uppercase font-black mb-1">Price</div>
+                        <div class="text-white font-mono text-xs">71048.00</div>
+                    </div>
+                    <button class="w-full bg-[#00b15d] text-white py-4 rounded font-black text-xs uppercase tracking-widest shadow-[0_4px_20px_rgba(0,177,93,0.15)]">Open Long / Buy</button>
                 </div>
             </aside>
+        </div>
+    </div>
+
+    <div id="prefs-modal" class="fixed inset-0 bg-black/90 z-[300] hidden flex items-center justify-center">
+        <div class="w-80 bg-[#0a0e12] border border-[#1c2024] p-6 rounded-xl">
+            <p class="text-[10px] font-black uppercase text-gray-500 mb-4 tracking-widest text-center">Select Multi-Chart Layout</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="updateLayout(1)" class="p-3 border border-[#1c2024] hover:border-[#00b15d] rounded text-[9px] font-bold">1 Chart</button>
+                <button onclick="updateLayout(2)" class="p-3 border border-[#1c2024] hover:border-[#00b15d] rounded text-[9px] font-bold">2 Charts</button>
+                <button onclick="updateLayout(4)" class="p-3 border border-[#00b15d] bg-[#00b15d]/5 rounded text-[9px] font-bold text-[#00b15d]">4 Charts (Grid)</button>
+                <button onclick="updateLayout(5)" class="p-3 border border-[#1c2024] hover:border-[#00b15d] rounded text-[9px] font-bold">5 Charts</button>
+            </div>
+            <button onclick="togglePrefs()" class="w-full mt-6 text-[9px] text-gray-600 hover:text-white uppercase font-bold">Close Settings</button>
         </div>
     </div>
 
