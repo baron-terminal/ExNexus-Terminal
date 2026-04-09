@@ -3,150 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Trading Intelligence | AI, Arbitrage & Charts</title>
+    <title>ExNexus | Trading Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css" rel="stylesheet">
     <style>
-        /* Updated for PURE BLACK Background */
-        body { background-color: #000000; color: #ffffff; font-family: sans-serif; overflow: hidden; }
-        .bybit-dark { background-color: #0a0e12; border: 1px solid #2d343b; } /* Obsidian panels */
+        body { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        .bybit-dark { background-color: #0a0e12; border: 1px solid #2d343b; }
         .hidden { display: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #2d343b; border-radius: 10px; }
-        #tv_chart_container { height: 100%; width: 100%; }
         
-        /* Logo Gradient Definitions */
-        .ex-green { fill: #00b15d; }
-        .nexus-blue { fill: #ffffff; }
-        .nexus-text { fill: #ffffff; font-family: sans-serif; font-weight: bold; font-size: 24px;}
-        .trading-intel { fill: #848e9c; font-family: sans-serif; font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em;}
-        .interlock-x { stroke-width: 0.5; stroke: #848e9c; fill: none; }
+        /* THE CHART FIX: Ensure it takes all available space without squeezing */
+        #tradingview_widget { height: 100%; width: 100%; position: absolute; inset: 0; }
+        
+        /* SVG Branding Colors */
+        .ex-text { fill: #00b15d; font-weight: bold; font-size: 24px; }
+        .nexus-text { fill: #ffffff; font-weight: bold; font-size: 24px; }
+        .trading-intel { fill: #848e9c; font-size: 9px; text-transform: uppercase; letter-spacing: 0.25em; }
+        .glowing-line { stroke: #00b1ff; stroke-width: 1; filter: drop-shadow(0 0 3px #00b1ff); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: #2d343b; }
     </style>
 </head>
 <body>
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-[#000000]">
-        <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-lg shadow-2xl border border-[#2d343b]">
-            <div class="mb-10 text-center flex justify-center">
-                <svg width="220" height="130" viewBox="0 0 220 130">
-                    <g transform="translate(60, 0)">
-                      <polygon points="50,10 90,80 70,80 30,10" fill="#e5e7eb" opacity="0.8"/> <polygon points="10,10 50,80 30,80 -10,10" fill="#ffffff"/> <polygon points="30,40 50,75 70,75 50,40" fill="#00b1ff"/>
-                      <polygon points="30,40 10,75 -10,75 10,40" fill="#00b15d"/>
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-[#000000] z-[100] relative">
+        <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-lg border border-[#2d343b] text-center">
+            <div class="mb-8 flex justify-center">
+                <svg width="220" height="140" viewBox="0 0 240 150">
+                    <g transform="translate(65, 5) scale(0.85)">
+                        <polygon points="50,10 90,80 70,80 30,10" fill="#e5e7eb" opacity="0.9"/> 
+                        <polygon points="10,10 50,80 30,80 -10,10" fill="#ffffff"/> 
+                        <polygon points="30,40 50,75 70,75 50,40" fill="#00b1ff"/>
+                        <polygon points="30,40 10,75 -10,75 10,40" fill="#00b15d"/>
                     </g>
-                    
-                    <g transform="translate(0, 95)">
-                        <text x="65" y="0" class="nexus-text tracking-tighter">ExNexus</text>
+                    <g transform="translate(0, 100)">
+                        <text x="65" y="0"><tspan class="ex-text">Ex</tspan><tspan class="nexus-text tracking-tighter">Nexus</tspan></text>
                     </g>
-                    
-                    <g transform="translate(0, 115)">
-                        <text x="80" y="0" class="trading-intel uppercase tracking-widest">Trading Intelligence</text>
-                    </g>
+                    <line x1="55" y1="115" x2="185" y2="115" class="glowing-line" />
+                    <text x="75" y="132" class="trading-intel">Trading Intelligence</text>
                 </svg>
             </div>
-            
-            <div class="space-y-6">
-                <input type="email" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b1ff]" placeholder="Email">
-                <input type="password" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b15d]" placeholder="Password">
-                <button onclick="showTerminal()" class="w-full bg-[#00b15d] hover:bg-[#008f4c] text-white font-bold py-3 rounded uppercase tracking-widest transition shadow-lg shadow-green-900/40">Secure AI Access</button>
+            <div class="space-y-4">
+                <input type="email" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b1ff] text-sm" placeholder="Email">
+                <input type="password" class="w-full bg-[#000000] border border-[#2d343b] p-3 rounded text-white outline-none focus:border-[#00b15d] text-sm" placeholder="Password">
+                <button onclick="showTerminal()" class="w-full bg-[#00b15d] hover:bg-[#008f4c] text-white font-bold py-3 rounded uppercase tracking-widest text-xs transition shadow-lg shadow-green-900/20">Access Terminal</button>
             </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="min-h-screen flex hidden">
-        <nav class="w-16 border-r border-[#2d343b] flex flex-col items-center py-6 gap-8 bg-[#000000]">
-            <svg width="30" height="30" viewBox="0 0 100 100">
-                <polygon points="50,10 90,80 70,80 30,10" fill="#e5e7eb"/>
-                <polygon points="10,10 50,80 30,80 -10,10" fill="#ffffff"/>
-                <polygon points="30,40 50,75 70,75 50,40" fill="#00b1ff"/>
-                <polygon points="30,40 10,75 -10,75 10,40" fill="#00b15d"/>
-            </svg>
-            
-            <i data-lucide="layout-grid" class="text-[#00b1ff] cursor-pointer w-6 h-6" title="Dashboard"></i>
-            <i data-lucide="zap" class="text-gray-500 hover:text-white cursor-pointer w-6 h-6" title="Arbitrage"></i>
-            <i data-lucide="bot" class="text-gray-500 hover:text-white cursor-pointer w-6 h-6" title="AI Bots"></i>
-            <i data-lucide="settings" onclick="toggleSettings()" class="text-gray-500 hover:text-white cursor-pointer w-6 h-6" title="Settings"></i>
-            <i data-lucide="log-out" onclick="location.reload()" class="mt-auto text-gray-500 hover:text-white cursor-pointer w-6 h-6" title="Logout"></i>
-        </nav>
-
-        <main class="flex-1 flex flex-col">
-            <header class="h-14 border-b border-[#2d343b] flex items-center px-6 justify-between bg-[#0a0e12]">
-                <div class="flex items-center gap-6">
-                    <h1 class="font-bold tracking-tight text-white flex gap-2 items-center">
-                        <span class="text-[10px] text-gray-400">ExNexus</span>
-                        <span class="text-gray-400">|</span> 
-                        <span class="text-[10px] uppercase tracking-widest">Trading Intelligence</span>
-                    </h1>
-                    <div class="flex gap-3 text-[10px] uppercase font-bold ml-4">
-                        <span class="text-[#00b15d]">● Binance</span>
-                        <span class="text-[#00b15d]">● Bybit</span>
-                        <span class="text-red-500">○ Gate.io</span>
-                    </div>
+    <div id="terminal-screen" class="h-screen flex flex-col hidden">
+        <header class="h-12 border-b border-[#2d343b] flex items-center px-4 justify-between bg-[#0a0e12] shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1">
+                    <span class="text-[#00b15d] font-bold text-xs">Ex</span><span class="text-white font-bold text-xs">Nexus</span>
                 </div>
-                <div class="flex gap-4 items-center">
-                    <div class="text-[10px] text-gray-400">altFINS AI: <span class="text-[#00b15d] uppercase">Scanning (98% Win Prob)</span></div>
-                </div>
-            </header>
-
-            <div class="flex-1 grid grid-cols-12 relative overflow-hidden bg-[#000000]">
-                <div id="settings-panel" class="absolute inset-0 bg-[#000000]/95 z-50 p-10 hidden">
-                    <div class="max-w-2xl mx-auto bybit-dark p-8 rounded border border-[#2d343b]">
-                        <div class="flex justify-between mb-6">
-                            <h2 class="text-xl font-bold text-white">ExNexus | Key Manager</h2>
-                            <button onclick="toggleSettings()" class="text-gray-500">✕</button>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="p-4 bg-[#000000] rounded border border-[#2d343b]">
-                                <h3 class="text-[#00b15d] text-xs font-bold mb-3 uppercase">Gate.io V4 API</h3>
-                                <input type="text" class="w-full bg-[#0a0e12] border border-[#2d343b] p-2 rounded text-xs mb-2 text-white" placeholder="API Key">
-                                <input type="password" class="w-full bg-[#0a0e12] border border-[#2d343b] p-2 rounded text-xs mb-2 text-white" placeholder="API Secret">
-                                <input type="password" class="w-full bg-[#0a0e12] border border-[#2d343b] p-2 rounded text-xs text-white" placeholder="API Passphrase">
-                            </div>
-                            <button class="w-full bg-[#00b15d] text-white font-bold py-2 rounded text-xs uppercase tracking-tighter transition">Save Secure Configuration</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-span-3 border-r border-[#2d343b] bg-[#000000] flex flex-col">
-                    <div class="p-3 border-b border-[#2d343b] bg-[#0a0e12] flex justify-between">
-                        <span class="text-[10px] font-bold text-[#00b15d]">ARBITRAGE SCANNER</span>
-                        <span class="text-[9px] text-gray-500">Net Profit Calculated</span>
-                    </div>
-                    <div class="flex-1 overflow-y-auto p-2 space-y-2">
-                        <div class="p-3 bg-[#0a0e12] rounded border-l-2 border-[#00b15d] hover:bg-[#1c242c] cursor-pointer group border border-[#2d343b]">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold text-white">SOL/USDT</span>
-                                <span class="text-[#00b15d] text-xs font-bold">+1.82%</span>
-                            </div>
-                            <div class="flex justify-between text-[9px] text-gray-400 mb-3">
-                                <span>Buy: Gate.io ($172.10)</span>
-                                <span>Sell: Bybit ($175.25)</span>
-                            </div>
-                            <button class="w-full bg-[#2d343b] group-hover:bg-[#00b15d] group-hover:text-white transition py-1.5 rounded text-[9px] font-bold uppercase tracking-widest text-white">Execute Atomic Trade</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-span-6 border-r border-[#2d343b] bg-black relative overflow-hidden">
-                    <div id="tradingview_widget"></div>
-                </div>
-
-                <div class="col-span-3 flex flex-col bybit-dark">
-                    <div class="p-4 border-b border-[#2d343b]">
-                        <h3 class="text-[10px] font-bold text-gray-500 uppercase mb-4">altFINS AI Insight</h3>
-                        <div class="p-3 bg-[#000000] rounded border border-[#2d343b] mb-4">
-                            <div class="text-[11px] text-[#00b15d] font-bold mb-1">Win Probability: 94%</div>
-                            <p class="text-[10px] text-gray-400 leading-relaxed">AI suggests "Trend-Following Bot" for BTC. Resistance broken at $68,200.</p>
-                        </div>
-                        <div class="space-y-3">
-                            <select class="w-full bg-[#000000] border border-[#2d343b] p-2 rounded text-xs outline-none text-white">
-                                <option>Autonomy: AI-SemiAuto</option>
-                                <option>Autonomy: Full-Manual</option>
-                            </select>
-                            <button class="w-full bg-[#00b15d] hover:bg-[#008f4c] py-3 rounded font-bold text-sm text-white tracking-widest shadow-lg shadow-green-900/40 transition">DEPLOY AI BOT</button>
-                        </div>
-                    </div>
+                <div class="h-4 w-[1px] bg-[#2d343b]"></div>
+                <div class="flex gap-3 text-[9px] uppercase font-bold">
+                    <span class="text-[#00b15d]">● Binance</span>
+                    <span class="text-[#00b15d]">● Bybit</span>
+                    <span class="text-red-500">○ Gate.io</span>
                 </div>
             </div>
-        </main>
+            <div class="text-[9px] text-gray-500 tracking-widest uppercase">AI Strategy: <span class="text-[#00b1ff]">Active Scanning</span></div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <nav class="w-12 border-r border-[#2d343b] flex flex-col items-center py-4 gap-6 bg-[#000000] shrink-0">
+                <i data-lucide="layout-grid" class="text-[#00b1ff] w-5 h-5 cursor-pointer"></i>
+                <i data-lucide="zap" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer" title="Arbitrage"></i>
+                <i data-lucide="bot" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer"></i>
+                <i data-lucide="settings" onclick="toggleSettings()" class="text-gray-500 hover:text-white w-5 h-5 cursor-pointer"></i>
+                <i data-lucide="log-out" onclick="location.reload()" class="mt-auto text-gray-500 w-5 h-5 cursor-pointer"></i>
+            </nav>
+
+            <aside class="w-64 border-r border-[#2d343b] bg-[#000000] flex flex-col shrink-0 overflow-y-auto">
+                <div class="p-2 border-b border-[#2d343b] bg-[#0a0e12] flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-[#00b15d]">ARBITRAGE SCANNER</span>
+                </div>
+                <div class="p-2 space-y-2">
+                    <div class="p-2 bg-[#0a0e12] rounded border border-[#2d343b] hover:border-[#00b15d] cursor-pointer group">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-white">SOL/USDT</span>
+                            <span class="text-[#00b15d] text-[10px] font-bold">+1.82%</span>
+                        </div>
+                        <div class="text-[8px] text-gray-500 mt-1">Gate.io → Bybit</div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="flex-1 relative bg-black overflow-hidden">
+                <div id="tradingview_widget"></div>
+            </section>
+
+            <aside class="w-64 border-l border-[#2d343b] bg-[#0a0e12] shrink-0 p-4">
+                <h3 class="text-[9px] font-bold text-gray-500 uppercase mb-4">Execution Engine</h3>
+                <div class="p-3 bg-[#000000] rounded border border-[#2d343b] mb-4">
+                    <div class="text-[10px] text-[#00b15d] font-bold mb-1">94% Confidence</div>
+                    <p class="text-[9px] text-gray-400 leading-tight italic">Bullish pattern detected. AI ready for Bybit deployment.</p>
+                </div>
+                <button class="w-full bg-[#00b15d] py-3 rounded font-bold text-[10px] text-white tracking-widest uppercase transition-all hover:bg-[#008f4c]">Deploy AI Bot</button>
+            </aside>
+        </div>
+
+        <div id="settings-panel" class="absolute inset-0 bg-black/90 z-[200] hidden flex items-center justify-center">
+            <div class="w-full max-w-lg bybit-dark p-6 rounded border border-[#2d343b]">
+                <div class="flex justify-between mb-4">
+                    <h2 class="text-sm font-bold">API Key Manager</h2>
+                    <button onclick="toggleSettings()" class="text-gray-500">✕</button>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-4 bg-black rounded border border-[#2d343b]">
+                        <label class="text-[10px] text-gray-500 uppercase">Gate.io Passphrase</label>
+                        <input type="password" class="w-full bg-[#0a0e12] border border-[#2d343b] p-2 rounded text-xs mt-1 text-white" placeholder="Enter API Passphrase">
+                    </div>
+                    <button class="w-full bg-[#00b15d] text-white text-xs font-bold py-2 rounded">SAVE CONFIG</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -156,7 +129,7 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('terminal-screen').classList.remove('hidden');
             
-            // Initialize Chart after showing terminal
+            // Fixed TradingView Widget for Narrow Screens
             new TradingView.widget({
                 "autosize": true,
                 "symbol": "BYBIT:BTCUSDT",
@@ -167,8 +140,10 @@
                 "locale": "en",
                 "toolbar_bg": "#f1f3f6",
                 "enable_publishing": false,
+                "withdateranges": true,
                 "hide_side_toolbar": false,
                 "allow_symbol_change": true,
+                "details": false,
                 "container_id": "tradingview_widget"
             });
             
@@ -176,8 +151,7 @@
         }
 
         function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
-            panel.classList.toggle('hidden');
+            document.getElementById('settings-panel').classList.toggle('hidden');
         }
 
         lucide.createIcons();
