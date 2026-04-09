@@ -3,38 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus Terminal</title>
+    <title>ExNexus | Trading Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-3xl border border-[#2d343b] text-center shadow-2xl">
+            
             <div class="brand-box">
                 <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(150, 60)" text-anchor="middle">
-                        <path d="M-30-40L10 45L-10 45L-50-40Z" fill="#ffffff"/>
-                        <path d="M10-40L50 45L30 45L-10-40Z" fill="#ffffff"/>
-                        <path d="M-10 2L10 40L30 40L10 2Z" fill="#00b1ff"/>
-                        <path d="M-10 2L-30 40L-50 40L-30 2Z" fill="#00b15d"/>
+                    <g transform="translate(150, 65)">
+                        <path d="M-45-45 L5 50 L-15 50 L-65-45 Z" fill="#ffffff"/>
+                        <path d="M15-45 L65 50 L45 50 L-5-45 Z" fill="#ffffff"/>
+                        <path d="M0 5 L20 45 L40 45 L20 5 Z" fill="#00b1ff"/>
+                        <path d="M0 5 L-20 45 L-40 45 L-20 5 Z" fill="#00b15d"/>
                     </g>
                     <text x="150" y="145" text-anchor="middle" font-weight="800" font-size="36">
                         <tspan fill="#00b15d">Ex</tspan><tspan fill="#ffffff">Nexus</tspan>
                     </text>
-                    <line x1="40" y1="165" x2="260" y2="165" stroke="#00b1ff" stroke-width="2" />
+                    <line x1="40" y1="165" x2="260" y2="165" stroke="#00b1ff" stroke-width="2" style="filter: drop-shadow(0 0 5px #00b1ff);" />
                     <text x="150" y="188" text-anchor="middle" fill="#848e9c" font-size="10" letter-spacing="0.4em">TRADING INTELLIGENCE</text>
                 </svg>
             </div>
-            <div class="space-y-4 mt-4">
+
+            <div class="space-y-4 mt-6">
                 <input type="email" class="input-field" placeholder="License Email">
                 <input type="password" class="input-field" placeholder="Password">
-                <button onclick="launch()" class="btn-primary">Initialize Terminal</button>
+                
+                <button onclick="launch()" class="btn-primary">
+                    Initialize Terminal
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen hidden">
-        <div id="tv-container"></div>
+    <div id="terminal-screen" class="h-screen flex flex-col hidden">
+        <header class="h-14 border-b border-[#2d343b] flex items-center px-6 bg-[#0a0e12]">
+            <span class="text-[#00b15d] font-extrabold text-xl">Ex</span><span class="text-white font-extrabold text-xl">Nexus</span>
+        </header>
+        <div class="flex-1 relative bg-black">
+            <div id="tv-container"></div>
+        </div>
     </div>
 
     <script src="https://s3.tradingview.com/tv.js"></script>
