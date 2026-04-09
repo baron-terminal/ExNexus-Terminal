@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Trading Intelligence</title>
+    <title>ExNexus | Pro Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="bg-black text-gray-300 text-xs overflow-hidden">
 
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-6 bg-black z-50 relative">
         <div class="w-full max-w-md p-10 bg-[#0a0e12] rounded-3xl border border-[#2d343b] text-center shadow-2xl">
             <div class="brand-box mb-8">
                 <svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
@@ -29,56 +29,129 @@
         </div>
     </div>
 
-    <div id="terminal-screen" class="h-screen flex flex-col hidden overflow-hidden">
-        <header class="h-12 border-b border-[#2d343b] flex items-center px-4 bg-[#0a0e12] justify-between">
-            <div class="flex items-center gap-6">
-                <div class="flex items-center">
-                    <span class="text-[#00b15d] font-extrabold text-lg">Ex</span><span class="text-white font-extrabold text-lg">Nexus</span>
+    <div id="terminal-screen" class="h-screen flex flex-col hidden">
+        
+        <header class="h-10 border-b border-[#1c2024] flex items-center px-3 bg-[#0a0e12] justify-between">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center text-sm">
+                    <span class="text-[#00b15d] font-extrabold">Ex</span><span class="text-white font-extrabold">Nexus</span>
                 </div>
-                <nav class="flex gap-4 text-[10px] font-bold text-gray-400">
-                    <span class="text-white cursor-pointer">MARKETS</span>
-                    <span class="cursor-pointer">TRADE</span>
-                    <span class="text-[#00b1ff] cursor-pointer">BOTS</span>
+                <nav class="flex gap-4 text-[11px] font-medium text-gray-400">
+                    <span class="hover:text-white cursor-pointer">Markets</span>
+                    <span class="text-white border-b border-[#00b15d] pb-2 cursor-pointer">Trade</span>
+                    <span class="hover:text-white cursor-pointer">Tools</span>
+                    <span class="text-[#00b1ff] cursor-pointer font-bold">Bots</span>
                 </nav>
             </div>
         </header>
 
+        <div class="h-12 border-b border-[#1c2024] bg-[#0a0e12] flex items-center px-4 gap-8">
+            <div class="flex flex-col">
+                <span class="text-white font-bold text-sm">BTCUSDT</span>
+                <span class="text-[10px] text-gray-500">Perpetual</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[#00b15d] font-bold">71,048.00</span>
+                <span class="text-[10px] text-gray-500">Index Price: 71,072.41</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-[10px]">24h Change</span>
+                <span class="text-[#00b15d]">+84.30 (+0.11%)</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-[10px]">24h High</span>
+                <span class="text-white">71,988.50</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-[10px]">24h Low</span>
+                <span class="text-white">70,417.20</span>
+            </div>
+        </div>
+
         <div class="flex-1 flex overflow-hidden">
-            <nav class="w-12 border-r border-[#2d343b] flex flex-col items-center py-4 bg-black gap-6">
-                <i data-lucide="layout-dashboard" class="w-5 h-5 text-[#00b15d]"></i>
-                <i data-lucide="bot" class="w-5 h-5 text-gray-500"></i>
-                <i data-lucide="database" class="w-5 h-5 text-gray-500"></i>
-            </nav>
-
-            <section class="flex-1 relative bg-black">
-                <div id="tv-container"></div>
-            </section>
-
-            <aside class="w-80 border-l border-[#2d343b] bg-[#0a0e12] flex flex-col p-4 gap-4 overflow-y-auto">
-                <div class="flex gap-2">
-                    <button class="flex-1 bg-[#00b15d] py-2 rounded text-xs font-bold uppercase text-white">Buy</button>
-                    <button class="flex-1 bg-[#2d343b] py-2 rounded text-xs font-bold text-gray-400 uppercase">Sell</button>
+            
+            <aside class="w-60 border-r border-[#1c2024] flex flex-col bg-[#0a0e12]">
+                <div class="p-2 border-b border-[#1c2024] flex justify-between text-[10px] font-bold">
+                    <span>Order Book</span>
+                    <span class="text-gray-500">0.1</span>
                 </div>
-                
-                <div class="space-y-3">
-                    <div class="flex justify-between text-[10px] text-gray-500 font-bold uppercase">
-                        <span>Order Type</span>
-                        <span class="text-[#00b1ff]">Margin 10x</span>
+                <div class="flex-1 overflow-hidden p-2">
+                    <div class="flex justify-between text-red-500 mb-1"><span>71,049.80</span><span>0.050</span></div>
+                    <div class="flex justify-between text-red-500 mb-1"><span>71,049.70</span><span>0.001</span></div>
+                    <div class="flex justify-between text-red-500 mb-1"><span>71,049.60</span><span>0.032</span></div>
+                    <div class="text-lg font-bold text-[#00b15d] text-center my-3">71,048.00 ↑</div>
+                    <div class="flex justify-between text-[#00b15d] mb-1"><span>71,047.80</span><span>13.181</span></div>
+                    <div class="flex justify-between text-[#00b15d] mb-1"><span>71,047.30</span><span>0.049</span></div>
+                </div>
+            </aside>
+
+            <div class="flex-1 flex flex-col overflow-hidden bg-black">
+                <div class="flex-1 relative">
+                    <div id="tv-container"></div>
+                </div>
+                <div class="h-48 border-t border-[#1c2024] bg-[#0a0e12] flex flex-col">
+                    <div class="flex gap-6 p-2 border-b border-[#1c2024] text-[10px] font-bold text-gray-500">
+                        <span class="text-white border-b border-[#00b15d] pb-1 cursor-pointer">Positions(0)</span>
+                        <span class="hover:text-white cursor-pointer">Current Orders(0)</span>
+                        <span class="hover:text-white cursor-pointer">Order History</span>
+                        <span class="hover:text-white cursor-pointer">Trade History</span>
+                        <span class="hover:text-white cursor-pointer">Assets</span>
                     </div>
-                    <select class="w-full bg-black border border-[#2d343b] p-2 text-xs rounded text-white outline-none">
-                        <option>Limit</option>
-                        <option>Market</option>
-                    </select>
-                    <input type="text" class="w-full bg-black border border-[#2d343b] p-2 text-xs rounded text-white" value="70624.00">
-                    <input type="text" class="w-full bg-black border border-[#2d343b] p-2 text-xs rounded text-white" placeholder="0.001 BTC">
+                    <div class="grid grid-cols-8 gap-2 p-2 text-[10px] text-gray-500 font-bold border-b border-[#1c2024]">
+                        <span>Contracts</span>
+                        <span>Qty</span>
+                        <span>Value</span>
+                        <span>Entry Price</span>
+                        <span>Mark Price</span>
+                        <span>Liq. Price</span>
+                        <span>Unrealized P&L</span>
+                        <span>Realized P&L</span>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center text-gray-600 italic">
+                        No history or active reporting data to display.
+                    </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col gap-2 mt-2">
-                    <button class="w-full bg-[#00b15d] py-3 rounded-lg text-sm font-bold uppercase text-white">Open Long</button>
-                    <button class="w-full border border-red-500 text-red-500 py-3 rounded-lg text-sm font-bold uppercase">Open Short</button>
+            <aside class="w-72 border-l border-[#1c2024] bg-[#0a0e12] flex flex-col p-3 overflow-y-auto">
+                <div class="flex bg-black p-1 rounded-md mb-4">
+                    <button class="flex-1 bg-[#00b15d] text-white py-1.5 rounded text-[11px] font-bold">Buy</button>
+                    <button class="flex-1 text-gray-500 py-1.5 rounded text-[11px] font-bold hover:text-white">Sell</button>
                 </div>
                 
-                <div class="border-t border-[#2d343b] my-2"></div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-gray-500 font-bold">Order Type</span>
+                        <span class="text-[#00b1ff] text-[10px]">Cross 10x</span>
+                    </div>
+                    <div class="relative">
+                        <select class="w-full bg-black border border-[#2d343b] p-2 rounded text-white outline-none appearance-none">
+                            <option>Limit</option>
+                            <option>Market</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-[10px] text-gray-500 mb-1 font-bold">
+                            <span>Price</span>
+                            <span>USDT</span>
+                        </div>
+                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white text-sm" value="71048.00">
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-[10px] text-gray-500 mb-1 font-bold">
+                            <span>Qty</span>
+                            <span>BTC</span>
+                        </div>
+                        <input type="text" class="w-full bg-black border border-[#2d343b] p-2 rounded text-white text-sm" placeholder="0.0">
+                    </div>
+
+                    <div class="pt-4 space-y-2">
+                        <button class="w-full bg-[#00b15d] text-white py-3 rounded font-bold text-sm uppercase">Buy / Long</button>
+                        <button class="w-full bg-[#f04438] text-white py-3 rounded font-bold text-sm uppercase">Sell / Short</button>
+                    </div>
+                </div>
             </aside>
         </div>
     </div>
