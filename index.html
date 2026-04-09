@@ -75,12 +75,66 @@
                     </div>
 
                     <!-- AI ANALYTICS (Future AltFINS Integration) -->
-                    <div class="ai-box mt-10">
-                        <h4 class="text-xs font-bold text-purple-400 uppercase mb-2">AI Intelligence</h4>
-                        <p class="text-[11px] text-gray-400 leading-relaxed italic">
-                            "Connecting to AltFINS via MCP... Awaiting high-probability trade signals."
-                        </p>
-                    </div>
+                    <script>
+    console.log("Internal Brain is now active!");
+
+    // 1. Toggle the Modal Window
+    function toggleApiModal() {
+        console.log("Button Clicked!");
+        const modal = document.getElementById('api-modal');
+        if (modal) {
+            modal.classList.toggle('hidden');
+        } else {
+            alert("Error: Modal box not found in the code.");
+        }
+    }
+
+    // 2. Save Keys to Browser Storage
+    function saveApiKeys() {
+        const key = document.getElementById('ex-key').value;
+        const secret = document.getElementById('ex-secret').value;
+
+        if (!key || !secret) {
+            alert("Please enter your API details.");
+            return;
+        }
+
+        localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
+        alert("Keys Saved Successfully!");
+        toggleApiModal();
+        window.location.reload();
+    }
+
+    // 3. Fetch Bybit Price
+    async function updatePrice() {
+        try {
+            const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
+            const data = await res.json();
+            const lastPrice = data.result.list[0].lastPrice;
+            const btcElement = document.getElementById('btc-price');
+            if (btcElement) {
+                btcElement.innerText = '$' + parseFloat(lastPrice).toLocaleString();
+            }
+        } catch (e) {
+            console.error("Price update failed");
+        }
+    }
+
+    // Run price update every 2 seconds
+    setInterval(updatePrice, 2000);
+    updatePrice();
+
+    // 4. Check status on load
+    window.onload = function() {
+        if (localStorage.getItem('user_api_keys')) {
+            const btn = document.querySelector('header button');
+            if (btn) {
+                btn.innerText = "Bybit Connected ✅";
+                btn.style.backgroundColor = "#059669"; // Green color
+            }
+        }
+    }
+</script>
                 </div>
             </div>
         </div>
