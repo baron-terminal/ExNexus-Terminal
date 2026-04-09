@@ -1,45 +1,41 @@
-/* COMPLETE style.css - PRO VERSION */
+/* COMPLETE style.css - GREEN UNIFICATION */
 body { 
     background: #000; 
     color: #fff; 
     margin: 0; 
     overflow: hidden; 
-    font-family: 'Inter', -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased; 
 }
 .hidden { display: none; }
 
-/* Login Styling */
-.input-field { 
-    width: 100%; 
-    background: #000; 
-    border: 1px solid #1c2024; 
-    padding: 0.85rem; 
-    border-radius: 0.5rem; 
-    color: #fff; 
-    font-size: 14px;
-    outline: none; 
-    margin-bottom: 0.5rem;
+/* Global Green Accents */
+.text-green-pro { color: #00b15d; }
+.bg-green-pro { background: #00b15d; }
+.border-green-pro { border-color: #00b15d; }
+
+/* Prefs Options */
+.pref-card { 
+    border: 1px solid #2d343b; 
+    border-radius: 4px; 
+    padding: 12px; 
+    text-align: center; 
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    color: #848e9c;
+    transition: all 0.2s ease;
 }
-.input-field:focus { border-color: #00b1ff; }
-
-.btn-primary { 
-    width: 100%; 
-    background: #00b15d; 
-    color: #fff; 
-    font-weight: 800; 
-    padding: 1rem; 
-    border-radius: 0.5rem; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em;
+.pref-card.active { 
+    border-color: #00b15d; 
+    background: rgba(0, 177, 93, 0.1); 
+    color: #00b15d;
 }
+.pref-card:hover { border-color: #00b15d; color: #fff; }
 
-/* UI Components */
-::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2d343b; border-radius: 10px; }
+/* Inputs */
+input:focus { border-color: #00b15d !important; outline: none; }
 
-#tv-container { height: 100%; width: 100%; }
-
-/* Mono font for prices */
-.font-mono { font-family: 'ui-monospace', 'SFMono-Regular', monospace; }
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #00b15d; border-radius: 10px; }
