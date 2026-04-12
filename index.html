@@ -14,16 +14,22 @@
 <div id="login-screen" class="fixed inset-0 bg-[#0b0e11] z-[100] flex items-center justify-center">
     <div class="bg-[#161a1e] p-8 rounded-2xl border border-gray-800 w-80 shadow-2xl text-center">
         <!-- LOGIN ICON -->
-<!-- EXNEXUS ARROW LOGO -->
-<div class="flex justify-center w-full mb-8">
-    <svg width="140" height="80" viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
-        <!-- The Bold 'E' -->
-        <path d="M10 15h40v12H25v10h20v12H25v10h25v12H10V15z" fill="#A4CD39"/>
+<!-- FINAL EXNEXUS ARROW LOGO -->
+<div class="flex justify-center w-full mb-8" style="min-height: 100px;">
+    <svg width="180" height="100" viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- The 'E' (Moved left for more space) -->
+        <path d="M10 20h30v10H20v15h20v10H20v15h30v10H10V20z" fill="#A4CD39"/>
         
-        <!-- The 'X' and Arrow Path -->
-        <path d="M60 70l25-35" stroke="#1b4332" stroke-width="10" stroke-linecap="round"/> 
-        <path d="M55 65c10 0 45-30 85-55" stroke="#A4CD39" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- The 'X' Shadow Leg -->
+        <path d="M70 20l20 50" stroke="#1b4332" stroke-width="12" stroke-linecap="round"/> 
         
+        <!-- The 'X' Arrow Swoosh (The Curve) -->
+        <path d="M60 70 Q85 70 140 15" stroke="#A4CD39" stroke-width="12" fill="none" stroke-linecap="round"/>
+        
+        <!-- The Arrow Head (Positioned safely inside the 180-width box) -->
+        <path d="M140 15l-18 4M140 15l-4 18" stroke="#A4CD39" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</div>
         <!-- The Arrow Head -->
         <path d="M140 10l-15 2M140 10l-2 15" stroke="#A4CD39" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
        </svg>
