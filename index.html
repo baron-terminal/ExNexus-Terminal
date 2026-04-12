@@ -179,6 +179,55 @@
         }
     }
 
+async function updateWalletBalance() {
+    const savedKeys = JSON.parse(localStorage.getItem('user_api_keys'));
+    
+    // If you haven't entered keys yet, the balance stays 0.00
+    if (!savedKeys || !savedKeys.key || !savedKeys.secret) {
+        console.log("No API keys found. Awaiting connection...");
+        return;
+    }
+
+    // --- PASTE YOUR WORKER URL BELOW ---
+    const proxyUrl = "https://exnexus-proxy.drorbaron18.workers.dev/"; 
+
+    try {
+        const response = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: {
+                'x-api-key': savedKeys.key,
+                'x-api-secret': savedKeys.secret
+            }
+        });
+
+        const data = await response.json();
+        
+        // Find the USDT balance inside the Bybit response
+        if (data.result && data.result.list) {
+            const coins = data.result.list[0].coin;
+            const usdt = coins.find(c => c.coin === "USDT");
+            
+            if (usdt) {
+                const balance = parseFloat(usdt.walletBalance).toFixed(2);
+                document.getElementById('wallet-balance').innerText = balance;
+                console.log("Wallet Sync Successful: " + balance + " USDT");
+            }
+        }
+    } catch (e) {
+        console.error("Balance Update Error:", e);
+    }
+}
+
+// Set the balance to update every 30 seconds
+setInterval(updateWalletBalance, 30000);
+
+// Also update it immediately when the system is unlocked
+const originalUnlock = unlockTerminal;
+unlockTerminal = function() {
+    originalUnlock();
+    updateWalletBalance();
+};
+                        
     // Run price update every 2 seconds
     setInterval(updatePrice, 2000);
     updatePrice();
