@@ -274,6 +274,30 @@
             }
         }
     }
+     // --- SECURITY SETTINGS ---
+const MASTER_PASSWORD = "YourSecretPassword123"; // Change this to your desired password!
+
+function unlockTerminal() {
+    const passInput = document.getElementById('master-password').value;
+    const loginScreen = document.getElementById('login-screen');
+    const errorMsg = document.getElementById('login-error');
+
+    if (passInput === MASTER_PASSWORD) {
+        // Correct Password
+        loginScreen.style.display = 'none'; // Remove the shield
+        sessionStorage.setItem('isUnlocked', 'true'); // Remember for this session
+        console.log("System Unlocked. Welcome, Commander.");
+    } else {
+        // Wrong Password
+        errorMsg.classList.remove('hidden');
+        document.getElementById('master-password').value = "";
+    }
+}
+
+// Check if already unlocked on refresh
+if (sessionStorage.getItem('isUnlocked') === 'true') {
+    document.getElementById('login-screen').style.display = 'none';
+}  
 </script>
 </body>
 </html>
