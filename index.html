@@ -122,17 +122,27 @@
                         <button class="flex-1 btn-sell py-3">SELL</button>
                     </div>
 
-                    <div class="mt-10 p-4 border border-purple-500/30 rounded-lg bg-[#1c1329]">
-    <div class="flex items-center justify-between mb-4">
-        <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">AI Co-Pilot</h4>
-        <span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded">AltFINS Active</span>
-    </div>
-    
-    <!-- This is the empty space the Brain will fill -->
-    <div id="ai-content" class="space-y-3">
-        <p class="text-gray-500 text-xs italic animate-pulse">Scanning market data...</p>
-    </div>
-</div>
+                   <!-- AI CO-PILOT UNIT -->
+        <div class="mt-4 p-4 border border-purple-500/30 rounded-lg bg-[#1c1329]">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">AI Co-Pilot</h4>
+                <span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded">AltFINS Active</span>
+            </div>
+            <div id="ai-content" class="space-y-3">
+                <p class="text-gray-500 text-xs italic animate-pulse">Scanning market data...</p>
+            </div>
+        </div>
+
+        <!-- ASSETS PORTFOLIO UNIT (New) -->
+        <div class="mt-4 p-4 border border-gray-800 rounded-lg bg-[#111418]">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">My Assets</h4>
+                <span class="text-[9px] text-[#00ADEF] cursor-pointer hover:underline uppercase font-bold" onclick="updateWalletBalance()">Sync</span>
+            </div>
+            <div id="asset-list" class="space-y-2">
+                <p class="text-[9px] text-gray-600 italic text-center py-2 uppercase">Awaiting API...</p>
+            </div>
+        </div>
                     <!-- AI ANALYTICS (Future AltFINS Integration) -->
                     <script>
     console.log("Internal Brain is now active!");
