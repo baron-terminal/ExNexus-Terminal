@@ -284,29 +284,40 @@
         }
     }
      // --- SECURITY SETTINGS ---
-const MASTER_PASSWORD = "YourSecretPassword123"; // Change this to your desired password!
+// --- SECURITY SETTINGS ---
+const MASTER_PASSWORD = "YourSecretPassword123"; // Change this to your password!
+const MOCK_2FA_CODE = "123456"; // This is your mock Authenticator code
+
+function checkPassword() {
+    const pass = document.getElementById('master-password').value;
+    if (pass === MASTER_PASSWORD) {
+        // Move to 2FA phase
+        document.getElementById('auth-phase-1').classList.add('hidden');
+        document.getElementById('auth-phase-2').classList.remove('hidden');
+        document.getElementById('login-error').classList.add('hidden');
+    } else {
+        document.getElementById('login-error').classList.remove('hidden');
+    }
+}
 
 function unlockTerminal() {
-    const passInput = document.getElementById('master-password').value;
-    const loginScreen = document.getElementById('login-screen');
-    const errorMsg = document.getElementById('login-error');
-
-    if (passInput === MASTER_PASSWORD) {
-        // Correct Password
-        loginScreen.style.display = 'none'; // Remove the shield
-        sessionStorage.setItem('isUnlocked', 'true'); // Remember for this session
+    const code = document.getElementById('2fa-code').value;
+    if (code === MOCK_2FA_CODE) {
+        document.getElementById('login-screen').style.display = 'none';
+        sessionStorage.setItem('isUnlocked', 'true');
         console.log("System Unlocked. Welcome, Commander.");
     } else {
-        // Wrong Password
-        errorMsg.classList.remove('hidden');
-        document.getElementById('master-password').value = "";
+        alert("Invalid 2FA Code. Access Denied.");
     }
 }
 
 // Check if already unlocked on refresh
 if (sessionStorage.getItem('isUnlocked') === 'true') {
-    document.getElementById('login-screen').style.display = 'none';
-}  
+    window.onload = function() {
+        const login = document.getElementById('login-screen');
+        if(login) login.style.display = 'none';
+    }
+}
 </script>
 </body>
 </html>
