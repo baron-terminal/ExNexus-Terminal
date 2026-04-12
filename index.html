@@ -159,20 +159,33 @@
     }
 
     // 2. Save Keys to Browser Storage
-    function saveApiKeys() {
-        const key = document.getElementById('ex-key').value;
-        const secret = document.getElementById('ex-secret').value;
+    // --- THE MASTER API SAVE FUNCTION ---
+function saveApiKeys() {
+    console.log("Saving new keys...");
+    const key = document.getElementById('ex-key').value.trim();
+    const secret = document.getElementById('ex-secret').value.trim();
 
-        if (!key || !secret) {
-            alert("Please enter your API details.");
-            return;
-        }
-
-        localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        alert("Keys Saved Successfully!");
-        toggleApiModal();
-        window.location.reload();
+    if (!key || !secret) {
+        alert("Error: Please enter both API Key and Secret.");
+        return;
     }
+
+    // Save to browser memory
+    localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
+    
+    // CHANGE UI BUTTON TO SHOW CONNECTED
+    const connectBtn = document.querySelector('header button');
+    if (connectBtn) {
+        connectBtn.innerText = "Bybit Connected ✅";
+        connectBtn.style.backgroundColor = "#A4CD39"; // Your brand green
+    }
+
+    alert("Keys Saved! Connecting to ExNexus Bridge...");
+    toggleApiModal(); // Close the popup
+    
+    // TRIGGER THE BALANCE FETCH IMMEDIATELY
+    updateWalletBalance(); 
+}
 
     // 3. Fetch Bybit Price
     async function updatePrice() {
@@ -356,23 +369,13 @@ unlockTerminal = function() {
         if (modal) { modal.classList.toggle('hidden'); }
     }
 
-    // 2. Save Keys to Browser Storage
-    function saveApiKeys() {
-        const key = document.getElementById('ex-key').value;
-        const secret = document.getElementById('ex-secret').value;
-        if (!key || !secret) { alert("Please enter API details."); return; }
-        localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        alert("Keys Saved Successfully!");
-        toggleApiModal();
-        window.location.reload();
-    }
-
-    // 3. Fetch Bybit Price
+       // 3. Fetch Bybit Price
     async function updatePrice() {
         try {
             const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
             const data = await res.json();
-            const lastPrice = data.result.list[0].lastPrice;
+            const lastPrice 
+                = data.result.list[0].lastPrice;
             document.getElementById('btc-price').innerText = '$' + parseFloat(lastPrice).toLocaleString();
         } catch (e) { console.error("Price update failed"); }
     }
