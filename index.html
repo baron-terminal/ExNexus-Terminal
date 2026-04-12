@@ -39,40 +39,57 @@
         <p id="login-error" class="text-red-500 text-[10px] mt-4 hidden">Invalid Credentials.</p>
     </div>
 </div>
-        <!-- SIDEBAR -->
-        <div class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0">
-    <!-- SIDEBAR -->
-    <aside class="w-24 bg-[#161a1e] border-r border-gray-800 flex flex-col items-center py-6 transition-all">
-      <div class="mb-10 w-full px-2 flex justify-center">
-    <!-- The sidebar is now wider (w-24), allowing the logo to be much larger and readable -->
-    <img src="Logo.png" alt="ExNexus" class="w-full h-auto object-contain scale-110">
-</div>
-            <div class="hover:text-white">📊</div>
-            <div class="hover:text-white">🤖</div>
-            <div class="hover:text-white">⚙️</div>
+        <!-- THE MASTER LAYOUT -->
+<div class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0">
+    
+    <!-- 1. SIDEBAR (Widened to w-32 so ExNexus is clear) -->
+    <aside class="w-32 bg-[#161a1e] border-r border-gray-800 flex flex-col items-center py-6 z-20">
+        <div class="mb-10 w-full px-2">
+            <!-- Your Logo -->
+            <img src="Logo.png" alt="ExNexus" class="w-full h-auto object-contain">
+        </div>
+        
+        <!-- Navigation Icons -->
+        <div class="space-y-8 text-xl cursor-pointer text-gray-500">
+            <div class="hover:text-white transition">📊</div>
+            <div class="hover:text-white transition">🤖</div>
+            <div class="hover:text-white transition">⚙️</div>
         </div>
     </aside>
 
-     <!-- MAIN TERMINAL -->
-    <div class="flex-1 flex flex-col">
-            
-            <!-- HEADER -->
-            <header class="h-14 bg-[#161a1e] border-b border-gray-800 flex items-center justify-between px-6">
-                <div class="flex items-center space-x-4">
-                    <span class="text-xs text-gray-400">BYBIT SPOT</span>
-                    <span class="font-bold">BTC / USDT</span>
-                    <span id="btc-price" class="font-mono text-xl">$--,---.--</span>
+    <!-- 2. MAIN TERMINAL -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        
+        <!-- THE HEADER (Fixed at the top) -->
+        <header class="h-16 bg-[#111418] border-b border-gray-800 flex items-center justify-between px-6 z-10">
+            <div class="flex items-center space-x-10">
+                <!-- PRICE BLOCK -->
+                <div class="flex flex-col border-r border-gray-800 pr-10">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Bybit Spot Price</span>
+                    <div class="flex items-center space-x-2">
+                        <span id="display-pair" class="font-bold text-xs text-white italic">BTC/USDT</span>
+                        <span id="btc-price" class="font-mono text-xl text-[#A4CD39] font-black">$--,---.--</span>
+                    </div>
                 </div>
-                <button onclick="toggleApiModal()" class="bg-blue-600 hover:bg-blue-500 px-4 py-1 rounded text-xs font-bold transition">
-    Connect API
-</button>
-</header>
 
-            <!-- CONTENT AREA -->
-            <div class="flex-1 flex overflow-hidden">
-                <!-- CHART HOUSING -->
-<div class="flex-1 bg-black border-r border-gray-800 relative">
-    <!-- TradingView Widget BEGIN -->
+                <!-- BALANCE BLOCK -->
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1">Account Balance</span>
+                    <div class="flex items-center space-x-2">
+                        <span id="wallet-balance" class="font-mono text-xl text-white font-black">0.00</span>
+                        <span class="text-[10px] text-gray-500 font-bold">USDT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API STATUS BUTTON -->
+            <button onclick="toggleApiModal()" class="bg-[#00ADEF] hover:bg-blue-500 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-lg shadow-blue-500/10">
+                Connect API
+            </button>
+        </header>
+
+        <!-- 3. CHART & CONTENT AREA -->
+        <div class="flex-1 flex overflow-hidden bg-black">
     <div class="tradingview-widget-container" style="height:100%;width:100%">
         <div id="tradingview_chart" style="height:calc(100% - 32px);width:100%"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
