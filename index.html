@@ -190,11 +190,18 @@
     }
 
 async function updateWalletBalance() {
+    console.log("Attempting to sync with Bybit...");
+    
     const savedKeys = JSON.parse(localStorage.getItem('user_api_keys'));
-    if (!savedKeys || !savedKeys.key || !savedKeys.secret) return;
+    
+    if (!savedKeys || !savedKeys.key) {
+        console.log("Sync Failed: No API Keys found in storage.");
+        return;
+    }
 
-    // Use your Cloudflare Worker URL
-    const proxyUrl = "PASTE_YOUR_WORKER_URL_HERE"; 
+    // --- DOUBLE CHECK THIS URL ---
+    // Make sure this is YOUR actual worker URL from Cloudflare
+    const proxyUrl = "https://exnexus-proxy.drorbaron10.workers.dev/"; 
 
     try {
         const response = await fetch(proxyUrl, {
@@ -205,23 +212,52 @@ async function updateWalletBalance() {
             }
         });
 
+        console.log("Bridge response received. Status:", response.status);
         const data = await response.json();
-        
-        if (data.result && data.result.list) {
-            const coins = data.result.list[0].coin;
-            const assetList = document.getElementById('asset-list');
-            assetList.innerHTML = ''; // Clear the loading text
+        console.log("Bybit Data received:", data);
 
+        if (data.retCode !== 0) {
+            console.error("Bybit Error Message:", data.retMsg);
+            alert("Bybit Error: " + data.retMsg);
+            return;
+        }
+
+        const assetList = document.getElementById('asset-list');
+        if (assetList) assetList.innerHTML = ''; 
+
+        // Handling Unified Account structure
+        if (data.result && data.result.list && data.result.list[0].coin) {
+            const coins = data.result.list[0].coin;
+            
             coins.forEach(c => {
                 const amount = parseFloat(c.walletBalance);
-                
-                // Only show coins you actually hold
                 if (amount > 0) {
-                    // 1. Update Header if it's USDT
                     if (c.coin === "USDT") {
                         document.getElementById('wallet-balance').innerText = amount.toFixed(2);
                     }
-
+                    
+                    const row = document.createElement('div');
+                    row.className = "flex justify-between items-center border-b border-gray-900 pb-2";
+                    row.innerHTML = `
+                        <div>
+                            <p class="text-[11px] font-bold text-white">${c.coin}</p>
+                            <p class="text-[9px] text-gray-500 font-mono">${amount.toFixed(4)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[11px] text-[#A4CD39] font-mono font-bold">$${parseFloat(c.usdValue || 0).toFixed(2)}</p>
+                        </div>
+                    `;
+                    assetList.appendChild(row);
+                }
+            });
+            console.log("Dashboard updated with real assets!");
+        } else {
+            console.log("No assets found or wrong account type. Are you using a Unified Trading Account?");
+        }
+    } catch (e) {
+        console.error("The Bridge is broken or URL is wrong:", e);
+    }
+}
                     // 2. Add to Assets Sidebar
                     const assetRow = document.createElement('div');
                     assetRow.className = "flex justify-between items-center border-b border-gray-900 pb-2";
