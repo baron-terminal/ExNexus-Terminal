@@ -3,99 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Institutional Intelligence</title>
+    <title>ExNexus | Institutional Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --brand-lime: #A4CD39; --brand-blue: #00ADEF; --bg-dark: #07090b; }
-        body { background-color: var(--bg-dark); margin: 0; padding: 0; overflow: hidden; }
-        .panel-glass { background: rgba(17, 20, 24, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: var(--bg-dark); margin: 0; font-family: sans-serif; overflow: hidden; color: white; }
+        .glass { background: rgba(17, 20, 24, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.03); }
+        .glow-lime { box-shadow: 0 0 15px rgba(164, 205, 57, 0.2); }
+        .sidebar-item:hover { background: rgba(164, 205, 57, 0.1); border-left: 2px solid var(--brand-lime); }
     </style>
 </head>
-<body class="text-white font-sans">
+<body>
 
-    <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6">
+    <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex items-center justify-center p-6">
         <div class="w-full max-w-sm space-y-8 text-center bg-[#111418] p-10 rounded-3xl border border-gray-800 shadow-2xl">
-            <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto mb-6">
-            <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39] mb-4">Secure Terminal Access</h2>
+            <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto">
+            <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39]">Secure Access</h2>
             <div class="space-y-4">
-                <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
-                <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
-                <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:brightness-110 transition">Unlock Terminal</button>
+                <input type="text" id="user-id" placeholder="USER" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs outline-none focus:border-[#A4CD39]">
+                <input type="password" id="user-pass" placeholder="KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs outline-none focus:border-[#A4CD39]">
+                <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest">Unlock</button>
             </div>
-            <div class="pt-6 border-t border-gray-800 mt-6">
-                <button onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] text-gray-500 font-bold hover:text-white uppercase transition">Need an account? Sign Up</button>
-            </div>
+            <button onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] text-gray-500 uppercase font-bold hover:text-white">Sign Up</button>
         </div>
     </div>
 
-    <div id="terminal-wrapper" class="flex h-screen w-full opacity-0 transition-opacity duration-1000">
-        <aside class="w-16 bg-[#111418] border-r border-gray-800 flex flex-col items-center py-4">
-            <div class="mb-8"><img src="Icon.png" alt="X" class="w-8 h-8"></div>
-            <div class="text-xl">📊</div>
+    <div id="terminal-wrapper" class="flex h-screen w-full opacity-0 transition-opacity duration-700">
+        
+        <aside class="w-16 bg-[#0b0e11] border-r border-gray-800 flex flex-col items-center py-6 space-y-8 z-50">
+            <img src="Logo_Icon.png" class="w-7 h-7 opacity-80" alt="X">
+            <div class="flex flex-col space-y-6">
+                <div class="sidebar-item p-3 rounded-lg cursor-pointer text-gray-500 hover:text-[#A4CD39]">📊</div>
+                <div class="sidebar-item p-3 rounded-lg cursor-pointer text-gray-500 hover:text-[#A4CD39]">⚡</div>
+                <div class="sidebar-item p-3 rounded-lg cursor-pointer text-gray-500 hover:text-[#A4CD39]">🤖</div>
+            </div>
         </aside>
-        <main class="flex-1 flex flex-col">
-            <header class="h-14 bg-[#111418] border-b border-gray-800 flex items-center px-6">
-                <span id="btc-price" class="text-lg font-mono font-black text-[#A4CD39]">Connecting...</span>
+
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-16 bg-[#111418] border-b border-gray-800 flex items-center justify-between px-8">
+                <div class="flex items-center space-x-12">
+                    <div class="flex flex-col">
+                        <span class="text-[8px] text-gray-500 uppercase font-black">Market / BTC-USDT</span>
+                        <span id="btc-price" class="text-xl font-mono font-black text-[#A4CD39]">$00,000.00</span>
+                    </div>
+                    <div class="hidden md:flex space-x-8 border-l border-gray-800 pl-8">
+                        <div class="flex flex-col"><span class="text-[8px] text-gray-500 uppercase font-bold">24H Vol</span><span class="text-[11px] font-mono">$42.1B</span></div>
+                        <div class="flex flex-col"><span class="text-[8px] text-gray-500 uppercase font-bold">Status</span><span class="text-[9px] text-blue-400 font-black uppercase">● API Linked</span></div>
+                    </div>
+                </div>
             </header>
-            <div id="tradingview_chart" class="flex-1 bg-black"></div>
+
+            <div class="flex-1 flex overflow-hidden">
+                <div class="flex-1 bg-black">
+                    <div id="tradingview_chart" class="h-full w-full"></div>
+                </div>
+
+                <aside class="w-72 bg-[#0b0e11] border-l border-gray-800 p-5 flex flex-col space-y-6">
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-[#1c1329] to-[#0b0e11] border border-purple-500/20">
+                        <h4 class="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-4">AI Intelligence</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-[9px]"><span class="text-gray-400">Signal Strength</span><span class="text-purple-400">88%</span></div>
+                            <div class="h-1 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-purple-500 w-[88%]"></div></div>
+                            <p class="text-[10px] font-bold text-white uppercase mt-2">Bullish Momentum</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto space-y-3">
+                        <h4 class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Live Signal Feed</h4>
+                        <div class="p-3 bg-[#111418] rounded-xl border border-gray-800 text-[10px]">
+                            <span class="text-[#A4CD39] font-bold">BTC</span> 1H Trend: <span class="text-gray-300 italic underline">Breakout imminent</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </main>
     </div>
 
     <script>
         let isSignUpMode = false;
-
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
-            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Secure Terminal Access";
-            document.getElementById('auth-btn').innerText = isSignUpMode ? "Register & Enter" : "Unlock Terminal";
-            document.getElementById('auth-toggle').innerText = isSignUpMode ? "Back to Login" : "Need an account? Sign Up";
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Secure Access";
+            document.getElementById('auth-toggle').innerText = isSignUpMode ? "Login Instead" : "Sign Up";
         }
 
         function handleAuth() {
             const u = document.getElementById('user-id').value.trim();
             const p = document.getElementById('user-pass').value.trim();
-            
-            if (!u || !p) {
-                alert("Please fill both fields");
-                return;
-            }
+            if(!u || !p) return alert("Missing fields");
 
-            if (isSignUpMode) {
+            if(isSignUpMode) {
                 localStorage.setItem("nexus_user_" + u, p);
-                alert("Account Created! You can now log in.");
+                alert("Account Created!");
                 toggleAuthMode();
             } else {
                 const saved = localStorage.getItem("nexus_user_" + u);
-                if (saved === p || (u === "admin" && p === "nexus2026")) {
+                if(saved === p || (u === "admin" && p === "nexus2026")) {
                     document.getElementById('gatekeeper').style.display = 'none';
                     document.getElementById('terminal-wrapper').style.opacity = '1';
-                    startTerminal();
-                } else {
-                    alert("Access Denied. If new, please Sign Up first.");
-                }
+                    initApp();
+                } else { alert("Denied"); }
             }
         }
 
-        function startTerminal() {
-            if (typeof TradingView !== 'undefined') {
-                new TradingView.widget({
-                    "autosize": true,
-                    "symbol": "BYBIT:BTCUSDT",
-                    "interval": "60",
-                    "theme": "dark",
-                    "container_id": "tradingview_chart"
-                });
-            }
-            
-            setInterval(function() {
+        function initApp() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BYBIT:BTCUSDT",
+                "interval": "60",
+                "theme": "dark",
+                "container_id": "tradingview_chart"
+            });
+
+            setInterval(() => {
                 fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT')
                     .then(r => r.json())
                     .then(data => {
                         const price = parseFloat(data.result.list[0].lastPrice);
-                        document.getElementById('btc-price').innerText = 'BTC/USDT: $' + price.toLocaleString();
-                    })
-                    .catch(e => console.log("Price error"));
+                        document.getElementById('btc-price').innerText = '$' + price.toLocaleString();
+                    });
             }, 3000);
         }
     </script>
