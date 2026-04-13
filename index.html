@@ -43,26 +43,39 @@
         
         <!-- HEADER -->
         <header class="h-20 bg-[#111418] border-b border-gray-800 flex items-center justify-between px-8 z-10">
-            <div class="flex items-center space-x-12">
-                <!-- PRICE BLOCK -->
-                <div class="flex flex-col border-r border-gray-800 pr-10">
-                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Bybit Spot Price</span>
-                    <div class="flex items-center space-x-3">
-                        <span class="font-black text-sm tracking-tighter">BTC/USDT</span>
-                        <span id="btc-price" class="font-mono text-2xl text-[#A4CD39] font-black">$--,---.--</span>
-                    </div>
-                </div>
-
-                <!-- BALANCE BLOCK -->
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1">Available Balance</span>
-                    <div class="flex items-center space-x-2">
-                        <span id="wallet-balance" class="font-mono text-2xl text-white font-black">0.00</span>
-                        <span class="text-xs text-gray-500 font-bold uppercase">USDT</span>
-                    </div>
-                </div>
+            <div class="flex items-center space-x-8">
+        <!-- 1. PRICE BLOCK -->
+        <div class="flex flex-col border-r border-gray-800 pr-8">
+            <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Bybit Spot Price</span>
+            <div class="flex items-center space-x-3">
+                <span class="font-black text-xs">BTC/USDT</span>
+                <span id="btc-price" class="font-mono text-xl text-[#A4CD39] font-black">$--,---.--</span>
             </div>
+        </div>
 
+        <!-- 2. AVAILABLE BALANCE (USDT) -->
+        <div class="flex flex-col border-r border-gray-800 pr-8">
+            <span class="text-[9px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1">Available</span>
+            <div class="flex items-center space-x-2">
+                <span id="wallet-balance" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span>
+                <span class="text-[9px] text-gray-500 font-bold uppercase">USDT</span>
+            </div>
+        </div>
+
+        <!-- 3. TOTAL EQUITY (USD) -->
+        <div class="flex flex-col">
+            <span class="text-[9px] text-[#A4CD39] font-bold uppercase tracking-widest mb-1">Total Equity</span>
+            <div class="flex items-center space-x-2">
+                <span id="total-equity" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span>
+                <span class="text-[9px] text-gray-600 font-bold uppercase">USD</span>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="toggleApiModal()" id="api-status-btn" class="bg-gray-800 text-gray-400 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition border border-gray-700">
+        Connect API
+    </button>
+</header>
             <button onclick="toggleApiModal()" id="api-status-btn" class="bg-[#00ADEF] hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-lg shadow-blue-500/10">
                 Connect API
             </button>
