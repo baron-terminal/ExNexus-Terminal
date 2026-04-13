@@ -13,30 +13,30 @@
 <!-- SECURITY GATEKEEPER WITH 2FA -->
 <div id="login-screen" class="fixed inset-0 bg-[#0b0e11] z-[100] flex items-center justify-center">
     <div class="bg-[#161a1e] p-8 rounded-2xl border border-gray-800 w-80 shadow-2xl text-center">
-        <!-- THE SINGLE LOGO ICON -->
+        <!-- THE LOGO ICON -->
         <div class="flex justify-center mb-6">
-            <img src="Icon.png" alt="ExNexus" class="h-20 w-auto">
+            <img src="icon.png" alt="ExNexus" class="h-20 w-auto">
         </div>
         
-        <!-- Phase 1: Password -->
+        <!-- PHASE 1: PASSWORD -->
         <div id="auth-phase-1">
             <h2 class="text-white font-bold mb-2">Terminal Locked</h2>
-            <p class="text-gray-500 text-[10px] mb-6">Enter Master Password</p>
+            <p class="text-gray-500 text-[10px] mb-6 uppercase tracking-widest">Enter Master Password</p>
             <input id="master-password" type="password" placeholder="••••••••" 
-                class="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4 outline-none focus:border-blue-500 text-center tracking-widest">
-            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition">Next Step</button>
+                class="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4 outline-none focus:border-blue-500 text-center tracking-widest text-lg">
+            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition uppercase text-xs">Next Step</button>
         </div>
 
-        <!-- Phase 2: Authenticator (Hidden initially) -->
+        <!-- PHASE 2: 2FA AUTHENTICATOR -->
         <div id="auth-phase-2" class="hidden">
-            <h2 class="text-white font-bold mb-2">2FA Required</h2>
-            <p class="text-gray-500 text-[10px] mb-6">Enter code from Google Authenticator</p>
+            <h2 class="text-white font-bold mb-2 text-[#A4CD39]">2FA REQUIRED</h2>
+            <p class="text-gray-500 text-[10px] mb-6 uppercase tracking-widest">Enter 6-Digit Auth Code</p>
             <input id="2fa-code" type="text" placeholder="000 000" maxlength="6"
-                class="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4 outline-none focus:border-blue-500 text-center tracking-[0.5em] text-xl font-bold">
-            <button onclick="unlockTerminal()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition">Verify & Unlock</button>
+                class="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4 outline-none focus:border-blue-500 text-center tracking-[0.5em] text-xl font-bold font-mono">
+            <button onclick="unlockTerminal()" class="w-full bg-[#A4CD39] hover:bg-[#8eb331] text-black font-bold py-3 rounded-lg transition uppercase text-xs">Verify & Unlock</button>
         </div>
         
-        <p id="login-error" class="text-red-500 text-[10px] mt-4 hidden">Invalid Credentials.</p>
+        <p id="login-error" class="text-red-500 text-[10px] mt-4 hidden font-bold">ACCESS DENIED</p>
     </div>
 </div>
         <!-- THE MASTER LAYOUT -->
