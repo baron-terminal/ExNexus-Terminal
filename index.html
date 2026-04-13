@@ -145,60 +145,35 @@
         </div>
                     <!-- AI ANALYTICS (Future AltFINS Integration) -->
                    <script>
-    console.log("ExNexus Consolidated Brain: Active");
+    console.log("ExNexus Emergency Brain: Active");
 
-    // 1. SECURITY
     const MASTER_PASSWORD = "YourSecretPassword123";
-    const MOCK_2FA_CODE = "123456";
 
+    // SIMPLIFIED LOGIN: No 2FA for now, just to get you inside
     function checkPassword() {
         const pass = document.getElementById('master-password').value;
         if (pass === MASTER_PASSWORD) {
-            document.getElementById('auth-phase-1').classList.add('hidden');
-            document.getElementById('auth-phase-2').classList.remove('hidden');
-        } else {
-            document.getElementById('login-error').classList.remove('hidden');
-        }
-    }
-
-    function unlockTerminal() {
-        const code = document.getElementById('2fa-code').value;
-        if (code === MOCK_2FA_CODE) {
             document.getElementById('login-screen').style.display = 'none';
             sessionStorage.setItem('isUnlocked', 'true');
-            updateWalletBalance(); 
+            console.log("Access Granted.");
+            updateWalletBalance(); // Fetch assets immediately
         } else {
-            alert("Invalid 2FA");
+            alert("Wrong Password");
         }
     }
 
-    // 2. API STORAGE
-    function saveApiKeys() {
-        const key = document.getElementById('ex-key').value.trim();
-        const secret = document.getElementById('ex-secret').value.trim();
-        if (!key || !secret) { alert("Enter keys."); return; }
-        localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        alert("Keys Saved Successfully!");
-        toggleApiModal();
-        updateWalletBalance();
-    }
+    // This function is just a backup to prevent errors
+    function unlockTerminal() { checkPassword(); }
 
-    function toggleApiModal() {
-        const modal = document.getElementById('api-modal');
-        if (modal) modal.classList.toggle('hidden');
-    }
-
-    // 3. MARKET DATA
     async function updatePrice() {
         try {
             const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
             const data = await res.json();
             const lastPrice = data.result.list[0].lastPrice;
             document.getElementById('btc-price').innerText = '$' + parseFloat(lastPrice).toLocaleString();
-        } catch (e) { console.error("Price error"); }
+        } catch (e) { console.log("Price error"); }
     }
 
-    // 4. CONSOLIDATED ASSETS & BALANCE
     async function updateWalletBalance() {
         const savedKeys = JSON.parse(localStorage.getItem('user_api_keys'));
         if (!savedKeys || !savedKeys.key) return;
@@ -247,7 +222,6 @@
         </div>`;
     }
 
-    // 5. INITIALIZE
     setInterval(updatePrice, 2000);
     setInterval(updateWalletBalance, 60000);
     updatePrice();
@@ -256,10 +230,6 @@
         if (sessionStorage.getItem('isUnlocked') === 'true') {
             document.getElementById('login-screen').style.display = 'none';
             updateWalletBalance();
-        }
-        if (localStorage.getItem('user_api_keys')) {
-            const btn = document.querySelector('button[onclick="toggleApiModal()"]');
-            if (btn) { btn.innerText = "Bybit Connected ✅"; btn.style.backgroundColor = "#A4CD39"; }
         }
     }
 </script>
