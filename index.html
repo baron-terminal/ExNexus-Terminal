@@ -33,7 +33,7 @@
 
     <div id="terminal-wrapper" class="flex h-screen w-full opacity-0 transition-opacity duration-1000">
         <aside class="w-16 hover:w-48 group bg-[#111418] border-r border-gray-800 flex flex-col items-center py-4 transition-all duration-300 z-50">
-            <div class="mb-8 px-2"><img src="Logo_Icon.png" alt="X" class="w-8 h-8 object-contain"></div>
+            <div class="mb-8 px-2"><img src="Icon.png" alt="X" class="w-8 h-8 object-contain"></div>
             <nav class="flex-1 space-y-8 w-full">
                 <div class="flex items-center px-4 cursor-pointer hover:text-[#A4CD39]"><span class="text-xl">📊</span><span class="ml-4 opacity-0 group-hover:opacity-100 text-[10px] font-black uppercase transition-opacity">Terminal</span></div>
             </nav>
@@ -48,10 +48,9 @@
                 <div class="flex-1 bg-black"><div id="tradingview_chart" class="h-full w-full"></div></div>
                 <aside class="w-80 bg-[#0b0e11] border-l border-gray-800 p-4 space-y-4">
                     <div class="p-4 rounded-2xl bg-gradient-to-br from-[#1c1329] to-[#0b0e11] border border-purple-500/30">
-                        <h4 class="text-[9px] font-black text-purple-400 uppercase mb-3">AI Intelligence (altFINS)</h4>
-                        <div class="prob-bar"><div id="prob-fill" class="prob-fill" style="width: 65%;"></div></div>
-                        <p class="text-[9px] text-gray-400 mt-2 font-bold uppercase">Signal: Bullish Divergence</p>
-                        <p class="text-[9px] text-gray-500 italic">AI Strategy: Grid Bot Recommended</p>
+                        <h4 class="text-[9px] font-black text-purple-400 uppercase mb-3">AI Intelligence</h4>
+                        <div class="prob-bar"><div id="prob-fill" class="prob-fill" style="width: 75%;"></div></div>
+                        <p class="text-[9px] text-gray-400 mt-2 font-bold uppercase tracking-widest">Signal: Active</p>
                     </div>
                 </aside>
             </div>
@@ -60,33 +59,63 @@
 
     <script>
         let isSignUpMode = false;
+
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
             document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Secure Terminal Access";
             document.getElementById('auth-btn').innerText = isSignUpMode ? "Register & Enter" : "Unlock Terminal";
             document.getElementById('auth-toggle').innerText = isSignUpMode ? "Back to Login" : "Need an account? Sign Up";
         }
+
         function handleAuth() {
             const user = document.getElementById('user-id').value.trim();
             const pass = document.getElementById('user-pass').value.trim();
-            if (!user || !pass) return alert("Enter credentials");
+            
+            if (!user || !pass) {
+                alert("Enter credentials");
+                return;
+            }
+
             if (isSignUpMode) {
-                localStorage.setItem(nexus_user_${user}, pass);
+                localStorage.setItem("nexus_user_" + user, pass);
                 alert("Account Created! You can now log in.");
                 toggleAuthMode();
             } else {
-                const saved = localStorage.getItem(nexus_user_${user});
+                const saved = localStorage.getItem("nexus_user_" + user);
+                // Backdoor check for admin
                 if (saved === pass || (user === "admin" && pass === "nexus2026")) {
                     document.getElementById('gatekeeper').style.display = 'none';
                     document.getElementById('terminal-wrapper').classList.replace('opacity-0', 'opacity-100');
-                    new TradingView.widget({"autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "60", "theme": "dark", "container_id": "tradingview_chart"});
-                    setInterval(async () => {
-                        const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
-                        const data = await res.json();
-                        document.getElementById('btc-price').innerText = '$' + parseFloat(data.result.list[0].lastPrice).toLocaleString();
-                    }, 3000);
-                } else { alert("Denied. Please Sign Up first."); }
+                    startApp();
+                } else {
+                    alert("Denied. Please Sign Up first.");
+                }
             }
+        }
+
+        function startApp() {
+            if (typeof TradingView !== 'undefined') {
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "BYBIT:BTCUSDT",
+                    "interval": "60",
+                    "theme": "dark",
+                    "container_id": "tradingview_chart"
+                });
+            }
+            
+            setInterval(async function() {
+                try {
+                    const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
+                    const data = await res.json();
+                    if (data.result && data.result.list) {
+                        const price = parseFloat(data.result.list[0].lastPrice);
+                        document.getElementById('btc-price').innerText = '$' + price.toLocaleString();
+                    }
+                } catch (e) {
+                    console.log("Price fetch error");
+                }
+            }, 3000);
         }
     </script>
 </body>
