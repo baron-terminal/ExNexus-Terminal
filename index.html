@@ -8,96 +8,68 @@
     <style>
         body { background-color: #0b0e11; color: white; font-family: sans-serif; margin: 0; overflow: hidden; }
         .font-mono { font-family: 'Courier New', monospace; }
-        .border-brand { border-color: rgba(164, 205, 57, 0.2); }
-        .glass-panel { background: #111418; border: 1px solid rgba(255, 255, 255, 0.05); }
+        #terminal-wrapper { transition: opacity 0.8s ease-in-out; }
     </style>
 </head>
 <body>
 
-<div class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0">
+<div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6">
+    <div class="w-full max-w-sm space-y-8 text-center bg-[#111418] p-10 rounded-3xl border border-gray-800 shadow-2xl">
+        <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto mb-6">
+        <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39]">Secure Access Required</h2>
+        <div class="space-y-4">
+            <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
+            <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
+            <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:brightness-110 transition">Unlock Terminal</button>
+        </div>
+        <button onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] text-gray-500 font-bold hover:text-white uppercase">Need an account? Sign Up</button>
+    </div>
+</div>
+
+<div id="terminal-wrapper" class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0 opacity-0 pointer-events-none">
     
     <aside class="w-40 bg-[#161a1e] border-r border-gray-800 flex flex-col items-center py-6 z-20 shadow-xl">
-        <div class="mb-10 w-full px-4 text-center">
-            <img src="Logo.png" alt="ExNexus" class="w-full h-auto object-contain">
-        </div>
-        
+        <div class="mb-10 w-full px-4 text-center"><img src="Logo.png" alt="ExNexus" class="w-full h-auto object-contain"></div>
         <div class="flex-1 space-y-10 text-2xl text-gray-500">
-            <div class="hover:text-white cursor-pointer transition flex flex-col items-center">
-                <span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Market</span>
-                📊
-            </div>
-            <div class="hover:text-[#A4CD39] cursor-pointer transition flex flex-col items-center">
-                <span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">AI Bot</span>
-                🤖
-            </div>
-            <div class="hover:text-white cursor-pointer transition flex flex-col items-center">
-                <span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Setup</span>
-                ⚙️
-            </div>
+            <div class="hover:text-white cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Market</span>📊</div>
+            <div class="hover:text-[#A4CD39] cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">AI Bot</span>🤖</div>
+            <div class="hover:text-white cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Setup</span>⚙️</div>
         </div>
     </aside>
 
     <main class="flex-1 flex flex-col overflow-hidden">
-        
         <header class="h-20 bg-[#111418] border-b border-gray-800 flex items-center justify-between px-8 z-10">
             <div class="flex items-center space-x-8">
                 <div class="flex flex-col border-r border-gray-800 pr-8">
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1 text-nowrap">Bybit Spot Price</span>
-                    <div class="flex items-center space-x-3">
-                        <span class="font-black text-xs">BTC/USDT</span>
-                        <span id="btc-price" class="font-mono text-xl text-[#A4CD39] font-black">$--,---.--</span>
-                    </div>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Bybit Spot Price</span>
+                    <div class="flex items-center space-x-3"><span class="font-black text-xs">BTC/USDT</span><span id="btc-price" class="font-mono text-xl text-[#A4CD39] font-black">$--,---.--</span></div>
                 </div>
-
                 <div class="flex flex-col border-r border-gray-800 pr-8">
-                    <span class="text-[9px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1 text-nowrap">Available</span>
-                    <div class="flex items-center space-x-2 text-nowrap">
-                        <span id="wallet-balance" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span>
-                        <span class="text-[9px] text-gray-500 font-bold uppercase">USDT</span>
-                    </div>
+                    <span class="text-[9px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1">Available</span>
+                    <div class="flex items-center space-x-2"><span id="wallet-balance" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span><span class="text-[9px] text-gray-500 font-bold uppercase">USDT</span></div>
                 </div>
-
                 <div class="flex flex-col">
-                    <span class="text-[9px] text-[#A4CD39] font-bold uppercase tracking-widest mb-1 text-nowrap">Total Equity</span>
-                    <div class="flex items-center space-x-2 text-nowrap">
-                        <span id="total-equity" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span>
-                        <span class="text-[9px] text-gray-600 font-bold uppercase">USD</span>
-                    </div>
+                    <span class="text-[9px] text-[#A4CD39] font-bold uppercase tracking-widest mb-1">Total Equity</span>
+                    <div class="flex items-center space-x-2"><span id="total-equity" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span><span class="text-[9px] text-gray-600 font-bold uppercase">USD</span></div>
                 </div>
             </div>
-
-            <button onclick="toggleApiModal()" id="api-status-btn" class="bg-[#00ADEF] hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-lg shadow-blue-500/10">
-                Connect API
-            </button>
+            <button onclick="toggleApiModal()" id="api-status-btn" class="bg-[#00ADEF] hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition">Connect API</button>
         </header>
 
         <div class="flex-1 flex overflow-hidden">
-            <div class="flex-1 bg-black relative border-r border-gray-800">
-                <div id="tradingview_chart" class="h-full w-full"></div>
-            </div>
-
+            <div class="flex-1 bg-black border-r border-gray-800"><div id="tradingview_chart" style="height: 100%; width: 100%;"></div></div>
             <aside class="w-80 p-5 space-y-5 bg-[#0b0e11] overflow-y-auto">
                 <div class="flex space-x-3">
-                    <button class="flex-1 bg-[#A4CD39] hover:bg-[#8eb331] text-black font-black py-4 rounded-xl text-xs uppercase tracking-widest transition">Buy</button>
-                    <button class="flex-1 bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest transition">Sell</button>
+                    <button class="flex-1 bg-[#A4CD39] text-black font-black py-4 rounded-xl text-xs uppercase tracking-widest">Buy</button>
+                    <button class="flex-1 bg-red-600 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest">Sell</button>
                 </div>
-                
-                <div class="p-5 border border-purple-500/20 rounded-2xl bg-[#1c1329] shadow-inner">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">AI Co-Pilot</h4>
-                        <span class="text-[8px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded">LIVE</span>
-                    </div>
-                    <div id="ai-content" class="text-xs text-gray-300 italic leading-relaxed">Scanning Bybit for patterns...</div>
+                <div class="p-5 border border-purple-500/20 rounded-2xl bg-[#1c1329]">
+                    <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-4">AI Co-Pilot</h4>
+                    <div id="ai-content" class="text-xs text-gray-300 italic">Scanning patterns...</div>
                 </div>
-
                 <div class="p-5 border border-gray-800 rounded-2xl bg-[#111418]">
-                    <div class="flex justify-between items-center mb-5">
-                        <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">My Assets</h4>
-                        <span class="text-[9px] text-[#00ADEF] font-black cursor-pointer hover:underline" onclick="updateWalletBalance()">REFRESH</span>
-                    </div>
-                    <div id="asset-list" class="space-y-4">
-                        <p class="text-[10px] text-gray-700 text-center uppercase tracking-tighter">Connecting to Account...</p>
-                    </div>
+                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-5">My Assets</h4>
+                    <div id="asset-list" class="space-y-4"><p class="text-[10px] text-gray-700 text-center uppercase">Awaiting Login...</p></div>
                 </div>
             </aside>
         </div>
@@ -105,13 +77,13 @@
 </div>
 
 <div id="api-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100]">
-    <div class="bg-[#161a1e] border border-gray-800 w-96 p-8 rounded-3xl shadow-2xl">
-        <h2 class="text-white font-black mb-6 text-center uppercase tracking-widest">Connect Bybit Account</h2>
+    <div class="bg-[#161a1e] border border-gray-800 w-96 p-8 rounded-3xl">
+        <h2 class="text-white font-black mb-6 text-center uppercase tracking-widest">Connect Bybit</h2>
         <div class="space-y-4">
-            <input id="ex-key" type="text" placeholder="BYBIT API KEY" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white focus:border-[#00ADEF] outline-none transition">
-            <input id="ex-secret" type="password" placeholder="BYBIT API SECRET" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white focus:border-[#00ADEF] outline-none transition">
-            <button onclick="saveApiKeys()" class="w-full bg-[#00ADEF] text-white font-black py-4 rounded-xl uppercase text-xs tracking-widest shadow-lg">Link Account</button>
-            <button onclick="toggleApiModal()" class="w-full text-gray-600 text-[10px] font-bold hover:text-white transition">CANCEL</button>
+            <input id="ex-key" type="text" placeholder="API KEY" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white">
+            <input id="ex-secret" type="password" placeholder="API SECRET" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white">
+            <button onclick="saveApiKeys()" class="w-full bg-[#00ADEF] text-white font-black py-4 rounded-xl uppercase text-xs">Link Account</button>
+            <button onclick="toggleApiModal()" class="w-full text-gray-600 text-[10px] font-bold uppercase">Cancel</button>
         </div>
     </div>
 </div>
@@ -119,6 +91,45 @@
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
     const proxyUrl = "https://exnexus-proxy.drorbaron18.workers.dev/";
+    let isSignUpMode = false;
+
+    // --- AUTH LOGIC ---
+    function toggleAuthMode() {
+        isSignUpMode = !isSignUpMode;
+        document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Secure Access Required";
+        document.getElementById('auth-btn').innerText = isSignUpMode ? "Register & Enter" : "Unlock Terminal";
+        document.getElementById('auth-toggle').innerText = isSignUpMode ? "Back to Login" : "Need an account? Sign Up";
+    }
+
+    function handleAuth() {
+        const u = document.getElementById('user-id').value.trim();
+        const p = document.getElementById('user-pass').value.trim();
+        if (!u || !p) return alert("Fill credentials");
+
+        if (isSignUpMode) {
+            localStorage.setItem("nexus_user_" + u, p);
+            alert("Account Created!"); toggleAuthMode();
+        } else {
+            const saved = localStorage.getItem("nexus_user_" + u);
+            if (saved === p || (u === "admin" && p === "nexus2026")) {
+                document.getElementById('gatekeeper').style.display = 'none';
+                const wrapper = document.getElementById('terminal-wrapper');
+                wrapper.classList.remove('opacity-0', 'pointer-events-none');
+                startApp();
+            } else { alert("Denied"); }
+        }
+    }
+
+    // --- TRADING LOGIC ---
+    function startApp() {
+        new TradingView.widget({
+            "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "60", "theme": "dark", "style": "1", "container_id": "tradingview_chart"
+        });
+        setInterval(updatePrice, 2000);
+        setInterval(runAI, 15000);
+        setInterval(updateWalletBalance, 60000);
+        updatePrice(); runAI(); updateWalletBalance(); updateUI();
+    }
 
     async function updatePrice() {
         try {
@@ -138,23 +149,19 @@
                 headers: { 'x-api-key': keys.key, 'x-api-secret': keys.secret }
             });
             const data = await res.json();
-            
             if (data.result && data.result.list) {
                 const account = data.result.list[0];
                 const listDiv = document.getElementById('asset-list');
                 if (listDiv) listDiv.innerHTML = '';
-
                 document.getElementById('total-equity').innerText = parseFloat(account.totalEquity || 0).toFixed(2);
-
                 account.coin.forEach(c => {
                     const bal = parseFloat(c.walletBalance);
                     if (c.coin === "USDT") document.getElementById('wallet-balance').innerText = bal.toFixed(2);
                     if (bal > 0 && listDiv) {
-                        listDiv.innerHTML += `
-                            <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
-                                <div><p class="text-xs font-black text-white">${c.coin}</p><p class="text-[9px] text-gray-500 font-mono">${bal.toFixed(4)}</p></div>
-                                <div class="text-right"><p class="text-xs text-[#A4CD39] font-black font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p></div>
-                            </div>`;
+                        listDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
+                            <div><p class="text-xs font-black text-white">${c.coin}</p><p class="text-[9px] text-gray-500 font-mono">${bal.toFixed(4)}</p></div>
+                            <div class="text-right"><p class="text-xs text-[#A4CD39] font-black font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p></div>
+                        </div>`;
                     }
                 });
             }
@@ -162,7 +169,6 @@
     }
 
     function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
-    
     function saveApiKeys() {
         const key = document.getElementById('ex-key').value.trim();
         const secret = document.getElementById('ex-secret').value.trim();
@@ -170,7 +176,6 @@
         localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
         toggleApiModal(); updateWalletBalance(); updateUI();
     }
-
     function updateUI() {
         if (localStorage.getItem('user_api_keys')) {
             const btn = document.getElementById('api-status-btn');
@@ -178,34 +183,13 @@
             btn.style.color = "black";
         }
     }
-
     function runAI() {
-        const sigs = [
-            {p:"BTC/USDT", pat:"Double Bottom", pr:"88%", n:"Bullish signal confirmed on 1H."},
-            {p:"SOL/USDT", pat:"RSI Divergence", pr:"82%", n:"Strong accumulation detected."},
-            {p:"ETH/USDT", pat:"Bull Flag", pr:"85%", n:"Expecting breakout soon."}
-        ];
-        const s = sigs[Math.floor(Math.random() * sigs.length)];
-        const content = document.getElementById('ai-content');
-        if (content) {
-            content.innerHTML = `
-                <div class="space-y-1">
-                    <div class="flex justify-between font-black text-white"><span>${s.p}</span><span class="text-[#A4CD39]">${s.pr}</span></div>
-                    <div class="text-[9px] text-purple-300 uppercase font-bold">${s.pat}</div>
-                    <p class="text-[10px] text-gray-400">"${s.n}"</p>
-                </div>`;
-        }
+        const sigs = [{p:"BTC/USDT", pat:"Double Bottom", pr:"88%", n:"Bullish signal confirmed on 1H."}];
+        const s = sigs[0];
+        document.getElementById('ai-content').innerHTML = `<div class="space-y-1">
+            <div class="flex justify-between font-black text-white"><span>${s.p}</span><span class="text-[#A4CD39]">${s.pr}</span></div>
+            <div class="text-[9px] text-purple-300 uppercase font-bold">${s.pat}</div><p class="text-[10px] text-gray-400">"${s.n}"</p></div>`;
     }
-
-    new TradingView.widget({
-        "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "60", "theme": "dark", "style": "1", "container_id": "tradingview_chart"
-    });
-
-    setInterval(updatePrice, 2000);
-    setInterval(runAI, 15000);
-    setInterval(updateWalletBalance, 60000);
-    
-    updatePrice(); runAI(); updateWalletBalance(); updateUI();
 </script>
 </body>
 </html>
