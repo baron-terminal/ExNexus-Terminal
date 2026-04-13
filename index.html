@@ -149,38 +149,50 @@
 
     // 2. WALLET SYNC
     async function updateWalletBalance() {
-        console.log("Nexus Bridge: Requesting Assets...");
-        const keys = JSON.parse(localStorage.getItem('user_api_keys'));
-        if (!keys) return;
-
-        try {
-            const res = await fetch(proxyUrl, { 
-                method: 'POST', 
-                headers: { 'x-api-key': keys.key, 'x-api-secret': keys.secret }
-            });
-            const data = await res.json();
+    const keys = JSON.parse(localStorage.getItem('user_api_keys'));
+    if (!keys) return;
+    try {
+        const res = await fetch(proxyUrl, { 
+            method: 'POST', 
+            headers: { 'x-api-key': keys.key, 'x-api-secret': keys.secret }
+        });
+        const data = await res.json();
+        
+        if (data.result && data.result.list) {
+            const account = data.result.list[0];
             const listDiv = document.getElementById('asset-list');
-            if (!listDiv) return;
-            
-            listDiv.innerHTML = ''; 
+            if (listDiv) listDiv.innerHTML = '';
 
-            if (data.result && data.result.list) {
-                const coins = data.result.list[0].coin;
-                coins.forEach(c => {
-                    const bal = parseFloat(c.walletBalance);
-                    if (bal > 0) {
-                        if (c.coin === "USDT") document.getElementById('wallet-balance').innerText = bal.toFixed(2);
-                        listDiv.innerHTML += `
-                            <div class="flex justify-between items-center border-b border-gray-900 pb-3">
-                                <div><p class="text-xs font-black text-white">${c.coin}</p><p class="text-[9px] text-gray-500 font-mono">${bal.toFixed(4)}</p></div>
-                                <div class="text-right"><p class="text-xs text-[#A4CD39] font-black font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p></div>
-                            </div>`;
-                    }
-                });
-            }
-        } catch (e) { console.log("Sync failed"); }
-    }
+            // 1. UPDATE TOTAL EQUITY (USD)
+            const equity = parseFloat(account.totalEquity || 0).toFixed(2);
+            document.getElementById('total-equity').innerText = equity;
 
+            // 2. PROCESS COINS
+            account.coin.forEach(c => {
+                const bal = parseFloat(c.walletBalance);
+                
+                // Set Available Balance if it's USDT
+                if (c.coin === "USDT") {
+                    document.getElementById('wallet-balance').innerText = bal.toFixed(2);
+                }
+
+                // Add to Assets List on the right
+                if (bal > 0 && listDiv) {
+                    listDiv.innerHTML += `
+                        <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
+                            <div>
+                                <p class="text-xs font-black text-white">${c.coin}</p>
+                                <p class="text-[9px] text-gray-500 font-mono">${bal.toFixed(4)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-[#A4CD39] font-black font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+    } catch (e) { console.log("Sync Error"); }
+}
     // 3. API STORAGE
     function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
     function saveApiKeys() {
