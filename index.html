@@ -10,15 +10,24 @@
 </head>
 <body class="bg-[#07090b] text-white font-sans overflow-hidden">
 
-    <div id="gatekeeper" class="fixed inset-0 z-[200] bg-[#07090b] flex flex-col items-center justify-center p-6 transition-all duration-700">
-        <div class="w-full max-w-sm space-y-8 text-center">
-            <img src="Logo.png" alt="ExNexus" class="w-64 mx-auto mb-10 drop-shadow-[0_0_30px_rgba(164,205,57,0.2)]">
-            <div class="panel-glass p-8 rounded-3xl border border-gray-800 space-y-4">
-                <h2 class="text-xs font-black uppercase tracking-[0.3em] text-gray-500 mb-6">Institutional Access</h2>
-                <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs focus:border-[#A4CD39] outline-none transition">
-                <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs focus:border-[#A4CD39] outline-none transition">
-                <button onclick="unlockTerminal()" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:scale-[1.02] transition shadow-lg shadow-lime-500/10">
+    <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-sm space-y-8 text-center bg-[#111418] p-10 rounded-3xl border border-gray-800 shadow-2xl">
+            <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto mb-6">
+            
+            <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39] mb-4">Secure Terminal Access</h2>
+            
+            <div class="space-y-4">
+                <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white focus:border-[#A4CD39] outline-none transition">
+                <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white focus:border-[#A4CD39] outline-none transition">
+                
+                <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:brightness-110 transition">
                     Unlock Terminal
+                </button>
+            </div>
+
+            <div class="pt-6 border-t border-gray-800 mt-6">
+                <button onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] text-gray-500 font-bold hover:text-white uppercase transition">
+                    Need an account? Sign Up
                 </button>
             </div>
         </div>
