@@ -8,21 +8,19 @@
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --brand-lime: #A4CD39; --brand-blue: #00ADEF; --bg-dark: #07090b; }
-        body { background-color: var(--bg-dark); }
+        body { background-color: var(--bg-dark); margin: 0; padding: 0; overflow: hidden; }
         .panel-glass { background: rgba(17, 20, 24, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .prob-bar { height: 4px; background: #1c2024; border-radius: 2px; overflow: hidden; }
-        .prob-fill { height: 100%; background: linear-gradient(90deg, var(--brand-lime), var(--brand-blue)); transition: width 1s ease-in-out; }
     </style>
 </head>
-<body class="bg-[#07090b] text-white font-sans overflow-hidden">
+<body class="text-white font-sans">
 
     <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6">
         <div class="w-full max-w-sm space-y-8 text-center bg-[#111418] p-10 rounded-3xl border border-gray-800 shadow-2xl">
             <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto mb-6">
             <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39] mb-4">Secure Terminal Access</h2>
             <div class="space-y-4">
-                <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white focus:border-[#A4CD39] outline-none transition">
-                <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white focus:border-[#A4CD39] outline-none transition">
+                <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
+                <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
                 <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:brightness-110 transition">Unlock Terminal</button>
             </div>
             <div class="pt-6 border-t border-gray-800 mt-6">
@@ -32,28 +30,15 @@
     </div>
 
     <div id="terminal-wrapper" class="flex h-screen w-full opacity-0 transition-opacity duration-1000">
-        <aside class="w-16 hover:w-48 group bg-[#111418] border-r border-gray-800 flex flex-col items-center py-4 transition-all duration-300 z-50">
-            <div class="mb-8 px-2"><img src="Icon.png" alt="X" class="w-8 h-8 object-contain"></div>
-            <nav class="flex-1 space-y-8 w-full">
-                <div class="flex items-center px-4 cursor-pointer hover:text-[#A4CD39]"><span class="text-xl">📊</span><span class="ml-4 opacity-0 group-hover:opacity-100 text-[10px] font-black uppercase transition-opacity">Terminal</span></div>
-            </nav>
+        <aside class="w-16 bg-[#111418] border-r border-gray-800 flex flex-col items-center py-4">
+            <div class="mb-8"><img src="Icon.png" alt="X" class="w-8 h-8"></div>
+            <div class="text-xl">📊</div>
         </aside>
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="h-14 bg-[#111418]/80 backdrop-blur-md border-b border-gray-800 flex items-center justify-between px-6">
-                <div class="flex items-center space-x-6">
-                    <div class="flex flex-col"><span class="text-[8px] text-gray-500 uppercase font-bold">BTC/USDT</span><span id="btc-price" class="text-lg font-mono font-black text-[#A4CD39]">$00,000.00</span></div>
-                </div>
+        <main class="flex-1 flex flex-col">
+            <header class="h-14 bg-[#111418] border-b border-gray-800 flex items-center px-6">
+                <span id="btc-price" class="text-lg font-mono font-black text-[#A4CD39]">Connecting...</span>
             </header>
-            <div class="flex-1 flex overflow-hidden">
-                <div class="flex-1 bg-black"><div id="tradingview_chart" class="h-full w-full"></div></div>
-                <aside class="w-80 bg-[#0b0e11] border-l border-gray-800 p-4 space-y-4">
-                    <div class="p-4 rounded-2xl bg-gradient-to-br from-[#1c1329] to-[#0b0e11] border border-purple-500/30">
-                        <h4 class="text-[9px] font-black text-purple-400 uppercase mb-3">AI Intelligence</h4>
-                        <div class="prob-bar"><div id="prob-fill" class="prob-fill" style="width: 75%;"></div></div>
-                        <p class="text-[9px] text-gray-400 mt-2 font-bold uppercase tracking-widest">Signal: Active</p>
-                    </div>
-                </aside>
-            </div>
+            <div id="tradingview_chart" class="flex-1 bg-black"></div>
         </main>
     </div>
 
@@ -68,32 +53,31 @@
         }
 
         function handleAuth() {
-            const user = document.getElementById('user-id').value.trim();
-            const pass = document.getElementById('user-pass').value.trim();
+            const u = document.getElementById('user-id').value.trim();
+            const p = document.getElementById('user-pass').value.trim();
             
-            if (!user || !pass) {
-                alert("Enter credentials");
+            if (!u || !p) {
+                alert("Please fill both fields");
                 return;
             }
 
             if (isSignUpMode) {
-                localStorage.setItem("nexus_user_" + user, pass);
+                localStorage.setItem("nexus_user_" + u, p);
                 alert("Account Created! You can now log in.");
                 toggleAuthMode();
             } else {
-                const saved = localStorage.getItem("nexus_user_" + user);
-                // Backdoor check for admin
-                if (saved === pass || (user === "admin" && pass === "nexus2026")) {
+                const saved = localStorage.getItem("nexus_user_" + u);
+                if (saved === p || (u === "admin" && p === "nexus2026")) {
                     document.getElementById('gatekeeper').style.display = 'none';
-                    document.getElementById('terminal-wrapper').classList.replace('opacity-0', 'opacity-100');
-                    startApp();
+                    document.getElementById('terminal-wrapper').style.opacity = '1';
+                    startTerminal();
                 } else {
-                    alert("Denied. Please Sign Up first.");
+                    alert("Access Denied. If new, please Sign Up first.");
                 }
             }
         }
 
-        function startApp() {
+        function startTerminal() {
             if (typeof TradingView !== 'undefined') {
                 new TradingView.widget({
                     "autosize": true,
@@ -104,17 +88,14 @@
                 });
             }
             
-            setInterval(async function() {
-                try {
-                    const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
-                    const data = await res.json();
-                    if (data.result && data.result.list) {
+            setInterval(function() {
+                fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT')
+                    .then(r => r.json())
+                    .then(data => {
                         const price = parseFloat(data.result.list[0].lastPrice);
-                        document.getElementById('btc-price').innerText = '$' + price.toLocaleString();
-                    }
-                } catch (e) {
-                    console.log("Price fetch error");
-                }
+                        document.getElementById('btc-price').innerText = 'BTC/USDT: $' + price.toLocaleString();
+                    })
+                    .catch(e => console.log("Price error"));
             }, 3000);
         }
     </script>
