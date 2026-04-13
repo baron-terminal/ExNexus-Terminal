@@ -145,9 +145,9 @@
         </div>
                     <!-- AI ANALYTICS (Future AltFINS Integration) -->
                    <script>
-    console.log("ExNexus Master Brain: Active");
+    console.log("ExNexus Consolidated Brain: Active");
 
-    // 1. SECURITY SETTINGS
+    // 1. SECURITY
     const MASTER_PASSWORD = "YourSecretPassword123";
     const MOCK_2FA_CODE = "123456";
 
@@ -172,15 +172,15 @@
         }
     }
 
-    // 2. API KEY STORAGE
+    // 2. API STORAGE
     function saveApiKeys() {
         const key = document.getElementById('ex-key').value.trim();
         const secret = document.getElementById('ex-secret').value.trim();
         if (!key || !secret) { alert("Enter keys."); return; }
         localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        updateWalletBalance();
-        updateUIStatus();
+        alert("Keys Saved Successfully!");
         toggleApiModal();
+        updateWalletBalance();
     }
 
     function toggleApiModal() {
@@ -188,17 +188,7 @@
         if (modal) modal.classList.toggle('hidden');
     }
 
-    function updateUIStatus() {
-        if (localStorage.getItem('user_api_keys')) {
-            const btn = document.querySelector('button[onclick="toggleApiModal()"]');
-            if (btn) {
-                btn.innerText = "Bybit Connected ✅";
-                btn.style.backgroundColor = "#A4CD39";
-            }
-        }
-    }
-
-    // 3. MARKET DATA (Bybit Price)
+    // 3. MARKET DATA
     async function updatePrice() {
         try {
             const res = await fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT');
@@ -208,24 +198,7 @@
         } catch (e) { console.error("Price error"); }
     }
 
-    // 4. AI CO-PILOT (AltFINS Simulation)
-    function runAIAnalyst() {
-        const aiContent = document.getElementById('ai-content');
-        if (!aiContent) return;
-        const signals = [
-            { pair: "BTC/USDT", pattern: "Falling Wedge", prob: "84%", note: "Support at $62k. Bullish." },
-            { pair: "SOL/USDT", pattern: "RSI Divergence", prob: "78%", note: "Whale accumulation. Buy dip." },
-            { pair: "ETH/USDT", pattern: "Bull Flag", prob: "81%", note: "Consolidation complete." }
-        ];
-        const s = signals[Math.floor(Math.random() * signals.length)];
-        aiContent.innerHTML = `<div class="space-y-1 border-l-2 border-purple-500 pl-3">
-            <div class="flex justify-between font-bold text-xs"><span>${s.pair}</span><span class="text-green-400">${s.prob}</span></div>
-            <div class="text-[9px] text-purple-300 uppercase">${s.pattern}</div>
-            <p class="text-[10px] text-gray-400 italic">"${s.note}"</p>
-        </div>`;
-    }
-
-    // 5. WALLET & ASSETS MIRROR
+    // 4. CONSOLIDATED ASSETS & BALANCE
     async function updateWalletBalance() {
         const savedKeys = JSON.parse(localStorage.getItem('user_api_keys'));
         if (!savedKeys || !savedKeys.key) return;
@@ -239,39 +212,55 @@
             });
             const data = await response.json();
             const assetList = document.getElementById('asset-list');
-            if (assetList) assetList.innerHTML = '';
+            if (assetList) assetList.innerHTML = ''; 
 
             if (data.result && data.result.list && data.result.list[0].coin) {
                 const coins = data.result.list[0].coin;
+                let stables = [];
+                let crypto = [];
+
                 coins.forEach(c => {
                     const amount = parseFloat(c.walletBalance);
                     if (amount > 0) {
+                        if (["USDT", "USDC", "DAI"].includes(c.coin)) stables.push(c);
+                        else crypto.push(c);
                         if (c.coin === "USDT") document.getElementById('wallet-balance').innerText = amount.toFixed(2);
-                        const row = document.createElement('div');
-                        row.className = "flex justify-between items-center border-b border-gray-900 pb-2 mb-1";
-                        row.innerHTML = `<div><p class="text-[10px] font-bold text-white">${c.coin}</p><p class="text-[8px] text-gray-500">${amount.toFixed(4)}</p></div>
-                                         <div class="text-right font-bold text-[10px] text-[#A4CD39]">$${parseFloat(c.usdValue || 0).toFixed(2)}</div>`;
-                        if (assetList) assetList.appendChild(row);
                     }
                 });
+
+                if (stables.length > 0) {
+                    assetList.innerHTML += <p class="text-[8px] text-[#00ADEF] font-bold uppercase mb-2">Stablecoins</p>;
+                    stables.forEach(c => assetList.innerHTML += createRow(c));
+                }
+                if (crypto.length > 0) {
+                    assetList.innerHTML += <p class="text-[8px] text-[#A4CD39] font-bold uppercase mt-4 mb-2">Crypto Assets</p>;
+                    crypto.forEach(c => assetList.innerHTML += createRow(c));
+                }
             }
         } catch (e) { console.error("Sync Failed", e); }
     }
 
-    // 6. INITIALIZATION
+    function createRow(c) {
+        return `<div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
+            <div><p class="text-[11px] font-bold text-white">${c.coin}</p><p class="text-[9px] text-gray-500">${parseFloat(c.walletBalance).toFixed(4)}</p></div>
+            <div class="text-right font-bold text-[11px] text-white">$${parseFloat(c.usdValue || 0).toFixed(2)}</div>
+        </div>`;
+    }
+
+    // 5. INITIALIZE
     setInterval(updatePrice, 2000);
-    setInterval(runAIAnalyst, 10000);
     setInterval(updateWalletBalance, 60000);
-    
     updatePrice();
-    runAIAnalyst();
-    
+
     window.onload = function() {
         if (sessionStorage.getItem('isUnlocked') === 'true') {
             document.getElementById('login-screen').style.display = 'none';
             updateWalletBalance();
         }
-        updateUIStatus();
+        if (localStorage.getItem('user_api_keys')) {
+            const btn = document.querySelector('button[onclick="toggleApiModal()"]');
+            if (btn) { btn.innerText = "Bybit Connected ✅"; btn.style.backgroundColor = "#A4CD39"; }
+        }
     }
 </script>
 </body>
