@@ -166,7 +166,7 @@
         if (code === MOCK_2FA_CODE) {
             document.getElementById('login-screen').style.display = 'none';
             sessionStorage.setItem('isUnlocked', 'true');
-            updateWalletBalance(); // Trigger sync on login
+            updateWalletBalance(); 
         } else {
             alert("Invalid 2FA");
         }
@@ -178,17 +178,24 @@
         const secret = document.getElementById('ex-secret').value.trim();
         if (!key || !secret) { alert("Enter keys."); return; }
         localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        
-        const btn = document.querySelector('button[onclick="toggleApiModal()"]');
-        if (btn) { btn.innerText = "Bybit Connected ✅"; btn.style.backgroundColor = "#A4CD39"; }
-        
-        toggleApiModal();
         updateWalletBalance();
+        updateUIStatus();
+        toggleApiModal();
     }
 
     function toggleApiModal() {
         const modal = document.getElementById('api-modal');
         if (modal) modal.classList.toggle('hidden');
+    }
+
+    function updateUIStatus() {
+        if (localStorage.getItem('user_api_keys')) {
+            const btn = document.querySelector('button[onclick="toggleApiModal()"]');
+            if (btn) {
+                btn.innerText = "Bybit Connected ✅";
+                btn.style.backgroundColor = "#A4CD39";
+            }
+        }
     }
 
     // 3. MARKET DATA (Bybit Price)
@@ -201,9 +208,25 @@
         } catch (e) { console.error("Price error"); }
     }
 
-    // 4. WALLET & ASSETS MIRROR
+    // 4. AI CO-PILOT (AltFINS Simulation)
+    function runAIAnalyst() {
+        const aiContent = document.getElementById('ai-content');
+        if (!aiContent) return;
+        const signals = [
+            { pair: "BTC/USDT", pattern: "Falling Wedge", prob: "84%", note: "Support at $62k. Bullish." },
+            { pair: "SOL/USDT", pattern: "RSI Divergence", prob: "78%", note: "Whale accumulation. Buy dip." },
+            { pair: "ETH/USDT", pattern: "Bull Flag", prob: "81%", note: "Consolidation complete." }
+        ];
+        const s = signals[Math.floor(Math.random() * signals.length)];
+        aiContent.innerHTML = `<div class="space-y-1 border-l-2 border-purple-500 pl-3">
+            <div class="flex justify-between font-bold text-xs"><span>${s.pair}</span><span class="text-green-400">${s.prob}</span></div>
+            <div class="text-[9px] text-purple-300 uppercase">${s.pattern}</div>
+            <p class="text-[10px] text-gray-400 italic">"${s.note}"</p>
+        </div>`;
+    }
+
+    // 5. WALLET & ASSETS MIRROR
     async function updateWalletBalance() {
-        console.log("NEXUS SYNC: Starting...");
         const savedKeys = JSON.parse(localStorage.getItem('user_api_keys'));
         if (!savedKeys || !savedKeys.key) return;
 
@@ -215,21 +238,19 @@
                 headers: { 'x-api-key': savedKeys.key, 'x-api-secret': savedKeys.secret }
             });
             const data = await response.json();
-            
             const assetList = document.getElementById('asset-list');
             if (assetList) assetList.innerHTML = '';
 
             if (data.result && data.result.list && data.result.list[0].coin) {
                 const coins = data.result.list[0].coin;
                 coins.forEach(c => {
-                    const balance = parseFloat(c.walletBalance);
-                    if (balance > 0) {
-                        if (c.coin === "USDT") {
-                            document.getElementById('wallet-balance').innerText = balance.toFixed(2);
-                        }
+                    const amount = parseFloat(c.walletBalance);
+                    if (amount > 0) {
+                        if (c.coin === "USDT") document.getElementById('wallet-balance').innerText = amount.toFixed(2);
                         const row = document.createElement('div');
-                        row.className = "flex justify-between items-center border-b border-gray-900 pb-2 mb-2";
-                        row.innerHTML = <div><p class="text-[11px] font-bold text-white">${c.coin}</p><p class="text-[9px] text-gray-500 font-mono">${balance.toFixed(4)}</p></div><div class="text-right font-bold"><p class="text-[11px] text-[#A4CD39] font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p></div>;
+                        row.className = "flex justify-between items-center border-b border-gray-900 pb-2 mb-1";
+                        row.innerHTML = `<div><p class="text-[10px] font-bold text-white">${c.coin}</p><p class="text-[8px] text-gray-500">${amount.toFixed(4)}</p></div>
+                                         <div class="text-right font-bold text-[10px] text-[#A4CD39]">$${parseFloat(c.usdValue || 0).toFixed(2)}</div>`;
                         if (assetList) assetList.appendChild(row);
                     }
                 });
@@ -237,20 +258,20 @@
         } catch (e) { console.error("Sync Failed", e); }
     }
 
-    // 5. STARTUP LOGIC
+    // 6. INITIALIZATION
     setInterval(updatePrice, 2000);
-    setInterval(updateWalletBalance, 30000);
+    setInterval(runAIAnalyst, 10000);
+    setInterval(updateWalletBalance, 60000);
+    
     updatePrice();
+    runAIAnalyst();
     
     window.onload = function() {
         if (sessionStorage.getItem('isUnlocked') === 'true') {
             document.getElementById('login-screen').style.display = 'none';
             updateWalletBalance();
         }
-        if (localStorage.getItem('user_api_keys')) {
-            const btn = document.querySelector('button[onclick="toggleApiModal()"]');
-            if (btn) { btn.innerText = "Bybit Connected ✅"; btn.style.backgroundColor = "#A4CD39"; }
-        }
+        updateUIStatus();
     }
 </script>
 </body>
