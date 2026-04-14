@@ -167,21 +167,15 @@
         if (!keys) return;
         try {
             const res = await fetch(proxyUrl, { method: 'POST', headers: { 'x-api-key': keys.key, 'x-api-secret': keys.secret } });
-            const data = await res.json();
-            if (data.result && data.result.list) {
-                const acc = data.result.list[0];
-                document.getElementById('total-equity').innerText = parseFloat(acc.totalEquity || 0).toFixed(2);
-                const listDiv = document.getElementById('asset-list');
-                listDiv.innerHTML = '';
-                acc.coin.forEach(c => {
-                    const b = parseFloat(c.walletBalance);
-                    if (c.coin === "USDT") document.getElementById('wallet-balance').innerText = b.toFixed(2);
-                    if (b > 0) {
-                        listDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
-                            <div><p class="text-xs font-black text-white">${c.coin}</p><p class="text-[9px] text-gray-500 font-mono">${b.toFixed(4)}</p></div>
-                            <div class="text-right"><p class="text-xs text-[#A4CD39] font-black font-mono">$${parseFloat(c.usdValue || 0).toFixed(2)}</p></div>
-                        </div>`;
-                   } catch (e) { console.error("Balance Sync Fail"); }
+            const data = await response.json();
+        if (data.result && data.result.list) {
+            const b = data.result.list[0];
+            const balanceEl = document.getElementById('wallet-balance');
+            if (balanceEl) balanceEl.innerText = $${parseFloat(b.coinCashableAmount).toLocaleString()};
+        }
+    } catch (e) { 
+        console.error("Balance Sync Fail", e); 
+    }
 }
 
 function runAI() {
@@ -194,7 +188,6 @@ function runAI() {
     const wColor = whale.type === "Inflow" ? "#ff4d4d" : "#A4CD39";
     const whaleFeed = document.getElementById('whale-feed');
     if (whaleFeed) {
-        // FIXED: The backticks (`) below are mandatory to prevent the Line 202 error
         whaleFeed.innerHTML = <div class="text-[10px] flex justify-between font-bold"><span style="color:${wColor}">${whale.coin} ${whale.type}</span><span class="text-white">${whale.val}</span></div><div class="text-[8px] text-gray-500 font-mono">${whale.label}</div>;
     }
 
@@ -217,8 +210,8 @@ function handleAuth() {
     if (gatekeeper && wrapper) {
         gatekeeper.style.display = 'none';
         wrapper.classList.remove('opacity-0');
-        wrapper.style.pointerEvents = 'auto'; // Re-enables clicking the dashboard
-        setInterval(runAI, 3000); // Starts the data feed
+        wrapper.style.pointerEvents = 'auto';
+        setInterval(runAI, 3000);
     }
 }
 
