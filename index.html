@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #07090b; color: white; overflow: hidden; }
+        .glass { background: rgba(15, 18, 22, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .neon-text { text-shadow: 0 0 10px rgba(164, 205, 57, 0.5); }
+    </style>
+</head>
+<body>
 
+    <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-full max-w-sm space-y-8">
+            <h1 class="text-4xl font-black tracking-tighter neon-text" style="color: #A4CD39;">EXNEXUS <span class="text-white">TERMINAL</span></h1>
+            <div class="space-y-4">
+                <input id="user-id" type="text" placeholder="OPERATOR ID" class="w-full bg-black/50 border border-gray-800 p-3 rounded text-sm font-mono focus:border-[#A4CD39] outline-none">
+                <input id="user-pass" type="password" placeholder="ACCESS KEY" class="w-full bg-black/50 border border-gray-800 p-3 rounded text-sm font-mono focus:border-[#A4CD39] outline-none">
+                <button onclick="handleAuth()" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded hover:opacity-90 transition-all uppercase tracking-widest text-xs">Enter Terminal</button>
+            </div>
+            <p class="text-[10px] text-gray-600 font-mono italic uppercase">Encrypted Quantum Link Active</p>
+        </div>
+    </div>
+
+    <div id="terminal-wrapper" class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-1000">
+        <div class="w-16 border-r border-gray-800 flex flex-col items-center py-6 space-y-8 bg-black/20">
+            <div class="w-8 h-8 rounded bg-[#A4CD39]/10 flex items-center justify-center border border-[#A4CD39]/30">
+                <div class="w-4 h-4 bg-[#A4CD39] rounded-sm animate-pulse"></div>
+            </div>
+            <button onclick="toggleApiModal()" class="text-gray-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </button>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-black/40">
+                <div class="flex items-center space-x-4">
+                    <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Status:</span>
+                    <span class="text-[10px] font-bold text-[#A4CD39]">SECURE CONNECTION</span>
+                </div>
+                <div id="btc-price" class="font-mono font-bold text-sm tracking-tighter text-[#A4CD39]">LOADING...</div>
+            </div>
+
+            <div class="flex-1 p-4 grid grid-cols-12 gap-4 overflow-y-auto">
+                <div class="col-span-12 lg:col-span-8 h-[550px] glass rounded-xl overflow-hidden relative border border-gray-800">
+                    <div id="tradingview_widget" class="w-full h-full"></div>
+                </div>
+
+                <div class="col-span-12 lg:col-span-4 space-y-4">
+                    <div class="glass p-5 rounded-xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Available Equity</h3>
+                            <button id="api-status-btn" onclick="toggleApiModal()" class="text-[9px] font-bold text-red-500 uppercase">Unlinked</button>
+                        </div>
+                        <div id="wallet-balance" class="text-3xl font-black tracking-tighter">$0.00</div>
+                    </div>
+
+                    <div class="glass p-5 rounded-xl space-y-4 border-l-2 border-[#A4CD39]/50">
+                        <h3 class="text-[10px] font-black text-[#A4CD39] uppercase tracking-widest">Intelligence Feed</h3>
+                        <div id="ai-content" class="space-y-3 min-h-[100px]">
+                            <div class="animate-pulse flex space-y-2 flex-col"><div class="h-2 bg-gray-800 rounded w-3/4"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="api-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[100] p-6">
+        <div class="glass p-8 rounded-2xl w-full max-w-md space-y-6">
+            <h2 class="text-xl font-black tracking-tight uppercase">Bybit Link</h2>
+            <div class="space-y-4">
+                <input id="ex-key" type="text" placeholder="API KEY" class="w-full bg-black/40 border border-gray-800 p-3 rounded text-xs font-mono">
+                <input id="ex-secret" type="password" placeholder="API SECRET" class="w-full bg-black/40 border border-gray-800 p-3 rounded text-xs font-mono">
+                <div class="flex space-x-3">
+                    <button onclick="saveApiKeys()" class="flex-1 bg-[#A4CD39] text-black font-bold py-3 rounded text-xs uppercase">Save Keys</button>
+                    <button onclick="toggleApiModal()" class="flex-1 bg-gray-800 text-white font-bold py-3 rounded text-xs uppercase">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        function handleAuth() {
+            const u = document.getElementById('user-id').value;
+            const p = document.getElementById('user-pass').value;
+            
+            if (u === "admin" && p === "nexus2026") {
+                document.getElementById('gatekeeper').style.display = 'none';
+                const wrap = document.getElementById('terminal-wrapper');
+                wrap.classList.remove('opacity-0', 'pointer-events-none');
+                initTerminal();
+            } else {
+                alert("ACCESS DENIED");
+            }
+        }
+
+        function initTerminal() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BYBIT:BTCUSDT",
+                "interval": "15",
+                "theme": "dark",
+                "container_id": "tradingview_widget"
+            });
+            setInterval(updatePrice, 3000);
+            setInterval(runAI, 8000);
+            updatePrice();
+            runAI();
+            updateWalletBalance();
+        }
+
+        async function updatePrice() {
+            try {
+                const res = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
+                const data = await res.json();
+                const price = parseFloat(data.result.list[0].lastPrice);
+                document.getElementById('btc-price').innerText = '$' + price.toLocaleString();
+            } catch (e) { console.log("Price error"); }
+        }
+
+        function runAI() {
+            const signals = [
+                { p: "BTC/USDT", text: "Heavy institutional buy volume at 74k.", color: "#A4CD39" },
+                { p: "ETH/USDT", text: "Liquidity grab below support level.", color: "#ff4d4d" }
+            ];
+            const s = signals[Math.floor(Math.random() * signals.length)];
+            document.getElementById('ai-content').innerHTML = `
+                <div class="space-y-1">
+                    <div class="text-[10px] font-bold" style="color:${s.color}">${s.p} SCAN</div>
+                    <div class="text-xs text-gray-300 font-mono italic">"${s.text}"</div>
+                </div>`;
+        }
+
+        function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
+
+        function saveApiKeys() {
+            const k = document.getElementById('ex-key').value;
+            const s = document.getElementById('ex-secret').value;
+            if (k && s) {
+                localStorage.setItem('nexus_api', JSON.stringify({k, s}));
+                toggleApiModal();
+                updateWalletBalance();
+            }
+        }
+
+        async function updateWalletBalance() {
+            const saved = localStorage.getItem('nexus_api');
+            if (saved) {
+                document.getElementById('api-status-btn').innerText = "LINKED ✅";
+                document.getElementById('api-status-btn').style.color = "#A4CD39";
+            }
+        }
+    </script>
+</body>
+</html>
