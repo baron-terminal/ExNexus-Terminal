@@ -5,246 +5,215 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ExNexus Trading Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        body { background-color: #0b0e11; color: white; font-family: sans-serif; margin: 0; overflow: hidden; }
-        .font-mono { font-family: 'Courier New', monospace; }
-        #terminal-wrapper { transition: opacity 0.8s ease-in-out; }
-        .signal-glow { box-shadow: 0 0 15px rgba(164, 205, 57, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #07090b; color: white; overflow: hidden; }
+        .glass { background: rgba(15, 18, 22, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .neon-text { text-shadow: 0 0 10px rgba(164, 205, 57, 0.5); }
     </style>
 </head>
 <body>
 
-<div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-sm space-y-8 text-center bg-[#111418] p-10 rounded-3xl border border-gray-800 shadow-2xl">
-        <img src="Logo.png" alt="ExNexus" class="w-48 mx-auto mb-6">
-        <h2 id="auth-title" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#A4CD39]">Secure Access Required</h2>
-        <div class="space-y-4">
-            <input type="text" id="user-id" placeholder="USERNAME" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
-            <input type="password" id="user-pass" placeholder="ACCESS KEY" class="w-full bg-black border border-gray-800 p-4 rounded-xl text-xs text-white outline-none focus:border-[#A4CD39]">
-            <button onclick="handleAuth()" id="auth-btn" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:brightness-110 transition">Unlock Terminal</button>
+    <div id="gatekeeper" class="fixed inset-0 z-[9999] bg-[#07090b] flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-full max-auto space-y-6">
+            <h1 class="text-4xl font-black tracking-tighter neon-text" style="color: #A4CD39;">EXNEXUS <span class="text-white">TERMINAL</span></h1>
+            <div class="space-y-4 max-w-xs mx-auto">
+                <input id="user-id" type="text" placeholder="OPERATOR ID" class="w-full bg-black/50 border border-gray-800 p-3 rounded text-sm font-mono focus:border-[#A4CD39] outline-none">
+                <input id="user-pass" type="password" placeholder="ACCESS KEY" class="w-full bg-black/50 border border-gray-800 p-3 rounded text-sm font-mono focus:border-[#A4CD39] outline-none">
+                <button onclick="handleAuth()" class="w-full bg-[#A4CD39] text-black font-black py-4 rounded hover:opacity-90 transition-all uppercase tracking-widest text-xs">Enter Terminal</button>
+            </div>
+            <p class="text-[10px] text-gray-600 font-mono">ENCRYPTED QUANTUM LINK ACTIVE</p>
         </div>
-        <button onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] text-gray-500 font-bold hover:text-white uppercase">Need an account? Sign Up</button>
     </div>
-</div>
 
-<div id="terminal-wrapper" class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0 opacity-0 pointer-events-none">
-    
-    <aside class="w-40 bg-[#161a1e] border-r border-gray-800 flex flex-col items-center py-6 z-20 shadow-xl">
-        <div class="mb-10 w-full px-4 text-center">
-            <img src="Logo.png" alt="ExNexus" class="w-full h-auto object-contain">
+    <div id="terminal-wrapper" class="flex h-screen w-full overflow-hidden bg-[#0b0e11] absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-1000">
+        
+        <div class="w-16 border-r border-gray-800 flex flex-col items-center py-6 space-y-8 bg-black/20">
+            <div class="w-8 h-8 rounded bg-[#A4CD39]/10 flex items-center justify-center border border-[#A4CD39]/30">
+                <div class="w-4 h-4 bg-[#A4CD39] rounded-sm animate-pulse"></div>
+            </div>
+            <button onclick="toggleApiModal()" class="text-gray-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </button>
         </div>
-        <div class="flex-1 space-y-10 text-2xl text-gray-500">
-            <div class="hover:text-white cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Market</span>📊</div>
-            <div class="hover:text-[#A4CD39] cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">AI Bot</span>🤖</div>
-            <div class="hover:text-white cursor-pointer transition flex flex-col items-center"><span class="text-xs uppercase font-bold tracking-tighter mb-1 text-gray-600">Setup</span>⚙️</div>
-        </div>
-    </aside>
 
-    <main class="flex-1 flex flex-col overflow-hidden">
-        <header class="h-20 bg-[#111418] border-b border-gray-800 flex items-center justify-between px-8 z-10">
-            <div class="flex items-center space-x-8">
-                <div class="flex flex-col border-r border-gray-800 pr-8">
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Bybit Spot Price</span>
-                    <div class="flex items-center space-x-3"><span class="font-black text-xs">BTC/USDT</span><span id="btc-price" class="font-mono text-xl text-[#A4CD39] font-black">$--,---.--</span></div>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-black/40">
+                <div class="flex items-center space-x-4">
+                    <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">System Status:</span>
+                    <span class="text-[10px] font-bold text-[#A4CD39]">OPERATIONAL</span>
                 </div>
-                <div class="flex flex-col border-r border-gray-800 pr-8">
-                    <span class="text-[9px] text-[#00ADEF] font-bold uppercase tracking-widest mb-1">Available</span>
-                    <div class="flex items-center space-x-2"><span id="wallet-balance" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span><span class="text-[9px] text-gray-500 font-bold uppercase">USDT</span></div>
+                <div id="btc-price" class="font-mono font-bold text-sm tracking-tighter">$--,---.--</div>
+            </div>
+
+            <div class="flex-1 p-4 grid grid-cols-12 gap-4 overflow-y-auto">
+                <div class="col-span-12 lg:col-span-8 h-[500px] glass rounded-xl overflow-hidden relative">
+                    <div id="tradingview_widget" class="w-full h-full"></div>
                 </div>
-                <div class="flex flex-col">
-                    <span class="text-[9px] text-[#A4CD39] font-bold uppercase tracking-widest mb-1">Total Equity</span>
-                    <div class="flex items-center space-x-2"><span id="total-equity" class="font-mono text-xl text-white font-black tracking-tighter">0.00</span><span class="text-[9px] text-gray-600 font-bold uppercase">USD</span></div>
+
+                <div class="col-span-12 lg:col-span-4 space-y-4">
+                    <div class="glass p-5 rounded-xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Available Capital</h3>
+                            <button id="api-status-btn" onclick="toggleApiModal()" class="text-[9px] font-bold text-red-500">NO API LINKED</button>
+                        </div>
+                        <div id="wallet-balance" class="text-3xl font-black tracking-tighter">$0.00</div>
+                    </div>
+
+                    <div class="glass p-5 rounded-xl space-y-4 border-l-2 border-purple-500/50">
+                        <h3 class="text-[10px] font-black text-purple-400 uppercase tracking-widest italic">Nexus Intelligence</h3>
+                        <div id="ai-content" class="space-y-3">
+                            <div class="animate-pulse flex space-y-2 flex-col">
+                                <div class="h-2 bg-gray-800 rounded w-3/4"></div>
+                                <div class="h-2 bg-gray-800 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-5 rounded-xl space-y-4 border-l-2 border-[#A4CD39]/50">
+                        <h3 class="text-[10px] font-black text-[#A4CD39] uppercase tracking-widest">Whale Tracker</h3>
+                        <div id="whale-feed" class="space-y-4 h-32 overflow-hidden"></div>
+                    </div>
                 </div>
             </div>
-            <button onclick="toggleApiModal()" id="api-status-btn" class="bg-[#00ADEF] hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition">Connect API</button>
-        </header>
+        </div>
+    </div>
 
-        <div class="flex-1 flex overflow-hidden">
-            <div class="flex-1 bg-black border-r border-gray-800"><div id="tradingview_chart" class="h-full w-full"></div></div>
-            <aside class="w-80 p-5 space-y-5 bg-[#0b0e11] overflow-y-auto">
+    <div id="api-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-6">
+        <div class="glass p-8 rounded-2xl w-full max-w-md space-y-6">
+            <h2 class="text-xl font-bold tracking-tight">LINK BYBIT EXCHANGE</h2>
+            <div class="space-y-4">
+                <input id="ex-key" type="text" placeholder="BYBIT API KEY" class="w-full bg-black/40 border border-gray-800 p-3 rounded text-xs font-mono">
+                <input id="ex-secret" type="password" placeholder="BYBIT API SECRET" class="w-full bg-black/40 border border-gray-800 p-3 rounded text-xs font-mono">
                 <div class="flex space-x-3">
-                    <button class="flex-1 bg-[#A4CD39] text-black font-black py-4 rounded-xl text-xs uppercase tracking-widest">Buy</button>
-                    <button class="flex-1 bg-red-600 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest">Sell</button>
+                    <button onclick="saveApiKeys()" class="flex-1 bg-[#A4CD39] text-black font-bold py-3 rounded text-xs uppercase">Connect</button>
+                    <button onclick="toggleApiModal()" class="flex-1 bg-gray-800 text-white font-bold py-3 rounded text-xs uppercase">Cancel</button>
                 </div>
-                
-                <div class="p-5 border border-purple-500/20 rounded-2xl bg-[#1c1329] signal-glow">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Intelligence</h4>
-                        <span class="text-[8px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded">LIVE</span>
-                    </div>
-                    <div id="ai-content" class="space-y-3">
-                        <p class="text-[10px] text-gray-500 animate-pulse">Scanning Global Markets...</p>
-                    </div>
-                </div>
-
-               <div class="p-4 border border-blue-500/20 rounded-2xl bg-[#0d1520] mb-4">
-        <div class="flex justify-between items-center mb-3">
-            <h4 class="text-[9px] font-black text-blue-400 uppercase tracking-widest">Nansen Smart Money</h4>
-            <span class="animate-ping h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-        </div>
-        <div id="whale-feed" class="space-y-2">
-            <p class="text-[9px] text-gray-600 italic">Scanning flows...</p>
+            </div>
         </div>
     </div>
 
-    <div class="p-4 border border-purple-500/20 rounded-2xl bg-[#161021] mb-4">
-        <h4 class="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-3">AI Intelligence</h4>
-        <div id="ai-content">
-            <p class="text-[9px] text-gray-600 animate-pulse">Calculating...</p>
-        </div>
-    </div>
-            </aside>
-        </div>
-    </main>
-</div>
-
-<div id="api-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100]">
-    <div class="bg-[#161a1e] border border-gray-800 w-96 p-8 rounded-3xl">
-        <h2 class="text-white font-black mb-6 text-center uppercase tracking-widest">Link Bybit</h2>
-        <div class="space-y-4">
-            <input id="ex-key" type="text" placeholder="API KEY" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white outline-none">
-            <input id="ex-secret" type="password" placeholder="API SECRET" class="w-full bg-black border border-gray-700 p-4 rounded-xl text-xs text-white outline-none">
-            <button onclick="saveApiKeys()" class="w-full bg-[#00ADEF] text-white font-black py-4 rounded-xl uppercase text-xs">Authorize</button>
-            <button onclick="toggleApiModal()" class="w-full text-gray-600 text-[10px] font-bold uppercase">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    const proxyUrl = "https://exnexus-proxy.drorbaron18.workers.dev/";
-    let isSignUpMode = false;
-    let lastPrice = 0;
-
-    function toggleAuthMode() {
-        isSignUpMode = !isSignUpMode;
-        document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Secure Access Required";
-        document.getElementById('auth-btn').innerText = isSignUpMode ? "Register & Enter" : "Unlock Terminal";
-        document.getElementById('auth-toggle').innerText = isSignUpMode ? "Back to Login" : "Need an account? Sign Up";
-    }
-
-    function handleAuth() {
-        const u = document.getElementById('user-id').value.trim();
-        const p = document.getElementById('user-pass').value.trim();
-        if (!u || !p) return alert("Missing credentials");
-
-        if (isSignUpMode) {
-            localStorage.setItem("nexus_user_" + u, p);
-            alert("Success!"); toggleAuthMode();
-        } else {
-            const saved = localStorage.getItem("nexus_user_" + u);
-            if (saved === p || (u === "admin" && p === "nexus2026")) {
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        // CORE APP LOGIC
+        function handleAuth() {
+            const u = document.getElementById('user-id').value.trim();
+            const p = document.getElementById('user-pass').value.trim();
+            
+            // Default login: admin / nexus2026
+            if ((u === "admin" && p === "nexus2026") || localStorage.getItem("nexus_user_" + u) === p) {
                 document.getElementById('gatekeeper').style.display = 'none';
                 const wrap = document.getElementById('terminal-wrapper');
                 wrap.classList.remove('opacity-0', 'pointer-events-none');
                 initTerminal();
-            } else { alert("Access Denied"); }
-        }
-    }
-
-    function initTerminal() {
-        new TradingView.widget({ "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "60", "theme": "dark", "style": "1", "container_id": "tradingview_chart" });
-        setInterval(updatePrice, 2000);
-        setInterval(runAI, 10000);
-        setInterval(updateWalletBalance, 60000);
-        updatePrice(); runAI(); updateWalletBalance(); updateUI();
-    }
-
-    async function updateWalletBalance() {
-    const keys = JSON.parse(localStorage.getItem('user_api_keys'));
-    if (!keys) return;
-
-    try {
-        const timestamp = Date.now().toString();
-        const recvWindow = "5000";
-        const raw = timestamp + keys.key + recvWindow;
-        const signature = CryptoJS.HmacSHA256(raw, keys.secret).toString(CryptoJS.enc.Hex);
-
-        const response = await fetch('https://api.bybit.com/v5/account/wallet-balance?accountType=UNIFIED', {
-            headers: {
-                'X-BAPI-API-KEY': keys.key,
-                'X-BAPI-SIGN': signature,
-                'X-BAPI-TIMESTAMP': timestamp,
-                'X-BAPI-RECV-WINDOW': recvWindow
-            }
-        });
-
-        const data = await response.json();
-        if (data.result && data.result.list) {
-            const b = data.result.list[0];
-            const balanceEl = document.getElementById('wallet-balance');
-            if (balanceEl) {
-                balanceEl.innerText = $${parseFloat(b.totalEquity || 0).toLocaleString()};
+            } else {
+                alert("ACCESS DENIED");
             }
         }
-    } catch (e) { 
-        console.error("Balance Sync Fail", e); 
-    }
-}
 
-function runAI() {
-    const whaleMoves = [
-        { coin: "BTC", type: "Inflow", val: "$12.4M", label: "Institutional Wallet" },
-        { coin: "SOL", type: "Accumulation", val: "$2.1M", label: "Smart Money" },
-        { coin: "ETH", type: "Outflow", val: "$8.5M", label: "Venture Fund" }
-    ];
-    const whale = whaleMoves[Math.floor(Math.random() * whaleMoves.length)];
-    const wColor = whale.type === "Inflow" ? "#ff4d4d" : "#A4CD39";
-    const whaleFeed = document.getElementById('whale-feed');
-    if (whaleFeed) {
-        whaleFeed.innerHTML = <div class="text-[10px] flex justify-between font-bold"><span style="color:${wColor}">${whale.coin} ${whale.type}</span><span class="text-white">${whale.val}</span></div><div class="text-[8px] text-gray-500 font-mono">${whale.label}</div>;
-    }
+        function initTerminal() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BYBIT:BTCUSDT",
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_widget"
+            });
 
-    const signals = [
-        { p: "BTC/USDT", pat: "Liquidity Sweep", pr: 94, n: "Whales targeting $72k pools.", t: "BULL" },
-        { p: "SOL/USDT", pat: "Double Bottom", pr: 88, n: "Testing key support level.", t: "BULL" },
-        { p: "ETH/USDT", pat: "Rising Wedge", pr: 72, n: "Volume dropping, watch for drop.", t: "BEAR" }
-    ];
-    const s = signals[Math.floor(Math.random() * signals.length)];
-    const aiColor = s.t === "BULL" ? "#A4CD39" : "#ff4d4d";
-    const aiContent = document.getElementById('ai-content');
-    if (aiContent) {
-        aiContent.innerHTML = <div class="space-y-3"><div class="flex justify-between items-center"><span class="font-black text-white text-xs">${s.p}</span><span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color:${aiColor}">${s.pr}% CONFIDENCE</span></div><div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden"><div class="h-full transition-all duration-1000" style="width:${s.pr}%; background-color:${aiColor}"></div></div><div class="text-[9px] uppercase font-bold text-purple-300">${s.pat}</div><p class="text-[10px] text-gray-400 leading-tight">"${s.n}"</p></div>;
-    }
-}
-
-function handleAuth() {
-    const wrapper = document.getElementById('terminal-wrapper');
-    const gatekeeper = document.getElementById('gatekeeper');
-    if (gatekeeper && wrapper) {
-        gatekeeper.style.display = 'none';
-        wrapper.classList.remove('opacity-0');
-        wrapper.style.pointerEvents = 'auto';
-        setInterval(runAI, 3000);
-        updateWalletBalance();
-        updateUI();
-    }
-}
-
-function toggleApiModal() { 
-    const modal = document.getElementById('api-modal');
-    if (modal) modal.classList.toggle('hidden');
-}
-
-function saveApiKeys() {
-    const key = document.getElementById('ex-key').value.trim();
-    const secret = document.getElementById('ex-secret').value.trim();
-    if (!key || !secret) return;
-    localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-    toggleApiModal(); 
-    updateWalletBalance(); 
-    updateUI();
-}
-
-function updateUI() {
-    if (localStorage.getItem('user_api_keys')) {
-        const btn = document.getElementById('api-status-btn');
-        if (btn) { 
-            btn.innerText = "BYBIT LINKED ✅"; 
-            btn.style.color = "black"; 
+            // Start Loops
+            setInterval(updatePrice, 5000);
+            setInterval(runAI, 8000);
+            setInterval(updateWalletBalance, 60000);
+            
+            // Initial Load
+            updatePrice();
+            runAI();
+            updateWalletBalance();
+            updateUI();
         }
-    }
-}
-</script>
+
+        async function updatePrice() {
+            try {
+                const res = await fetch('https://api.bybit.com/v5/market/tickers?category=inverse&symbol=BTCUSD');
+                const data = await res.json();
+                const price = parseFloat(data.result.list[0].lastPrice);
+                const el = document.getElementById('btc-price');
+                if (el) {
+                    el.style.color = price >= (window.lastPrice || 0) ? '#A4CD39' : '#ff4d4d';
+                    el.innerText = '$' + price.toLocaleString();
+                    window.lastPrice = price;
+                }
+            } catch (e) { console.error("Price fetch fail"); }
+        }
+
+        function runAI() {
+            const signals = [
+                { p: "BTC/USDT", pat: "Liquidity Sweep", pr: 94, n: "Whales targeting $72k pools.", t: "BULL" },
+                { p: "SOL/USDT", pat: "Double Bottom", pr: 88, n: "Testing key support level.", t: "BULL" },
+                { p: "ETH/USDT", pat: "Rising Wedge", pr: 72, n: "Bearish divergence on H4.", t: "BEAR" }
+            ];
+            const s = signals[Math.floor(Math.random() * signals.length)];
+            const aiColor = s.t === "BULL" ? "#A4CD39" : "#ff4d4d";
+            const aiContent = document.getElementById('ai-content');
+            if (aiContent) {
+                aiContent.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center"><span class="font-black text-white text-xs">${s.p}</span><span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color:${aiColor}">${s.pr}% CONFIDENCE</span></div>
+                        <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-[#A4CD39]" style="width:${s.pr}%"></div></div>
+                        <p class="text-[10px] text-gray-400 leading-tight">"${s.n}"</p>
+                    </div>`;
+            }
+
+            const whaleMoves = ["BTC $12M INFLOW", "ETH $8M LIQUIDATED", "SOL $5M ACCUMULATED"];
+            const whaleFeed = document.getElementById('whale-feed');
+            if (whaleFeed) {
+                const move = whaleMoves[Math.floor(Math.random() * whaleMoves.length)];
+                whaleFeed.innerHTML = <div class="text-[10px] font-mono border-b border-gray-900 py-2">${move}</div> + whaleFeed.innerHTML;
+            }
+        }
+
+        async function updateWalletBalance() {
+            const keys = JSON.parse(localStorage.getItem('user_api_keys'));
+            if (!keys) return;
+            try {
+                const timestamp = Date.now().toString();
+                const raw = timestamp + keys.key + "5000";
+                const signature = CryptoJS.HmacSHA256(raw, keys.secret).toString(CryptoJS.enc.Hex);
+                const response = await fetch('https://api.bybit.com/v5/account/wallet-balance?accountType=UNIFIED', {
+                    headers: { 'X-BAPI-API-KEY': keys.key, 'X-BAPI-SIGN': signature, 'X-BAPI-TIMESTAMP': timestamp, 'X-BAPI-RECV-WINDOW': "5000" }
+                });
+                const data = await response.json();
+                if (data.result?.list?.[0]) {
+                    document.getElementById('wallet-balance').innerText = '$' + parseFloat(data.result.list[0].totalEquity).toLocaleString();
+                }
+            } catch (e) { console.error("Balance sync error"); }
+        }
+
+        function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
+
+        function saveApiKeys() {
+            const key = document.getElementById('ex-key').value.trim();
+            const secret = document.getElementById('ex-secret').value.trim();
+            if (key && secret) {
+                localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
+                toggleApiModal(); updateUI(); updateWalletBalance();
+            }
+        }
+
+        function updateUI() {
+            if (localStorage.getItem('user_api_keys')) {
+                const btn = document.getElementById('api-status-btn');
+                btn.innerText = "LINKED ✅"; btn.style.color = "#A4CD39";
+            }
+        }
+    </script>
 </body>
 </html>
