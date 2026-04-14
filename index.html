@@ -187,7 +187,7 @@
         } catch (e) { console.error("Balance Sync Fail"); }
     }
 
-   function runAI() {
+  function runAI() {
     // 1. NANSEN-STYLE WHALE ALERTS
     const whaleMoves = [
         { coin: "BTC", type: "Inflow", val: "$12.4M", label: "Institutional Wallet" },
@@ -215,6 +215,17 @@
     }
 }
 
+// LOGIN GATEKEEPER LOGIC
+function handleAuth() {
+    const wrapper = document.getElementById('terminal-wrapper');
+    const gatekeeper = document.getElementById('gatekeeper');
+    if (gatekeeper && wrapper) {
+        gatekeeper.style.display = 'none';
+        wrapper.classList.remove('opacity-0');
+        setInterval(runAI, 3000);
+    }
+}
+
 function toggleApiModal() { 
     const modal = document.getElementById('api-modal');
     if (modal) modal.classList.toggle('hidden');
@@ -231,10 +242,7 @@ function saveApiKeys() {
 function updateUI() {
     if (localStorage.getItem('user_api_keys')) {
         const btn = document.getElementById('api-status-btn');
-        if (btn) {
-            btn.innerText = "BYBIT LINKED ✅";
-            btn.style.color = "black";
-        }
+        if (btn) { btn.innerText = "BYBIT LINKED ✅"; btn.style.color = "black"; }
     }
 }
 </script>
