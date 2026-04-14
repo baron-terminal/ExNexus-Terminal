@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Locked Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono&display=swap');
+        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050505; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; margin: 0; }
+        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(57, 255, 20, 0.3); }
+        .glass { background: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Draggable AI Icon */
+        #draggable-ai {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #4285f4, #9b72cb);
+            border-radius: 12px; z-index: 9999; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: move; position: absolute; bottom: 80px; right: 20px;
+            box-shadow: 0 0 20px rgba(66, 133, 244, 0.4);
+        }
+        
+        /* Fixed Grid Lockdown */
+        .app-container { display: grid; grid-template-columns: 48px 1fr 280px 220px; grid-template-rows: 40px 1fr 180px; height: 100vh; gap: 4px; padding: 4px; }
+    </style>
+</head>
+<body>
 
+    <div class="app-container">
+        <header class="col-span-4 glass flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <img src="logo.png" alt="ExNexus Logo" class="h-6 w-auto"> </div>
+            <div class="flex items-center space-x-6 text-[10px] font-mono">
+                <div id="ticker" class="neon-text font-black tracking-widest">$00,000.00</div>
+                <div class="text-green-500 font-bold uppercase tracking-tighter">Bybit Node: Active</div>
+            </div>
+        </header>
+
+        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
+            <div class="text-neon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+            <div class="text-gray-700 hover:text-white cursor-pointer"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg></div>
+        </nav>
+
+        <main class="glass overflow-hidden relative">
+            <div id="tradingview_widget" class="w-full h-full"></div>
+        </main>
+
+        <aside class="glass p-3 overflow-y-auto">
+            <h4 class="text-[9px] text-gray-500 font-black uppercase mb-4 tracking-widest">Active Bot Engines</h4>
+            <div class="space-y-3">
+                <div class="p-3 bg-white/5 border border-white/10 rounded-lg">
+                    <div class="flex justify-between text-[10px] font-bold"><span>Smart Trades</span> <span class="text-neon">+$2,025</span></div>
+                </div>
+                <div class="p-3 bg-white/5 border border-white/10 rounded-lg opacity-50">
+                    <div class="flex justify-between text-[10px] font-bold"><span>DCA Bots</span> <span class="text-red-500">-$1,091</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <aside class="glass p-4 flex flex-col">
+            <h4 class="text-[9px] text-gray-500 font-black uppercase mb-4 tracking-widest">Manual Override</h4>
+            <button onclick="setDir('LONG')" id="l-btn" class="w-full py-3 rounded bg-[#39FF14] text-black text-[10px] font-black uppercase mb-1 shadow-[0_0_15px_#39FF1444]">Open Long</button>
+            <button onclick="setDir('SHORT')" id="s-btn" class="w-full py-3 rounded bg-gray-900 text-gray-400 text-[10px] font-black uppercase mb-4">Open Short</button>
+            <input type="number" placeholder="QTY USDT" class="w-full bg-black border border-gray-800 p-3 rounded text-xs mb-4 font-mono">
+            <button id="ex-btn" class="mt-auto w-full py-4 rounded bg-[#39FF14] text-black font-black uppercase text-[10px]">Execute Long</button>
+        </aside>
+
+        <section class="col-span-3 glass p-4 overflow-hidden">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-900 pb-2">
+                <div class="flex space-x-6 text-[9px] font-black text-gray-500 uppercase">
+                    <span class="text-white border-b-2 border-neon pb-2">Active Positions</span>
+                    <span class="hover:text-white cursor-pointer">Order History</span>
+                    <span class="hover:text-white cursor-pointer">Bot Logs</span>
+                </div>
+            </div>
+            <table class="w-full text-left text-[10px] font-mono">
+                <thead class="text-gray-600 text-[8px] uppercase">
+                    <tr><th>Symbol</th><th>Side</th><th>Entry</th><th>PnL%</th><th class="text-right">Action</th></tr>
+                </thead>
+                <tbody class="text-gray-400">
+                    <tr><td colspan="5" class="pt-6 text-center italic text-gray-700">Scanning connected exchange nodes for active positions...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="draggable-ai">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        $(function() { $("#draggable-ai").draggable({ containment: "window" }); });
+
+        const tv = { "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15", "theme": "dark", "container_id": "tradingview_widget", "hide_top_toolbar": false };
+        window.onload = () => { new TradingView.widget(tv); sync(); setInterval(sync, 3000); };
+
+        function setDir(d) {
+            const l = document.getElementById('l-btn'); const s = document.getElementById('s-btn'); const ex = document.getElementById('ex-btn');
+            if(d === 'LONG') {
+                l.className = "w-full py-3 rounded bg-[#39FF14] text-black text-[10px] font-black uppercase mb-1 shadow-[0_0_15px_#39FF1444]";
+                s.className = "w-full py-3 rounded bg-gray-900 text-gray-400 text-[10px] font-black uppercase mb-4";
+                ex.style.backgroundColor = '#39FF14'; ex.style.color = 'black'; ex.innerText = "Execute Long";
+            } else {
+                s.className = "w-full py-3 rounded bg-[#FF003F] text-white text-[10px] font-black uppercase mb-1 shadow-[0_0_15px_#FF003F44]";
+                l.className = "w-full py-3 rounded bg-gray-900 text-gray-400 text-[10px] font-black uppercase mb-4";
+                ex.style.backgroundColor = '#FF003F'; ex.style.color = 'white'; ex.innerText = "Execute Short";
+            }
+        }
+
+        async function sync() {
+            try {
+                const r = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
+                const d = await r.json();
+                document.getElementById('ticker').innerText = '$' + parseFloat(d.result.list[0].lastPrice).toLocaleString();
+            } catch(e){}
+        }
+    </script>
+</body>
+</html>
