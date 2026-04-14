@@ -215,13 +215,14 @@
     }
 }
 
-// LOGIN GATEKEEPER LOGIC - This fixes the handleAuth error
+// THIS FUNCTION HANDLES THE LOGIN SCREEN
 function handleAuth() {
     const wrapper = document.getElementById('terminal-wrapper');
     const gatekeeper = document.getElementById('gatekeeper');
     if (gatekeeper && wrapper) {
         gatekeeper.style.display = 'none';
         wrapper.classList.remove('opacity-0');
+        // This starts the AI updates every 3 seconds
         setInterval(runAI, 3000);
     }
 }
