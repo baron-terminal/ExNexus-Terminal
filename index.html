@@ -187,7 +187,7 @@
         } catch (e) { console.error("Balance Sync Fail"); }
     }
 
-    function runAI() {
+   function runAI() {
     // 1. NANSEN-STYLE WHALE ALERTS
     const whaleMoves = [
         { coin: "BTC", type: "Inflow", val: "$12.4M", label: "Institutional Wallet" },
@@ -211,37 +211,32 @@
     const aiColor = s.t === "BULL" ? "#A4CD39" : "#ff4d4d";
     const aiContent = document.getElementById('ai-content');
     if (aiContent) {
-        aiContent.innerHTML = `
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="font-black text-white text-xs">${s.p}</span>
-                    <span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color:${aiColor}">${s.pr}% CONFIDENCE</span>
-                </div>
-                <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full transition-all duration-1000" style="width:${s.pr}%; background-color:${aiColor}"></div>
-                </div>
-                <div class="text-[9px] uppercase font-bold text-purple-300">${s.pat}</div>
-                <p class="text-[10px] text-gray-400 leading-tight">"${s.n}"</p>
-            </div>`;
+        aiContent.innerHTML = <div class="space-y-3"><div class="flex justify-between items-center"><span class="font-black text-white text-xs">${s.p}</span><span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color:${aiColor}">${s.pr}% CONFIDENCE</span></div><div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden"><div class="h-full transition-all duration-1000" style="width:${s.pr}%; background-color:${aiColor}"></div></div><div class="text-[9px] uppercase font-bold text-purple-300">${s.pat}</div><p class="text-[10px] text-gray-400 leading-tight">"${s.n}"</p></div>;
     }
-}
 }
 
-    function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
-    function saveApiKeys() {
-        const key = document.getElementById('ex-key').value.trim();
-        const secret = document.getElementById('ex-secret').value.trim();
-        if (!key || !secret) return;
-        localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
-        toggleApiModal(); updateWalletBalance(); updateUI();
-    }
-    function updateUI() {
-        if (localStorage.getItem('user_api_keys')) {
-            const btn = document.getElementById('api-status-btn');
-            btn.innerText = "BYBIT LINKED ✅"; btn.classList.replace('bg-[#00ADEF]', 'bg-[#A4CD39]');
+function toggleApiModal() { 
+    const modal = document.getElementById('api-modal');
+    if (modal) modal.classList.toggle('hidden');
+}
+
+function saveApiKeys() {
+    const key = document.getElementById('ex-key').value.trim();
+    const secret = document.getElementById('ex-secret').value.trim();
+    if (!key || !secret) return;
+    localStorage.setItem('user_api_keys', JSON.stringify({ key, secret }));
+    toggleApiModal(); updateWalletBalance(); updateUI();
+}
+
+function updateUI() {
+    if (localStorage.getItem('user_api_keys')) {
+        const btn = document.getElementById('api-status-btn');
+        if (btn) {
+            btn.innerText = "BYBIT LINKED ✅";
             btn.style.color = "black";
         }
     }
+}
 </script>
 </body>
 </html>
