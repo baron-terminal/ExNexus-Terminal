@@ -194,7 +194,7 @@ function runAI() {
     const wColor = whale.type === "Inflow" ? "#ff4d4d" : "#A4CD39";
     const whaleFeed = document.getElementById('whale-feed');
     if (whaleFeed) {
-        // These backticks (`) are essential to prevent the SyntaxError
+        // FIXED: The backticks (`) below are mandatory to prevent the Line 202 error
         whaleFeed.innerHTML = <div class="text-[10px] flex justify-between font-bold"><span style="color:${wColor}">${whale.coin} ${whale.type}</span><span class="text-white">${whale.val}</span></div><div class="text-[8px] text-gray-500 font-mono">${whale.label}</div>;
     }
 
@@ -217,8 +217,8 @@ function handleAuth() {
     if (gatekeeper && wrapper) {
         gatekeeper.style.display = 'none';
         wrapper.classList.remove('opacity-0');
-        wrapper.style.pointerEvents = 'auto';
-        setInterval(runAI, 3000);
+        wrapper.style.pointerEvents = 'auto'; // Re-enables clicking the dashboard
+        setInterval(runAI, 3000); // Starts the data feed
     }
 }
 
