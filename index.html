@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Institutional Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap');
+        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050709; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; overflow: hidden; }
+        .glass { background: rgba(13, 16, 21, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
+        .hot-red-text { color: var(--hot-red); text-shadow: 0 0 10px rgba(255, 0, 63, 0.2); }
+        
+        /* Floating Gemini Assistant */
+        #gemini-hub {
+            position: fixed; bottom: 20px; left: 80px; width: 48px; height: 48px;
+            background: linear-gradient(135deg, #4285f4, #9b72cb);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3);
+        }
+    </style>
+</head>
+<body>
 
+    <div id="gemini-hub" onclick="alert('Gemini: Automation Node Healthy. 12 Triggers Monitored.')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+    </div>
+
+    <div class="flex h-screen w-full">
+        <div class="w-16 border-r border-gray-900 flex flex-col items-center py-6 space-y-8 bg-black">
+            <div class="w-10 h-10 rounded-lg border border-neon flex items-center justify-center shadow-[0_0_10px_rgba(57,255,20,0.2)]">
+                <div class="w-2 h-2 bg-neon rounded-full animate-ping"></div>
+            </div>
+            <div class="flex flex-col space-y-6 text-gray-600">
+                <div class="hover:text-neon cursor-pointer transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></div>
+                <div class="text-neon"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col">
+            <div class="h-12 border-b border-gray-900 flex items-center justify-between px-6 bg-black/50">
+                <div class="flex items-center space-x-6">
+                    <span class="text-[10px] font-black neon-text tracking-widest uppercase">ExNexus Terminal</span>
+                    <span class="text-[9px] font-bold text-blue-500 uppercase">● Bybit Bot Connected</span>
+                </div>
+                <div id="price-ticker" class="font-mono font-black text-sm neon-text tracking-tighter">$00,000.00</div>
+            </div>
+
+            <div class="flex-1 p-2 grid grid-cols-12 gap-2 overflow-hidden">
+                <div class="col-span-9 h-[65vh] glass rounded-xl overflow-hidden relative">
+                    <div id="tradingview_widget" class="w-full h-full"></div>
+                </div>
+
+                <div class="col-span-3 flex flex-col space-y-2 h-[65vh]">
+                    <div class="glass p-4 rounded-xl">
+                        <span class="text-[8px] font-bold text-gray-500 uppercase">Total Equity</span>
+                        <div class="text-xl font-black text-white">$24,190.55</div>
+                    </div>
+
+                    <div class="glass p-4 rounded-xl flex-1 flex flex-col overflow-hidden">
+                        <span class="text-[8px] font-bold text-gray-500 uppercase mb-3">Quick Manual Override</span>
+                        <div class="grid grid-cols-2 gap-1 mb-4">
+                            <button onclick="setMode('BUY')" id="b-tab" class="py-2 rounded bg-neon text-black text-[10px] font-black uppercase">Long</button>
+                            <button onclick="setMode('SELL')" id="s-tab" class="py-2 rounded bg-gray-900 text-gray-500 text-[10px] font-black uppercase">Short</button>
+                        </div>
+                        <input type="number" id="manual-qty" placeholder="USDT Amount" class="w-full bg-black border border-gray-800 p-2 rounded text-xs mb-3 focus:border-neon outline-none">
+                        <button id="exec-btn" class="w-full py-3 rounded bg-neon text-black font-black uppercase text-[10px] shadow-[0_0_15px_rgba(57,255,20,0.1)] mt-auto">Execute Manual Trade</button>
+                    </div>
+                </div>
+
+                <div class="col-span-12 h-[22vh] glass rounded-xl p-4 flex space-x-4">
+                    <div class="w-1/4 border-r border-gray-900 pr-4">
+                        <h3 class="text-[9px] font-black text-gray-500 uppercase mb-3">Bot Logic Node</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[10px]"><span class="text-gray-400">RSI 14:</span> <span class="neon-text">42.5</span></div>
+                            <div class="flex justify-between text-[10px]"><span class="text-gray-400">MACD:</span> <span class="hot-red-text">Bearish Cross</span></div>
+                            <div class="flex justify-between text-[10px]"><span class="text-gray-400">Status:</span> <span class="animate-pulse">Waiting for Signal</span></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[9px] font-black text-gray-400 uppercase mb-3 tracking-widest">Active Positions</h3>
+                        <table class="w-full text-left font-mono">
+                            <thead class="text-[8px] text-gray-600 border-b border-gray-900 uppercase">
+                                <tr><th>Symbol</th><th>Side</th><th>PnL %</th><th>Entry</th><th class="text-right">Action</th></tr>
+                            </thead>
+                            <tbody class="text-[10px] text-gray-400">
+                                <tr><td colspan="5" class="pt-6 text-center italic">Scanning Bybit Perpetual Node...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        window.onload = function() {
+            new TradingView.widget({
+                "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15",
+                "theme": "dark", "container_id": "tradingview_widget", "hide_top_toolbar": false
+            });
+            sync(); setInterval(sync, 4000);
+        };
+
+        function setMode(m) {
+            const b = document.getElementById('b-tab'); const s = document.getElementById('s-tab');
+            const btn = document.getElementById('exec-btn');
+            if(m === 'BUY') {
+                b.className = 'py-2 rounded bg-neon text-black text-[10px] font-black uppercase';
+                s.className = 'py-2 rounded bg-gray-900 text-gray-500 text-[10px] font-black uppercase';
+                btn.className = 'w-full py-3 rounded bg-neon text-black font-black uppercase text-[10px]';
+                btn.innerText = 'Execute Manual Long';
+            } else {
+                s.className = 'py-2 rounded bg-[#FF003F] text-white text-[10px] font-black uppercase';
+                b.className = 'py-2 rounded bg-gray-900 text-gray-500 text-[10px] font-black uppercase';
+                btn.className = 'w-full py-3 rounded bg-[#FF003F] text-white font-black uppercase text-[10px]';
+                btn.innerText = 'Execute Manual Short';
+            }
+        }
+
+        async function sync() {
+            try {
+                const r = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
+                const d = await r.json();
+                document.getElementById('price-ticker').innerText = '$' + parseFloat(d.result.list[0].lastPrice).toLocaleString();
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>
