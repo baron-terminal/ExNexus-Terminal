@@ -196,16 +196,9 @@
     ];
     const whale = whaleMoves[Math.floor(Math.random() * whaleMoves.length)];
     const wColor = whale.type === "Inflow" ? "#ff4d4d" : "#A4CD39";
-    
     const whaleFeed = document.getElementById('whale-feed');
     if (whaleFeed) {
-        whaleFeed.innerHTML = `
-            <div class="text-[10px] flex justify-between font-bold">
-                <span style="color: ${wColor}">${whale.coin} ${whale.type}</span>
-                <span class="text-white">${whale.val}</span>
-            </div>
-            <div class="text-[8px] text-gray-500 font-mono">${whale.label}</div>
-        `;
+        whaleFeed.innerHTML = <div class="text-[10px] flex justify-between font-bold"><span style="color:${wColor}">${whale.coin} ${whale.type}</span><span class="text-white">${whale.val}</span></div><div class="text-[8px] text-gray-500 font-mono">${whale.label}</div>;
     }
 
     // 2. COINGLASS-STYLE PROBABILITY
@@ -216,22 +209,22 @@
     ];
     const s = signals[Math.floor(Math.random() * signals.length)];
     const aiColor = s.t === "BULL" ? "#A4CD39" : "#ff4d4d";
-    
     const aiContent = document.getElementById('ai-content');
     if (aiContent) {
         aiContent.innerHTML = `
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="font-black text-white text-xs">${s.p}</span>
-                    <span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color: ${aiColor}">${s.pr}% CONFIDENCE</span>
+                    <span class="text-[8px] font-bold px-2 py-0.5 rounded bg-black/40" style="color:${aiColor}">${s.pr}% CONFIDENCE</span>
                 </div>
                 <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full transition-all duration-1000" style="width: ${s.pr}%; background-color: ${aiColor}"></div>
+                    <div class="h-full transition-all duration-1000" style="width:${s.pr}%; background-color:${aiColor}"></div>
                 </div>
                 <div class="text-[9px] uppercase font-bold text-purple-300">${s.pat}</div>
                 <p class="text-[10px] text-gray-400 leading-tight">"${s.n}"</p>
             </div>`;
     }
+}
 }
 
     function toggleApiModal() { document.getElementById('api-modal').classList.toggle('hidden'); }
