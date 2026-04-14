@@ -10,6 +10,8 @@
         body { font-family: 'Inter', sans-serif; background-color: #07090b; color: white; overflow: hidden; }
         .glass { background: rgba(15, 18, 22, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
         .neon-glow { color: #A4CD39; text-shadow: 0 0 15px rgba(164, 205, 57, 0.4); }
+        #chart-parent { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .expanded { grid-column: span 12 !important; height: 85vh !important; z-index: 50; }
     </style>
 </head>
 <body>
@@ -20,12 +22,8 @@
                 <div class="w-5 h-5 bg-[#A4CD39] rounded-sm animate-pulse"></div>
             </div>
             <div class="flex flex-col space-y-10">
-                <div title="Nansen Smart Money" class="text-blue-500 cursor-pointer hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                </div>
-                <div title="Coinglass Data" class="text-orange-500 cursor-pointer hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                </div>
+                <div class="text-blue-500"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
+                <div class="text-orange-500"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
             </div>
         </div>
 
@@ -33,32 +31,57 @@
             <div class="h-16 border-b border-gray-800 flex items-center justify-between px-8 bg-black/60">
                 <div class="flex items-center space-x-10">
                     <span class="text-[11px] font-black neon-glow tracking-widest uppercase">● EXNEXUS LIVE</span>
-                    <span class="text-[11px] font-black text-blue-400 tracking-widest uppercase animate-pulse">● NANSEN FEED ACTIVE</span>
+                    <span id="active-symbol" class="text-[11px] font-black text-blue-400 tracking-widest uppercase animate-pulse">● SYNCING NODE</span>
                 </div>
                 <div id="btc-price" class="font-mono font-black text-lg text-[#A4CD39] tracking-tighter">$00,000.00</div>
             </div>
 
-            <div class="flex-1 p-6 grid grid-cols-12 gap-6">
-                <div class="col-span-9 h-full glass rounded-3xl overflow-hidden border border-gray-800">
-                    <div id="tradingview_widget" class="w-full h-full"></div>
+            <div class="flex-1 p-4 grid grid-cols-12 gap-4 relative">
+                
+                <div id="chart-parent" class="col-span-8 h-[55vh] glass rounded-3xl overflow-hidden border border-gray-800 flex flex-col relative">
+                    <div class="h-10 border-b border-gray-800/50 flex items-center justify-between px-4 bg-black/20">
+                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Multi-Asset Terminal</span>
+                        <button onclick="toggleChartSize()" class="bg-[#A4CD39]/20 hover:bg-[#A4CD39]/40 text-[#A4CD39] text-[9px] font-bold px-3 py-1 rounded transition-all">
+                            EXPAND / SHRINK
+                        </button>
+                    </div>
+                    <div id="tradingview_widget" class="flex-1 w-full"></div>
                 </div>
 
-                <div class="col-span-3 space-y-6">
-                    <div class="glass p-6 rounded-3xl border-l-4 border-blue-500 bg-blue-500/5">
-                        <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-3">Nansen Intelligence</span>
-                        <div id="nansen-feed" class="text-xs font-mono text-blue-100 italic">Scanning on-chain whale activity...</div>
+                <div id="exec-panel" class="col-span-4 glass p-6 rounded-3xl border border-gray-800 flex flex-col">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Execution Engine</h3>
+                    <div class="flex bg-black/40 p-1 rounded-xl mb-6">
+                        <button onclick="setSide('BUY')" id="buy-btn" class="flex-1 py-3 rounded-lg text-xs font-black transition-all bg-[#A4CD39] text-black">BUY</button>
+                        <button onclick="setSide('SELL')" id="sell-btn" class="flex-1 py-3 rounded-lg text-xs font-black transition-all text-gray-500">SELL</button>
                     </div>
+                    <div class="space-y-4 mb-6">
+                        <input id="trade-qty" type="number" placeholder="QTY USDT" class="w-full bg-black/60 border border-gray-800 p-4 rounded-xl text-xs font-mono outline-none focus:border-[#A4CD39]">
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setPct(25)" class="bg-gray-900 py-2 rounded text-[10px] font-bold">25%</button>
+                            <button onclick="setPct(100)" class="bg-gray-900 py-2 rounded text-[10px] font-bold">MAX</button>
+                        </div>
+                    </div>
+                    <button id="exec-action" class="w-full py-5 rounded-2xl bg-[#A4CD39] text-black font-black uppercase tracking-widest text-xs">Confirm Order</button>
+                </div>
 
-                    <div class="glass p-6 rounded-3xl border-l-4 border-orange-500 bg-orange-500/5">
-                        <span class="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-3">Coinglass Liquidations</span>
-                        <div id="coinglass-feed" class="text-xs font-mono text-orange-100 italic">Calculating OI and liquidation heatmaps...</div>
+                <div class="col-span-12 h-[25vh] glass rounded-3xl border border-gray-800 p-6 overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Active Positions</h3>
                     </div>
-
-                    <div class="glass p-8 rounded-3xl bg-[#A4CD39]/5">
-                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-2">Available Equity</span>
-                        <div class="text-4xl font-black text-white tracking-tighter">$24,190.55</div>
-                        <div class="mt-2 text-[10px] font-bold text-[#A4CD39]">NODE CONNECTED: BYBIT</div>
-                    </div>
+                    <table class="w-full text-left">
+                        <thead class="text-[9px] text-gray-600 uppercase border-b border-gray-800">
+                            <tr>
+                                <th class="pb-2">Asset</th>
+                                <th class="pb-2">Side</th>
+                                <th class="pb-2">Size</th>
+                                <th class="pb-2">Entry</th>
+                                <th class="pb-2 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pos-table" class="text-xs font-mono text-gray-300">
+                            <tr><td colspan="5" class="pt-8 text-center text-gray-600 italic">Listening for execution...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -66,8 +89,16 @@
 
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // Automatic Initialization (No Login Required)
+        let isExpanded = false;
+        const userEquity = 24190.55; //
+
         window.onload = function() {
+            initTradingView();
+            syncPrice();
+            setInterval(syncPrice, 5000);
+        };
+
+        function initTradingView() {
             new TradingView.widget({
                 "autosize": true,
                 "symbol": "BYBIT:BTCUSDT",
@@ -76,29 +107,45 @@
                 "theme": "dark",
                 "style": "1",
                 "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_top_toolbar": false, // RESTORES SEARCH & INTERVALS
+                "allow_symbol_change": true, // RESTORES SYMBOL SELECTOR
                 "container_id": "tradingview_widget"
             });
-            
-            setInterval(fetchRealTimeData, 5000);
-            fetchRealTimeData();
-        };
+        }
 
-        async function fetchRealTimeData() {
-            try {
-                const response = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
-                const data = await response.json();
-                const price = parseFloat(data.result.list[0].lastPrice);
-                document.getElementById('btc-price').innerText = '$' + price.toLocaleString();
-            } catch (error) {
-                console.error("API Sync Error:", error);
+        function toggleChartSize() {
+            const chart = document.getElementById('chart-parent');
+            const exec = document.getElementById('exec-panel');
+            isExpanded = !isExpanded;
+            isExpanded ? (chart.classList.add('expanded'), exec.classList.add('hidden')) : (chart.classList.remove('expanded'), exec.classList.remove('hidden'));
+            setTimeout(initTradingView, 100);
+        }
+
+        function setSide(side) {
+            const b = document.getElementById('buy-btn'); const s = document.getElementById('sell-btn');
+            const action = document.getElementById('exec-action');
+            if(side === 'BUY') {
+                b.className = 'flex-1 py-3 rounded-lg text-xs font-black bg-[#A4CD39] text-black';
+                s.className = 'flex-1 py-3 rounded-lg text-xs font-black text-gray-500';
+                action.style.backgroundColor = '#A4CD39'; action.innerText = 'Confirm Market Buy';
+            } else {
+                s.className = 'flex-1 py-3 rounded-lg text-xs font-black bg-red-500 text-white';
+                b.className = 'flex-1 py-3 rounded-lg text-xs font-black text-gray-500';
+                action.style.backgroundColor = '#ef4444'; action.innerText = 'Confirm Market Sell';
             }
+        }
 
-            // Intelligence Feed Mock Logic
-            const nansenAlerts = ["Smart Money buying ETH at support", "Whale wallet move: +$14.2M USDT", "Institutional buy wall at $72.5k"];
-            const coinAlerts = ["$8.4M Shorts Liquidated (5m)", "L/S Ratio: 52.1% Long", "Open Interest rising +1.2%"];
-            
-            document.getElementById('nansen-feed').innerText = nansenAlerts[Math.floor(Math.random() * nansenAlerts.length)];
-            document.getElementById('coinglass-feed').innerText = coinAlerts[Math.floor(Math.random() * coinAlerts.length)];
+        function setPct(p) { document.getElementById('trade-qty').value = Math.floor(userEquity * (p/100)); }
+
+        async function syncPrice() {
+            try {
+                const r = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
+                const d = await r.json();
+                document.getElementById('btc-price').innerText = '$' + parseFloat(d.result.list[0].lastPrice).toLocaleString();
+                document.getElementById('active-symbol').innerText = '● BYBIT:BTCUSDT ACTIVE';
+            } catch (e) {}
         }
     </script>
 </body>
