@@ -335,7 +335,7 @@
            MOB-UI  –  Bybit-style mobile / tablet layout
            Shown on ≤1199px, replaces .app-container entirely
         ======================================================== */
-        #mob-ui{display:none;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg);}
+        #mob-ui{display:none;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--bg);}
         @media(max-width:1199px){
             .app-container{display:none!important;}
             #mobile-nav,#mobile-more,#draggable-ai{display:none!important;}
@@ -392,11 +392,11 @@
         .mchk{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid);cursor:pointer;padding:1px 0;}
         .mchk input[type=checkbox]{width:13px;height:13px;accent-color:var(--neon);cursor:pointer;flex-shrink:0;}
         /* Order book */
-        .mbook{display:flex;flex-direction:column;flex:0 0 46%;min-width:0;height:260px;}
+        .mbook{display:flex;flex-direction:column;flex:0 0 46%;min-width:0;}
         .mbook-hdr{display:flex;justify-content:space-between;padding:0 2px 4px;border-bottom:1px solid var(--border);margin-bottom:1px;flex-shrink:0;}
         .mbook-hdr span{font-size:9px;color:var(--text-dim);}
-        .mbook-asks{height:88px;display:flex;flex-direction:column-reverse;overflow:hidden;flex-shrink:0;}
-        .mbook-bids{height:88px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+        .mbook-asks{height:90px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;justify-content:flex-end;}
+        .mbook-bids{height:90px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
         .mbrow{display:flex;justify-content:space-between;padding:2px 2px;position:relative;font-size:10px;line-height:1.55;}
         .mbrow .mbar{position:absolute;top:0;bottom:0;right:0;opacity:.08;pointer-events:none;}
         .mbrow.ask .mbar{background:var(--hot-red);}
@@ -414,7 +414,7 @@
         .mlong{flex:1;padding:11px;background:var(--neon);color:#000;font-size:12px;font-weight:700;border-radius:7px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
         .mshort{flex:1;padding:11px;background:var(--hot-red);color:#fff;font-size:12px;font-weight:700;border-radius:7px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
         /* Bottom section */
-        .mbtm{flex:1;min-height:0;display:flex;flex-direction:column;background:#080808;border-top:1px solid var(--border);}
+        .mbtm{flex:1;min-height:0;max-height:220px;display:flex;flex-direction:column;background:#080808;border-top:1px solid var(--border);}
         .mbtm-tabs{display:flex;padding:0 8px;height:33px;border-bottom:1px solid var(--border);overflow-x:auto;gap:0;flex-shrink:0;}
         .mbtm-tabs::-webkit-scrollbar{display:none;}
         .mbt{font-size:11px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:0 10px;height:100%;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
@@ -927,6 +927,7 @@ window.onload = () => {
     renderLSRows();
     fetchFearGreed();
     initResponsive();
+    renderMobBook();
 };
 
 /* ============ PANEL SYSTEM ============ */
@@ -1147,6 +1148,14 @@ function closeMobileMore(){
 }
 
 /* ============ RESPONSIVE INIT ============ */
+function setMobHeight(){
+    const m = document.getElementById('mob-ui');
+    if(m && window.innerWidth <= 1199) m.style.height = window.innerHeight + 'px';
+}
+setMobHeight();
+window.addEventListener('resize', setMobHeight);
+window.addEventListener('orientationchange', ()=>{ setTimeout(setMobHeight,150); });
+
 function initResponsive(){
     if(window.innerWidth < 768){
         // Show chart by default on mobile
@@ -1238,21 +1247,27 @@ function mobPct(pct){
 }
 
 // Render mobile order book (condensed — price + qty only)
-const mAskData=[[74245.10,0.124],[74240.30,0.067],[74238.90,0.891],[74237.50,0.045],[74236.20,0.312],[74235.00,0.178]];
+// Mock order book for mobile (sorted: asks high→low, bids high→low)
+const mAskData=[[74235.00,0.178],[74236.20,0.312],[74237.50,0.045],[74238.90,0.891],[74240.30,0.067],[74245.10,0.124]];
 const mBidData=[[74231.70,1.089],[74230.50,0.334],[74229.10,0.612],[74228.40,0.089],[74227.80,0.445],[74226.20,0.231]];
 const mMax = Math.max(...mAskData.map(r=>r[1]),...mBidData.map(r=>r[1]));
 function renderMobBook(){
     const asks = document.getElementById('mob-asks');
     const bids = document.getElementById('mob-bids');
     if(!asks||!bids) return;
+    // Asks: sorted low-to-high so closest to mid is at bottom (justify-content:flex-end)
     asks.innerHTML = mAskData.map(([p,q])=>
-        `<div class="mbrow ask"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10px;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);font-size:10px;">${q.toFixed(3)}</span></div>`
+        `<div class="mbrow ask"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div>`+
+        `<span class="mono" style="color:#FF003F;font-size:10px;">${p.toFixed(2)}</span>`+
+        `<span class="mono" style="color:rgba(255,255,255,0.55);font-size:10px;">${q.toFixed(3)}</span></div>`
     ).join('');
+    // Bids: sorted high-to-low so closest to mid is at top
     bids.innerHTML = mBidData.map(([p,q])=>
-        `<div class="mbrow bid"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div><span class="mono" style="color:#44B828;font-size:10px;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);font-size:10px;">${q.toFixed(3)}</span></div>`
+        `<div class="mbrow bid"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div>`+
+        `<span class="mono" style="color:#44B828;font-size:10px;">${p.toFixed(2)}</span>`+
+        `<span class="mono" style="color:rgba(255,255,255,0.55);font-size:10px;">${q.toFixed(3)}</span></div>`
     ).join('');
 }
-renderMobBook();
 
 
 function openDataHub(){ togglePanel('datahub'); }
