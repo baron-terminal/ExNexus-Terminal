@@ -1,1 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Institutional Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono&display=swap');
+        
+        :root { 
+            --neon: #39FF14; 
+            --hot-red: #FF003F; 
+            --bg: #050505; 
+            --sidebar-right-width: 320px; /* Locked Width */
+            --sidebar-left-width: 52px;   /* Locked Width */
+        }
 
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: rgba(255,255,255,0.9); 
+            overflow: hidden; 
+            height: 100vh; 
+            margin: 0; 
+        }
+
+        /* GRID LOCK PROTOCOL */
+        .app-container { 
+            display: grid; 
+            grid-template-columns: var(--sidebar-left-width) 1fr var(--sidebar-right-width); 
+            grid-template-rows: 40px 1fr 180px; 
+            height: 100vh; 
+            gap: 2px; 
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .glass { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.03); }
+
+        /* Left Nav Icons */
+        .nav-icon { position: relative; cursor: pointer; color: #444; }
+        .nav-icon:hover { color: var(--neon); }
+        .nav-icon:hover::after {
+            content: attr(data-label);
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            background: #111; color: var(--neon); font-size: 7px; padding: 2px 6px;
+            border-radius: 2px; white-space: nowrap; margin-left: 10px; z-index: 50;
+            border: 1px solid rgba(57, 255, 20, 0.2); text-transform: uppercase;
+        }
+
+        /* RIGHT SIDEBAR COMPONENT LOCK */
+        .node-header { font-weight: 900; font-size: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .bot-row { display: flex; justify-content: space-between; font-size: 10px; padding: 6px 0; }
+        
+        .btn-action { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); font-weight: 800; text-transform: uppercase; font-size: 10px; transition: 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.05); }
+
+        input { background: #000; border: 1px solid rgba(255,255,255,0.05); color: white; font-family: 'JetBrains Mono'; font-size: 10px; padding: 8px; width: 100%; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="col-span-3 glass flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <span class="text-[9px] font-black tracking-widest text-white/40">EXNEXUS</span>
+                <span class="text-[7px] font-bold text-white/20 uppercase">Institutional Terminal</span>
+            </div>
+            <div id="ticker" style="color:var(--neon)" class="font-mono text-[10px] font-bold">$74,281.10</div>
+        </header>
+
+        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
+            <div class="nav-icon" data-label="Market Trends"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+            <div class="nav-icon" data-label="Portfolio Intelligence"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+        </nav>
+
+        <main class="glass relative overflow-hidden" style="min-width: 0;">
+            <div id="tradingview_widget" class="absolute inset-0"></div>
+        </main>
+
+        <aside class="row-span-2 glass p-4 flex flex-col overflow-y-auto">
+            <div class="mb-8">
+                <div class="text-white/20 uppercase tracking-[0.2em] text-[8px] font-black mb-4">Bot Intelligence Node</div>
+                <div class="space-y-1">
+                    <div class="bot-row"><span>Smart Trades</span> <span style="color:var(--neon)">+$2,025</span></div>
+                    <div class="bot-row text-white/40"><span>DCA Bot</span> <span>Active</span></div>
+                    <div class="bot-row text-white/40"><span>Grid Bot</span> <span>Standby</span></div>
+                    <div class="bot-row"><span style="color:var(--neon)">DYS Bot</span> <span class="italic text-white/20 font-mono text-[8px]">Monitoring...</span></div>
+                </div>
+            </div>
+
+            <div class="space-y-6 mt-auto">
+                <div class="flex justify-between text-[9px] font-black opacity-30 uppercase">
+                    <span>Cross</span> <span>10.00x</span>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[8px] font-black text-white/20 uppercase">
+                        <span>Order Qty</span> <span>USDT</span>
+                    </div>
+                    <input type="text" placeholder="QTY in USDT">
+                </div>
+
+                <button class="btn-action">Open Short</button>
+            </div>
+        </aside>
+
+        <section class="glass">
+            <div class="flex items-center space-x-6 px-6 h-10 border-b border-white/5 text-[9px] font-black uppercase text-white/20">
+                <span style="color:var(--neon); border-bottom: 2px solid var(--neon)" class="h-full flex items-center">Open Orders</span>
+                <span>Positions</span>
+                <span>Order
