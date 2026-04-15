@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Institutional Terminal Build</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=JetBrains+Mono&display=swap');
+        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050505; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; margin: 0; font-weight: 300; }
+        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
+        .glass { background: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Fine White Typography */
+        h4, span, button, p { color: rgba(255,255,255,0.9); font-weight: 300 !important; letter-spacing: 0.025em; }
 
+        /* Tooltip Rings (No Fill) */
+        .tooltip-ring {
+            display: none; position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
+            border: 1px solid currentColor; background: #050505; color: white;
+            font-size: 8px; padding: 2px 8px; border-radius: 4px; white-space: nowrap; z-index: 50;
+        }
+        .group:hover .tooltip-ring { display: block; }
+
+        .app-container { display: grid; grid-template-columns: 48px 1fr 280px 240px; grid-template-rows: 40px 1fr 200px; height: 100vh; gap: 4px; padding: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="col-span-4 glass flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <img src="logo.png" alt="ExNexus" class="h-5 w-auto"> 
+                <span class="text-[10px] opacity-40 ml-2">INSTITUTIONAL TERMINAL</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="ticker" class="neon-text font-mono text-[11px]">$74,231.70</div>
+            </div>
+        </header>
+
+        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
+            <div onclick="expandAI('Analistic: Potential Bullish Breakout')" class="group relative cursor-pointer text-gray-600 hover:text-blue-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="tooltip-ring border-blue-600 text-blue-400">ANALISTIC</span>
+            </div>
+
+            <div onclick="expandAI('Smart Money: Large Whale Activity')" class="group relative cursor-pointer text-gray-600 hover:text-yellow-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z"></path></svg>
+                <span class="tooltip-ring border-yellow-600 text-yellow-500">SMART MONEY</span>
+            </div>
+        </nav>
+
+        <main class="glass overflow-hidden relative">
+            <div id="tradingview_widget" class="w-full h-full"></div>
+        </main>
+
+        <aside class="glass p-3 overflow-y-auto">
+            <h4 class="text-[8px] text-gray-500 uppercase mb-4 tracking-widest">Bot Intelligence Node</h4>
+            <div class="space-y-2">
+                <div class="p-2 border border-white/5 rounded">
+                    <div class="flex justify-between text-[9px]"><span>Smart Trades</span> <span class="neon-text">+$2,025</span></div>
+                </div>
+                <div class="p-2 border border-white/5 rounded opacity-60">
+                    <div class="flex justify-between text-[9px]"><span>DCA Bot</span> <span class="text-white">Active</span></div>
+                </div>
+                <div class="p-2 border border-white/5 rounded opacity-60">
+                    <div class="flex justify-between text-[9px]"><span>Grid Bot</span> <span class="text-white">Standby</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <aside class="glass p-3 flex flex-col space-y-4">
+            <div class="flex justify-between text-[9px]">
+                <span class="opacity-50">Cross</span> <span class="text-neon">10.00x</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+                <button class="bg-white/5 py-1 text-[8px] border border-white/10 rounded">Limit</button>
+                <button class="bg-neon/10 text-neon py-1 text-[8px] border border-neon/20 rounded">Market</button>
+                <button class="bg-white/5 py-1 text-[8px] border border-white/10 rounded">Chase</button>
+            </div>
+            <div class="mt-auto space-y-2">
+                <button class="w-full py-2 bg-neon text-black text-[9px] uppercase">Open Long</button>
+                <button class="w-full py-2 border border-hot-red text-hot-red text-[9px] uppercase">Open Short</button>
+            </div>
+        </aside>
+
+        <section class="col-span-3 glass flex flex-col">
+            <div class="flex items-center space-x-6 px-4 border-b border-white/5 text-[8px] uppercase h-8">
+                <span class="text-neon border-b border-neon h-full flex items-center">Open Orders</span>
+                <span class="text-white opacity-40 hover:opacity-100 cursor-pointer">Positions</span>
+                <span class="text-white opacity-40 hover:opacity-100 cursor-pointer">P&L</span>
+            </div>
+            <div class="flex-1 bg-black/40 flex items-center justify-center">
+                <span class="text-[8px] italic opacity-20">Scanning Exchange Nodes...</span>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        window.onload = () => { 
+            new TradingView.widget({
+                "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15", "theme": "dark", "container_id": "tradingview_widget",
+                "overrides": {
+                    "mainSeriesProperties.candleStyle.upColor": "#39FF14", "mainSeriesProperties.candleStyle.downColor": "#FF003F",
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#39FF14", "mainSeriesProperties.candleStyle.borderDownColor": "#FF003F"
+                }
+            });
+        };
+    </script>
+</body>
+</html>
