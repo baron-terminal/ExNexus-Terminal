@@ -3,171 +3,575 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Institutional Terminal Build</title>
+    <title>ExNexus | Institutional Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono&display=swap');
-        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050505; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; margin: 0; }
-        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(57, 255, 20, 0.3); }
-        .glass { background: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.05); }
-        
-        #draggable-ai {
-            min-width: 44px; height: 44px;
-            background: linear-gradient(135deg, #4285f4, #9b72cb);
-            border-radius: 12px; z-index: 9999; position: absolute; bottom: 80px; right: 20px;
-            box-shadow: 0 0 20px rgba(66, 133, 244, 0.4); cursor: move;
-            transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+        :root {
+            --neon:#39FF14; --hot-red:#FF003F; --bg:#050505;
+            --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+            --text-dim:rgba(255,255,255,0.32); --text-mid:rgba(255,255,255,0.58); --text-bright:rgba(255,255,255,0.92);
+            --blue:#4285f4; --yellow:#F0B429; --orange:#FF8C00; --purple:#9b72cb;
         }
-        #ai-briefing { display: none; padding: 12px; width: 220px; font-size: 10px; }
-        
-        /* 4-Column Terminal Architecture */
-        .app-container { display: grid; grid-template-columns: 48px 1fr 280px 240px; grid-template-rows: 40px 1fr 200px; height: 100vh; gap: 4px; padding: 4px; }
-        
-        input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: #333; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 10px; width: 10px; border-radius: 50%; background: var(--neon); margin-top: -4px; cursor: pointer; }
+        *{box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-bright);overflow:hidden;height:100vh;margin:0;font-size:11px;font-weight:400;}
+        .mono{font-family:'JetBrains Mono',monospace;}
+        .glass{background:#0a0a0a;border:1px solid var(--border);}
+        .neon-text{color:var(--neon);}
+        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 190px;height:100vh;gap:3px;padding:3px;}
+        ::-webkit-scrollbar{width:3px;height:3px;}
+        ::-webkit-scrollbar-track{background:transparent;}
+        ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
+
+        .tab-btn{color:var(--text-dim);cursor:pointer;padding:0 4px;height:100%;display:flex;align-items:center;white-space:nowrap;border-bottom:1.5px solid transparent;font-size:11px;font-weight:400;transition:color 0.15s;background:none;border-top:none;border-left:none;border-right:none;}
+        .tab-btn:hover{color:var(--text-bright);}
+        .tab-btn.active{color:var(--text-bright);border-bottom-color:var(--neon);}
+        .tab-panel{display:none;}
+        .tab-panel.active{display:flex;flex-direction:column;height:100%;}
+
+        .data-table{width:100%;border-collapse:collapse;}
+        .data-table th{font-size:10px;font-weight:500;color:var(--text-dim);text-align:left;padding:6px 8px 5px;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;background:#0a0a0a;z-index:1;}
+        .data-table th.r{text-align:right;}
+        .data-table td{font-size:11px;color:var(--text-mid);padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.03);white-space:nowrap;}
+        .data-table td.r{text-align:right;}
+        .data-table tr:hover td{background:rgba(255,255,255,0.02);}
+        .empty-state{color:var(--text-dim);font-size:11px;text-align:center;padding:28px 0;}
+
+        .ob-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:2px 8px;cursor:default;position:relative;font-size:10.5px;}
+        .ob-row:hover{background:rgba(255,255,255,0.02);}
+        .ob-bar{position:absolute;top:0;bottom:0;right:0;opacity:0.08;pointer-events:none;}
+        .ob-ask .ob-bar{background:var(--hot-red);}
+        .ob-bid .ob-bar{background:var(--neon);}
+
+        .ex-input{width:100%;background:#111;border:1px solid var(--border);padding:5px 8px;font-size:11px;color:var(--text-bright);font-family:'JetBrains Mono',monospace;outline:none;border-radius:3px;}
+        .ex-input:focus{border-color:rgba(255,255,255,0.18);}
+        input[type=range]{-webkit-appearance:none;background:transparent;width:100%;}
+        input[type=range]::-webkit-slider-runnable-track{height:2px;background:#2a2a2a;border-radius:1px;}
+        input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:10px;width:10px;border-radius:50%;background:var(--neon);margin-top:-4px;cursor:pointer;}
+
+        .ot-tab{font-size:10.5px;padding:4px 8px;border-radius:3px;cursor:pointer;color:var(--text-dim);border:1px solid transparent;background:none;}
+        .ot-tab.active{background:rgba(255,255,255,0.07);color:var(--text-bright);border-color:var(--border);}
+        .lev-badge{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:3px;padding:3px 8px;font-size:10.5px;color:var(--text-mid);cursor:pointer;}
+        .lev-badge:hover{border-color:rgba(255,255,255,0.18);}
+
+        /* LEFT NAV */
+        .nav-item{position:relative;cursor:pointer;color:var(--text-dim);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background 0.15s,color 0.15s;}
+        .nav-item:hover{background:rgba(255,255,255,0.06);color:white;}
+        .nav-item.active{background:rgba(255,255,255,0.09);}
+        .nav-tip{position:absolute;left:44px;top:50%;transform:translateY(-50%);background:#1a1a1a;border:1px solid var(--border2);font-size:9.5px;font-weight:500;padding:4px 9px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:200;color:white;letter-spacing:0.04em;}
+        .nav-item:hover .nav-tip{opacity:1;}
+        .nav-dot{width:5px;height:5px;border-radius:50%;position:absolute;bottom:5px;right:5px;}
+
+        /* SLIDE PANELS */
+        .slide-panel{position:absolute;left:47px;top:41px;bottom:193px;width:360px;background:#0c0c0c;border:1px solid var(--border2);z-index:100;transform:translateX(-120%);transition:transform 0.22s cubic-bezier(0.4,0,0.2,1);overflow:hidden;display:flex;flex-direction:column;border-radius:0 4px 4px 0;box-shadow:4px 0 24px rgba(0,0,0,0.6);}
+        .slide-panel.open{transform:translateX(0);}
+        .panel-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+        .panel-title{font-size:11px;font-weight:500;color:var(--text-bright);display:flex;align-items:center;gap:7px;}
+        .panel-close{cursor:pointer;color:var(--text-dim);font-size:16px;line-height:1;transition:color 0.12s;}
+        .panel-close:hover{color:white;}
+        .panel-body{flex:1;overflow-y:auto;padding:10px 14px;}
+        .panel-label{font-size:9.5px;font-weight:500;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;}
+
+        .coin-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+        .coin-row:last-child{border-bottom:none;}
+        .ls-bar-wrap{height:5px;border-radius:3px;background:#1a1a1a;overflow:hidden;margin-top:4px;width:150px;}
+        .ls-long{height:100%;background:var(--neon);float:left;}
+        .ls-short{height:100%;background:var(--hot-red);float:right;}
+
+        /* Fear Greed */
+        .fg-hist-item{flex:1;background:rgba(255,255,255,0.04);border-radius:3px;padding:5px 4px;text-align:center;}
+        .fg-hist-val{font-size:13px;font-family:'JetBrains Mono',monospace;}
+        .fg-hist-lbl{font-size:8.5px;color:var(--text-dim);margin-top:2px;}
+
+        /* AI Scout */
+        .scout-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+        .scout-source{font-size:10px;color:var(--text-mid);}
+        .prob-ring{width:84px;height:84px;position:relative;flex-shrink:0;}
+        .prob-ring svg{width:84px;height:84px;}
+        .prob-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:16px;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--neon);}
+        .bot-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:4px;padding:9px 11px;margin-top:6px;}
+
+        /* AI bubble */
+        #draggable-ai{min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
+        #ai-briefing{display:none;padding:10px;width:210px;font-size:10px;}
     </style>
 </head>
 <body>
+<div class="app-container">
 
-    <div class="app-container">
-        <header class="col-span-4 glass flex items-center justify-between px-4">
-            <div class="flex items-center space-x-2">
-                <img src="logo.png" alt="ExNexus" class="h-6 w-auto"> 
-            </div>
-            <div class="flex items-center space-x-4">
-                <span class="text-[9px] text-gray-500 font-bold uppercase">Bybit Connected</span>
-                <div id="ticker" class="neon-text font-black tracking-widest text-[11px]">$74,231.70</div>
-            </div>
-        </header>
-
-        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
-            <div class="text-neon opacity-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></div>
-            
-            <div onclick="expandAI('Analistic: Potential Bullish Breakout on 4H SOL/USDT')" class="group relative cursor-pointer text-gray-700 hover:text-blue-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                <span class="absolute left-12 hidden group-hover:block bg-blue-600 text-[8px] font-black px-2 py-1 rounded tracking-tighter shadow-lg z-50">ANALISTIC</span>
-            </div>
-
-            <div onclick="expandAI('Smart Money: Whale Wallet 0x4f... moving $10M USDC to Bybit')" class="group relative cursor-pointer text-gray-700 hover:text-yellow-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                <span class="absolute left-12 hidden group-hover:block bg-yellow-600 text-[8px] font-black px-2 py-1 rounded whitespace-nowrap tracking-tighter shadow-lg z-50">SMART MONEY</span>
-            </div>
-
-            <div class="group relative cursor-pointer text-gray-700 hover:text-orange-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                <span class="absolute left-12 hidden group-hover:block bg-orange-600 text-[8px] font-black px-2 py-1 rounded tracking-tighter shadow-lg z-50 uppercase">heatmap</span>
-            </div>
-        </nav>
-
-        <main class="glass overflow-hidden relative">
-            <div id="tradingview_widget" class="w-full h-full"></div>
-        </main>
-
-        <aside class="glass p-3 overflow-y-auto">
-            <h4 class="text-[9px] text-gray-500 font-black uppercase mb-4 tracking-widest">Active Bot Engines</h4>
-            <div class="space-y-3">
-                <div class="p-3 bg-white/5 border border-white/10 rounded-lg">
-                    <div class="flex justify-between text-[10px] font-bold"><span>Smart Trades</span> <span class="neon-text">+$2,025.18</span></div>
-                </div>
-                <div class="p-3 bg-white/5 border border-white/10 rounded-lg opacity-50">
-                    <div class="flex justify-between text-[10px] font-bold"><span>DCA Bots</span> <span class="text-hot-red">-$1,091.70</span></div>
-                </div>
-            </div>
-        </aside>
-
-        <aside class="glass p-3 flex flex-col space-y-4">
-            <div class="flex justify-between items-center text-[10px] font-black">
-                <span class="bg-gray-800 px-2 py-0.5 rounded text-gray-400">CROSS</span>
-                <span class="text-neon">10.00x</span>
-            </div>
-            
-            <div class="grid grid-cols-3 gap-1 text-[8px] font-black uppercase">
-                <button class="bg-white/5 py-1.5 rounded border border-white/10">Limit</button>
-                <button class="bg-neon text-black py-1.5 rounded">Market</button>
-                <button class="bg-white/5 py-1.5 rounded border border-white/10">Chase</button>
-            </div>
-
-            <div class="space-y-3 pt-2">
-                <div class="flex justify-between text-[9px] text-gray-500 font-bold">
-                    <span>Order Qty</span>
-                    <span class="text-white">USDT <svg class="inline w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></span>
-                </div>
-                <input type="text" placeholder="Amount" class="w-full bg-black border border-white/10 p-2 text-[10px] font-mono rounded text-neon focus:outline-none focus:border-neon">
-                
-                <div class="pt-1">
-                    <input type="range" min="0" max="100" class="w-full">
-                    <div class="flex justify-between text-[7px] text-gray-600 font-black mt-1 uppercase">
-                        <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-auto space-y-2">
-                <button class="w-full py-3 rounded bg-[#39FF14] text-black font-black uppercase text-[10px] shadow-[0_0_20px_#39FF1433]">Open Long</button>
-                <button class="w-full py-3 rounded bg-transparent border border-hot-red text-hot-red font-black uppercase text-[10px]">Open Short</button>
-            </div>
-
-            <div class="border-t border-white/5 pt-3 space-y-1">
-                <div class="flex justify-between text-[8px] text-gray-600"><span>Mark Price</span> <span>74,022.96</span></div>
-                <div class="flex justify-between text-[8px] text-gray-600"><span>Index Price</span> <span>74,065.34</span></div>
-            </div>
-        </aside>
-
-        <section class="col-span-3 glass flex flex-col">
-            <div class="flex items-center space-x-6 px-4 border-b border-white/5 text-[9px] font-black uppercase tracking-tighter h-8">
-                <span class="text-neon border-b border-neon h-full flex items-center">Open Orders</span>
-                <span class="text-gray-500 hover:text-white cursor-pointer h-full flex items-center">Positions</span>
-                <span class="text-gray-500 hover:text-white cursor-pointer h-full flex items-center">Order History</span>
-                <span class="text-gray-500 hover:text-white cursor-pointer h-full flex items-center">Assets</span>
-                <span class="text-gray-500 hover:text-white cursor-pointer h-full flex items-center">P&L</span>
-            </div>
-            <div class="flex-1 overflow-auto bg-black/40 p-4">
-                <div class="text-[9px] font-mono text-gray-700 italic text-center mt-10">Scanning connected Bybit & Binance exchange nodes...</div>
-            </div>
-        </section>
-    </div>
-
-    <div id="draggable-ai">
-        <div id="ai-icon" class="flex-shrink-0 w-[44px] h-[44px] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+    <!-- HEADER -->
+    <header class="col-span-4 glass flex items-center justify-between px-4">
+        <div class="flex items-center gap-3"><img src="logo.png" alt="ExNexus" class="h-5 w-auto opacity-90"></div>
+        <div class="flex items-center gap-5">
+            <span style="font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;">Bybit Connected</span>
+            <span id="ticker" class="neon-text mono" style="font-size:12px;font-weight:500;">$74,231.70</span>
         </div>
-        <div id="ai-briefing">
-            <div class="flex justify-between items-center mb-2 border-b border-white/20 pb-1">
-                <span class="font-black uppercase text-[8px]">Intelligence Brief</span>
-                <span onclick="closeAI()" class="cursor-pointer font-bold hover:text-red-500">×</span>
+    </header>
+
+    <!-- LEFT NAV -->
+    <nav class="row-span-2 glass flex flex-col items-center py-4 gap-2">
+        <div style="color:var(--text-dim);cursor:pointer;padding:8px;" class="hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </div>
+        <div style="width:22px;height:1px;background:var(--border);"></div>
+
+        <!-- Analytics: altFINS -->
+        <div class="nav-item" id="nav-analytics" onclick="togglePanel('analytics')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <div class="nav-dot" style="background:var(--blue);"></div>
+            <span class="nav-tip" style="border-left:2px solid var(--blue);">Analytics · altFINS</span>
+        </div>
+
+        <!-- Smart Money: Nansen -->
+        <div class="nav-item" id="nav-smartmoney" onclick="togglePanel('smartmoney')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+            <div class="nav-dot" style="background:var(--yellow);"></div>
+            <span class="nav-tip" style="border-left:2px solid var(--yellow);">Smart Money · Nansen</span>
+        </div>
+
+        <!-- Heatmap: Coinglass -->
+        <div class="nav-item" id="nav-heatmap" onclick="togglePanel('heatmap')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <div class="nav-dot" style="background:var(--orange);"></div>
+            <span class="nav-tip" style="border-left:2px solid var(--orange);">Heatmap · Coinglass</span>
+        </div>
+
+        <!-- Long/Short: Coinglass -->
+        <div class="nav-item" id="nav-longshort" onclick="togglePanel('longshort')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+            <div class="nav-dot" style="background:var(--purple);"></div>
+            <span class="nav-tip" style="border-left:2px solid var(--purple);">Long/Short · Coinglass</span>
+        </div>
+
+        <!-- Fear & Greed -->
+        <div class="nav-item" id="nav-feargreed" onclick="togglePanel('feargreed')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            <div id="fg-dot" class="nav-dot" style="background:#555;"></div>
+            <span class="nav-tip" id="fg-tip" style="border-left:2px solid #555;">Fear & Greed</span>
+        </div>
+
+        <div style="flex:1;"></div>
+        <div style="width:22px;height:1px;background:var(--border);"></div>
+
+        <!-- AI Scout -->
+        <div class="nav-item" id="nav-scout" onclick="togglePanel('scout')" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.18);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+            <span class="nav-tip" style="border-left:2px solid var(--purple);">AI Scout</span>
+        </div>
+        <div style="height:8px;"></div>
+    </nav>
+
+    <!-- SLIDE PANELS -->
+
+    <!-- Analytics: altFINS -->
+    <div id="panel-analytics" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);"></div>Analytics <span style="color:var(--text-dim);font-weight:400;">· altFINS</span></div>
+            <span class="panel-close" onclick="closePanel('analytics')">×</span>
+        </div>
+        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
+            <button class="tab-btn active" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-screener')">Screener</button>
+            <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-patterns')">Patterns</button>
+            <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-signals')">Signals</button>
+        </div>
+        <div style="flex:1;overflow:auto;">
+            <div id="af-screener">
+                <table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead>
+                <tbody><tr><td colspan="6"><div class="empty-state">Connect altFINS API key in Settings</div></td></tr></tbody></table>
             </div>
-            <p id="ai-text" class="leading-tight text-white/90 font-mono"></p>
+            <div id="af-patterns" style="display:none;padding:14px;"><div class="panel-label">Chart Patterns</div><div class="empty-state">Connect altFINS API key</div></div>
+            <div id="af-signals" style="display:none;padding:14px;"><div class="panel-label">Trading Signals</div><div class="empty-state">Connect altFINS API key</div></div>
         </div>
     </div>
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-        $(function() { $("#draggable-ai").draggable({ containment: "window" }); });
+    <!-- Smart Money: Nansen -->
+    <div id="panel-smartmoney" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--yellow);"></div>Smart Money <span style="color:var(--text-dim);font-weight:400;">· Nansen</span></div>
+            <span class="panel-close" onclick="closePanel('smartmoney')">×</span>
+        </div>
+        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
+            <button class="tab-btn active" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-flows')">Flows</button>
+            <button class="tab-btn" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-whales')">Whales</button>
+            <button class="tab-btn" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-holders')">Holders</button>
+        </div>
+        <div style="flex:1;overflow:auto;">
+            <div id="nm-flows" style="padding:14px;"><div class="panel-label">Exchange Netflows (24h)</div><div class="empty-state">Connect Nansen via proxy</div></div>
+            <div id="nm-whales" style="display:none;padding:14px;"><div class="panel-label">Whale Alerts</div><div class="empty-state">Connect Nansen via proxy</div></div>
+            <div id="nm-holders" style="display:none;padding:14px;"><div class="panel-label">Top Holders</div><div class="empty-state">Connect Nansen via proxy</div></div>
+        </div>
+    </div>
 
-        function expandAI(msg) {
-            $("#ai-text").text(msg);
-            $("#draggable-ai").css("width", "260px");
-            $("#ai-briefing").fadeIn(300);
-        }
+    <!-- Heatmap: Coinglass -->
+    <div id="panel-heatmap" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--orange);"></div>Heatmap <span style="color:var(--text-dim);font-weight:400;">· Coinglass</span></div>
+            <span class="panel-close" onclick="closePanel('heatmap')">×</span>
+        </div>
+        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
+            <button class="tab-btn active" onclick="ptab(this,['cg-liq','cg-oi'],'cg-liq')">Liquidations</button>
+            <button class="tab-btn" onclick="ptab(this,['cg-liq','cg-oi'],'cg-oi')">Open Interest</button>
+        </div>
+        <div style="flex:1;overflow:auto;">
+            <div id="cg-liq" style="padding:14px;"><div class="panel-label">Liquidation Heatmap</div><div class="empty-state">Connect Coinglass via proxy</div></div>
+            <div id="cg-oi" style="display:none;padding:14px;"><div class="panel-label">Open Interest</div><div class="empty-state">Connect Coinglass via proxy</div></div>
+        </div>
+    </div>
 
-        function closeAI() {
-            $("#ai-briefing").fadeOut(100, () => { $("#draggable-ai").css("width", "44px"); });
-        }
+    <!-- Long/Short: Coinglass -->
+    <div id="panel-longshort" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--purple);"></div>Long/Short Ratio <span style="color:var(--text-dim);font-weight:400;">· Coinglass</span></div>
+            <span class="panel-close" onclick="closePanel('longshort')">×</span>
+        </div>
+        <div class="panel-body">
+            <div class="panel-label">Top Pairs · Live</div>
+            <div id="ls-rows">
+                <!-- populated by JS -->
+            </div>
+            <div style="margin-top:10px;padding:7px 9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;font-size:9.5px;color:var(--text-dim);">Mock data · Wire Coinglass API for live ratios</div>
+        </div>
+    </div>
 
-        const widgetOptions = {
-            "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15", "theme": "dark", "container_id": "tradingview_widget",
-            "overrides": {
-                "mainSeriesProperties.candleStyle.upColor": "#39FF14", "mainSeriesProperties.candleStyle.downColor": "#FF003F",
-                "mainSeriesProperties.candleStyle.borderUpColor": "#39FF14", "mainSeriesProperties.candleStyle.borderDownColor": "#FF003F",
-                "mainSeriesProperties.candleStyle.wickUpColor": "#39FF14", "mainSeriesProperties.candleStyle.wickDownColor": "#FF003F"
-            }
-        };
+    <!-- Fear & Greed -->
+    <div id="panel-feargreed" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title"><div id="fg-panel-dot" style="width:6px;height:6px;border-radius:50%;background:#555;"></div>Fear &amp; Greed Index</div>
+            <span class="panel-close" onclick="closePanel('feargreed')">×</span>
+        </div>
+        <div class="panel-body">
+            <!-- Gauge -->
+            <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;">
+                <div style="position:relative;width:150px;height:80px;overflow:hidden;">
+                    <svg viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:80px;">
+                        <path d="M12 75 A63 63 0 0 1 138 75" fill="none" stroke="#1e1e1e" stroke-width="10" stroke-linecap="round"/>
+                        <path d="M12 75 A63 63 0 0 1 36 28" fill="none" stroke="#FF003F" stroke-width="10" stroke-linecap="butt"/>
+                        <path d="M36 28 A63 63 0 0 1 65 12" fill="none" stroke="#FF6B35" stroke-width="10" stroke-linecap="butt"/>
+                        <path d="M65 12 A63 63 0 0 1 95 12" fill="none" stroke="#F0B429" stroke-width="10" stroke-linecap="butt"/>
+                        <path d="M95 12 A63 63 0 0 1 120 28" fill="none" stroke="#7ED321" stroke-width="10" stroke-linecap="butt"/>
+                        <path d="M120 28 A63 63 0 0 1 138 75" fill="none" stroke="#39FF14" stroke-width="10" stroke-linecap="butt"/>
+                        <line id="fg-needle" x1="75" y1="75" x2="75" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(0,75,75)" style="transition:transform 0.8s ease;"/>
+                        <circle cx="75" cy="75" r="5" fill="white"/>
+                    </svg>
+                </div>
+                <div id="fg-value-display" style="font-size:30px;font-weight:300;font-family:'JetBrains Mono',monospace;color:#555;margin-top:4px;">—</div>
+                <div id="fg-label-display" style="font-size:11px;font-weight:500;color:var(--text-dim);margin-top:2px;">Loading...</div>
+            </div>
+            <!-- History -->
+            <div class="panel-label" style="margin-top:10px;">Historical</div>
+            <div style="display:flex;gap:4px;" id="fg-history">
+                <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Yesterday</div></div>
+                <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Last Week</div></div>
+                <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Last Month</div></div>
+            </div>
+            <!-- Interpretation -->
+            <div class="panel-label" style="margin-top:12px;">Trading Implication</div>
+            <div id="fg-interpretation" style="font-size:10.5px;color:var(--text-mid);line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:9px;">Fetching...</div>
+        </div>
+    </div>
 
-        window.onload = () => { new TradingView.widget(widgetOptions); };
-    </script>
+    <!-- AI Scout -->
+    <div id="panel-scout" class="slide-panel" style="width:380px;">
+        <div class="panel-header">
+            <div class="panel-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="2"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                AI Scout <span style="color:var(--text-dim);font-weight:400;">· Signal Aggregator</span>
+            </div>
+            <span class="panel-close" onclick="closePanel('scout')">×</span>
+        </div>
+        <div class="panel-body">
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+                <select id="scout-coin" style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:5px 8px;font-size:11px;border-radius:3px;outline:none;">
+                    <option>BTCUSDT</option><option>ETHUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option><option>BNBUSDT</option><option>ADAUSDT</option>
+                </select>
+                <button onclick="runScout()" style="background:linear-gradient(135deg,#4285f4,#9b72cb);color:white;border:none;padding:5px 14px;border-radius:3px;font-size:10.5px;cursor:pointer;font-weight:500;">Scan</button>
+            </div>
+            <div class="panel-label">Intelligence Sources</div>
+            <div id="scout-sources" style="margin-bottom:14px;">
+                <div class="scout-row"><span class="scout-source">altFINS · RSI/MACD</span><span id="ss1" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">altFINS · Trend Score</span><span id="ss2" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Nansen · Smart Money</span><span id="ss3" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Coinglass · Long/Short</span><span id="ss4" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Coinglass · Liquidations</span><span id="ss5" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row" style="border-bottom:none;"><span class="scout-source">Fear &amp; Greed</span><span id="ss6" style="font-size:10px;color:var(--text-dim);">—</span></div>
+            </div>
+            <div class="panel-label">Win Probability</div>
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+                <div class="prob-ring">
+                    <svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="#1e1e1e" stroke-width="6"/><circle id="prob-circle" cx="42" cy="42" r="34" fill="none" stroke="var(--neon)" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round" transform="rotate(-90,42,42)" style="transition:stroke-dashoffset 0.9s ease;"/></svg>
+                    <div class="prob-val" id="prob-val">—</div>
+                </div>
+                <div style="flex:1;font-size:10px;color:var(--text-dim);line-height:1.6;" id="prob-summary">Run a scan to generate probability from all intelligence sources.</div>
+            </div>
+            <div class="panel-label">Recommended Bot</div>
+            <div class="bot-card" id="bot-rec"><div style="font-size:10.5px;color:var(--text-dim);">Awaiting scan...</div></div>
+            <div class="panel-label" style="margin-top:12px;">AI Reasoning</div>
+            <div id="scout-reasoning" style="font-size:10.5px;color:var(--text-mid);line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:9px;min-height:56px;">AI analysis will appear here after scan.</div>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <main class="glass overflow-hidden relative"><div id="tradingview_widget" class="w-full h-full"></div></main>
+
+    <!-- ORDER BOOK -->
+    <aside class="glass flex flex-col overflow-hidden">
+        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;">
+            <button class="tab-btn active" onclick="switchObTab(this,'ob-book')">Order Book</button>
+            <button class="tab-btn" onclick="switchObTab(this,'ob-trades')">Recent Trades</button>
+        </div>
+        <div id="ob-book" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0;">
+                <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
+                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
+                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Total(BTC)</span>
+            </div>
+            <div id="ob-asks" style="flex:1;overflow-y:auto;display:flex;flex-direction:column-reverse;"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:#0f0f0f;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-shrink:0;">
+                <span class="mono neon-text" style="font-size:12px;font-weight:500;">74,231.70</span>
+                <span style="font-size:9.5px;color:var(--text-dim);">Spread <span class="mono">0.10</span></span>
+            </div>
+            <div id="ob-bids" style="flex:1;overflow-y:auto;"></div>
+        </div>
+        <div id="ob-trades" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);">
+                <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
+                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
+                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Time</span>
+            </div>
+            <div id="recent-trades-list" style="flex:1;overflow-y:auto;"></div>
+        </div>
+    </aside>
+
+    <!-- ORDER ENTRY -->
+    <aside class="glass flex flex-col overflow-hidden" style="padding:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(57,255,20,0.2);">Isolated</button></div>
+            <button class="lev-badge" style="color:var(--text-bright);">10.00×</button>
+        </div>
+        <div style="display:flex;gap:3px;margin-bottom:10px;">
+            <button class="ot-tab active" onclick="switchOT(this)">Limit</button>
+            <button class="ot-tab" onclick="switchOT(this)">Market</button>
+            <button class="ot-tab" onclick="switchOT(this)">Chase</button>
+        </div>
+        <div style="margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Price</span><span class="mono" style="font-size:9.5px;color:var(--text-dim);">Last 74,231.70</span></div>
+            <div style="position:relative;"><input class="ex-input" type="text" value="74231.70"><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9.5px;color:var(--text-dim);">USDT</span></div>
+        </div>
+        <div style="margin-bottom:6px;">
+            <div style="margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Qty</span></div>
+            <div style="position:relative;"><input class="ex-input" type="text" placeholder="0.000"><span style="font-size:9.5px;color:var(--text-dim);position:absolute;right:8px;top:50%;transform:translateY(-50%);">BTC</span></div>
+        </div>
+        <div style="margin-bottom:6px;">
+            <input type="range" min="0" max="100" value="0">
+            <div style="display:flex;justify-content:space-between;margin-top:2px;">
+                <span style="font-size:8.5px;color:var(--text-dim);">0%</span><span style="font-size:8.5px;color:var(--text-dim);">25%</span><span style="font-size:8.5px;color:var(--text-dim);">50%</span><span style="font-size:8.5px;color:var(--text-dim);">75%</span><span style="font-size:8.5px;color:var(--text-dim);">100%</span>
+            </div>
+        </div>
+        <div style="background:#0f0f0f;border:1px solid var(--border);border-radius:3px;padding:6px 8px;margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Value</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Cost</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+            <button style="width:100%;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:600;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(57,255,20,0.16);">Open Long</button>
+            <button style="width:100%;padding:8px;background:transparent;color:var(--hot-red);font-size:11px;font-weight:600;border-radius:3px;border:1px solid rgba(255,0,63,0.35);cursor:pointer;">Open Short</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;">
+            <div style="font-size:10px;font-weight:500;color:var(--text-mid);margin-bottom:6px;">Contract Details BTCUSDT</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Expiration</span><span class="mono" style="font-size:10px;color:var(--text-mid);">Perpetual</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Index Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,022.96</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Mark Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,018.34</span></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- BOTTOM TABS -->
+    <section class="col-span-3 glass flex flex-col overflow-hidden">
+        <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
+            <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions')">Positions</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-orderhistory')">Order History</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tradehistory')">Trade History</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets')">Assets</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-borrowings')">Borrowings</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools')">Tools</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
+        </div>
+        <div style="flex:1;overflow:hidden;">
+            <div id="bt-openorders" class="tab-panel active" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Filled</th><th class="r">Order Value</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="10"><div class="empty-state">No open orders</div></td></tr></tbody></table></div>
+            <div id="bt-positions" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
+            <div id="bt-orderhistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Avg Fill</th><th class="r">Qty</th><th class="r">Order Value</th><th>Status</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No order history</div></td></tr></tbody></table></div>
+            <div id="bt-tradehistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Fee</th><th class="r">Realized PNL</th></tr></thead><tbody><tr><td colspan="7"><div class="empty-state">No trade history</div></td></tr></tbody></table></div>
+            <div id="bt-assets" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Equity</th><th class="r">Available</th><th class="r">Used Margin</th><th class="r">Order Margin</th><th class="r">Unrealized PNL</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No assets data</div></td></tr></tbody></table></div>
+            <div id="bt-borrowings" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Borrowed</th><th class="r">Interest</th><th class="r">Daily Rate</th><th>Due Date</th><th>Action</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No borrowings</div></td></tr></tbody></table></div>
+            <div id="bt-tools" class="tab-panel" style="height:100%;align-items:center;justify-content:center;"><div class="empty-state">Trading tools — coming soon</div></div>
+            <div id="bt-pnl" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Closed Size</th><th class="r">Entry Price</th><th class="r">Exit Price</th><th class="r">Realized PNL</th><th>Close Type</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No P&amp;L data</div></td></tr></tbody></table></div>
+        </div>
+    </section>
+</div>
+
+<!-- AI BUBBLE -->
+<div id="draggable-ai">
+    <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+    </div>
+    <div id="ai-briefing">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <span style="font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;">Intelligence Brief</span>
+            <span onclick="closeAI()" style="cursor:pointer;font-size:16px;line-height:1;color:rgba(255,255,255,0.4);">×</span>
+        </div>
+        <p id="ai-text" style="font-size:10px;line-height:1.5;color:rgba(255,255,255,0.85);font-family:'JetBrains Mono',monospace;"></p>
+    </div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+$(function(){ $("#draggable-ai").draggable({containment:"window"}); });
+function closeAI(){ $("#ai-briefing").fadeOut(100,()=>{ $("#draggable-ai").css("width","40px"); }); }
+
+window.onload = () => {
+    new TradingView.widget({
+        autosize:true,symbol:"BYBIT:BTCUSDT",interval:"15",theme:"dark",container_id:"tradingview_widget",
+        overrides:{"mainSeriesProperties.candleStyle.upColor":"#39FF14","mainSeriesProperties.candleStyle.downColor":"#FF003F","mainSeriesProperties.candleStyle.borderUpColor":"#39FF14","mainSeriesProperties.candleStyle.borderDownColor":"#FF003F","mainSeriesProperties.candleStyle.wickUpColor":"#39FF14","mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"}
+    });
+    renderOrderBook(); renderRecentTrades(); renderLSRows(); fetchFearGreed();
+};
+
+// Panel system
+let activePanel=null;
+function togglePanel(name){
+    if(activePanel===name){closePanel(name);return;}
+    if(activePanel)closePanel(activePanel);
+    document.getElementById('panel-'+name).classList.add('open');
+    document.getElementById('nav-'+name)?.classList.add('active');
+    activePanel=name;
+    if(name==='feargreed')fetchFearGreed();
+}
+function closePanel(name){
+    document.getElementById('panel-'+name).classList.remove('open');
+    document.getElementById('nav-'+name)?.classList.remove('active');
+    if(activePanel===name)activePanel=null;
+}
+
+// Panel tab switching
+function ptab(btn, allIds, showId){
+    allIds.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el)el.style.display=(id===showId)?'block':'none';
+    });
+    btn.closest('div').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+// Bottom tabs
+const BT=['bt-openorders','bt-positions','bt-orderhistory','bt-tradehistory','bt-assets','bt-borrowings','bt-tools','bt-pnl'];
+function switchBottomTab(btn,id){
+    BT.forEach(p=>document.getElementById(p)?.classList.remove('active'));
+    btn.closest('.glass').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    btn.classList.add('active');
+}
+function switchObTab(btn,id){
+    ['ob-book','ob-trades'].forEach(p=>document.getElementById(p).style.display='none');
+    btn.closest('.glass').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).style.display='flex';
+    btn.classList.add('active');
+}
+function switchOT(btn){
+    btn.closest('div').querySelectorAll('.ot-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+// Order book
+const askData=[[74245.10,0.124,2.841],[74240.30,0.067,2.717],[74238.90,0.891,2.650],[74237.50,0.045,1.759],[74236.20,0.312,1.714],[74235.00,0.178,1.402],[74233.80,0.224,1.224],[74232.40,0.551,1.000],[74231.90,0.449,0.449]];
+const bidData=[[74231.70,1.089,1.089],[74230.50,0.334,1.423],[74229.10,0.612,2.035],[74228.40,0.089,2.124],[74227.80,0.445,2.569],[74226.20,0.231,2.800],[74224.90,0.667,3.467],[74223.30,0.112,3.579],[74221.60,0.789,4.368]];
+const maxT=Math.max(...askData.map(r=>r[2]),...bidData.map(r=>r[2]));
+function renderOrderBook(){
+    document.getElementById('ob-asks').innerHTML=askData.map(([p,q,t])=>`<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`).join('');
+    document.getElementById('ob-bids').innerHTML=bidData.map(([p,q,t])=>`<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#39FF14;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`).join('');
+}
+function renderRecentTrades(){
+    const tr=[[74231.70,0.124,'13:55:46',true],[74230.50,0.891,'13:55:45',false],[74232.40,0.045,'13:55:44',true],[74229.10,0.334,'13:55:43',false],[74233.80,0.178,'13:55:42',true],[74228.40,0.612,'13:55:41',false],[74231.90,0.089,'13:55:40',true]];
+    document.getElementById('recent-trades-list').innerHTML=tr.map(([p,q,t,b])=>`<div class="ob-row"><span class="mono" style="color:${b?'#39FF14':'#FF003F'};font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t}</span></div>`).join('');
+}
+
+// Long/Short mock rows
+function renderLSRows(){
+    const pairs=[['BTCUSDT',63,37],['ETHUSDT',54,46],['SOLUSDT',48,52],['XRPUSDT',71,29],['BNBUSDT',58,42],['ADAUSDT',44,56]];
+    document.getElementById('ls-rows').innerHTML=pairs.map(([p,l,s])=>`
+        <div class="coin-row">
+            <div><div style="font-size:11px;color:var(--text-bright);font-weight:500;">${p}</div>
+            <div class="ls-bar-wrap"><div class="ls-long" style="width:${l}%;"></div><div class="ls-short" style="width:${s}%;"></div></div></div>
+            <div style="text-align:right;"><span class="mono" style="color:var(--neon);font-size:10.5px;">${l}%</span><span style="color:var(--text-dim);font-size:10px;"> / </span><span class="mono" style="color:var(--hot-red);font-size:10.5px;">${s}%</span></div>
+        </div>`).join('');
+}
+
+// Fear & Greed
+const FG_COLORS={extreme_fear:'#FF003F',fear:'#FF6B35',neutral:'#F0B429',greed:'#7ED321',extreme_greed:'#39FF14'};
+const FG_LABELS={extreme_fear:'Extreme Fear',fear:'Fear',neutral:'Neutral',greed:'Greed',extreme_greed:'Extreme Greed'};
+const FG_INTERP={
+    extreme_fear:'Panic mode — historically a strong buy signal. Confirm with trend + volume before entering.',
+    fear:'Caution dominates. Look for long setups on quality alts with bullish MACD + strong support.',
+    neutral:'Mixed sentiment. Follow momentum: use altFINS signals and L/S ratio for entries.',
+    greed:'Bulls in control. Ride momentum but tighten stops — late entries carry higher risk.',
+    extreme_greed:'Market overheated. Reduce size, take partials, watch for reversal signals from Coinglass.'
+};
+async function fetchFearGreed(){
+    try {
+        const res=await fetch('https://api.alternative.me/fng/?limit=3');
+        const d=await res.json();
+        if(!d.data)return;
+        const cur=d.data[0];
+        const val=parseInt(cur.value);
+        const cl=cur.value_classification.toLowerCase().replace(/ /g,'_');
+        const color=FG_COLORS[cl]||'#aaa';
+        const angle=(val/100)*180-90;
+        document.getElementById('fg-needle').setAttribute('transform',`rotate(${angle},75,75)`);
+        document.getElementById('fg-value-display').textContent=val;
+        document.getElementById('fg-value-display').style.color=color;
+        document.getElementById('fg-label-display').textContent=FG_LABELS[cl]||cur.value_classification;
+        document.getElementById('fg-label-display').style.color=color;
+        document.getElementById('fg-panel-dot').style.background=color;
+        document.getElementById('fg-dot').style.background=color;
+        document.getElementById('fg-tip').style.borderLeftColor=color;
+        document.getElementById('fg-tip').textContent=`Fear & Greed · ${val}`;
+        document.getElementById('fg-interpretation').textContent=FG_INTERP[cl]||'';
+        const hist=document.querySelectorAll('.fg-hist-item');
+        const hl=['Yesterday','Last Week','Last Month'];
+        d.data.forEach((item,i)=>{
+            if(i===0||!hist[i-1])return;
+            const hv=parseInt(item.value),hcl=item.value_classification.toLowerCase().replace(/ /g,'_');
+            hist[i-1].querySelector('.fg-hist-val').textContent=hv;
+            hist[i-1].querySelector('.fg-hist-val').style.color=FG_COLORS[hcl]||'#aaa';
+        });
+        document.getElementById('ss6').textContent=`${FG_LABELS[cl]} (${val})`;
+        document.getElementById('ss6').style.color=color;
+    } catch(e) {
+        document.getElementById('fg-label-display').textContent='Unavailable';
+        document.getElementById('fg-interpretation').textContent='Fear & Greed API will be fetched via your Cloudflare proxy in production.';
+    }
+}
+
+// AI Scout mock
+function runScout(){
+    const coin=document.getElementById('scout-coin').value;
+    const signals=[
+        {id:'ss1',text:'Bullish · RSI 58, MACD Cross ↑',color:'var(--neon)'},
+        {id:'ss2',text:'Strong · Score 7.2/10',color:'#6fff4a'},
+        {id:'ss3',text:'Accumulation detected',color:'var(--yellow)'},
+        {id:'ss4',text:'Longs 63% / Shorts 37%',color:'var(--neon)'},
+        {id:'ss5',text:'$2.1M short liq. below market',color:'var(--yellow)'},
+    ];
+    signals.forEach(s=>{ const el=document.getElementById(s.id); el.textContent=s.text; el.style.color=s.color; });
+    const prob=71;
+    document.getElementById('prob-circle').style.strokeDashoffset=213.6-(prob/100)*213.6;
+    document.getElementById('prob-val').textContent=prob+'%';
+    document.getElementById('prob-summary').textContent=`${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
+    document.getElementById('bot-rec').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
+    document.getElementById('scout-reasoning').textContent=`${coin}: RSI at 58 with bullish MACD cross on 4H (altFINS). Nansen flags smart money accumulation. Coinglass shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
+}
+</script>
 </body>
 </html>
