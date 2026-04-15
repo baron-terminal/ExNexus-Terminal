@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ExNexus | Institutional Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -96,6 +96,223 @@
         /* AI bubble */
         #draggable-ai{min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
         #ai-briefing{display:none;padding:10px;width:210px;font-size:10px;}
+
+        /* ========== TABLET (768–1199px) ========== */
+        @media (min-width:768px) and (max-width:1199px){
+            .app-container{
+                grid-template-columns:44px 1fr 280px !important;
+                grid-template-rows:40px 1fr 180px !important;
+            }
+            .app-container > header{ grid-column:1/-1 !important; }
+            #bottom-section{ grid-column:2/-1 !important; }
+            /* Order entry hidden in grid — shown as slide-in drawer */
+            #aside-orderentry{
+                display:none;
+                position:fixed;
+                right:0; top:43px; bottom:0;
+                width:240px;
+                z-index:90;
+                padding:10px;
+                background:#0a0a0a;
+                border-left:1px solid var(--border2);
+                box-shadow:-6px 0 24px rgba(0,0,0,0.6);
+                flex-direction:column;
+                overflow-y:auto;
+                transform:translateX(100%);
+                transition:transform 0.22s cubic-bezier(0.4,0,0.2,1);
+            }
+            #aside-orderentry.tablet-open{
+                display:flex !important;
+                transform:translateX(0) !important;
+            }
+            #tablet-trade-btn{ display:flex !important; }
+            .slide-panel{ width:min(360px,72vw); }
+            .nav-tip{ display:none; }
+        }
+
+        /* ========== MOBILE (<768px) ========== */
+        @media (max-width:767px){
+            body{
+                overflow:hidden;
+                display:flex;
+                flex-direction:column;
+                height:100vh;
+            }
+            .app-container{
+                flex:1;
+                min-height:0;
+                display:flex !important;
+                flex-direction:column;
+                padding:0;
+                gap:0;
+                height:auto;
+            }
+            .app-container > header{
+                height:46px !important;
+                flex-shrink:0;
+                padding:0 12px !important;
+            }
+            .app-container > nav{ display:none !important; }
+            /* All main sections hidden by default on mobile */
+            #main-chart,
+            #aside-orderbook,
+            #aside-orderentry,
+            #bottom-section{
+                display:none;
+                min-height:0;
+            }
+            /* Active section fills remaining space */
+            #main-chart.mob-active{
+                display:block !important;
+                flex:1;
+                min-height:0;
+                overflow:hidden;
+            }
+            #aside-orderbook.mob-active,
+            #aside-orderentry.mob-active{
+                display:flex !important;
+                flex-direction:column;
+                flex:1;
+                min-height:0;
+            }
+            #bottom-section.mob-active{
+                display:flex !important;
+                flex-direction:column;
+                flex:1;
+                min-height:0;
+                overflow:hidden;
+            }
+            /* Slide panels full-width overlay */
+            .slide-panel{
+                left:0 !important;
+                top:46px !important;
+                bottom:52px !important;
+                width:100% !important;
+                border-radius:0 !important;
+                border-left:none;
+                border-right:none;
+            }
+            /* AI bubble above mobile nav */
+            #draggable-ai{ bottom:60px !important; right:12px !important; }
+            /* Mobile bottom nav */
+            #mobile-nav{ display:flex; }
+            /* Mobile more overlay */
+            #mobile-more{ display:flex; }
+            /* Tablet button hidden on mobile */
+            #tablet-trade-btn{ display:none !important; }
+            /* Tablet backdrop off on mobile */
+            #tablet-backdrop{ display:none !important; }
+        }
+
+        /* Mobile bottom nav */
+        #mobile-nav{
+            display:none;
+            height:52px;
+            flex-shrink:0;
+            background:#080808;
+            border-top:1px solid var(--border);
+        }
+        .mob-btn{
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:3px;
+            color:var(--text-dim);
+            cursor:pointer;
+            background:none;
+            border:none;
+            font-size:8.5px;
+            font-weight:500;
+            letter-spacing:0.04em;
+            text-transform:uppercase;
+            padding:0;
+            touch-action:manipulation;
+            transition:color 0.15s;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .mob-btn.active{ color:var(--neon); }
+        .mob-btn svg{ width:19px; height:19px; }
+
+        /* Mobile more overlay */
+        #mobile-more{
+            display:none;
+            position:fixed;
+            inset:0;
+            top:46px;
+            bottom:52px;
+            background:#080808;
+            z-index:190;
+            flex-direction:column;
+            padding:14px;
+            overflow-y:auto;
+        }
+        #mobile-more.open{ display:flex !important; }
+        .mob-more-row{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            padding:13px 12px;
+            border-radius:6px;
+            cursor:pointer;
+            border:1px solid var(--border);
+            margin-bottom:8px;
+            background:rgba(255,255,255,0.02);
+            color:var(--text-bright);
+            font-size:12px;
+            font-weight:500;
+            -webkit-tap-highlight-color:transparent;
+            touch-action:manipulation;
+        }
+        .mob-more-row:active{ background:rgba(255,255,255,0.05); }
+        .mob-more-icon{
+            width:38px;
+            height:38px;
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+        }
+        .mob-more-sub{
+            font-size:10px;
+            color:var(--text-dim);
+            margin-top:2px;
+            font-weight:400;
+        }
+        /* Tablet backdrop */
+        #tablet-backdrop{
+            display:none;
+            position:fixed;
+            inset:0;
+            z-index:89;
+            background:rgba(0,0,0,0.4);
+        }
+        /* Tablet trade button */
+        #tablet-trade-btn{
+            display:none;
+            margin-left:auto;
+            background:rgba(57,255,20,0.08);
+            border:1px solid rgba(57,255,20,0.2);
+            color:var(--neon);
+            padding:3px 10px;
+            border-radius:3px;
+            font-size:10px;
+            cursor:pointer;
+            align-items:center;
+            gap:4px;
+            white-space:nowrap;
+            transition:background 0.15s;
+            touch-action:manipulation;
+        }
+        #tablet-trade-btn:hover{ background:rgba(57,255,20,0.14); }
+        /* Mobile header tweaks */
+        @media (max-width:767px){
+            .app-container > header .flex.items-center.gap-5{
+                gap:10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -103,9 +320,15 @@
 
     <!-- HEADER -->
     <header class="col-span-4 glass flex items-center justify-between px-4">
-        <div class="flex items-center gap-3"><img src="logo.png" alt="ExNexus" class="h-5 w-auto opacity-90"></div>
+        <div class="flex items-center gap-3">
+            <img src="logo.png" alt="ExNexus" class="h-5 w-auto opacity-90">
+        </div>
         <div class="flex items-center gap-5">
-            <span style="font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;">Bybit Connected</span>
+            <!-- Mobile: hamburger for panels -->
+            <button id="mob-panel-trigger" onclick="openMobileMore()" style="display:none;color:var(--text-dim);background:none;border:none;cursor:pointer;padding:4px;" class="hover:text-white">
+                <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <span style="font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;" id="exchange-status">Bybit Connected</span>
             <span id="ticker" class="neon-text mono" style="font-size:12px;font-weight:500;">$74,231.70</span>
         </div>
     </header>
@@ -117,35 +340,30 @@
         </div>
         <div style="width:22px;height:1px;background:var(--border);"></div>
 
-        <!-- Analytics: altFINS -->
         <div class="nav-item" id="nav-analytics" onclick="togglePanel('analytics')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             <div class="nav-dot" style="background:var(--blue);"></div>
             <span class="nav-tip" style="border-left:2px solid var(--blue);">Analytics · altFINS</span>
         </div>
 
-        <!-- Smart Money: Nansen -->
         <div class="nav-item" id="nav-smartmoney" onclick="togglePanel('smartmoney')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
             <div class="nav-dot" style="background:var(--yellow);"></div>
             <span class="nav-tip" style="border-left:2px solid var(--yellow);">Smart Money · Nansen</span>
         </div>
 
-        <!-- Heatmap: Coinglass -->
         <div class="nav-item" id="nav-heatmap" onclick="togglePanel('heatmap')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <div class="nav-dot" style="background:var(--orange);"></div>
             <span class="nav-tip" style="border-left:2px solid var(--orange);">Heatmap · Coinglass</span>
         </div>
 
-        <!-- Long/Short: Coinglass -->
         <div class="nav-item" id="nav-longshort" onclick="togglePanel('longshort')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
             <div class="nav-dot" style="background:var(--purple);"></div>
             <span class="nav-tip" style="border-left:2px solid var(--purple);">Long/Short · Coinglass</span>
         </div>
 
-        <!-- Fear & Greed -->
         <div class="nav-item" id="nav-feargreed" onclick="togglePanel('feargreed')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
             <div id="fg-dot" class="nav-dot" style="background:#555;"></div>
@@ -155,7 +373,6 @@
         <div style="flex:1;"></div>
         <div style="width:22px;height:1px;background:var(--border);"></div>
 
-        <!-- AI Scout -->
         <div class="nav-item" id="nav-scout" onclick="togglePanel('scout')" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.18);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
             <span class="nav-tip" style="border-left:2px solid var(--purple);">AI Scout</span>
@@ -163,7 +380,7 @@
         <div style="height:8px;"></div>
     </nav>
 
-    <!-- SLIDE PANELS -->
+    <!-- ========== SLIDE PANELS ========== -->
 
     <!-- Analytics: altFINS -->
     <div id="panel-analytics" class="slide-panel">
@@ -177,10 +394,7 @@
             <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-signals')">Signals</button>
         </div>
         <div style="flex:1;overflow:auto;">
-            <div id="af-screener">
-                <table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead>
-                <tbody><tr><td colspan="6"><div class="empty-state">Connect altFINS API key in Settings</div></td></tr></tbody></table>
-            </div>
+            <div id="af-screener"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">Connect altFINS API key in Settings</div></td></tr></tbody></table></div>
             <div id="af-patterns" style="display:none;padding:14px;"><div class="panel-label">Chart Patterns</div><div class="empty-state">Connect altFINS API key</div></div>
             <div id="af-signals" style="display:none;padding:14px;"><div class="panel-label">Trading Signals</div><div class="empty-state">Connect altFINS API key</div></div>
         </div>
@@ -228,9 +442,7 @@
         </div>
         <div class="panel-body">
             <div class="panel-label">Top Pairs · Live</div>
-            <div id="ls-rows">
-                <!-- populated by JS -->
-            </div>
+            <div id="ls-rows"></div>
             <div style="margin-top:10px;padding:7px 9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;font-size:9.5px;color:var(--text-dim);">Mock data · Wire Coinglass API for live ratios</div>
         </div>
     </div>
@@ -242,7 +454,6 @@
             <span class="panel-close" onclick="closePanel('feargreed')">×</span>
         </div>
         <div class="panel-body">
-            <!-- Gauge -->
             <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;">
                 <div style="position:relative;width:150px;height:80px;overflow:hidden;">
                     <svg viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:80px;">
@@ -259,14 +470,12 @@
                 <div id="fg-value-display" style="font-size:30px;font-weight:300;font-family:'JetBrains Mono',monospace;color:#555;margin-top:4px;">—</div>
                 <div id="fg-label-display" style="font-size:11px;font-weight:500;color:var(--text-dim);margin-top:2px;">Loading...</div>
             </div>
-            <!-- History -->
             <div class="panel-label" style="margin-top:10px;">Historical</div>
             <div style="display:flex;gap:4px;" id="fg-history">
                 <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Yesterday</div></div>
                 <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Last Week</div></div>
                 <div class="fg-hist-item"><div class="fg-hist-val" style="color:var(--text-dim);">—</div><div class="fg-hist-lbl">Last Month</div></div>
             </div>
-            <!-- Interpretation -->
             <div class="panel-label" style="margin-top:12px;">Trading Implication</div>
             <div id="fg-interpretation" style="font-size:10.5px;color:var(--text-mid);line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:9px;">Fetching...</div>
         </div>
@@ -313,13 +522,20 @@
     </div>
 
     <!-- CHART -->
-    <main class="glass overflow-hidden relative"><div id="tradingview_widget" class="w-full h-full"></div></main>
+    <main id="main-chart" class="glass overflow-hidden relative">
+        <div id="tradingview_widget" class="w-full h-full"></div>
+    </main>
 
     <!-- ORDER BOOK -->
-    <aside class="glass flex flex-col overflow-hidden">
-        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;">
+    <aside id="aside-orderbook" class="glass flex flex-col overflow-hidden">
+        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;align-items:center;">
             <button class="tab-btn active" onclick="switchObTab(this,'ob-book')">Order Book</button>
             <button class="tab-btn" onclick="switchObTab(this,'ob-trades')">Recent Trades</button>
+            <!-- Tablet: Trade drawer toggle -->
+            <button id="tablet-trade-btn" onclick="toggleTabletTrade()">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Trade
+            </button>
         </div>
         <div id="ob-book" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0;">
@@ -345,7 +561,7 @@
     </aside>
 
     <!-- ORDER ENTRY -->
-    <aside class="glass flex flex-col overflow-hidden" style="padding:10px;">
+    <aside id="aside-orderentry" class="glass flex flex-col overflow-hidden" style="padding:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(57,255,20,0.2);">Isolated</button></div>
             <button class="lev-badge" style="color:var(--text-bright);">10.00×</button>
@@ -388,7 +604,7 @@
     </aside>
 
     <!-- BOTTOM TABS -->
-    <section class="col-span-3 glass flex flex-col overflow-hidden">
+    <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions')">Positions</button>
@@ -410,7 +626,10 @@
             <div id="bt-pnl" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Closed Size</th><th class="r">Entry Price</th><th class="r">Exit Price</th><th class="r">Realized PNL</th><th>Close Type</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No P&amp;L data</div></td></tr></tbody></table></div>
         </div>
     </section>
-</div>
+</div><!-- end .app-container -->
+
+<!-- TABLET BACKDROP -->
+<div id="tablet-backdrop" onclick="closeTabletTrade()"></div>
 
 <!-- AI BUBBLE -->
 <div id="draggable-ai">
@@ -426,57 +645,168 @@
     </div>
 </div>
 
+<!-- MOBILE BOTTOM NAV -->
+<nav id="mobile-nav">
+    <button class="mob-btn active" data-view="chart" onclick="mobileView('chart')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Chart
+    </button>
+    <button class="mob-btn" data-view="book" onclick="mobileView('book')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Book
+    </button>
+    <button class="mob-btn" data-view="trade" onclick="mobileView('trade')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Trade
+    </button>
+    <button class="mob-btn" data-view="data" onclick="mobileView('data')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Data
+    </button>
+    <button class="mob-btn" data-view="more" onclick="openMobileMore()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        More
+    </button>
+</nav>
+
+<!-- MOBILE MORE OVERLAY (nav panel access on mobile) -->
+<div id="mobile-more">
+    <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;font-weight:500;">Intelligence Panels</div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('analytics')">
+        <div class="mob-more-icon" style="background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+            <div>Analytics</div>
+            <div class="mob-more-sub">altFINS · RSI / MACD / Patterns</div>
+        </div>
+    </div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('smartmoney')">
+        <div class="mob-more-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+        </div>
+        <div>
+            <div>Smart Money</div>
+            <div class="mob-more-sub">Nansen · Flows / Whales / Holders</div>
+        </div>
+    </div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('heatmap')">
+        <div class="mob-more-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <div>
+            <div>Heatmap</div>
+            <div class="mob-more-sub">Coinglass · Liquidations / OI</div>
+        </div>
+    </div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('longshort')">
+        <div class="mob-more-icon" style="background:rgba(155,114,203,0.1);border:1px solid rgba(155,114,203,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+        </div>
+        <div>
+            <div>Long / Short Ratio</div>
+            <div class="mob-more-sub">Coinglass · Live positioning</div>
+        </div>
+    </div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('feargreed')">
+        <div class="mob-more-icon" id="mob-fg-icon" style="background:rgba(85,85,85,0.1);border:1px solid rgba(85,85,85,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <div>
+            <div>Fear &amp; Greed <span id="mob-fg-val" style="font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:6px;">—</span></div>
+            <div class="mob-more-sub" id="mob-fg-label">Loading...</div>
+        </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:12px 0;"></div>
+    <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;font-weight:500;">AI</div>
+
+    <div class="mob-more-row" onclick="closeMobileMore();togglePanel('scout')" style="border-color:rgba(155,114,203,0.2);background:rgba(66,133,244,0.05);">
+        <div class="mob-more-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.15),rgba(155,114,203,0.15));border:1px solid rgba(155,114,203,0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+        </div>
+        <div>
+            <div style="color:var(--neon);">AI Scout</div>
+            <div class="mob-more-sub">Signal aggregator · All sources</div>
+        </div>
+    </div>
+</div>
+
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-$(function(){ $("#draggable-ai").draggable({containment:"window"}); });
+/* ============ DRAGGABLE AI BUBBLE ============ */
+$(function(){
+    // Only enable draggable on non-touch / desktop
+    if(!('ontouchstart' in window)){
+        $("#draggable-ai").draggable({containment:"window"});
+    }
+});
 function closeAI(){ $("#ai-briefing").fadeOut(100,()=>{ $("#draggable-ai").css("width","40px"); }); }
 
+/* ============ TRADINGVIEW ============ */
 window.onload = () => {
     new TradingView.widget({
-        autosize:true,symbol:"BYBIT:BTCUSDT",interval:"15",theme:"dark",container_id:"tradingview_widget",
-        overrides:{"mainSeriesProperties.candleStyle.upColor":"#39FF14","mainSeriesProperties.candleStyle.downColor":"#FF003F","mainSeriesProperties.candleStyle.borderUpColor":"#39FF14","mainSeriesProperties.candleStyle.borderDownColor":"#FF003F","mainSeriesProperties.candleStyle.wickUpColor":"#39FF14","mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"}
+        autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
+        container_id:"tradingview_widget",
+        overrides:{
+            "mainSeriesProperties.candleStyle.upColor":"#39FF14",
+            "mainSeriesProperties.candleStyle.downColor":"#FF003F",
+            "mainSeriesProperties.candleStyle.borderUpColor":"#39FF14",
+            "mainSeriesProperties.candleStyle.borderDownColor":"#FF003F",
+            "mainSeriesProperties.candleStyle.wickUpColor":"#39FF14",
+            "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
+        }
     });
-    renderOrderBook(); renderRecentTrades(); renderLSRows(); fetchFearGreed();
+    renderOrderBook();
+    renderRecentTrades();
+    renderLSRows();
+    fetchFearGreed();
+    initResponsive();
 };
 
-// Panel system
-let activePanel=null;
+/* ============ PANEL SYSTEM ============ */
+let activePanel = null;
 function togglePanel(name){
-    if(activePanel===name){closePanel(name);return;}
-    if(activePanel)closePanel(activePanel);
+    if(activePanel === name){ closePanel(name); return; }
+    if(activePanel) closePanel(activePanel);
     document.getElementById('panel-'+name).classList.add('open');
     document.getElementById('nav-'+name)?.classList.add('active');
-    activePanel=name;
-    if(name==='feargreed')fetchFearGreed();
+    activePanel = name;
+    if(name === 'feargreed') fetchFearGreed();
 }
 function closePanel(name){
     document.getElementById('panel-'+name).classList.remove('open');
     document.getElementById('nav-'+name)?.classList.remove('active');
-    if(activePanel===name)activePanel=null;
+    if(activePanel === name) activePanel = null;
 }
 
-// Panel tab switching
+/* ============ PANEL TAB SWITCHING ============ */
 function ptab(btn, allIds, showId){
     allIds.forEach(id=>{
-        const el=document.getElementById(id);
-        if(el)el.style.display=(id===showId)?'block':'none';
+        const el = document.getElementById(id);
+        if(el) el.style.display = (id === showId) ? 'block' : 'none';
     });
     btn.closest('div').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 }
 
-// Bottom tabs
-const BT=['bt-openorders','bt-positions','bt-orderhistory','bt-tradehistory','bt-assets','bt-borrowings','bt-tools','bt-pnl'];
-function switchBottomTab(btn,id){
+/* ============ BOTTOM TABS ============ */
+const BT = ['bt-openorders','bt-positions','bt-orderhistory','bt-tradehistory','bt-assets','bt-borrowings','bt-tools','bt-pnl'];
+function switchBottomTab(btn, id){
     BT.forEach(p=>document.getElementById(p)?.classList.remove('active'));
     btn.closest('.glass').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById(id)?.classList.add('active');
     btn.classList.add('active');
 }
-function switchObTab(btn,id){
+function switchObTab(btn, id){
     ['ob-book','ob-trades'].forEach(p=>document.getElementById(p).style.display='none');
-    btn.closest('.glass').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).style.display='flex';
+    btn.closest('div').querySelectorAll('.tab-btn:not(#tablet-trade-btn)').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).style.display = 'flex';
     btn.classList.add('active');
 }
 function switchOT(btn){
@@ -484,23 +814,29 @@ function switchOT(btn){
     btn.classList.add('active');
 }
 
-// Order book
+/* ============ ORDER BOOK DATA ============ */
 const askData=[[74245.10,0.124,2.841],[74240.30,0.067,2.717],[74238.90,0.891,2.650],[74237.50,0.045,1.759],[74236.20,0.312,1.714],[74235.00,0.178,1.402],[74233.80,0.224,1.224],[74232.40,0.551,1.000],[74231.90,0.449,0.449]];
 const bidData=[[74231.70,1.089,1.089],[74230.50,0.334,1.423],[74229.10,0.612,2.035],[74228.40,0.089,2.124],[74227.80,0.445,2.569],[74226.20,0.231,2.800],[74224.90,0.667,3.467],[74223.30,0.112,3.579],[74221.60,0.789,4.368]];
-const maxT=Math.max(...askData.map(r=>r[2]),...bidData.map(r=>r[2]));
+const maxT = Math.max(...askData.map(r=>r[2]),...bidData.map(r=>r[2]));
 function renderOrderBook(){
-    document.getElementById('ob-asks').innerHTML=askData.map(([p,q,t])=>`<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`).join('');
-    document.getElementById('ob-bids').innerHTML=bidData.map(([p,q,t])=>`<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#39FF14;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`).join('');
+    document.getElementById('ob-asks').innerHTML = askData.map(([p,q,t])=>
+        `<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+    ).join('');
+    document.getElementById('ob-bids').innerHTML = bidData.map(([p,q,t])=>
+        `<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#39FF14;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+    ).join('');
 }
 function renderRecentTrades(){
     const tr=[[74231.70,0.124,'13:55:46',true],[74230.50,0.891,'13:55:45',false],[74232.40,0.045,'13:55:44',true],[74229.10,0.334,'13:55:43',false],[74233.80,0.178,'13:55:42',true],[74228.40,0.612,'13:55:41',false],[74231.90,0.089,'13:55:40',true]];
-    document.getElementById('recent-trades-list').innerHTML=tr.map(([p,q,t,b])=>`<div class="ob-row"><span class="mono" style="color:${b?'#39FF14':'#FF003F'};font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t}</span></div>`).join('');
+    document.getElementById('recent-trades-list').innerHTML = tr.map(([p,q,t,b])=>
+        `<div class="ob-row"><span class="mono" style="color:${b?'#39FF14':'#FF003F'};font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t}</span></div>`
+    ).join('');
 }
 
-// Long/Short mock rows
+/* ============ LONG/SHORT ============ */
 function renderLSRows(){
     const pairs=[['BTCUSDT',63,37],['ETHUSDT',54,46],['SOLUSDT',48,52],['XRPUSDT',71,29],['BNBUSDT',58,42],['ADAUSDT',44,56]];
-    document.getElementById('ls-rows').innerHTML=pairs.map(([p,l,s])=>`
+    document.getElementById('ls-rows').innerHTML = pairs.map(([p,l,s])=>`
         <div class="coin-row">
             <div><div style="font-size:11px;color:var(--text-bright);font-weight:500;">${p}</div>
             <div class="ls-bar-wrap"><div class="ls-long" style="width:${l}%;"></div><div class="ls-short" style="width:${s}%;"></div></div></div>
@@ -508,7 +844,7 @@ function renderLSRows(){
         </div>`).join('');
 }
 
-// Fear & Greed
+/* ============ FEAR & GREED ============ */
 const FG_COLORS={extreme_fear:'#FF003F',fear:'#FF6B35',neutral:'#F0B429',greed:'#7ED321',extreme_greed:'#39FF14'};
 const FG_LABELS={extreme_fear:'Extreme Fear',fear:'Fear',neutral:'Neutral',greed:'Greed',extreme_greed:'Extreme Greed'};
 const FG_INTERP={
@@ -520,43 +856,48 @@ const FG_INTERP={
 };
 async function fetchFearGreed(){
     try {
-        const res=await fetch('https://api.alternative.me/fng/?limit=3');
-        const d=await res.json();
-        if(!d.data)return;
-        const cur=d.data[0];
-        const val=parseInt(cur.value);
-        const cl=cur.value_classification.toLowerCase().replace(/ /g,'_');
-        const color=FG_COLORS[cl]||'#aaa';
-        const angle=(val/100)*180-90;
+        const res = await fetch('https://api.alternative.me/fng/?limit=3');
+        const d = await res.json();
+        if(!d.data) return;
+        const cur = d.data[0];
+        const val = parseInt(cur.value);
+        const cl = cur.value_classification.toLowerCase().replace(/ /g,'_');
+        const color = FG_COLORS[cl] || '#aaa';
+        const angle = (val/100)*180 - 90;
         document.getElementById('fg-needle').setAttribute('transform',`rotate(${angle},75,75)`);
-        document.getElementById('fg-value-display').textContent=val;
-        document.getElementById('fg-value-display').style.color=color;
-        document.getElementById('fg-label-display').textContent=FG_LABELS[cl]||cur.value_classification;
-        document.getElementById('fg-label-display').style.color=color;
-        document.getElementById('fg-panel-dot').style.background=color;
-        document.getElementById('fg-dot').style.background=color;
-        document.getElementById('fg-tip').style.borderLeftColor=color;
-        document.getElementById('fg-tip').textContent=`Fear & Greed · ${val}`;
-        document.getElementById('fg-interpretation').textContent=FG_INTERP[cl]||'';
-        const hist=document.querySelectorAll('.fg-hist-item');
-        const hl=['Yesterday','Last Week','Last Month'];
+        document.getElementById('fg-value-display').textContent = val;
+        document.getElementById('fg-value-display').style.color = color;
+        document.getElementById('fg-label-display').textContent = FG_LABELS[cl] || cur.value_classification;
+        document.getElementById('fg-label-display').style.color = color;
+        document.getElementById('fg-panel-dot').style.background = color;
+        document.getElementById('fg-dot').style.background = color;
+        document.getElementById('fg-tip').style.borderLeftColor = color;
+        document.getElementById('fg-tip').textContent = `Fear & Greed · ${val}`;
+        document.getElementById('fg-interpretation').textContent = FG_INTERP[cl] || '';
+        const hist = document.querySelectorAll('.fg-hist-item');
         d.data.forEach((item,i)=>{
-            if(i===0||!hist[i-1])return;
-            const hv=parseInt(item.value),hcl=item.value_classification.toLowerCase().replace(/ /g,'_');
-            hist[i-1].querySelector('.fg-hist-val').textContent=hv;
-            hist[i-1].querySelector('.fg-hist-val').style.color=FG_COLORS[hcl]||'#aaa';
+            if(i===0 || !hist[i-1]) return;
+            const hv = parseInt(item.value), hcl = item.value_classification.toLowerCase().replace(/ /g,'_');
+            hist[i-1].querySelector('.fg-hist-val').textContent = hv;
+            hist[i-1].querySelector('.fg-hist-val').style.color = FG_COLORS[hcl] || '#aaa';
         });
-        document.getElementById('ss6').textContent=`${FG_LABELS[cl]} (${val})`;
-        document.getElementById('ss6').style.color=color;
+        document.getElementById('ss6').textContent = `${FG_LABELS[cl]} (${val})`;
+        document.getElementById('ss6').style.color = color;
+        // Update mobile more overlay
+        document.getElementById('mob-fg-val').textContent = val;
+        document.getElementById('mob-fg-val').style.color = color;
+        document.getElementById('mob-fg-label').textContent = FG_LABELS[cl] || cur.value_classification;
+        const mobIcon = document.getElementById('mob-fg-icon');
+        if(mobIcon){ mobIcon.style.borderColor = color+'44'; mobIcon.querySelector('svg').style.stroke = color; }
     } catch(e) {
-        document.getElementById('fg-label-display').textContent='Unavailable';
-        document.getElementById('fg-interpretation').textContent='Fear & Greed API will be fetched via your Cloudflare proxy in production.';
+        document.getElementById('fg-label-display').textContent = 'Unavailable';
+        document.getElementById('fg-interpretation').textContent = 'Fear & Greed API will be fetched via your Cloudflare proxy in production.';
     }
 }
 
-// AI Scout mock
+/* ============ AI SCOUT (MOCK) ============ */
 function runScout(){
-    const coin=document.getElementById('scout-coin').value;
+    const coin = document.getElementById('scout-coin').value;
     const signals=[
         {id:'ss1',text:'Bullish · RSI 58, MACD Cross ↑',color:'var(--neon)'},
         {id:'ss2',text:'Strong · Score 7.2/10',color:'#6fff4a'},
@@ -565,13 +906,116 @@ function runScout(){
         {id:'ss5',text:'$2.1M short liq. below market',color:'var(--yellow)'},
     ];
     signals.forEach(s=>{ const el=document.getElementById(s.id); el.textContent=s.text; el.style.color=s.color; });
-    const prob=71;
-    document.getElementById('prob-circle').style.strokeDashoffset=213.6-(prob/100)*213.6;
-    document.getElementById('prob-val').textContent=prob+'%';
-    document.getElementById('prob-summary').textContent=`${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
-    document.getElementById('bot-rec').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
-    document.getElementById('scout-reasoning').textContent=`${coin}: RSI at 58 with bullish MACD cross on 4H (altFINS). Nansen flags smart money accumulation. Coinglass shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
+    const prob = 71;
+    document.getElementById('prob-circle').style.strokeDashoffset = 213.6-(prob/100)*213.6;
+    document.getElementById('prob-val').textContent = prob+'%';
+    document.getElementById('prob-summary').textContent = `${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
+    document.getElementById('bot-rec').innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
+    document.getElementById('scout-reasoning').textContent = `${coin}: RSI at 58 with bullish MACD cross on 4H (altFINS). Nansen flags smart money accumulation. Coinglass shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
 }
+
+/* ============ TABLET TRADE DRAWER ============ */
+function toggleTabletTrade(){
+    const panel = document.getElementById('aside-orderentry');
+    const backdrop = document.getElementById('tablet-backdrop');
+    const isOpen = panel.classList.toggle('tablet-open');
+    backdrop.style.display = isOpen ? 'block' : 'none';
+    // Update button appearance
+    const btn = document.getElementById('tablet-trade-btn');
+    btn.style.background = isOpen ? 'rgba(57,255,20,0.18)' : 'rgba(57,255,20,0.08)';
+}
+function closeTabletTrade(){
+    document.getElementById('aside-orderentry').classList.remove('tablet-open');
+    document.getElementById('tablet-backdrop').style.display = 'none';
+    const btn = document.getElementById('tablet-trade-btn');
+    if(btn) btn.style.background = 'rgba(57,255,20,0.08)';
+}
+
+/* ============ MOBILE VIEW SWITCHING ============ */
+const MOB_SECTIONS = {
+    chart:  'main-chart',
+    book:   'aside-orderbook',
+    trade:  'aside-orderentry',
+    data:   'bottom-section'
+};
+
+function mobileView(view){
+    // Close more overlay
+    document.getElementById('mobile-more').classList.remove('open');
+    // Close any open slide panels
+    if(activePanel) closePanel(activePanel);
+    // Deactivate all sections
+    Object.values(MOB_SECTIONS).forEach(id=>{
+        document.getElementById(id)?.classList.remove('mob-active');
+    });
+    // Activate target
+    const targetId = MOB_SECTIONS[view];
+    if(targetId) document.getElementById(targetId)?.classList.add('mob-active');
+    // Update nav
+    document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector(`.mob-btn[data-view="${view}"]`)?.classList.add('active');
+}
+
+function openMobileMore(){
+    const overlay = document.getElementById('mobile-more');
+    const isOpen = overlay.classList.toggle('open');
+    document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
+    if(isOpen){
+        document.querySelector('.mob-btn[data-view="more"]')?.classList.add('active');
+    } else {
+        // Re-activate current section button
+        for(const [view, id] of Object.entries(MOB_SECTIONS)){
+            if(document.getElementById(id)?.classList.contains('mob-active')){
+                document.querySelector(`.mob-btn[data-view="${view}"]`)?.classList.add('active');
+            }
+        }
+    }
+}
+function closeMobileMore(){
+    document.getElementById('mobile-more').classList.remove('open');
+    document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
+    for(const [view, id] of Object.entries(MOB_SECTIONS)){
+        if(document.getElementById(id)?.classList.contains('mob-active')){
+            document.querySelector(`.mob-btn[data-view="${view}"]`)?.classList.add('active');
+        }
+    }
+}
+
+/* ============ RESPONSIVE INIT ============ */
+function initResponsive(){
+    if(window.innerWidth < 768){
+        // Show chart by default on mobile
+        document.getElementById('main-chart').classList.add('mob-active');
+        // Show hamburger in header on mobile
+        document.getElementById('mob-panel-trigger').style.display = 'flex';
+        document.getElementById('exchange-status').style.display = 'none';
+    }
+}
+
+// Handle resize (e.g., orientation change)
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(()=>{
+        const isMobile = window.innerWidth < 768;
+        document.getElementById('mob-panel-trigger').style.display = isMobile ? 'flex' : 'none';
+        document.getElementById('exchange-status').style.display = isMobile ? 'none' : '';
+        if(!isMobile){
+            // Clean up mobile state
+            Object.values(MOB_SECTIONS).forEach(id=>{
+                document.getElementById(id)?.classList.remove('mob-active');
+            });
+            document.getElementById('mobile-more').classList.remove('open');
+            closeTabletTrade();
+        } else {
+            // Ensure one section is active on mobile
+            const anyActive = Object.values(MOB_SECTIONS).some(id=>
+                document.getElementById(id)?.classList.contains('mob-active')
+            );
+            if(!anyActive) document.getElementById('main-chart').classList.add('mob-active');
+        }
+    }, 150);
+});
 </script>
 </body>
 </html>
