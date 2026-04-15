@@ -433,10 +433,45 @@
         .bcard-tag.run{background:rgba(68,184,40,0.1);color:var(--neon);border:1px solid rgba(68,184,40,0.2);}
         .bcard-dot{width:5px;height:5px;border-radius:50%;}
         /* Nav bar */
-        .mnavbar{display:flex;height:52px;background:#060606;border-top:1px solid var(--border);flex-shrink:0;}
-        .mnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-dim);cursor:pointer;font-size:8.5px;font-weight:500;text-transform:uppercase;letter-spacing:.03em;border:none;background:none;-webkit-tap-highlight-color:transparent;}
+        .mnavbar{display:flex;align-items:flex-end;height:52px;background:#060606;border-top:1px solid var(--border);flex-shrink:0;position:relative;overflow:visible;}
+        .mnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-dim);cursor:pointer;font-size:8.5px;font-weight:500;text-transform:uppercase;letter-spacing:.03em;border:none;background:none;-webkit-tap-highlight-color:transparent;height:52px;}
         .mnav.active{color:var(--neon);}
         .mnav svg{width:18px;height:18px;}
+        /* AI Scout FAB */
+        .mnav-fab{
+            flex-shrink:0;
+            width:56px;height:56px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#1a56d6,#4285f4);
+            box-shadow:0 0 0 3px rgba(66,133,244,0.22),0 0 22px rgba(66,133,244,0.55),0 -2px 14px rgba(66,133,244,0.3);
+            border:2px solid rgba(66,133,244,0.55);
+            cursor:pointer;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+            position:relative;top:-14px;
+            margin:0 2px;
+            -webkit-tap-highlight-color:transparent;
+            transition:box-shadow .2s,transform .15s;
+            animation:fab-pulse 3s ease-in-out infinite;
+        }
+        .mnav-fab:active{transform:scale(0.94);}
+        @keyframes fab-pulse{
+            0%,100%{box-shadow:0 0 0 3px rgba(66,133,244,0.22),0 0 22px rgba(66,133,244,0.55),0 -2px 14px rgba(66,133,244,0.3);}
+            50%{box-shadow:0 0 0 5px rgba(66,133,244,0.15),0 0 32px rgba(66,133,244,0.8),0 -2px 22px rgba(66,133,244,0.5);}
+        }
+        .mnav-fab svg{width:22px;height:22px;}
+        .mnav-fab span{font-size:7.5px;font-weight:700;color:#000;letter-spacing:.05em;text-transform:uppercase;}
+        /* Data hub panel */
+        #panel-datahub{width:min(400px,100vw);}
+        .dhub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px;}
+        .dhub-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s;}
+        .dhub-card:active{border-color:rgba(255,255,255,0.2);}
+        .dhub-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:7px;}
+        .dhub-name{font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:2px;}
+        .dhub-sub{font-size:9.5px;color:var(--text-dim);line-height:1.4;}
+        .dhub-live{display:flex;align-items:center;gap:4px;margin-top:6px;font-size:9px;color:var(--text-dim);}
+        .dhub-dot{width:5px;height:5px;border-radius:50%;background:#555;}
+        .dhub-dot.live{background:var(--neon);animation:blink 2s ease infinite;}
+        @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 
         </style>
 </head>
@@ -1008,6 +1043,11 @@ async function fetchFearGreed(){
         });
         document.getElementById('ss6').textContent = `${FG_LABELS[cl]} (${val})`;
         document.getElementById('ss6').style.color = color;
+        // Sync DataHub card
+        const dhubVal = document.getElementById('dhub-fg-val');
+        if(dhubVal){ dhubVal.textContent = FG_LABELS[cl]+' ('+val+')'; dhubVal.style.color = color; }
+        const dhubIcon = document.getElementById('dhub-fg-icon');
+        if(dhubIcon){ dhubIcon.style.borderColor = color+'33'; dhubIcon.querySelector('svg').style.stroke = color; }
         // Update mobile more overlay
         document.getElementById('mob-fg-val').textContent = val;
         document.getElementById('mob-fg-val').style.color = color;
@@ -1214,6 +1254,9 @@ function renderMobBook(){
 }
 renderMobBook();
 
+
+function openDataHub(){ togglePanel('datahub'); }
+
 </script>
 
 <!-- ============================================================
@@ -1381,28 +1424,94 @@ renderMobBook();
 
   <!-- Bottom navigation bar -->
   <nav class="mnavbar">
+    <button class="mnav active" id="mnav-trade">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Trade
+    </button>
     <button class="mnav" onclick="togglePanel('analytics')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Signals
     </button>
-    <button class="mnav" onclick="togglePanel('longshort')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
-      L/S
+    <!-- AI SCOUT FAB (raised center button) -->
+    <button class="mnav-fab" onclick="togglePanel('scout')" title="AI Scout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+      <span style="color:#fff;">Scout</span>
     </button>
-    <button class="mnav active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-      Trade
+    <button class="mnav" onclick="openDataHub()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      Data
     </button>
-    <button class="mnav" onclick="togglePanel('scout')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.6"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
-      Scout
-    </button>
-    <button class="mnav" onclick="togglePanel('heatmap')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Heatmap
+    <button class="mnav" onclick="togglePanel('feargreed')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      F&amp;G
     </button>
   </nav>
 </div><!-- /mob-ui -->
+
+
+<!-- DATA HUB PANEL (mobile quick-access to all intelligence) -->
+<div id="panel-datahub" class="slide-panel">
+    <div class="panel-header">
+        <div class="panel-title">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Intelligence Hub
+        </div>
+        <span class="panel-close" onclick="closePanel('datahub')">×</span>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <div style="padding:10px 14px 4px;font-size:9.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;font-weight:500;">Live Data Sources</div>
+        <div class="dhub-grid">
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('analytics')">
+                <div class="dhub-icon" style="background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="dhub-name">AltFINS</div>
+                <div class="dhub-sub">RSI · MACD · Patterns · Signals</div>
+                <div class="dhub-live"><span class="dhub-dot live"></span>Screener ready</div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('smartmoney')">
+                <div class="dhub-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg>
+                </div>
+                <div class="dhub-name">Nansen</div>
+                <div class="dhub-sub">Smart Money · Flows · Whales</div>
+                <div class="dhub-live"><span class="dhub-dot"></span>API required</div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('heatmap')">
+                <div class="dhub-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="dhub-name">Liquidations</div>
+                <div class="dhub-sub">Coinglass · Heatmap · OI</div>
+                <div class="dhub-live"><span class="dhub-dot"></span>API required</div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('longshort')">
+                <div class="dhub-icon" style="background:rgba(155,114,203,0.1);border:1px solid rgba(155,114,203,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+                </div>
+                <div class="dhub-name">Long / Short</div>
+                <div class="dhub-sub">Coinglass · Live ratio</div>
+                <div class="dhub-live"><span class="dhub-dot live"></span>Mock live</div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('feargreed')">
+                <div class="dhub-icon" id="dhub-fg-icon" style="background:rgba(85,85,85,0.1);border:1px solid rgba(85,85,85,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </div>
+                <div class="dhub-name">Fear &amp; Greed</div>
+                <div class="dhub-sub">Market sentiment index</div>
+                <div class="dhub-live"><span class="dhub-dot live"></span><span id="dhub-fg-val" style="font-family:'JetBrains Mono',monospace;">Loading...</span></div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('scout')" style="border-color:rgba(155,114,203,0.2);background:rgba(66,133,244,0.04);">
+                <div class="dhub-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.15),rgba(155,114,203,0.15));border:1px solid rgba(155,114,203,0.2);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                </div>
+                <div class="dhub-name" style="color:var(--neon);">AI Scout</div>
+                <div class="dhub-sub">All sources · Win probability</div>
+                <div class="dhub-live"><span class="dhub-dot live" style="background:var(--neon);"></span>Powered by Claude</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
