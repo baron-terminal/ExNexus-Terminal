@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Institutional Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
+        
+        :root { 
+            --neon: #39FF14; 
+            --hot-red: #FF003F; 
+            --bg: #050505; 
+            --sidebar-left: 56px;   /* FIXED */
+            --sidebar-right: 380px; /* FIXED */
+        }
 
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: rgba(255,255,255,0.9); 
+            overflow: hidden; 
+            height: 100vh; 
+            margin: 0; 
+        }
+
+        /* THE FORMULA: Left (Fixed) | Center (Compressed 40%) | Right (Fixed Intelligence) */
+        .app-container { 
+            display: grid; 
+            grid-template-columns: var(--sidebar-left) 0.6fr var(--sidebar-right); 
+            grid-template-rows: 42px 1fr 160px; 
+            height: 100vh; 
+            gap: 2px;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .glass { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.03); position: relative; }
+
+        /* Left Side: Navigation Icons */
+        .nav-icon { color: #444; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 50px; transition: 0.2s; }
+        .nav-icon:hover { color: var(--neon); background: rgba(57, 255, 20, 0.05); }
+
+        /* Center: Chart Area */
+        .chart-wrapper { min-width: 0; width: 100%; height: 100%; overflow: hidden; }
+
+        /* Right Side: Bot Intelligence & Execution */
+        .node-header { font-weight: 900; font-size: 8px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 20px; }
+        .bot-row { display: flex; justify-content: space-between; font-size: 11px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        
+        .trade-panel { margin-top: auto; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); }
+        input { background: #000; border: 1px solid rgba(255,255,255,0.1); color: white; font-family: 'JetBrains Mono'; font-size: 11px; padding: 12px; width: 100%; outline: none; margin: 12px 0; }
+        .btn-short { width: 100%; padding: 14px; border: 1px solid var(--hot-red); color: var(--hot-red); font-weight: 900; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; transition: 0.2s; }
+        .btn-short:hover { background: var(--hot-red); color: black; box-shadow: 0 0 15px rgba(255, 0, 63, 0.3); }
+
+        #ticker { color: var(--neon); font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="col-span-3 glass flex items-center justify-between px-6">
+            <div class="flex items-center space-x-4">
+                <span class="text-[10px] font-black tracking-widest text-white/40">EXNEXUS</span>
+                <span id="ticker">$74,231.70</span>
+            </div>
+            <div class="flex items-center space-x-4 text-[8px] font-bold text-white/20 uppercase tracking-widest">
+                <span>API: BYBIT_CONNECTED</span>
+                <span class="w-2 h-2 rounded-full bg-[#39FF14] animate-pulse"></span>
+            </div>
+        </header>
+
+        <nav class="row-span-2 glass flex flex-col py-6 space-y-2">
+            <div class="nav-icon" style="color:var(--neon)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+            <div class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+            <div class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"></path><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg></div>
+        </nav>
+
+        <main class="glass chart-wrapper">
+            <div id="tradingview_widget" style="width: 100%; height: 100%;"></div>
+        </main>
+
+        <aside class="row-span-2 glass p-6 flex flex-col">
+            <div class="node-header">Bot Intelligence Node</div>
+            <div class="space-y-1">
+                <div class="bot-row"><span>Smart Trades</span> <span style="color:var(--neon)">+$2,025.18</span></div>
+                <div class="bot-row text-white/40"><span>DCA Strategy</span> <span>Active (3)</span></div>
+                <div class="bot-row text-white/40"><span>Grid Bot</span> <span>Standby</span></div>
+                <div class="bot-row"><span style="color:var(--neon)">DYS Custom Bot</span> <span class="italic text-white/20 font-mono text-[8px]">Monitoring...</span></div>
+            </div>
+
+            <div class="trade-panel">
+                <div class="flex justify-between text-[10px] font-black opacity-30 uppercase mb-4">
+                    <span>Cross Margin</span> <span>10.00x</span>
+                </div>
+                <span class="text-[9px] font-black text-gray-600 uppercase">Order Quantity (USDT)</span>
+                <input type="text" placeholder="Enter Amount...">
+                <button class="btn-short">Execute Short</button>
+            </div>
+        </aside>
+
+        <footer class="glass px-8 py-4">
+            <div class="flex items-center space-x-10 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">
+                <span style="color:var(--neon); border-bottom: 2px solid var(--neon)" class="pb-1 cursor-pointer">Live Orders</span>
+                <span class="hover:text-white/60 transition cursor-pointer">Positions</span>
+                <span class="hover:text-white/60 transition cursor-pointer">P&L History</span>
+                <span class="hover:text-white/60 transition cursor-pointer">Asset Vault</span>
+            </div>
+        </nav>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "BYBIT:BTCUSDT.P",
+            "interval": "15",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "container_id": "tradingview_widget",
+            "enable_publishing": false,
+            "hide_side_toolbar": true, /* REMOVES BULK TO PROTECT SIDEBARS */
+            "allow_symbol_change": true
+        });
+    </script>
+</body>
+</html>
