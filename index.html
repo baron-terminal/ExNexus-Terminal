@@ -3,113 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExNexus | Institutional Terminal Build</title>
+    <title>ExNexus | Institutional Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=JetBrains+Mono&display=swap');
-        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050505; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; margin: 0; font-weight: 300; }
-        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
-        .glass { background: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.05); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
         
-        /* Fine White Typography */
-        h4, span, button, p { color: rgba(255,255,255,0.9); font-weight: 300 !important; letter-spacing: 0.025em; }
-
-        /* Tooltip Rings (No Fill) */
-        .tooltip-ring {
-            display: none; position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
-            border: 1px solid currentColor; background: #050505; color: white;
-            font-size: 8px; padding: 2px 8px; border-radius: 4px; white-space: nowrap; z-index: 50;
+        :root { 
+            --neon: #39FF14; 
+            --hot-red: #FF003F; 
+            --bg: #050505; 
+            --section-1-width: 56px;   /* TOOLBAR */
+            --section-3-width: 240px;  /* BOT LIST */
+            --section-4-width: 320px;  /* BYBIT UI */
         }
-        .group:hover .tooltip-ring { display: block; }
 
-        .app-container { display: grid; grid-template-columns: 48px 1fr 280px 240px; grid-template-rows: 40px 1fr 200px; height: 100vh; gap: 4px; padding: 4px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; height: 100vh; margin: 0; overflow: hidden; }
+        .glass { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.03); }
+
+        /* THE 4-SECTION FORMULA */
+        .app-shell {
+            display: grid;
+            grid-template-columns: var(--section-1-width) 1fr calc(var(--section-3-width) + var(--section-4-width));
+            grid-template-rows: 40px 1fr 150px;
+            height: 100vh;
+        }
+
+        /* SECTION 1: TOOLBAR */
+        .toolbar { grid-row: 1 / 4; display: flex; flex-col; align-items: center; py-6; space-y-6; border-right: 1px solid rgba(255,255,255,0.05); }
+        .t-icon { color: #444; cursor: pointer; transition: 0.2s; }
+        .t-icon:hover { color: var(--neon); }
+
+        /* SECTION 2: GRAPH */
+        .chart-area { min-width: 0; height: 100%; }
+
+        /* RIGHT MASTER CONTAINER (Sections 3 & 4) */
+        .right-panel {
+            display: grid;
+            grid-template-columns: var(--section-3-width) var(--section-4-width);
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* SECTION 3: BOT LIST */
+        .bot-list { p: 5; border-right: 1px solid rgba(255,255,255,0.03); }
+        .bot-item { display: flex; justify-content: space-between; font-size: 11px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+
+        /* SECTION 4: BYBIT UI */
+        .trading-ui { p: 6; display: flex; flex-direction: column; }
+        .bybit-input { background: #111; border: 1px solid #222; padding: 12px; font-family: 'JetBrains Mono'; width: 100%; margin-top: 8px; font-size: 12px; }
+        .btn-bybit { background: none; border: 1px solid var(--hot-red); color: var(--hot-red); padding: 14px; font-weight: 900; margin-top: 20px; text-transform: uppercase; font-size: 10px; }
+
+        .label-mini { font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; }
+        #ticker { color: var(--neon); font-family: 'JetBrains Mono'; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <header class="col-span-4 glass flex items-center justify-between px-4">
-            <div class="flex items-center space-x-2">
-                <img src="logo.png" alt="ExNexus" class="h-5 w-auto"> 
-                <span class="text-[10px] opacity-40 ml-2">INSTITUTIONAL TERMINAL</span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div id="ticker" class="neon-text font-mono text-[11px]">$74,231.70</div>
-            </div>
-        </header>
+<div class="app-shell">
+    <header class="col-span-2 glass flex items-center px-4 justify-between border-b border-white/5">
+        <div class="flex items-center space-x-4">
+            <span class="text-[10px] font-black opacity-30 tracking-tighter">EXNEXUS INSTITUTIONAL</span>
+            <span id="ticker">$74,231.70</span>
+        </div>
+    </header>
 
-        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
-            <div onclick="expandAI('Analistic: Potential Bullish Breakout')" class="group relative cursor-pointer text-gray-600 hover:text-blue-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                <span class="tooltip-ring border-blue-600 text-blue-400">ANALISTIC</span>
+    <aside class="toolbar glass">
+        <div class="t-icon" style="color:var(--neon)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+        <div class="t-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+        <div class="t-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+    </aside>
+
+    <main class="chart-area glass">
+        <div id="tv_chart" style="width: 100%; height: 100%;"></div>
+    </main>
+
+    <div class="right-panel row-span-2 glass">
+        <section class="bot-list p-4">
+            <div class="label-mini mb-4">Bot Intelligence Node</div>
+            <div class="bot-item"><span>Smart Trades</span> <span style="color:var(--neon)">+$2,025</span></div>
+            <div class="bot-item text-white/40"><span>DCA Bot</span> <span>Active</span></div>
+            <div class="bot-item text-white/40"><span>Grid Bot</span> <span>Standby</span></div>
+            <div class="bot-item"><span style="color:var(--neon)">DYS Bot</span> <span class="animate-pulse">Monitoring</span></div>
+        </section>
+
+        <section class="trading-ui p-4">
+            <div class="flex justify-between items-center mb-6">
+                <div class="label-mini">Execution</div>
+                <div class="text-[10px] font-mono text-white/40">10.00x Cross</div>
             </div>
-
-            <div onclick="expandAI('Smart Money: Large Whale Activity')" class="group relative cursor-pointer text-gray-600 hover:text-yellow-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z"></path></svg>
-                <span class="tooltip-ring border-yellow-600 text-yellow-500">SMART MONEY</span>
-            </div>
-        </nav>
-
-        <main class="glass overflow-hidden relative">
-            <div id="tradingview_widget" class="w-full h-full"></div>
-        </main>
-
-        <aside class="glass p-3 overflow-y-auto">
-            <h4 class="text-[8px] text-gray-500 uppercase mb-4 tracking-widest">Bot Intelligence Node</h4>
-            <div class="space-y-2">
-                <div class="p-2 border border-white/5 rounded">
-                    <div class="flex justify-between text-[9px]"><span>Smart Trades</span> <span class="neon-text">+$2,025</span></div>
+            
+            <div class="space-y-4">
+                <div>
+                    <span class="label-mini !text-[7px]">Order Qty (USDT)</span>
+                    <input type="text" class="bybit-input" placeholder="0.00">
                 </div>
-                <div class="p-2 border border-white/5 rounded opacity-60">
-                    <div class="flex justify-between text-[9px]"><span>DCA Bot</span> <span class="text-white">Active</span></div>
+                <div class="flex justify-between text-[8px] font-mono text-white/20">
+                    <span>25%</span><span>50%</span><span>75%</span><span>100%</span>
                 </div>
-                <div class="p-2 border border-white/5 rounded opacity-60">
-                    <div class="flex justify-between text-[9px]"><span>Grid Bot</span> <span class="text-white">Standby</span></div>
-                </div>
-            </div>
-        </aside>
-
-        <aside class="glass p-3 flex flex-col space-y-4">
-            <div class="flex justify-between text-[9px]">
-                <span class="opacity-50">Cross</span> <span class="text-neon">10.00x</span>
-            </div>
-            <div class="grid grid-cols-3 gap-1">
-                <button class="bg-white/5 py-1 text-[8px] border border-white/10 rounded">Limit</button>
-                <button class="bg-neon/10 text-neon py-1 text-[8px] border border-neon/20 rounded">Market</button>
-                <button class="bg-white/5 py-1 text-[8px] border border-white/10 rounded">Chase</button>
-            </div>
-            <div class="mt-auto space-y-2">
-                <button class="w-full py-2 bg-neon text-black text-[9px] uppercase">Open Long</button>
-                <button class="w-full py-2 border border-hot-red text-hot-red text-[9px] uppercase">Open Short</button>
-            </div>
-        </aside>
-
-        <section class="col-span-3 glass flex flex-col">
-            <div class="flex items-center space-x-6 px-4 border-b border-white/5 text-[8px] uppercase h-8">
-                <span class="text-neon border-b border-neon h-full flex items-center">Open Orders</span>
-                <span class="text-white opacity-40 hover:opacity-100 cursor-pointer">Positions</span>
-                <span class="text-white opacity-40 hover:opacity-100 cursor-pointer">P&L</span>
-            </div>
-            <div class="flex-1 bg-black/40 flex items-center justify-center">
-                <span class="text-[8px] italic opacity-20">Scanning Exchange Nodes...</span>
+                <button class="btn-bybit">Open Short</button>
             </div>
         </section>
     </div>
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-        window.onload = () => { 
-            new TradingView.widget({
-                "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15", "theme": "dark", "container_id": "tradingview_widget",
-                "overrides": {
-                    "mainSeriesProperties.candleStyle.upColor": "#39FF14", "mainSeriesProperties.candleStyle.downColor": "#FF003F",
-                    "mainSeriesProperties.candleStyle.borderUpColor": "#39FF14", "mainSeriesProperties.candleStyle.borderDownColor": "#FF003F"
-                }
-            });
-        };
-    </script>
-</body>
-</html>
+    <footer class="glass flex items-center px-10 border-t border-white/5">
+        <div class="flex space-x-1
