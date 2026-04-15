@@ -10,7 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
         :root {
-            --neon:#00C896; --hot-red:#FF003F; --bg:#050505;
+            --neon:#44B828; --hot-red:#FF003F; --bg:#050505;
             --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
             --text-dim:rgba(255,255,255,0.32); --text-mid:rgba(255,255,255,0.58); --text-bright:rgba(255,255,255,0.92);
             --blue:#4285f4; --yellow:#F0B429; --orange:#FF8C00; --purple:#9b72cb;
@@ -112,7 +112,16 @@
         .bot-toggle.stop:hover{background:rgba(255,0,63,0.15);}
         .bot-pnl-pos{color:var(--neon);}
         .bot-pnl-neg{color:var(--hot-red);}
-        /* ========== TABLET (768–1199px) ========== */
+        /* ==========         /* Mobile nav base (hidden by default, shown via media query) */
+        #mobile-nav{
+            display:none;
+            height:52px;
+            flex-shrink:0;
+            background:#080808;
+            border-top:1px solid var(--border);
+        }
+
+        TABLET (768–1199px) ========== */
         @media (min-width:768px) and (max-width:1199px){
             .app-container{
                 grid-template-columns:44px 1fr 280px !important;
@@ -220,13 +229,6 @@
         }
 
         /* Mobile bottom nav */
-        #mobile-nav{
-            display:none;
-            height:52px;
-            flex-shrink:0;
-            background:#080808;
-            border-top:1px solid var(--border);
-        }
         .mob-btn{
             flex:1;
             display:flex;
@@ -308,8 +310,8 @@
         #tablet-trade-btn{
             display:none;
             margin-left:auto;
-            background:rgba(57,255,20,0.08);
-            border:1px solid rgba(57,255,20,0.2);
+            background:rgba(68,184,40,0.08);
+            border:1px solid rgba(68,184,40,0.2);
             color:var(--neon);
             padding:3px 10px;
             border-radius:3px;
@@ -321,14 +323,122 @@
             transition:background 0.15s;
             touch-action:manipulation;
         }
-        #tablet-trade-btn:hover{ background:rgba(57,255,20,0.14); }
+        #tablet-trade-btn:hover{ background:rgba(68,184,40,0.14); }
         /* Mobile header tweaks */
         @media (max-width:767px){
             .app-container > header .flex.items-center.gap-5{
                 gap:10px;
             }
         }
-    </style>
+    
+        /* ========================================================
+           MOB-UI  –  Bybit-style mobile / tablet layout
+           Shown on ≤1199px, replaces .app-container entirely
+        ======================================================== */
+        #mob-ui{display:none;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg);}
+        @media(max-width:1199px){
+            .app-container{display:none!important;}
+            #mobile-nav,#mobile-more,#draggable-ai{display:none!important;}
+            #mob-ui{display:flex;}
+            .slide-panel{left:0!important;top:46px!important;bottom:52px!important;width:100%!important;border-radius:0!important;border-left:none;border-right:none;}
+        }
+        /* Header */
+        .mhdr{display:flex;align-items:center;justify-content:space-between;padding:0 12px;height:46px;border-bottom:1px solid var(--border);flex-shrink:0;background:#080808;}
+        .mhdr-pair{font-size:15px;font-weight:700;color:var(--text-bright);display:flex;align-items:center;gap:4px;cursor:pointer;}
+        .mhdr-caret{font-size:11px;color:var(--text-dim);}
+        .mhdr-meta{display:flex;align-items:center;gap:7px;}
+        .mhdr-price{font-size:13px;font-weight:600;color:var(--neon);font-family:'JetBrains Mono',monospace;}
+        .mhdr-chg{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:500;}
+        .mhdr-chg.pos{background:rgba(68,184,40,0.12);color:var(--neon);}
+        .mhdr-chg.neg{background:rgba(255,0,63,0.12);color:var(--hot-red);}
+        .mhdr-btns{display:flex;gap:6px;}
+        .mhdr-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;width:32px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);-webkit-tap-highlight-color:transparent;}
+        .mhdr-btn.on{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.28);color:var(--neon);}
+        /* Chart */
+        #mob-chart-sec{height:0;overflow:hidden;transition:height .25s ease;flex-shrink:0;background:#050505;}
+        #mob-chart-sec.open{height:200px;}
+        @media(min-width:768px){#mob-chart-sec{height:210px;}}
+        /* OC row */
+        .moc-row{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+        .moc-toggle{display:flex;background:#0f0f0f;border-radius:20px;padding:2px;border:1px solid var(--border);}
+        .moc-btn{padding:4px 18px;border-radius:18px;font-size:11px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--text-dim);transition:all .15s;-webkit-tap-highlight-color:transparent;}
+        .moc-btn.active{background:var(--neon);color:#000;}
+        .moc-btn.active-close{background:var(--hot-red);color:#fff;}
+        .mfunding{font-size:9px;color:var(--text-dim);text-align:right;line-height:1.5;}
+        .mfunding b{color:var(--text-mid);}
+        /* Margin/Lev row */
+        .mml-row{display:flex;gap:5px;padding:5px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+        .msel{flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);font-size:11px;padding:5px 7px;border-radius:5px;outline:none;-webkit-appearance:none;cursor:pointer;}
+        .mlev{background:#0f0f0f;border:1px solid rgba(68,184,40,0.22);color:var(--neon);font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;cursor:pointer;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+        /* Split */
+        .msplit{display:flex;flex:1;min-height:0;overflow:hidden;gap:6px;padding:6px 10px 4px 12px;}
+        /* Form */
+        .mform{display:flex;flex-direction:column;gap:5px;flex:0 0 54%;min-width:0;}
+        .mlbl{font-size:9px;color:var(--text-dim);margin-bottom:1px;text-transform:uppercase;letter-spacing:.03em;}
+        .mbal{font-size:11px;color:var(--text-mid);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:5px;}
+        .mbal-add{color:var(--neon);font-size:13px;cursor:pointer;line-height:1;}
+        .minput-wrap{position:relative;}
+        .minput{width:100%;background:#111;border:1px solid var(--border);color:var(--text-bright);font-size:12px;padding:7px 48px 7px 9px;border-radius:5px;outline:none;font-family:'JetBrains Mono',monospace;}
+        .minput:focus{border-color:rgba(255,255,255,0.18);}
+        .minput-sfx{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9.5px;color:var(--text-dim);pointer-events:none;white-space:nowrap;}
+        .mslider{width:100%;-webkit-appearance:none;background:transparent;margin:2px 0;}
+        .mslider::-webkit-slider-runnable-track{height:2px;background:#252525;border-radius:1px;}
+        .mslider::-webkit-slider-thumb{-webkit-appearance:none;height:14px;width:14px;border-radius:50%;background:var(--neon);margin-top:-6px;cursor:pointer;border:2px solid var(--bg);}
+        .mpct-row{display:flex;justify-content:space-between;margin-top:1px;}
+        .mpct{font-size:9px;color:var(--text-dim);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+        .minfo{background:#0c0c0c;border:1px solid var(--border);border-radius:4px;padding:5px 8px;}
+        .minfo-r{display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);line-height:1.7;}
+        .minfo-r span:last-child{color:var(--text-mid);font-family:'JetBrains Mono',monospace;}
+        .mchk{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid);cursor:pointer;padding:1px 0;}
+        .mchk input[type=checkbox]{width:13px;height:13px;accent-color:var(--neon);cursor:pointer;flex-shrink:0;}
+        /* Order book */
+        .mbook{display:flex;flex-direction:column;flex:0 0 46%;min-width:0;}
+        .mbook-hdr{display:flex;justify-content:space-between;padding:0 2px 4px;border-bottom:1px solid var(--border);margin-bottom:1px;flex-shrink:0;}
+        .mbook-hdr span{font-size:9px;color:var(--text-dim);}
+        .mbook-asks{flex:1;display:flex;flex-direction:column-reverse;overflow:hidden;}
+        .mbook-bids{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+        .mbrow{display:flex;justify-content:space-between;padding:2px 2px;position:relative;font-size:10px;line-height:1.55;}
+        .mbrow .mbar{position:absolute;top:0;bottom:0;right:0;opacity:.08;pointer-events:none;}
+        .mbrow.ask .mbar{background:var(--hot-red);}
+        .mbrow.bid .mbar{background:var(--neon);}
+        .mbook-mid{display:flex;align-items:center;justify-content:space-between;padding:3px 2px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:2px 0;flex-shrink:0;}
+        .mbook-mid-p{font-size:13px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace;}
+        .mls-bar{margin-top:4px;flex-shrink:0;}
+        .mls-track{height:3px;border-radius:2px;background:#1a1a1a;display:flex;overflow:hidden;}
+        .mls-long{background:var(--neon);}
+        .mls-short{background:var(--hot-red);}
+        .mls-lbls{display:flex;justify-content:space-between;margin-top:2px;}
+        .mls-lbl{font-size:9px;font-family:'JetBrains Mono',monospace;}
+        /* Action btns */
+        .maction{display:flex;gap:6px;padding:6px 12px;flex-shrink:0;}
+        .mlong{flex:1;padding:11px;background:var(--neon);color:#000;font-size:12px;font-weight:700;border-radius:7px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+        .mshort{flex:1;padding:11px;background:var(--hot-red);color:#fff;font-size:12px;font-weight:700;border-radius:7px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+        /* Bottom section */
+        .mbtm{flex-shrink:0;background:#080808;border-top:1px solid var(--border);}
+        .mbtm-tabs{display:flex;padding:0 8px;height:33px;border-bottom:1px solid var(--border);overflow-x:auto;gap:0;}
+        .mbtm-tabs::-webkit-scrollbar{display:none;}
+        .mbt{font-size:11px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:0 10px;height:100%;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+        .mbt.active{color:var(--text-bright);border-bottom-color:var(--neon);}
+        .mbtm-content{overflow-y:auto;max-height:170px;}
+        .mempty{color:var(--text-dim);font-size:11px;text-align:center;padding:16px;}
+        /* Bots grid */
+        .bots-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;}
+        @media(min-width:600px){.bots-grid{grid-template-columns:repeat(3,1fr);}}
+        .bcard{background:#0f0f0f;border:1px solid var(--border);border-radius:7px;padding:9px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+        .bcard:active{border-color:rgba(68,184,40,0.3);}
+        .bcard-name{font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:2px;}
+        .bcard-desc{font-size:9.5px;color:var(--text-dim);line-height:1.4;}
+        .bcard-tag{display:inline-flex;align-items:center;gap:3px;margin-top:5px;font-size:9px;padding:2px 7px;border-radius:10px;}
+        .bcard-tag.cfg{background:rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid var(--border);}
+        .bcard-tag.run{background:rgba(68,184,40,0.1);color:var(--neon);border:1px solid rgba(68,184,40,0.2);}
+        .bcard-dot{width:5px;height:5px;border-radius:50%;}
+        /* Nav bar */
+        .mnavbar{display:flex;height:52px;background:#060606;border-top:1px solid var(--border);flex-shrink:0;}
+        .mnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-dim);cursor:pointer;font-size:8.5px;font-weight:500;text-transform:uppercase;letter-spacing:.03em;border:none;background:none;-webkit-tap-highlight-color:transparent;}
+        .mnav.active{color:var(--neon);}
+        .mnav svg{width:18px;height:18px;}
+
+        </style>
 </head>
 <body>
 <div class="app-container">
@@ -578,7 +688,7 @@
     <!-- ORDER ENTRY -->
     <aside id="aside-orderentry" class="glass flex flex-col overflow-hidden" style="padding:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(57,255,20,0.2);">Isolated</button></div>
+            <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(68,184,40,0.2);">Isolated</button></div>
             <button class="lev-badge" style="color:var(--text-bright);">10.00×</button>
         </div>
         <div style="display:flex;gap:3px;margin-bottom:10px;">
@@ -605,7 +715,7 @@
             <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Cost</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-            <button style="width:100%;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:600;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(57,255,20,0.16);">Open Long</button>
+            <button style="width:100%;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:600;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(68,184,40,0.28);">Open Long</button>
             <button style="width:100%;padding:8px;background:transparent;color:var(--hot-red);font-size:11px;font-weight:600;border-radius:3px;border:1px solid rgba(255,0,63,0.35);cursor:pointer;">Open Short</button>
         </div>
         <div style="border-top:1px solid var(--border);padding-top:8px;">
@@ -937,13 +1047,13 @@ function toggleTabletTrade(){
     backdrop.style.display = isOpen ? 'block' : 'none';
     // Update button appearance
     const btn = document.getElementById('tablet-trade-btn');
-    btn.style.background = isOpen ? 'rgba(57,255,20,0.18)' : 'rgba(57,255,20,0.08)';
+    btn.style.background = isOpen ? 'rgba(68,184,40,0.18)' : 'rgba(68,184,40,0.08)';
 }
 function closeTabletTrade(){
     document.getElementById('aside-orderentry').classList.remove('tablet-open');
     document.getElementById('tablet-backdrop').style.display = 'none';
     const btn = document.getElementById('tablet-trade-btn');
-    if(btn) btn.style.background = 'rgba(57,255,20,0.08)';
+    if(btn) btn.style.background = 'rgba(68,184,40,0.08)';
 }
 
 /* ============ MOBILE VIEW SWITCHING ============ */
@@ -1031,6 +1141,268 @@ window.addEventListener('resize', ()=>{
         }
     }, 150);
 });
+
+/* ============ MOB-UI JS ============ */
+let mobTVLoaded = false;
+
+function toggleMobChart(){
+    const sec = document.getElementById('mob-chart-sec');
+    const btn = document.getElementById('mob-chart-toggle');
+    const open = sec.classList.toggle('open');
+    btn.classList.toggle('on', open);
+    if(open && !mobTVLoaded){
+        new TradingView.widget({
+            autosize:true, symbol:'BYBIT:BTCUSDT', interval:'5', theme:'dark',
+            container_id:'mob-tv-widget',
+            hide_top_toolbar:false, hide_legend:true, save_image:false,
+            overrides:{
+                'mainSeriesProperties.candleStyle.upColor':'#44B828',
+                'mainSeriesProperties.candleStyle.downColor':'#FF003F',
+                'mainSeriesProperties.candleStyle.borderUpColor':'#44B828',
+                'mainSeriesProperties.candleStyle.borderDownColor':'#FF003F',
+                'mainSeriesProperties.candleStyle.wickUpColor':'#44B828',
+                'mainSeriesProperties.candleStyle.wickDownColor':'#FF003F'
+            }
+        });
+        mobTVLoaded = true;
+    }
+}
+
+// Auto-open chart on tablet
+if(window.innerWidth >= 768){
+    window.addEventListener('load', ()=>{
+        const sec = document.getElementById('mob-chart-sec');
+        if(sec && !sec.classList.contains('open')) toggleMobChart();
+    });
+}
+
+function mobOC(type){
+    document.getElementById('moc-open').className = 'moc-btn' + (type==='open'?' active':'');
+    document.getElementById('moc-close').className = 'moc-btn' + (type==='close'?' active-close':'');
+}
+
+function mobTab(btn, id){
+    ['mbt-pos','mbt-ord','mbt-assets','mbt-bots'].forEach(i=>{
+        const el = document.getElementById(i);
+        if(el) el.style.display = (i===id)?'':'none';
+    });
+    btn.closest('.mbtm-tabs').querySelectorAll('.mbt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function mobSlider(val){
+    document.getElementById('mob-slider').value = val;
+}
+function mobPct(pct){
+    document.getElementById('mob-slider').value = pct;
+}
+
+// Render mobile order book (condensed — price + qty only)
+const mAskData=[[74245.10,0.124],[74240.30,0.067],[74238.90,0.891],[74237.50,0.045],[74236.20,0.312],[74235.00,0.178]];
+const mBidData=[[74231.70,1.089],[74230.50,0.334],[74229.10,0.612],[74228.40,0.089],[74227.80,0.445],[74226.20,0.231]];
+const mMax = Math.max(...mAskData.map(r=>r[1]),...mBidData.map(r=>r[1]));
+function renderMobBook(){
+    const asks = document.getElementById('mob-asks');
+    const bids = document.getElementById('mob-bids');
+    if(!asks||!bids) return;
+    asks.innerHTML = mAskData.map(([p,q])=>
+        `<div class="mbrow ask"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10px;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);font-size:10px;">${q.toFixed(3)}</span></div>`
+    ).join('');
+    bids.innerHTML = mBidData.map(([p,q])=>
+        `<div class="mbrow bid"><div class="mbar" style="width:${(q/mMax*100).toFixed(0)}%"></div><span class="mono" style="color:#44B828;font-size:10px;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);font-size:10px;">${q.toFixed(3)}</span></div>`
+    ).join('');
+}
+renderMobBook();
+
 </script>
+
+<!-- ============================================================
+     MOB-UI — Bybit-style mobile/tablet trading layout
+============================================================ -->
+<div id="mob-ui">
+
+  <!-- Header -->
+  <div class="mhdr">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="mhdr-pair">BTCUSDT <span class="mhdr-caret">▾</span></div>
+      <div class="mhdr-meta">
+        <span class="mhdr-price" id="mob-price">74,231.70</span>
+        <span class="mhdr-chg pos" id="mob-chg">+2.4%</span>
+      </div>
+    </div>
+    <div class="mhdr-btns">
+      <div class="mhdr-btn" id="mob-chart-toggle" onclick="toggleMobChart()" title="Chart">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="mhdr-btn" onclick="togglePanel('feargreed')" title="F&amp;G">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <div class="mhdr-btn" onclick="togglePanel('scout')" title="AI Scout" style="background:rgba(66,133,244,0.08);border-color:rgba(155,114,203,0.2);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart (collapsed by default on mobile, open on tablet) -->
+  <div id="mob-chart-sec">
+    <div id="mob-tv-widget" style="width:100%;height:100%;"></div>
+  </div>
+
+  <!-- Open / Close  +  Funding -->
+  <div class="moc-row">
+    <div class="moc-toggle">
+      <button class="moc-btn active" id="moc-open" onclick="mobOC('open')">Open</button>
+      <button class="moc-btn" id="moc-close" onclick="mobOC('close')">Close</button>
+    </div>
+    <div class="mfunding">Funding / Countdown<br><b>0.0028% / 03:32:43 (8h)</b></div>
+  </div>
+
+  <!-- Margin / Leverage / Order type -->
+  <div class="mml-row">
+    <select class="msel">
+      <option>Isolated</option><option>Cross</option>
+    </select>
+    <button class="mlev">10x</button>
+    <select class="msel">
+      <option>Market</option><option>Limit</option><option>Chase</option>
+    </select>
+  </div>
+
+  <!-- Split: Order Form (left) + Order Book (right) -->
+  <div class="msplit">
+
+    <!-- Order Form -->
+    <div class="mform">
+      <div>
+        <div class="mlbl">Available</div>
+        <div class="mbal">0.0000 USDT <span class="mbal-add">+</span></div>
+      </div>
+      <div class="minput-wrap">
+        <input class="minput" type="number" inputmode="decimal" placeholder="Cost" id="mob-cost">
+        <span class="minput-sfx">USDT ↺</span>
+      </div>
+      <div>
+        <input type="range" class="mslider" min="0" max="100" value="0" id="mob-slider" oninput="mobSlider(this.value)">
+        <div class="mpct-row">
+          <span class="mpct" onclick="mobPct(0)">0</span>
+          <span class="mpct" onclick="mobPct(25)">25%</span>
+          <span class="mpct" onclick="mobPct(50)">50%</span>
+          <span class="mpct" onclick="mobPct(75)">75%</span>
+          <span class="mpct" onclick="mobPct(100)">Full</span>
+        </div>
+      </div>
+      <div class="minfo">
+        <div class="minfo-r"><span>Qty</span><span id="mob-qty">0/0 BTC</span></div>
+        <div class="minfo-r"><span>Value</span><span id="mob-val">0/0 USDT</span></div>
+        <div class="minfo-r"><span>Liq. Price</span><span style="color:var(--neon);cursor:pointer;">Calculate</span></div>
+      </div>
+      <label class="mchk"><input type="checkbox"> Max. Slippage</label>
+      <label class="mchk"><input type="checkbox"> TP / SL</label>
+    </div>
+
+    <!-- Order Book -->
+    <div class="mbook">
+      <div class="mbook-hdr">
+        <span>Price(USDT)</span><span>Qty</span>
+      </div>
+      <div class="mbook-asks" id="mob-asks"></div>
+      <div class="mbook-mid">
+        <span class="mbook-mid-p" id="mob-mid">74,231.70</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="mbook-bids" id="mob-bids"></div>
+      <div class="mls-bar">
+        <div class="mls-track">
+          <div class="mls-long" id="mob-ls-long" style="width:56%;"></div>
+          <div class="mls-short" id="mob-ls-short" style="width:44%;"></div>
+        </div>
+        <div class="mls-lbls">
+          <span class="mls-lbl" style="color:var(--neon);">B <span id="mob-ls-lval">56</span>%</span>
+          <span class="mls-lbl" style="color:var(--hot-red);"><span id="mob-ls-sval">44</span>% S</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /split -->
+
+  <!-- Long / Short Buttons -->
+  <div class="maction">
+    <button class="mlong">Open Long</button>
+    <button class="mshort">Open Short</button>
+  </div>
+
+  <!-- Bottom section: Positions / Orders / Assets / Bots -->
+  <div class="mbtm">
+    <div class="mbtm-tabs">
+      <button class="mbt active" onclick="mobTab(this,'mbt-pos')">Positions(0)</button>
+      <button class="mbt" onclick="mobTab(this,'mbt-ord')">Orders(0)</button>
+      <button class="mbt" onclick="mobTab(this,'mbt-assets')">Assets</button>
+      <button class="mbt" onclick="mobTab(this,'mbt-bots')">Bots</button>
+    </div>
+    <div class="mbtm-content">
+      <div id="mbt-pos"><div class="mempty">No open positions</div></div>
+      <div id="mbt-ord" style="display:none;"><div class="mempty">No open orders</div></div>
+      <div id="mbt-assets" style="display:none;"><div class="mempty">Connect exchange in Settings</div></div>
+      <div id="mbt-bots" style="display:none;">
+        <div class="bots-grid">
+          <div class="bcard">
+            <div class="bcard-name">Grid Scalper</div>
+            <div class="bcard-desc">Range-bound grid with auto-spacing</div>
+            <div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div>
+          </div>
+          <div class="bcard">
+            <div class="bcard-name">Trend Rider</div>
+            <div class="bcard-desc">Follows momentum with trailing stop</div>
+            <div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div>
+          </div>
+          <div class="bcard">
+            <div class="bcard-name">Smart Reversal</div>
+            <div class="bcard-desc">RSI + MACD counter-trend entries</div>
+            <div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div>
+          </div>
+          <div class="bcard">
+            <div class="bcard-name">DCA Bot</div>
+            <div class="bcard-desc">Dollar-cost averaging with zones</div>
+            <div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div>
+          </div>
+          <div class="bcard">
+            <div class="bcard-name">AI Scout Bot</div>
+            <div class="bcard-desc">Claude-powered signal execution</div>
+            <div class="bcard-tag run"><span class="bcard-dot" style="background:var(--neon);"></span>Ready</div>
+          </div>
+          <div class="bcard" style="border-color:rgba(68,184,40,0.15);">
+            <div class="bcard-name" style="color:var(--neon);">+ Custom Bot</div>
+            <div class="bcard-desc">Build your own strategy logic</div>
+            <div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>New</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom navigation bar -->
+  <nav class="mnavbar">
+    <button class="mnav" onclick="togglePanel('analytics')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Signals
+    </button>
+    <button class="mnav" onclick="togglePanel('longshort')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+      L/S
+    </button>
+    <button class="mnav active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Trade
+    </button>
+    <button class="mnav" onclick="togglePanel('scout')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.6"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+      Scout
+    </button>
+    <button class="mnav" onclick="togglePanel('heatmap')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Heatmap
+    </button>
+  </nav>
+</div><!-- /mob-ui -->
+
 </body>
 </html>
