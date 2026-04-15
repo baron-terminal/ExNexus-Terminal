@@ -473,6 +473,113 @@
         .dhub-dot.live{background:var(--neon);animation:blink 2s ease infinite;}
         @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 
+        
+        /* ======== SETTINGS PANEL ======== */
+        #panel-settings{ width:min(480px,100vw); }
+        .set-nav{ display:flex; border-bottom:1px solid var(--border); padding:0 14px; height:36px; gap:4px; flex-shrink:0; overflow-x:auto; }
+        .set-nav::-webkit-scrollbar{ display:none; }
+        .set-nav-btn{ font-size:10.5px; color:var(--text-dim); background:none; border:none; border-bottom:2px solid transparent; padding:0 8px; height:100%; cursor:pointer; white-space:nowrap; transition:color .15s; }
+        .set-nav-btn.active{ color:var(--text-bright); border-bottom-color:var(--neon); }
+        .set-body{ flex:1; overflow-y:auto; padding:12px 14px; }
+        .set-section{ display:none; }
+        .set-section.active{ display:block; }
+        .set-section-title{ font-size:9px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; margin-top:4px; }
+        /* Exchange cards */
+        .exch-card{ background:#0d0d0d; border:1px solid var(--border); border-radius:7px; padding:11px 12px; margin-bottom:8px; transition:border-color .2s; }
+        .exch-card.connected{ border-color:rgba(68,184,40,0.28); }
+        .exch-header{ display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+        .exch-left{ display:flex; align-items:center; gap:9px; }
+        .exch-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+        .exch-dot.on{ background:var(--neon); box-shadow:0 0 6px rgba(68,184,40,0.5); }
+        .exch-dot.off{ background:#333; }
+        .exch-name{ font-size:12px; font-weight:600; color:var(--text-bright); }
+        .exch-tag{ font-size:9px; color:var(--text-dim); margin-top:1px; }
+        .exch-toggle{ width:38px; height:21px; border-radius:11px; background:#1a1a1a; border:1px solid var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+        .exch-toggle.on{ background:var(--neon); border-color:var(--neon); }
+        .exch-toggle-knob{ width:15px; height:15px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
+        .exch-toggle.on .exch-toggle-knob{ left:21px; }
+        .exch-fields{ margin-top:10px; display:none; }
+        .exch-fields.open{ display:block; }
+        .api-row{ margin-bottom:7px; }
+        .api-lbl{ font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.07em; margin-bottom:3px; }
+        .api-wrap{ display:flex; gap:4px; }
+        .api-inp{ flex:1; background:#080808; border:1px solid var(--border); color:var(--text-bright); font-size:11px; padding:7px 10px; border-radius:4px; outline:none; font-family:'JetBrains Mono',monospace; }
+        .api-inp:focus{ border-color:rgba(255,255,255,0.2); }
+        .api-eye{ background:#080808; border:1px solid var(--border); border-radius:4px; width:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-dim); flex-shrink:0; }
+        .api-eye:hover{ color:var(--text-bright); }
+        .exch-foot{ display:flex; align-items:center; gap:6px; margin-top:10px; }
+        .btn-test{ background:transparent; border:1px solid var(--border); color:var(--text-mid); font-size:10px; padding:5px 12px; border-radius:4px; cursor:pointer; transition:border-color .15s; }
+        .btn-test:hover{ border-color:rgba(255,255,255,0.2); color:var(--text-bright); }
+        .btn-save-key{ background:var(--neon); color:#000; font-size:10px; font-weight:700; padding:5px 14px; border-radius:4px; border:none; cursor:pointer; }
+        .conn-badge{ margin-left:auto; font-size:9px; display:flex; align-items:center; gap:4px; padding:3px 8px; border-radius:10px; }
+        .conn-badge.ok{ background:rgba(68,184,40,0.1); color:var(--neon); border:1px solid rgba(68,184,40,0.2); }
+        .conn-badge.err{ background:rgba(255,0,63,0.1); color:var(--hot-red); border:1px solid rgba(255,0,63,0.2); }
+        .conn-badge.idle{ background:rgba(255,255,255,0.04); color:var(--text-dim); border:1px solid var(--border); }
+        /* API Intelligence rows */
+        .api-intel-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .api-intel-row:last-child{ border-bottom:none; }
+        .api-intel-icon{ width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .api-intel-name{ font-size:11px; font-weight:600; color:var(--text-bright); }
+        .api-intel-sub{ font-size:9.5px; color:var(--text-dim); }
+        .api-intel-input{ flex:1; background:#080808; border:1px solid var(--border); color:var(--text-bright); font-size:11px; padding:6px 9px; border-radius:4px; outline:none; font-family:'JetBrains Mono',monospace; }
+        /* Risk/General rows */
+        .set-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .set-row:last-child{ border-bottom:none; }
+        .set-row-label{ font-size:11px; color:var(--text-mid); }
+        .set-row-sub{ font-size:9.5px; color:var(--text-dim); margin-top:1px; }
+        .set-inp-sm{ background:#080808; border:1px solid var(--border); color:var(--text-bright); font-size:11px; padding:5px 8px; border-radius:4px; outline:none; width:80px; text-align:right; font-family:'JetBrains Mono',monospace; }
+        .set-select{ background:#080808; border:1px solid var(--border); color:var(--text-bright); font-size:11px; padding:5px 8px; border-radius:4px; outline:none; -webkit-appearance:none; cursor:pointer; }
+        /* Login card */
+        .login-card{ background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:7px; padding:14px; margin-bottom:10px; }
+        .login-card-title{ font-size:12px; font-weight:600; color:var(--text-bright); margin-bottom:4px; }
+        .login-card-sub{ font-size:10px; color:var(--text-dim); line-height:1.5; margin-bottom:10px; }
+        .btn-primary{ background:var(--neon); color:#000; font-size:11px; font-weight:700; padding:8px 18px; border-radius:5px; border:none; cursor:pointer; }
+        .btn-secondary{ background:transparent; border:1px solid var(--border); color:var(--text-mid); font-size:11px; padding:8px 18px; border-radius:5px; cursor:pointer; }
+
+        /* ======== ARBITRAGE SCANNER ======== */
+        .arb-header{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; }
+        .arb-scan-btn{ background:var(--neon); color:#000; font-size:10px; font-weight:700; padding:5px 14px; border-radius:4px; border:none; cursor:pointer; display:flex; align-items:center; gap:5px; }
+        .arb-scan-btn.scanning{ background:rgba(68,184,40,0.15); color:var(--neon); border:1px solid rgba(68,184,40,0.3); }
+        .arb-stat{ background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:4px; padding:3px 9px; font-size:9.5px; color:var(--text-mid); }
+        .arb-stat b{ color:var(--text-bright); }
+        .arb-min-spread{ display:flex; align-items:center; gap:5px; margin-left:auto; font-size:10px; color:var(--text-dim); }
+        .arb-min-inp{ background:#080808; border:1px solid var(--border); color:var(--neon); font-size:10px; padding:3px 6px; border-radius:4px; outline:none; width:52px; text-align:center; font-family:'JetBrains Mono',monospace; }
+        .arb-table-wrap{ flex:1; overflow-y:auto; }
+        .arb-table{ width:100%; border-collapse:collapse; }
+        .arb-table th{ font-size:9.5px; font-weight:500; color:var(--text-dim); text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); white-space:nowrap; position:sticky; top:0; background:#0a0a0a; z-index:1; }
+        .arb-table th.r{ text-align:right; }
+        .arb-table td{ font-size:11px; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.03); white-space:nowrap; vertical-align:middle; }
+        .arb-table td.r{ text-align:right; }
+        .arb-table tr:hover td{ background:rgba(255,255,255,0.02); }
+        .arb-pair{ font-weight:600; color:var(--text-bright); font-size:12px; }
+        .arb-exch{ font-size:10px; color:var(--text-dim); margin-top:1px; }
+        .arb-price{ font-family:'JetBrains Mono',monospace; font-size:11px; }
+        .spread-badge{ display:inline-flex; align-items:center; padding:2px 7px; border-radius:10px; font-size:10px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+        .spread-hot{ background:rgba(68,184,40,0.12); color:var(--neon); border:1px solid rgba(68,184,40,0.25); }
+        .spread-warm{ background:rgba(240,180,41,0.1); color:#F0B429; border:1px solid rgba(240,180,41,0.2); }
+        .spread-cold{ background:rgba(255,255,255,0.04); color:var(--text-dim); border:1px solid var(--border); }
+        .arb-exec-btn{ background:var(--neon); color:#000; font-size:10px; font-weight:700; padding:4px 12px; border-radius:4px; border:none; cursor:pointer; white-space:nowrap; }
+        .arb-exec-btn:disabled{ background:rgba(255,255,255,0.06); color:var(--text-dim); cursor:default; }
+        .arb-auto-badge{ background:rgba(66,133,244,0.1); color:#4285f4; border:1px solid rgba(66,133,244,0.2); font-size:9px; padding:2px 7px; border-radius:10px; }
+        /* Mobile arb cards */
+        .arb-cards{ padding:8px; display:flex; flex-direction:column; gap:6px; }
+        .arb-card{ background:#0d0d0d; border:1px solid var(--border); border-radius:7px; padding:10px 12px; }
+        .arb-card.hot{ border-color:rgba(68,184,40,0.28); }
+        .arb-card-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+        .arb-card-pair{ font-size:13px; font-weight:700; color:var(--text-bright); }
+        .arb-card-body{ display:flex; gap:8px; margin-bottom:8px; }
+        .arb-card-side{ flex:1; background:rgba(255,255,255,0.03); border-radius:5px; padding:6px 8px; }
+        .arb-card-side-lbl{ font-size:8.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em; }
+        .arb-card-side-exch{ font-size:10px; font-weight:600; color:var(--text-bright); margin:2px 0; }
+        .arb-card-side-price{ font-size:11px; font-family:'JetBrains Mono',monospace; }
+        .arb-card-foot{ display:flex; align-items:center; justify-content:space-between; }
+        .arb-profit{ font-size:10px; color:var(--text-dim); }
+        .arb-profit b{ color:var(--neon); font-family:'JetBrains Mono',monospace; }
+
+        
+        .arb-pair-tag{font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-dim);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+        .arb-pair-tag.on{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.25);color:var(--neon);}
+
         </style>
 </head>
 <body>
@@ -538,6 +645,12 @@
             <span class="nav-tip" style="border-left:2px solid var(--purple);">AI Scout</span>
         </div>
         <div style="height:8px;"></div>
+
+        <!-- Settings -->
+        <div class="nav-item" id="nav-settings" onclick="toggleSettingsPanel()" style="margin-bottom:4px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span class="nav-tip" style="border-left:2px solid var(--neon);">Settings</span>
+        </div>
     </nav>
 
     <!-- ========== SLIDE PANELS ========== -->
@@ -773,6 +886,7 @@
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets')">Assets</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-borrowings')">Borrowings</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools')">Tools</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')">⚡ Arb</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
         </div>
         <div style="flex:1;overflow:hidden;">
@@ -783,7 +897,36 @@
             <div id="bt-assets" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Equity</th><th class="r">Available</th><th class="r">Used Margin</th><th class="r">Order Margin</th><th class="r">Unrealized PNL</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No assets data</div></td></tr></tbody></table></div>
             <div id="bt-borrowings" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Borrowed</th><th class="r">Interest</th><th class="r">Daily Rate</th><th>Due Date</th><th>Action</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No borrowings</div></td></tr></tbody></table></div>
             <div id="bt-tools" class="tab-panel" style="height:100%;align-items:center;justify-content:center;"><div class="empty-state">Trading tools — coming soon</div></div>
-            <div id="bt-pnl" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Closed Size</th><th class="r">Entry Price</th><th class="r">Exit Price</th><th class="r">Realized PNL</th><th>Close Type</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No P&amp;L data</div></td></tr></tbody></table></div>
+            <div id="bt-arb" class="tab-panel" style="height:100%;flex-direction:column;">
+                <div class="arb-header">
+                    <button class="arb-scan-btn" id="arb-scan-btn" onclick="startArbScan()">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Scan Now
+                    </button>
+                    <span class="arb-stat">Exchanges: <b id="arb-exch-count">0 connected</b></span>
+                    <span class="arb-stat">Opportunities: <b id="arb-opp-count" style="color:var(--neon);">—</b></span>
+                    <div class="arb-min-spread">Min net: <input class="arb-min-inp" type="number" value="0.08" step="0.01" id="arb-min-inp">%</div>
+                </div>
+                <div class="arb-table-wrap">
+                    <table class="arb-table">
+                        <thead><tr>
+                            <th>Pair</th>
+                            <th>Buy From</th>
+                            <th class="r">Buy Price</th>
+                            <th>Sell To</th>
+                            <th class="r">Sell Price</th>
+                            <th class="r">Spread</th>
+                            <th class="r">Fees</th>
+                            <th class="r">Net</th>
+                            <th class="r">Per $1K</th>
+                            <th>Action</th>
+                        </tr></thead>
+                        <tbody id="arb-tbody"><tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text-dim);font-size:11px;">Click Scan Now to find arbitrage opportunities across connected exchanges</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="bt-pnl" class="tab-panel"
+<div id="bt-pnl" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Closed Size</th><th class="r">Entry Price</th><th class="r">Exit Price</th><th class="r">Realized PNL</th><th>Close Type</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No P&amp;L data</div></td></tr></tbody></table></div>
         </div>
     </section>
 </div><!-- end .app-container -->
@@ -1272,6 +1415,222 @@ function renderMobBook(){
 
 function openDataHub(){ togglePanel('datahub'); }
 
+
+/* ============ SETTINGS ============ */
+function toggleSettingsPanel(){
+    if(activePanel==='settings') closePanel('settings');
+    else {
+        if(activePanel) closePanel(activePanel);
+        document.getElementById('panel-settings').classList.add('open');
+        activePanel='settings';
+        loadSettings();
+    }
+}
+function setTab(btn, id){
+    btn.closest('.set-nav').querySelectorAll('.set-nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.set-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+}
+function toggleExchFields(name){
+    const f = document.getElementById('fields-'+name);
+    if(f) f.classList.toggle('open');
+}
+function toggleExch(name){
+    const t = document.getElementById('toggle-'+name);
+    if(!t) return;
+    const on = t.classList.toggle('on');
+    const k = t.querySelector('.exch-toggle-knob');
+    if(k) k.style.left = on ? '21px' : '2px';
+    const dot = document.getElementById('dot-'+name);
+    if(dot){ dot.className='exch-dot '+(on?'on':'off'); }
+    const card = document.getElementById('card-'+name);
+    if(card){ if(on) card.classList.add('connected'); else card.classList.remove('connected'); }
+    saveSetting('exch-'+name+'-active', on?'1':'0');
+}
+function toggleEye(id){
+    const inp = document.getElementById(id);
+    if(inp) inp.type = inp.type==='password' ? 'text' : 'password';
+}
+function testConn(name){
+    const s = document.getElementById('status-'+name);
+    if(!s) return;
+    s.className='conn-badge idle'; s.textContent='Testing…';
+    setTimeout(()=>{
+        const key = document.getElementById(name+'-key')?.value || '';
+        const secret = document.getElementById(name+'-secret')?.value || '';
+        if(!key || !secret){ s.className='conn-badge err'; s.textContent='Missing keys'; return; }
+        s.className='conn-badge ok'; s.textContent='✓ Connected';
+    }, 1200);
+}
+function saveExch(name){
+    const key = document.getElementById(name+'-key')?.value || '';
+    const secret = document.getElementById(name+'-secret')?.value || '';
+    const mode = document.getElementById(name+'-mode')?.value || 'live';
+    if(key) saveSetting(name+'-key', key);
+    if(secret) saveSetting(name+'-secret', secret);
+    if(mode) saveSetting(name+'-mode', mode);
+    showToast('Saved '+name+' keys');
+}
+function saveIntelKeys(){
+    ['altfins','nansen','coinglass','anthropic'].forEach(k=>{
+        const v = document.getElementById(k+'-key')?.value||'';
+        if(v) saveSetting(k+'-key', v);
+    });
+    showToast('Intelligence API keys saved');
+}
+function saveArbSettings(){
+    saveSetting('arb-min-spread', document.getElementById('arb-min-spread')?.value||'0.08');
+    saveSetting('arb-max-size', document.getElementById('arb-max-size')?.value||'500');
+    saveSetting('arb-interval', document.getElementById('arb-interval')?.value||'3');
+    showToast('Arbitrage settings saved');
+}
+function saveRiskSettings(){
+    ['risk-leverage','risk-pct','risk-daily-loss'].forEach(id=>{
+        const v = document.getElementById(id)?.value||'';
+        if(v) saveSetting(id, v);
+    });
+    showToast('Risk settings saved');
+}
+function toggleArbPair(el, pair){
+    el.classList.toggle('on');
+    saveSetting('arb-pair-'+pair, el.classList.contains('on')?'1':'0');
+}
+function clearAllData(){
+    if(!confirm('Clear ALL keys and settings? This cannot be undone.')) return;
+    Object.keys(localStorage).filter(k=>k.startsWith('exnexus_')).forEach(k=>localStorage.removeItem(k));
+    showToast('All data cleared');
+}
+/* LocalStorage helpers */
+function saveSetting(k,v){ try{ localStorage.setItem('exnexus_'+k,v); }catch(e){} }
+function getSetting(k,d=''){ try{ return localStorage.getItem('exnexus_'+k)||d; }catch(e){ return d; } }
+function loadSettings(){
+    ['bybit','gate','binance','alpaca'].forEach(name=>{
+        const key = getSetting(name+'-key');
+        const secret = getSetting(name+'-secret');
+        const active = getSetting('exch-'+name+'-active')==='1';
+        if(key){ const el=document.getElementById(name+'-key'); if(el) el.value=key; }
+        if(secret){ const el=document.getElementById(name+'-secret'); if(el) el.value=secret; }
+        if(active){ const t=document.getElementById('toggle-'+name); if(t&&!t.classList.contains('on')) toggleExch(name); }
+    });
+    ['altfins','nansen','coinglass','anthropic'].forEach(k=>{
+        const v=getSetting(k+'-key'); const el=document.getElementById(k+'-key');
+        if(v&&el) el.value=v;
+    });
+}
+/* Toast notification */
+function showToast(msg){
+    let t = document.getElementById('toast-msg');
+    if(!t){ t=document.createElement('div'); t.id='toast-msg'; t.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(68,184,40,0.3);color:var(--neon);padding:7px 18px;border-radius:20px;font-size:11px;z-index:9999;pointer-events:none;transition:opacity .3s;'; document.body.appendChild(t); }
+    t.textContent=msg; t.style.opacity='1';
+    clearTimeout(t._timer);
+    t._timer=setTimeout(()=>t.style.opacity='0', 2200);
+}
+
+/* ============ ARBITRAGE SCANNER ============ */
+const ARB_FEES = { bybit:0.0006, gate:0.0007, binance:0.0007, alpaca:0 };
+const ARB_NAMES = { bybit:'Bybit', gate:'Gate.io', binance:'Binance', alpaca:'Alpaca' };
+// Mock prices (will be replaced by live API data)
+function getMockPrices(){
+    const r=()=>(Math.random()-0.5)*0.003;
+    return [
+        { pair:'BTC/USDT', prices:{ bybit:74350*(1+r()), gate:74180*(1+r()), binance:74290*(1+r()) }, vol:'2.4B' },
+        { pair:'ETH/USDT', prices:{ bybit:3428*(1+r()), gate:3420*(1+r()), binance:3425*(1+r()) }, vol:'890M' },
+        { pair:'SOL/USDT', prices:{ bybit:142.5*(1+r()), gate:142.8*(1+r()), binance:142.6*(1+r()) }, vol:'340M' },
+        { pair:'XRP/USDT', prices:{ bybit:0.5842*(1+r()), gate:0.5821*(1+r()), binance:0.5835*(1+r()) }, vol:'280M' },
+        { pair:'ADA/USDT', prices:{ bybit:0.4521*(1+r()), gate:0.4498*(1+r()), binance:0.4515*(1+r()) }, vol:'120M' },
+        { pair:'BNB/USDT', prices:{ bybit:584.2*(1+r()), gate:583.8*(1+r()), binance:584.5*(1+r()) }, vol:'210M' },
+    ];
+}
+function calcArb(item){
+    const entries = Object.entries(item.prices);
+    let buyX=null,sellX=null,buyP=Infinity,sellP=0;
+    entries.forEach(([exch,price])=>{ if(price<buyP){buyP=price;buyX=exch;} if(price>sellP){sellP=price;sellX=exch;} });
+    const spread = (sellP-buyP)/buyP;
+    const fees = (ARB_FEES[buyX]||0)+(ARB_FEES[sellX]||0);
+    const net = spread - fees;
+    const per1k = (net * 1000).toFixed(2);
+    return { buyX, sellX, buyP, sellP, spread:(spread*100).toFixed(3), fees:(fees*100).toFixed(3), net:(net*100).toFixed(3), per1k };
+}
+let arbScanning=false, arbTimer=null;
+function startArbScan(){
+    if(arbScanning){ clearInterval(arbTimer); arbScanning=false; const b=document.getElementById('arb-scan-btn'); if(b){b.classList.remove('scanning');b.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Scan Now';} return; }
+    arbScanning=true;
+    const b=document.getElementById('arb-scan-btn');
+    if(b){b.classList.add('scanning');b.innerHTML='⬛ Stop';}
+    renderArbResults();
+    const interval = parseInt(getSetting('arb-interval','3'))*1000;
+    arbTimer = setInterval(renderArbResults, interval);
+}
+function renderArbResults(){
+    const minNet = parseFloat(document.getElementById('arb-min-inp')?.value||'0.08');
+    const data = getMockPrices();
+    let hotCount=0;
+    // Desktop table
+    const tbody = document.getElementById('arb-tbody');
+    if(tbody){
+        tbody.innerHTML = data.map(item=>{
+            const a = calcArb(item);
+            const hot = parseFloat(a.net)>=minNet;
+            const warm = parseFloat(a.net)>=0.04 && !hot;
+            if(hot) hotCount++;
+            const badgeClass = hot?'spread-hot':warm?'spread-warm':'spread-cold';
+            const fmt = p => p>=1000 ? p.toFixed(2) : p>=10 ? p.toFixed(3) : p.toFixed(4);
+            return `<tr>
+                <td><div class="arb-pair">${item.pair}</div><div class="arb-exch" style="font-size:9px;color:var(--text-dim);">${item.vol} vol</div></td>
+                <td><div style="font-size:11px;font-weight:500;color:var(--neon);">${ARB_NAMES[a.buyX]}</div></td>
+                <td class="r"><span class="arb-price" style="color:#44B828;">${fmt(a.buyP)}</span></td>
+                <td><div style="font-size:11px;font-weight:500;color:var(--hot-red);">${ARB_NAMES[a.sellX]}</div></td>
+                <td class="r"><span class="arb-price" style="color:#FF003F;">${fmt(a.sellP)}</span></td>
+                <td class="r"><span class="spread-badge ${badgeClass}">${a.spread}%</span></td>
+                <td class="r" style="color:var(--text-dim);font-size:10px;font-family:'JetBrains Mono',monospace;">${a.fees}%</td>
+                <td class="r"><span style="color:${parseFloat(a.net)>0?'var(--neon)':'var(--text-dim)'};font-family:'JetBrains Mono',monospace;font-size:11px;">${a.net}%</span></td>
+                <td class="r" style="color:${parseFloat(a.per1k)>0?'var(--neon)':'var(--text-dim)'};font-family:'JetBrains Mono',monospace;">$${a.per1k}</td>
+                <td>${hot?`<button class="arb-exec-btn" onclick="execArb('${item.pair}','${a.buyX}','${a.sellX}')">Execute</button>`:`<button class="arb-exec-btn" disabled>Below min</button>`}</td>
+            </tr>`;
+        }).join('');
+    }
+    // Mobile cards
+    const cards = document.getElementById('mob-arb-cards');
+    if(cards){
+        cards.innerHTML = data.map(item=>{
+            const a = calcArb(item);
+            const hot = parseFloat(a.net)>=minNet;
+            const fmt = p => p>=1000?p.toFixed(2):p>=10?p.toFixed(3):p.toFixed(4);
+            return `<div class="arb-card ${hot?'hot':''}">
+                <div class="arb-card-top">
+                    <span class="arb-card-pair">${item.pair}</span>
+                    <span class="spread-badge ${hot?'spread-hot':parseFloat(a.net)>0.04?'spread-warm':'spread-cold'}">${a.net}% net</span>
+                </div>
+                <div class="arb-card-body">
+                    <div class="arb-card-side">
+                        <div class="arb-card-side-lbl">Buy</div>
+                        <div class="arb-card-side-exch" style="color:var(--neon);">${ARB_NAMES[a.buyX]}</div>
+                        <div class="arb-card-side-price">${fmt(a.buyP)}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;font-size:16px;color:var(--text-dim);">→</div>
+                    <div class="arb-card-side">
+                        <div class="arb-card-side-lbl">Sell</div>
+                        <div class="arb-card-side-exch" style="color:var(--hot-red);">${ARB_NAMES[a.sellX]}</div>
+                        <div class="arb-card-side-price">${fmt(a.sellP)}</div>
+                    </div>
+                </div>
+                <div class="arb-card-foot">
+                    <div class="arb-profit">Profit/1K: <b>$${a.per1k}</b> · Fees: ${a.fees}%</div>
+                    ${hot?`<button class="arb-exec-btn" style="font-size:10px;padding:4px 10px;" onclick="execArb('${item.pair}','${a.buyX}','${a.sellX}')">Execute</button>`:''}
+                </div>
+            </div>`;
+        }).join('');
+    }
+    // Update counters
+    const ec=document.getElementById('arb-exch-count'); if(ec) ec.textContent='3 mock';
+    const oc=document.getElementById('arb-opp-count'); if(oc){ oc.textContent=hotCount; oc.style.color=hotCount>0?'var(--neon)':'var(--text-dim)'; }
+    const moc=document.getElementById('mob-arb-count'); if(moc){ moc.textContent=hotCount; }
+}
+function execArb(pair, buyEx, sellEx){
+    showToast(`Arb queued: Buy ${pair} on ${ARB_NAMES[buyEx]} → Sell on ${ARB_NAMES[sellEx]}`);
+}
+
 </script>
 
 <!-- ============================================================
@@ -1289,14 +1648,17 @@ function openDataHub(){ togglePanel('datahub'); }
       </div>
     </div>
     <div class="mhdr-btns">
+      <!-- Chart toggle -->
       <div class="mhdr-btn" id="mob-chart-toggle" onclick="toggleMobChart()" title="Chart">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       </div>
-      <div class="mhdr-btn" onclick="togglePanel('feargreed')" title="F&amp;G">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <!-- Fear & Greed -->
+      <div class="mhdr-btn" onclick="togglePanel('feargreed')" title="Fear &amp; Greed">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5"/></svg>
       </div>
-      <div class="mhdr-btn" onclick="togglePanel('scout')" title="AI Scout" style="background:rgba(66,133,244,0.08);border-color:rgba(155,114,203,0.2);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+      <!-- AI Chat / Scout -->
+      <div class="mhdr-btn" onclick="togglePanel('scout')" title="AI Scout" style="background:rgba(66,133,244,0.1);border-color:rgba(155,114,203,0.25);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="0.8" fill="#9b72cb"/><circle cx="12" cy="10" r="0.8" fill="#9b72cb"/><circle cx="15" cy="10" r="0.8" fill="#9b72cb"/></svg>
       </div>
     </div>
   </div>
@@ -1395,11 +1757,19 @@ function openDataHub(){ togglePanel('datahub'); }
       <button class="mbt" onclick="mobTab(this,'mbt-ord')">Orders(0)</button>
       <button class="mbt" onclick="mobTab(this,'mbt-assets')">Assets</button>
       <button class="mbt" onclick="mobTab(this,'mbt-bots')">Bots</button>
+      <button class="mbt" onclick="mobTab(this,'mbt-arb')">⚡ Arb</button>
     </div>
     <div class="mbtm-content">
       <div id="mbt-pos"><div class="mempty">No open positions</div></div>
       <div id="mbt-ord" style="display:none;"><div class="mempty">No open orders</div></div>
       <div id="mbt-assets" style="display:none;"><div class="mempty">Connect exchange in Settings</div></div>
+      <div id="mbt-arb" style="display:none;">
+        <div style="padding:8px 10px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);">
+            <button class="arb-scan-btn" style="font-size:9.5px;padding:4px 10px;" onclick="startArbScan()">⚡ Scan</button>
+            <span style="font-size:9.5px;color:var(--text-dim);">Opportunities: <b id="mob-arb-count" style="color:var(--neon);">—</b></span>
+        </div>
+        <div class="arb-cards" id="mob-arb-cards"><div class="mempty">Tap Scan to find opportunities</div></div>
+      </div>
       <div id="mbt-bots" style="display:none;">
         <div class="bots-grid">
           <div class="bcard">
@@ -1456,9 +1826,9 @@ function openDataHub(){ togglePanel('datahub'); }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
       Data
     </button>
-    <button class="mnav" onclick="togglePanel('feargreed')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-      F&amp;G
+    <button class="mnav" onclick="toggleSettingsPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
     </button>
   </nav>
 </div><!-- /mob-ui -->
@@ -1523,6 +1893,187 @@ function openDataHub(){ togglePanel('datahub'); }
                 <div class="dhub-name" style="color:var(--neon);">AI Scout</div>
                 <div class="dhub-sub">All sources · Win probability</div>
                 <div class="dhub-live"><span class="dhub-dot live" style="background:var(--neon);"></span>Powered by Claude</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== SETTINGS PANEL ==================== -->
+<div id="panel-settings" class="slide-panel" style="right:0;left:auto;transform:translateX(120%);border-radius:4px 0 0 4px;">
+    <div class="panel-header">
+        <div class="panel-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+        </div>
+        <span class="panel-close" onclick="closePanel('settings')">×</span>
+    </div>
+    <!-- Tab nav -->
+    <div class="set-nav">
+        <button class="set-nav-btn active" onclick="setTab(this,'set-exchanges')">Exchanges</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-apis')">Intelligence</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-arb')">Arbitrage</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-risk')">Risk</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-security')">Security</button>
+    </div>
+    <div class="set-body">
+
+        <!-- EXCHANGES -->
+        <div id="set-exchanges" class="set-section active">
+            <div class="set-section-title">Trading Exchanges</div>
+
+            <!-- Bybit -->
+            <div class="exch-card" id="card-bybit">
+                <div class="exch-header" onclick="toggleExchFields('bybit')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-bybit"></span>
+                        <div><div class="exch-name">Bybit</div><div class="exch-tag">Futures · Spot · USDT Perp</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-bybit" onclick="event.stopPropagation();toggleExch('bybit')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-bybit">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('bybit-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('bybit-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="bybit-mode"><option value="live">Live</option><option value="testnet">Testnet</option></select></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('bybit')">Test Connection</button><button class="btn-save-key" onclick="saveExch('bybit')">Save</button><span class="conn-badge idle" id="status-bybit">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Gate.io -->
+            <div class="exch-card" id="card-gate">
+                <div class="exch-header" onclick="toggleExchFields('gate')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-gate"></span>
+                        <div><div class="exch-name">Gate.io</div><div class="exch-tag">Futures · Spot · Altcoins</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-gate" onclick="event.stopPropagation();toggleExch('gate')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-gate">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('gate-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('gate-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('gate')">Test Connection</button><button class="btn-save-key" onclick="saveExch('gate')">Save</button><span class="conn-badge idle" id="status-gate">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Binance -->
+            <div class="exch-card" id="card-binance">
+                <div class="exch-header" onclick="toggleExchFields('binance')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-binance"></span>
+                        <div><div class="exch-name">Binance</div><div class="exch-tag">Futures · Spot · Global</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-binance" onclick="event.stopPropagation();toggleExch('binance')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-binance">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('binance-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('binance-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('binance')">Test Connection</button><button class="btn-save-key" onclick="saveExch('binance')">Save</button><span class="conn-badge idle" id="status-binance">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Alpaca -->
+            <div class="exch-card" id="card-alpaca">
+                <div class="exch-header" onclick="toggleExchFields('alpaca')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-alpaca"></span>
+                        <div><div class="exch-name">Alpaca</div><div class="exch-tag">Stocks · Forex · Crypto · TradFi</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-alpaca" onclick="event.stopPropagation();toggleExch('alpaca')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-alpaca">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('alpaca-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('alpaca-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="alpaca-mode"><option value="paper">Paper Trading</option><option value="live">Live Trading</option></select></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('alpaca')">Test Connection</button><button class="btn-save-key" onclick="saveExch('alpaca')">Save</button><span class="conn-badge idle" id="status-alpaca">Not tested</span></div>
+                </div>
+            </div>
+
+            <div style="margin-top:4px;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px;" onclick="alert('More exchanges coming soon: Kraken, OKX, Hyperliquid')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Add Exchange (Kraken, OKX, Hyperliquid…)
+            </div>
+        </div>
+
+        <!-- INTELLIGENCE APIs -->
+        <div id="set-apis" class="set-section">
+            <div class="set-section-title">Intelligence &amp; AI APIs</div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">AltFINS</div><div class="api-intel-sub">Technical signals · Screener</div></div>
+                <input class="api-intel-input" type="password" id="altfins-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Nansen</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
+                <input class="api-intel-input" type="password" id="nansen-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Coinglass</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
+                <input class="api-intel-input" type="password" id="coinglass-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row" style="border-bottom:none;">
+                <div class="api-intel-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.2);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.8"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Anthropic (Claude)</div><div class="api-intel-sub">AI brain · Scout · Arbitrage AI</div></div>
+                <input class="api-intel-input" type="password" id="anthropic-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveIntelKeys()">Save All API Keys</button></div>
+        </div>
+
+        <!-- ARBITRAGE SETTINGS -->
+        <div id="set-arb" class="set-section">
+            <div class="set-section-title">Arbitrage Engine</div>
+            <div class="set-row"><div><div class="set-row-label">Auto Execute</div><div class="set-row-sub">AI executes trades automatically</div></div><div class="exch-toggle" id="toggle-autoarb" onclick="toggleExch('autoarb')"><div class="exch-toggle-knob"></div></div></div>
+            <div class="set-row"><div><div class="set-row-label">Min Net Spread</div><div class="set-row-sub">After fees — minimum to trigger</div></div><input class="set-inp-sm" type="number" id="arb-min-spread" value="0.08" step="0.01" min="0.01">%</div>
+            <div class="set-row"><div><div class="set-row-label">Max Order Size</div><div class="set-row-sub">Per arbitrage trade</div></div><input class="set-inp-sm" type="number" id="arb-max-size" value="500"> USDT</div>
+            <div class="set-row"><div><div class="set-row-label">AI Validation</div><div class="set-row-sub">Claude checks before executing</div></div><div class="exch-toggle on" id="toggle-arbai" onclick="toggleExch('arbai')"><div class="exch-toggle-knob" style="left:21px;"></div></div></div>
+            <div class="set-row"><div><div class="set-row-label">Scan Interval</div><div class="set-row-sub">How often to check spreads</div></div><select class="set-select" id="arb-interval"><option value="1">1 second</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select></div>
+            <div class="set-row" style="border-bottom:none;"><div><div class="set-row-label">Active Pairs</div><div class="set-row-sub">Coins to monitor for arb</div></div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;" id="arb-pairs-wrap">
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'BTC')">BTC</span>
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'ETH')">ETH</span>
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'SOL')">SOL</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'XRP')">XRP</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'ADA')">ADA</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'BNB')">BNB</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'DOGE')">DOGE</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'AVAX')">AVAX</span>
+            </div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveArbSettings()">Save Arb Settings</button></div>
+        </div>
+
+        <!-- RISK -->
+        <div id="set-risk" class="set-section">
+            <div class="set-section-title">Risk Management</div>
+            <div class="set-row"><div><div class="set-row-label">Default Exchange</div><div class="set-row-sub">Primary for manual trades</div></div><select class="set-select" id="risk-default-exch"><option>Bybit</option><option>Gate.io</option><option>Binance</option><option>Alpaca</option></select></div>
+            <div class="set-row"><div><div class="set-row-label">Default Leverage</div><div class="set-row-sub">Applied to new positions</div></div><input class="set-inp-sm" type="number" id="risk-leverage" value="10" min="1" max="100">×</div>
+            <div class="set-row"><div><div class="set-row-label">Risk Per Trade</div><div class="set-row-sub">% of total portfolio</div></div><input class="set-inp-sm" type="number" id="risk-pct" value="2" min="0.1" max="100">%</div>
+            <div class="set-row"><div><div class="set-row-label">Daily Loss Limit</div><div class="set-row-sub">Stop trading if exceeded</div></div><input class="set-inp-sm" type="number" id="risk-daily-loss" value="5">%</div>
+            <div class="set-row"><div><div class="set-row-label">Default Order Type</div></div><select class="set-select" id="risk-order-type"><option>Market</option><option>Limit</option><option>Chase</option></select></div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveRiskSettings()">Save Risk Settings</button></div>
+        </div>
+
+        <!-- SECURITY -->
+        <div id="set-security" class="set-section">
+            <div class="set-section-title">Security &amp; Login</div>
+            <div class="login-card">
+                <div class="login-card-title">🔐 App Login</div>
+                <div class="login-card-sub">Full login system with username/password, biometric support, and session management. Will be activated before final deployment.</div>
+                <div style="display:flex;gap:8px;"><button class="btn-primary" disabled style="opacity:.4;cursor:default;">Coming Soon</button></div>
+            </div>
+            <div class="login-card">
+                <div class="login-card-title">🔒 PIN Lock</div>
+                <div class="login-card-sub">Quick 4-digit PIN to lock the app when idle. Protects from unauthorized access on shared devices.</div>
+                <div class="set-row" style="border:none;padding:0;"><div class="set-row-label">Enable PIN Lock</div><div class="exch-toggle" id="toggle-pin" onclick="toggleExch('pin')"><div class="exch-toggle-knob"></div></div></div>
+            </div>
+            <div class="login-card">
+                <div class="login-card-title">⏱ Auto-Lock</div>
+                <div class="set-row" style="border:none;padding:6px 0 0;"><div class="set-row-label">Lock after</div><select class="set-select" id="lock-timer"><option>1 minute</option><option>5 minutes</option><option selected>15 minutes</option><option>30 minutes</option><option>Never</option></select></div>
+            </div>
+            <div style="margin-top:14px;padding:10px 12px;background:rgba(255,0,63,0.04);border:1px solid rgba(255,0,63,0.12);border-radius:7px;">
+                <div style="font-size:11px;font-weight:600;color:var(--hot-red);margin-bottom:4px;">⚠ Clear All Data</div>
+                <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Removes all API keys and settings from this device.</div>
+                <button style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.25);color:var(--hot-red);font-size:10px;padding:5px 14px;border-radius:4px;cursor:pointer;" onclick="clearAllData()">Clear All Keys &amp; Settings</button>
             </div>
         </div>
     </div>
