@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExNexus | Institutional Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&family=JetBrains+Mono&display=swap');
+        :root { --neon: #39FF14; --hot-red: #FF003F; --bg: #050505; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: rgba(255,255,255,0.9); overflow: hidden; height: 100vh; margin: 0; font-weight: 300; }
+        .neon-text { color: var(--neon); }
+        .glass { background: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Rigid CSS Grid Lock */
+        .app-container { 
+            display: grid; 
+            grid-template-columns: 52px 1fr 280px 260px; 
+            grid-template-rows: 40px 1fr 200px; 
+            height: 100vh; 
+            gap: 4px; 
+            padding: 4px; 
+        }
 
+        /* Tooltip Hover Labels */
+        .nav-icon { position: relative; cursor: pointer; color: #444; transition: color 0.2s; }
+        .nav-icon:hover { color: var(--neon); }
+        .nav-icon:hover::after {
+            content: attr(data-label);
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            background: #1a1a1a; color: white; font-[8px]; padding: 4px 8px;
+            border-radius: 4px; white-space: nowrap; margin-left: 10px; z-index: 50;
+            border: 1px solid var(--neon);
+        }
+
+        #draggable-ai {
+            width: 44px; height: 44px; background: linear-gradient(135deg, #4285f4, #9b72cb);
+            border-radius: 12px; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            cursor: move; position: absolute; bottom: 220px; right: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="col-span-4 glass flex items-center justify-between px-4">
+            <div class="text-[10px] tracking-widest font-light opacity-50 uppercase">ExNexus Institutional</div>
+            <div class="flex items-center space-x-6 text-[10px] font-mono">
+                <div id="ticker" class="neon-text font-black">$74,231.70</div>
+                <div class="flex space-x-2 text-gray-500 font-bold uppercase">
+                    <span class="text-green-500">BYBIT CONNECTED</span>
+                    <span class="border-l border-gray-800 pl-2">API: STABLE</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="row-span-2 glass flex flex-col items-center py-6 space-y-8">
+            <div class="nav-icon" data-label="Market Trends">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            </div>
+            <div class="nav-icon" data-label="altfins Intelligence" onclick="connectAI('altfins')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            </div>
+            <div class="nav-icon" data-label="CoinGlass Liquidation" onclick="connectAI('CoinGlass')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            </div>
+            <div class="nav-icon" data-label="Smart Money (Nansen)" onclick="connectAI('Nansen')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z"></path></svg>
+            </div>
+        </nav>
+
+        <main class="glass relative">
+            <div id="tradingview_widget" class="w-full h-full"></div>
+        </main>
+
+        <aside class="glass p-3 flex flex-col space-y-2">
+            <span class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Bot Intelligence Node</span>
+            <div class="space-y-1 text-[10px]">
+                <div class="flex justify-between p-2 border border-white/5 bg-white/5"><span>Smart Trades</span> <span class="neon-text">+$2,025</span></div>
+                <div class="flex justify-between p-2 border border-white/5"><span>DCA Bot</span> <span class="text-white">Active</span></div>
+                <div class="flex justify-between p-2 border border-white/5"><span>Grid Bot</span> <span class="text-gray-500">Standby</span></div>
+                <div class="flex justify-between p-2 border border-white/5 bg-neon/5"><span>DYS Bot</span> <span class="neon-text italic">Monitoring...</span></div>
+            </div>
+        </aside>
+
+        <aside class="glass p-3 flex flex-col space-y-4">
+            <div class="flex justify-between text-[10px] font-bold">
+                <span class="opacity-50 uppercase">Cross</span> <span class="text-white">10.00x</span>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-1 text-[9px] font-bold uppercase">
+                <button class="bg-white/5 py-1 rounded border border-white/10">Limit</button>
+                <button class="bg-white/20 py-1 rounded border border-white/20">Market</button>
+                <button class="bg-white/5 py-1 rounded border border-white/10">Chase</button>
+            </div>
+
+            <div class="space-y-2">
+                <div class="flex justify-between text-[9px] text-gray-500 font-bold">
+                    <span>Order Qty</span> <span class="text-white">USDT</span>
+                </div>
+                <input type="text" value="QTY in USDT" class="w-full bg-black border border-white/10 p-2 text-xs font-mono rounded text-gray-400">
+                <div class="flex justify-between text-[7px] text-gray-600 font-bold uppercase px-1">
+                    <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+                </div>
+            </div>
+
+            <div class="mt-auto space-y-2">
+                <button class="w-full py-3 rounded bg-neon text-black font-bold uppercase text-[11px]">Open Long</button>
+                <button class="w-full py-3 rounded border border-hot-red text-hot-red font-bold uppercase text-[11px]">Open Short</button>
+            </div>
+        </aside>
+
+        <section class="col-span-4 glass p-0 flex flex-col">
+            <div class="flex items-center space-x-6 px-6 border-b border-white/5 text-[9px] font-bold uppercase tracking-tighter h-10">
+                <span class="text-neon border-b border-neon h-full flex items-center">Open Orders</span>
+                <span class="text-gray-500">Positions</span>
+                <span class="text-gray-500">Order History</span>
+                <span class="text-gray-500">Trade History</span>
+                <span class="text-gray-500">Assets</span>
+                <span class="text-gray-500">P&L</span>
+            </div>
+            <div class="flex-1 p-4 overflow-auto">
+                <table class="w-full text-left text-[10px] font-mono opacity-30">
+                    <tr class="border-b border-white/5 text-gray-500 uppercase text-[8px]">
+                        <th class="pb-2">Symbol</th><th class="pb-2">Side</th><th class="pb-2">Entry</th><th class="pb-2">PnL</th>
+                    </tr>
+                    <tr><td colspan="4" class="pt-4 italic">Connecting to Bybit trade streams...</td></tr>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div id="draggable-ai">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        $(function() { $("#draggable-ai").draggable({ containment: "window" }); });
+        
+        function connectAI(service) {
+            alert(ExNexus: Connecting AI Logic to ${service} API... Pattern scanning initiated.);
+        }
+
+        const tv = { "autosize": true, "symbol": "BYBIT:BTCUSDT", "interval": "15", "theme": "dark", "container_id": "tradingview_widget" };
+        window.onload = () => { new TradingView.widget(tv); sync(); setInterval(sync, 5000); };
+
+        async function sync() {
+            try {
+                const r = await fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT');
+                const d = await r.json();
+                document.getElementById('ticker').innerText = '$' + parseFloat(d.result.list[0].lastPrice).toLocaleString();
+            } catch(e){}
+        }
+    </script>
+</body>
+</html>
