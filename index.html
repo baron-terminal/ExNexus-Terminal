@@ -580,6 +580,78 @@
         .arb-pair-tag{font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-dim);cursor:pointer;-webkit-tap-highlight-color:transparent;}
         .arb-pair-tag.on{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.25);color:var(--neon);}
 
+        
+        /* ======== PERFORMANCE PANEL ======== */
+        #panel-performance{ width:min(480px,100vw); }
+        .perf-hero{ padding:14px; background:linear-gradient(135deg,rgba(68,184,40,0.06),rgba(68,184,40,0.02)); border-bottom:1px solid var(--border); }
+        .perf-pnl{ font-size:32px; font-weight:300; font-family:'JetBrains Mono',monospace; }
+        .perf-pnl.pos{ color:var(--neon); }
+        .perf-pnl.neg{ color:var(--hot-red); }
+        .perf-badges{ display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+        .perf-badge{ font-size:10px; padding:3px 10px; border-radius:10px; font-weight:500; }
+        .perf-badge.wr{ background:rgba(68,184,40,0.12); color:var(--neon); border:1px solid rgba(68,184,40,0.2); }
+        .perf-badge.wl{ background:rgba(255,255,255,0.05); color:var(--text-mid); border:1px solid var(--border); }
+        .perf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:12px 14px; border-bottom:1px solid var(--border); }
+        .perf-stat{ background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
+        .perf-stat-lbl{ font-size:8.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:3px; }
+        .perf-stat-val{ font-size:14px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+        .perf-section{ padding:10px 14px; border-bottom:1px solid var(--border); }
+        .perf-section-title{ font-size:9px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; margin-bottom:9px; display:flex; align-items:center; gap:5px; }
+        /* Equity curve mini */
+        .eq-canvas{ width:100%; height:80px; display:block; }
+        /* Pattern bars */
+        .patt-row{ display:flex; align-items:center; gap:7px; margin-bottom:7px; }
+        .patt-name{ font-size:10.5px; color:var(--text-mid); width:90px; flex-shrink:0; }
+        .patt-track{ flex:1; height:5px; border-radius:3px; background:#1a1a1a; overflow:hidden; position:relative; }
+        .patt-fill{ height:100%; border-radius:3px; }
+        .patt-pct{ font-size:10px; font-family:'JetBrains Mono',monospace; width:34px; text-align:right; flex-shrink:0; }
+        .patt-pl{ font-size:9.5px; font-family:'JetBrains Mono',monospace; width:48px; text-align:right; flex-shrink:0; }
+        /* Trade table */
+        .trade-mini-table{ width:100%; border-collapse:collapse; }
+        .trade-mini-table th{ font-size:9px; color:var(--text-dim); text-align:left; padding:3px 4px; text-transform:uppercase; letter-spacing:.06em; }
+        .trade-mini-table th.r{ text-align:right; }
+        .trade-mini-table td{ font-size:10.5px; color:var(--text-mid); padding:5px 4px; border-top:1px solid rgba(255,255,255,0.03); }
+        .trade-mini-table td.r{ text-align:right; }
+        .trade-mini-table td.sym{ font-weight:600; color:var(--text-bright); font-size:11px; }
+        /* Weekly P/L */
+        .wk-row{ display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:11px; }
+        .wk-row:last-child{ border-bottom:none; }
+        .wk-wl span.w{ color:var(--neon); font-weight:600; }
+        .wk-wl span.l{ color:var(--hot-red); font-weight:600; }
+
+        /* ======== RISK CALCULATOR ======== */
+        .calc-section{ padding:14px; border-bottom:1px solid var(--border); }
+        .calc-title{ font-size:11px; font-weight:600; color:var(--text-bright); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+        .calc-title-bar{ width:3px; height:14px; background:var(--neon); border-radius:2px; }
+        .calc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:10px; }
+        .calc-field label{ font-size:9px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); display:block; margin-bottom:3px; }
+        .calc-inp{ width:100%; background:#111; border:1px solid var(--border); color:var(--text-bright); font-size:13px; padding:9px 10px; border-radius:5px; outline:none; font-family:'JetBrains Mono',monospace; font-weight:500; }
+        .calc-inp:focus{ border-color:rgba(68,184,40,0.35); }
+        .calc-btn{ width:100%; padding:11px; background:var(--neon); color:#000; font-size:12px; font-weight:700; border:none; border-radius:5px; cursor:pointer; letter-spacing:.02em; }
+        .calc-result{ background:rgba(68,184,40,0.05); border:1px solid rgba(68,184,40,0.15); border-radius:5px; padding:10px 12px; margin-top:8px; display:none; }
+        .calc-result.show{ display:block; }
+        .calc-res-row{ display:flex; justify-content:space-between; padding:4px 0; font-size:11px; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .calc-res-row:last-child{ border-bottom:none; }
+        .calc-res-lbl{ color:var(--text-dim); }
+        .calc-res-val{ font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--text-bright); }
+
+        /* ======== ENHANCED ASSETS TAB ======== */
+        .asset-hero{ background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:6px; padding:11px 14px; margin:8px 10px; }
+        .asset-hero-total{ font-size:26px; font-weight:300; font-family:'JetBrains Mono',monospace; color:var(--text-bright); }
+        .asset-hero-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px; }
+        .asset-hero-item label{ font-size:9px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); display:block; margin-bottom:2px; }
+        .asset-hero-item span{ font-size:12px; font-family:'JetBrains Mono',monospace; }
+        .exch-asset-card{ border:1px solid var(--border); border-radius:6px; margin:0 10px 7px; overflow:hidden; }
+        .exch-asset-hdr{ display:flex; align-items:center; gap:9px; padding:9px 12px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); cursor:pointer; }
+        .exch-asset-logo{ width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+        .exch-asset-name{ font-size:12px; font-weight:600; color:var(--text-bright); }
+        .exch-asset-status{ font-size:9.5px; margin-top:1px; }
+        .exch-asset-rows{ padding:8px 12px; }
+        .exch-asset-row{ display:flex; justify-content:space-between; padding:4px 0; font-size:11px; border-bottom:1px solid rgba(255,255,255,0.03); }
+        .exch-asset-row:last-child{ border-bottom:none; }
+        .exch-asset-row label{ color:var(--text-dim); text-transform:uppercase; font-size:9.5px; letter-spacing:.06em; }
+        .exch-asset-row span{ font-family:'JetBrains Mono',monospace; color:var(--text-mid); }
+
         </style>
 </head>
 <body>
@@ -639,6 +711,12 @@
 
         <div style="flex:1;"></div>
         <div style="width:22px;height:1px;background:var(--border);"></div>
+
+        <!-- Performance -->
+        <div class="nav-item" id="nav-performance" onclick="togglePanel('performance')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span class="nav-tip" style="border-left:2px solid var(--neon);">Performance</span>
+        </div>
 
         <div class="nav-item" id="nav-scout" onclick="togglePanel('scout')" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.18);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
@@ -894,9 +972,115 @@
             <div id="bt-positions" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
             <div id="bt-orderhistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Avg Fill</th><th class="r">Qty</th><th class="r">Order Value</th><th>Status</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No order history</div></td></tr></tbody></table></div>
             <div id="bt-tradehistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Fee</th><th class="r">Realized PNL</th></tr></thead><tbody><tr><td colspan="7"><div class="empty-state">No trade history</div></td></tr></tbody></table></div>
-            <div id="bt-assets" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Equity</th><th class="r">Available</th><th class="r">Used Margin</th><th class="r">Order Margin</th><th class="r">Unrealized PNL</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No assets data</div></td></tr></tbody></table></div>
+            <div id="bt-assets" class="tab-panel" style="height:100%;overflow-y:auto;flex-direction:column;gap:0;">
+                <!-- Portfolio Hero -->
+                <div class="asset-hero">
+                    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:4px;">Total Portfolio</div>
+                    <div class="asset-hero-total" id="asset-total">$0.00</div>
+                    <div class="asset-hero-grid" style="margin-top:8px;">
+                        <div class="asset-hero-item"><label>Available</label><span id="asset-avail" style="color:var(--neon);">$0.00</span></div>
+                        <div class="asset-hero-item"><label>Margin Used</label><span id="asset-margin">$0.00</span></div>
+                        <div class="asset-hero-item"><label>Unr. P/L</label><span id="asset-upnl" style="color:var(--text-mid);">+$0.00</span></div>
+                    </div>
+                </div>
+                <!-- Exchange cards -->
+                <div id="asset-exchanges" style="padding:4px 0;">
+                    <div class="exch-asset-card">
+                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+                            <div class="exch-asset-logo" style="background:rgba(255,184,0,0.15);color:#FFB800;">B</div>
+                            <div style="flex:1;"><div class="exch-asset-name">Bybit</div><div class="exch-asset-status" id="bybit-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="exch-asset-rows" style="display:none;">
+                            <div class="exch-asset-row"><label>Total Balance</label><span id="bybit-bal">—</span></div>
+                            <div class="exch-asset-row"><label>Available</label><span id="bybit-avail">—</span></div>
+                            <div class="exch-asset-row"><label>Wallet Balance</label><span id="bybit-wallet">—</span></div>
+                            <div class="exch-asset-row"><label>Margin Used</label><span id="bybit-margin">—</span></div>
+                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="bybit-upnl">—</span></div>
+                        </div>
+                    </div>
+                    <div class="exch-asset-card">
+                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+                            <div class="exch-asset-logo" style="background:rgba(0,200,150,0.12);color:#00C896;">G</div>
+                            <div style="flex:1;"><div class="exch-asset-name">Gate.io</div><div class="exch-asset-status" id="gate-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="exch-asset-rows" style="display:none;">
+                            <div class="exch-asset-row"><label>Total Balance</label><span id="gate-bal">—</span></div>
+                            <div class="exch-asset-row"><label>Available</label><span id="gate-avail">—</span></div>
+                            <div class="exch-asset-row"><label>Margin Used</label><span id="gate-margin">—</span></div>
+                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="gate-upnl">—</span></div>
+                        </div>
+                    </div>
+                    <div class="exch-asset-card">
+                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+                            <div class="exch-asset-logo" style="background:rgba(240,180,41,0.12);color:#F0B429;">N</div>
+                            <div style="flex:1;"><div class="exch-asset-name">Binance</div><div class="exch-asset-status" id="binance-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="exch-asset-rows" style="display:none;">
+                            <div class="exch-asset-row"><label>Total Balance</label><span id="binance-bal">—</span></div>
+                            <div class="exch-asset-row"><label>Available</label><span id="binance-avail">—</span></div>
+                            <div class="exch-asset-row"><label>Margin Used</label><span id="binance-margin">—</span></div>
+                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="binance-upnl">—</span></div>
+                        </div>
+                    </div>
+                    <div class="exch-asset-card">
+                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+                            <div class="exch-asset-logo" style="background:rgba(66,133,244,0.12);color:#4285f4;">A</div>
+                            <div style="flex:1;"><div class="exch-asset-name">Alpaca</div><div class="exch-asset-status" id="alpaca-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="exch-asset-rows" style="display:none;">
+                            <div class="exch-asset-row"><label>Total Balance</label><span id="alpaca-bal">—</span></div>
+                            <div class="exch-asset-row"><label>Cash Available</label><span id="alpaca-cash">—</span></div>
+                            <div class="exch-asset-row"><label>Portfolio Value</label><span id="alpaca-portfolio">—</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="bt-borrowings" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Borrowed</th><th class="r">Interest</th><th class="r">Daily Rate</th><th>Due Date</th><th>Action</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No borrowings</div></td></tr></tbody></table></div>
-            <div id="bt-tools" class="tab-panel" style="height:100%;align-items:center;justify-content:center;"><div class="empty-state">Trading tools — coming soon</div></div>
+            <div id="bt-tools" class="tab-panel" style="height:100%;overflow-y:auto;">
+                <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
+                    <button style="flex:1;padding:7px;font-size:10.5px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;" class="calc-tab-btn active-calc" id="calc-tab-pos" onclick="switchCalc('pos')">Position Size</button>
+                    <button style="flex:1;padding:7px;font-size:10.5px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;" class="calc-tab-btn" id="calc-tab-rrr" onclick="switchCalc('rrr')">RRR / P&amp;L</button>
+                </div>
+                <!-- Position Size Calculator -->
+                <div id="calc-pos" class="calc-section">
+                    <div class="calc-title"><div class="calc-title-bar"></div>Position Size</div>
+                    <div class="calc-grid">
+                        <div class="calc-field"><label>Account Size ($)</label><input class="calc-inp" type="number" id="ps-account" value="1000" placeholder="1000"></div>
+                        <div class="calc-field"><label>Risk % per Trade</label><input class="calc-inp" type="number" id="ps-risk" value="2" placeholder="2" step="0.1"></div>
+                        <div class="calc-field"><label>Entry Price</label><input class="calc-inp" type="number" id="ps-entry" placeholder="0.00" step="any"></div>
+                        <div class="calc-field"><label>Stop Loss Price</label><input class="calc-inp" type="number" id="ps-stop" placeholder="0.00" step="any"></div>
+                    </div>
+                    <button class="calc-btn" onclick="calcPosition()">Calculate Position</button>
+                    <div class="calc-result" id="ps-result">
+                        <div class="calc-res-row"><span class="calc-res-lbl">Risk Amount</span><span class="calc-res-val" id="ps-r-risk">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Position Size (units)</span><span class="calc-res-val" id="ps-r-size">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Position Value</span><span class="calc-res-val" id="ps-r-val">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Stop Distance</span><span class="calc-res-val" id="ps-r-dist">—</span></div>
+                    </div>
+                </div>
+                <!-- RRR Calculator -->
+                <div id="calc-rrr" class="calc-section" style="display:none;">
+                    <div class="calc-title"><div class="calc-title-bar"></div>RRR &amp; P/L</div>
+                    <div class="calc-grid">
+                        <div class="calc-field"><label>Entry Price</label><input class="calc-inp" type="number" id="rrr-entry" placeholder="0.00" step="any"></div>
+                        <div class="calc-field"><label>Target (TP)</label><input class="calc-inp" type="number" id="rrr-tp" placeholder="0.00" step="any"></div>
+                        <div class="calc-field"><label>Stop Loss</label><input class="calc-inp" type="number" id="rrr-sl" placeholder="0.00" step="any"></div>
+                        <div class="calc-field"><label>Trade Size ($)</label><input class="calc-inp" type="number" id="rrr-size" value="100" placeholder="100"></div>
+                    </div>
+                    <button class="calc-btn" onclick="calcRRR()">Calculate RRR</button>
+                    <div class="calc-result" id="rrr-result">
+                        <div class="calc-res-row"><span class="calc-res-lbl">Risk/Reward Ratio</span><span class="calc-res-val" id="rrr-r-ratio">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Potential Profit</span><span class="calc-res-val" id="rrr-r-profit" style="color:var(--neon);">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Potential Loss</span><span class="calc-res-val" id="rrr-r-loss" style="color:var(--hot-red);">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Profit %</span><span class="calc-res-val" id="rrr-r-pct">—</span></div>
+                        <div class="calc-res-row"><span class="calc-res-lbl">Break-even Win Rate</span><span class="calc-res-val" id="rrr-r-be">—</span></div>
+                    </div>
+                </div>
+            </div>
             <div id="bt-arb" class="tab-panel" style="height:100%;flex-direction:column;">
                 <div class="arb-header">
                     <button class="arb-scan-btn" id="arb-scan-btn" onclick="startArbScan()">
@@ -1631,6 +1815,180 @@ function execArb(pair, buyEx, sellEx){
     showToast(`Arb queued: Buy ${pair} on ${ARB_NAMES[buyEx]} → Sell on ${ARB_NAMES[sellEx]}`);
 }
 
+
+/* ============ PERFORMANCE PANEL ============ */
+const PERF_DATA = {
+    totalPnl: -5.71,
+    winRate: 62.4,
+    wins: 63, losses: 38,
+    avgWin: 0.306, avgLoss: -0.657,
+    patterns: [
+        { name:'Free Style', pct:100, pl:'+$0.18', trades:2 },
+        { name:'Falling Wedge', pct:78, pl:'+$0.10', trades:9 },
+        { name:'Channel Down', pct:75, pl:'+$0.41', trades:8 },
+        { name:'Resistance', pct:63, pl:'-$0.97', trades:16 },
+        { name:'Support', pct:52, pl:'-$3.69', trades:31 },
+        { name:'Rising Wedge', pct:38, pl:'-$3.05', trades:8 },
+    ],
+    bestTrades: [
+        { pair:'PIXEL/USDT', date:'11 Mar', pattern:'Free Style', pl:'+$1.40' },
+        { pair:'PUMP/USDT', date:'23 Feb', pattern:'Support', pl:'+$0.99' },
+        { pair:'LYN/USDT', date:'10 Mar', pattern:'Free Style', pl:'+$0.96' },
+        { pair:'RENDER/USDT', date:'2 Mar', pattern:'Resistance', pl:'+$0.95' },
+        { pair:'IMX/USDT', date:'23 Feb', pattern:'Triangle', pl:'+$0.67' },
+    ],
+    worstTrades: [
+        { pair:'MOVE/USDT', date:'12 Feb', pattern:'Falling Wedge', pl:'-$2.27' },
+        { pair:'VIRTUAL/USDT', date:'9 Mar', pattern:'Channel Up', pl:'-$1.72' },
+        { pair:'VIRTUAL/USDT', date:'9 Mar', pattern:'Channel Up', pl:'-$1.50' },
+        { pair:'VIRTUAL/USDT', date:'2 Mar', pattern:'Resistance', pl:'-$1.23' },
+        { pair:'HYPE/USDT', date:'10 Mar', pattern:'Resistance', pl:'-$1.07' },
+    ],
+    weekly: [
+        { week:'8 Mar', trades:18, w:10, l:8, pl:'-$2.33', neg:true },
+        { week:'1 Mar', trades:14, w:9, l:5, pl:'-$1.91', neg:true },
+        { week:'22 Feb', trades:20, w:11, l:9, pl:'-$0.38', neg:true },
+        { week:'15 Feb', trades:18, w:13, l:5, pl:'+$1.22', neg:false },
+        { week:'8 Feb', trades:31, w:20, l:11, pl:'+$1.80', neg:false },
+    ],
+    equity: [0,0.4,1.2,0.8,-0.2,0.6,1.4,0.9,-0.6,-1.1,-0.4,0.3,1.1,0.7,-0.3,0.5,1.2,0.4,-0.9,-2.1,-1.4,-0.6,-1.8,-3.2,-4.1,-5.7,-4.2,-5.9,-6.4,-5.1,-4.6]
+};
+
+function renderPerformancePanel(){
+    // Patterns
+    const pp = document.getElementById('perf-patterns');
+    if(pp) pp.innerHTML = PERF_DATA.patterns.map(p=>{
+        const color = p.pct>=70?'var(--neon)':p.pct>=50?'#F0B429':'var(--hot-red)';
+        return `<div class="patt-row">
+            <span class="patt-name">${p.name}</span>
+            <div class="patt-track"><div class="patt-fill" style="width:${p.pct}%;background:${color};"></div></div>
+            <span class="patt-pct" style="color:${color};">${p.pct}%</span>
+            <span class="patt-pl" style="color:${p.pl.startsWith('+')?'var(--neon)':'var(--hot-red)'};">${p.pl}</span>
+        </div>`;
+    }).join('');
+    // Best trades
+    const pb = document.getElementById('perf-best');
+    if(pb) pb.innerHTML = PERF_DATA.bestTrades.map(t=>
+        `<tr><td class="sym">${t.pair}</td><td style="color:var(--text-dim);font-size:10px;">${t.date}</td><td style="font-size:10px;color:var(--text-dim);">${t.pattern}</td><td class="r" style="color:var(--neon);font-family:'JetBrains Mono',monospace;">${t.pl}</td></tr>`
+    ).join('');
+    // Worst trades
+    const pw = document.getElementById('perf-worst');
+    if(pw) pw.innerHTML = PERF_DATA.worstTrades.map(t=>
+        `<tr><td class="sym">${t.pair}</td><td style="color:var(--text-dim);font-size:10px;">${t.date}</td><td style="font-size:10px;color:var(--text-dim);">${t.pattern}</td><td class="r" style="color:var(--hot-red);font-family:'JetBrains Mono',monospace;">${t.pl}</td></tr>`
+    ).join('');
+    // Weekly
+    const wk = document.getElementById('perf-weekly');
+    if(wk) wk.innerHTML = PERF_DATA.weekly.map(w=>
+        `<div class="wk-row">
+            <span style="color:var(--text-mid);font-size:11px;">${w.week}</span>
+            <span style="color:var(--text-dim);font-size:10px;">${w.trades}</span>
+            <span class="wk-wl"><span class="w">${w.w}W</span> <span class="l">${w.l}L</span></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${w.neg?'var(--hot-red)':'var(--neon)'};">${w.pl}</span>
+        </div>`
+    ).join('');
+    // Equity curve canvas
+    drawEquityCurve();
+}
+
+function drawEquityCurve(){
+    const canvas = document.getElementById('perf-equity-canvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth || 320;
+    const H = 80;
+    canvas.width = W; canvas.height = H;
+    const data = PERF_DATA.equity;
+    const min = Math.min(...data), max = Math.max(...data);
+    const range = max - min || 1;
+    const pts = data.map((v,i)=>({ x: (i/(data.length-1))*W, y: H - ((v-min)/range)*(H-10)-5 }));
+    // Fill
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'rgba(68,184,40,0.15)');
+    grad.addColorStop(1,'rgba(68,184,40,0)');
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, H);
+    pts.forEach(p=>ctx.lineTo(p.x,p.y));
+    ctx.lineTo(pts[pts.length-1].x, H);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+    // Line
+    ctx.beginPath();
+    pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+    ctx.strokeStyle = '#44B828';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Zero line
+    const zeroY = H - ((0-min)/range)*(H-10)-5;
+    ctx.beginPath();
+    ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+// Render when panel opens
+const _origTogglePanel = togglePanel;
+function togglePanel(name){
+    _origTogglePanel(name);
+    if(name==='performance') setTimeout(renderPerformancePanel, 50);
+}
+
+/* ============ RISK CALCULATOR ============ */
+const activeCalcStyle = 'color:var(--text-bright);border-bottom:2px solid var(--neon);';
+const inactiveCalcStyle = 'color:var(--text-dim);border-bottom:2px solid transparent;';
+
+function switchCalc(tab){
+    document.getElementById('calc-pos').style.display = tab==='pos' ? '' : 'none';
+    document.getElementById('calc-rrr').style.display = tab==='rrr' ? '' : 'none';
+    const posBtn = document.getElementById('calc-tab-pos');
+    const rrrBtn = document.getElementById('calc-tab-rrr');
+    if(posBtn) posBtn.style.cssText += tab==='pos' ? activeCalcStyle : inactiveCalcStyle;
+    if(rrrBtn) rrrBtn.style.cssText += tab==='rrr' ? activeCalcStyle : inactiveCalcStyle;
+}
+
+function calcPosition(){
+    const account = parseFloat(document.getElementById('ps-account')?.value||0);
+    const riskPct = parseFloat(document.getElementById('ps-risk')?.value||0)/100;
+    const entry = parseFloat(document.getElementById('ps-entry')?.value||0);
+    const stop = parseFloat(document.getElementById('ps-stop')?.value||0);
+    if(!account||!riskPct||!entry||!stop){ showToast('Please fill all fields'); return; }
+    const riskAmt = account * riskPct;
+    const stopDist = Math.abs(entry - stop);
+    const stopPct = (stopDist/entry*100).toFixed(2);
+    const posSize = riskAmt / stopDist;
+    const posVal = posSize * entry;
+    const res = document.getElementById('ps-result');
+    document.getElementById('ps-r-risk').textContent = '$'+riskAmt.toFixed(2);
+    document.getElementById('ps-r-size').textContent = posSize.toFixed(4)+' units';
+    document.getElementById('ps-r-val').textContent = '$'+posVal.toFixed(2);
+    document.getElementById('ps-r-dist').textContent = '$'+stopDist.toFixed(4)+' ('+stopPct+'%)';
+    res.classList.add('show');
+}
+
+function calcRRR(){
+    const entry = parseFloat(document.getElementById('rrr-entry')?.value||0);
+    const tp = parseFloat(document.getElementById('rrr-tp')?.value||0);
+    const sl = parseFloat(document.getElementById('rrr-sl')?.value||0);
+    const size = parseFloat(document.getElementById('rrr-size')?.value||0);
+    if(!entry||!tp||!sl||!size){ showToast('Please fill all fields'); return; }
+    const reward = Math.abs(tp - entry);
+    const risk = Math.abs(entry - sl);
+    const rrr = reward / risk;
+    const profit = (reward / entry) * size;
+    const loss = (risk / entry) * size;
+    const profitPct = (reward / entry * 100).toFixed(2);
+    const beWinRate = (1 / (1 + rrr) * 100).toFixed(1);
+    document.getElementById('rrr-r-ratio').textContent = '1 : '+rrr.toFixed(2);
+    document.getElementById('rrr-r-profit').textContent = '+$'+profit.toFixed(2);
+    document.getElementById('rrr-r-loss').textContent = '-$'+loss.toFixed(2);
+    document.getElementById('rrr-r-pct').textContent = profitPct+'%';
+    document.getElementById('rrr-r-be').textContent = beWinRate+'%';
+    document.getElementById('rrr-result').classList.add('show');
+}
+
 </script>
 
 <!-- ============================================================
@@ -1886,6 +2244,22 @@ function execArb(pair, buyEx, sellEx){
                 <div class="dhub-sub">Market sentiment index</div>
                 <div class="dhub-live"><span class="dhub-dot live"></span><span id="dhub-fg-val" style="font-family:'JetBrains Mono',monospace;">Loading...</span></div>
             </div>
+            <div class="dhub-card" onclick="closePanel('datahub');togglePanel('performance')">
+                <div class="dhub-icon" style="background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <div class="dhub-name">Performance</div>
+                <div class="dhub-sub">P/L · Patterns · Equity curve</div>
+                <div class="dhub-live"><span class="dhub-dot live"></span>From your trades</div>
+            </div>
+            <div class="dhub-card" onclick="closePanel('datahub');switchBottomTab(document.querySelector('.tab-btn[onclick*=bt-tools]'),'bt-tools')" style="">
+                <div class="dhub-icon" style="background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.18);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div class="dhub-name">Risk Calculator</div>
+                <div class="dhub-sub">Position size · RRR · P/L</div>
+                <div class="dhub-live"><span class="dhub-dot live"></span>Always available</div>
+            </div>
             <div class="dhub-card" onclick="closePanel('datahub');togglePanel('scout')" style="border-color:rgba(155,114,203,0.2);background:rgba(66,133,244,0.04);">
                 <div class="dhub-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.15),rgba(155,114,203,0.15));border:1px solid rgba(155,114,203,0.2);">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
@@ -2075,6 +2449,72 @@ function execArb(pair, buyEx, sellEx){
                 <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Removes all API keys and settings from this device.</div>
                 <button style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.25);color:var(--hot-red);font-size:10px;padding:5px 14px;border-radius:4px;cursor:pointer;" onclick="clearAllData()">Clear All Keys &amp; Settings</button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== PERFORMANCE PANEL ==================== -->
+<div id="panel-performance" class="slide-panel">
+    <div class="panel-header">
+        <div class="panel-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Performance Report
+        </div>
+        <span class="panel-close" onclick="closePanel('performance')">×</span>
+    </div>
+    <!-- Hero -->
+    <div class="perf-hero">
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:3px;">Total P/L · All Trades</div>
+        <div class="perf-pnl neg" id="perf-total-pnl">-$5.71</div>
+        <div class="perf-badges">
+            <span class="perf-badge wr" id="perf-wr-badge">62.4% Win Rate</span>
+            <span class="perf-badge wl" id="perf-wl-badge">63W · 38L · 0 Open</span>
+        </div>
+    </div>
+    <!-- Stats grid -->
+    <div class="perf-grid">
+        <div class="perf-stat"><div class="perf-stat-lbl">Avg Win</div><div class="perf-stat-val" style="color:var(--neon);">+$0.306</div></div>
+        <div class="perf-stat"><div class="perf-stat-lbl">Avg Loss</div><div class="perf-stat-val" style="color:var(--hot-red);">-$0.657</div></div>
+        <div class="perf-stat"><div class="perf-stat-lbl">Win/Loss Ratio</div><div class="perf-stat-val" style="color:var(--text-bright);">0.47×</div></div>
+        <div class="perf-stat"><div class="perf-stat-lbl">Expectancy</div><div class="perf-stat-val" style="color:var(--hot-red);">-$0.057</div></div>
+        <div class="perf-stat"><div class="perf-stat-lbl">Total Trades</div><div class="perf-stat-val" style="color:var(--text-bright);">101</div></div>
+        <div class="perf-stat"><div class="perf-stat-lbl">Best Pattern</div><div class="perf-stat-val" style="color:var(--neon);font-size:11px;">Free Style</div></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;">
+        <!-- Equity Curve -->
+        <div class="perf-section">
+            <div class="perf-section-title">📈 Equity Curve</div>
+            <canvas id="perf-equity-canvas" class="eq-canvas" height="80"></canvas>
+        </div>
+        <!-- Pattern Win Rate -->
+        <div class="perf-section">
+            <div class="perf-section-title">🎯 Pattern Win Rate</div>
+            <div id="perf-patterns"></div>
+        </div>
+        <!-- Best 5 Trades -->
+        <div class="perf-section">
+            <div class="perf-section-title">🏆 Best 5 Trades</div>
+            <table class="trade-mini-table">
+                <thead><tr><th>Pair</th><th>Date</th><th>Pattern</th><th class="r">P/L</th></tr></thead>
+                <tbody id="perf-best"></tbody>
+            </table>
+        </div>
+        <!-- Worst 5 Trades -->
+        <div class="perf-section">
+            <div class="perf-section-title">💀 Worst 5 Trades</div>
+            <table class="trade-mini-table">
+                <thead><tr><th>Pair</th><th>Date</th><th>Pattern</th><th class="r">P/L</th></tr></thead>
+                <tbody id="perf-worst"></tbody>
+            </table>
+        </div>
+        <!-- Weekly P/L -->
+        <div class="perf-section" style="border-bottom:none;">
+            <div class="perf-section-title">📅 Weekly P/L</div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0 6px;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);margin-bottom:4px;">
+                <span>Week of</span><span>Trades</span><span>W/L</span><span>Net P/L</span>
+            </div>
+            <div id="perf-weekly"></div>
         </div>
     </div>
 </div>
