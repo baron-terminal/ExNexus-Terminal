@@ -4677,15 +4677,6 @@ const DEMO_STARTING_BALANCE = 10000;
 
 // Demo state
 let demoMode = false;
-let demoState = {
-    balance: DEMO_STARTING_BALANCE,
-    available: DEMO_STARTING_BALANCE,
-    positions: [],   // { id, symbol, side, qty, entryPrice, leverage, margin, timestamp }
-    orders: [],      // { id, symbol, side, qty, price, type, status, timestamp }
-    trades: [],      // closed trade history
-    pnl: 0
-};
-
 function isDemoMode() {
     return getSetting('demo-mode','') === '1';
 }
