@@ -1,0 +1,494 @@
+// ============================================================
+//  ExNexus Proxy Worker  —  exnexus-proxy.drorbaron18.workers.dev
+//  KV binding: env.KV  (namespace: EXNEXUS_KV)
+// ============================================================
+
+const CORS = {
+  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, x-api-key, x-api-secret, x-session-token, Authorization",
+};
+
+function cors(body, status = 200, extra = {}) {
+  return new Response(body, {
+    status,
+    headers: { "Content-Type": "application/json", ...CORS, ...extra },
+  });
+}
+function ok(data)   { return cors(JSON.stringify({ ok: true,  ...data })); }
+function err(msg, status = 400) { return cors(JSON.stringify({ ok: false, error: msg }), status); }
+
+// ── Random helpers ────────────────────────────────────────────
+function uid(len = 32) {
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── HMAC-SHA256 hex ───────────────────────────────────────────
+async function hmac256hex(secret, message) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── Session check helper ──────────────────────────────────────
+async function getSession(request, env) {
+  const token = request.headers.get("x-session-token");
+  if (!token) return null;
+  const raw = await env.KV.get("session:" + token);
+  if (!raw) return null;
+  return JSON.parse(raw);
+}
+
+// ============================================================
+//  MAIN FETCH HANDLER
+// ============================================================
+export default {
+  async fetch(request, env) {
+    // CORS preflight
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS });
+    }
+
+    const url  = new URL(request.url);
+    const path = url.pathname;
+
+    // ── Route table ──────────────────────────────────────────
+    // Auth
+    if (path === "/auth/qr-generate")  return handleQRGenerate(request, env);
+    if (path === "/auth/qr-poll")      return handleQRPoll(request, env);
+    if (path === "/auth/qr-approve")   return handleQRApprove(request, env);
+    if (path === "/auth/session-check")return handleSessionCheck(request, env);
+    if (path === "/auth/logout")       return handleLogout(request, env);
+
+    // Settings sync
+    if (path === "/sync/save")         return handleSyncSave(request, env);
+    if (path === "/sync/load")         return handleSyncLoad(request, env);
+
+    // Exchange proxies
+    if (path.startsWith("/bybit/"))    return handleBybit(request, env, path);
+    if (path.startsWith("/gate/"))     return handleGate(request, env, path);
+    if (path.startsWith("/binance/"))  return handleBinance(request, env, path);
+    if (path.startsWith("/alpaca/"))   return handleAlpaca(request, env, path);
+
+    // Arbitrage multi-price fetch
+    if (path === "/arb/prices")        return handleArbPrices(request, env);
+
+    // Anthropic AI proxy
+    if (path === "/ai/chat")           return handleAI(request, env);
+
+    // ── Data Platform (/data/*) ────────────────────────────────
+    if (path === '/data/status')     return forwardToData('/status');
+    if (path === '/data/init')       return forwardToData('/init');
+    if (path === '/data/collect')    return forwardToData('/collect');
+    if (path === '/data/screener')   return forwardToData('/screener' + url.search);
+    if (path === '/data/indicators') return forwardToData('/indicators' + url.search);
+    if (path === '/data/candles')    return forwardToData('/candles' + url.search);
+    if (path === '/data/patterns')   return forwardToData('/patterns' + url.search);
+    if (path === '/data/coins')      return forwardToData('/coins' + url.search);
+    if (path === '/data/backtest') {
+      const body = await request.json().catch(()=>({}));
+      return forwardToData('/backtest', body);
+    }
+
+  // Fear & Greed (CORS proxy)
+    if (path === "/fng")               return handleFNG();
+
+    // Legacy — keep old direct Bybit wallet call working
+    if (path === "/" || path === "")   return handleBybitLegacy(request, env);
+
+    return err("Route not found", 404);
+  }
+};
+
+// ============================================================
+//  AUTH — QR LOGIN
+// ============================================================
+
+// Step 1: Web app calls this → gets a token + QR data
+async function handleQRGenerate(request, env) {
+  const token   = uid(24);          // unique QR token
+  const expires = Date.now() + 90_000; // 90 seconds
+  await env.KV.put(
+    "qr:" + token,
+    JSON.stringify({ status: "pending", expires }),
+    { expirationTtl: 120 }           // KV TTL (seconds)
+  );
+  // The QR code encodes a deep-link the mobile app scans
+  const qrPayload = `exnexus://approve?token=${token}`;
+  return ok({ token, qrPayload, expires });
+}
+
+// Step 2: Web app polls every 2s
+async function handleQRPoll(request, env) {
+  const url   = new URL(request.url);
+  const token = url.searchParams.get("token");
+  if (!token) return err("Missing token");
+
+  const raw = await env.KV.get("qr:" + token);
+  if (!raw) return err("Token expired or invalid", 404);
+
+  const data = JSON.parse(raw);
+  if (Date.now() > data.expires) return err("Token expired", 410);
+
+  if (data.status === "approved") {
+    // Issue session token, clean up QR token
+    const sessionToken = uid(40);
+    await env.KV.put(
+      "session:" + sessionToken,
+      JSON.stringify({ created: Date.now(), device: "web" }),
+      { expirationTtl: 86_400 * 7 }  // 7 days
+    );
+    await env.KV.delete("qr:" + token);
+    return ok({ status: "approved", sessionToken });
+  }
+
+  return ok({ status: data.status }); // "pending"
+}
+
+// Step 3: Mobile app (already logged in) calls this to approve
+async function handleQRApprove(request, env) {
+  const body  = await request.json().catch(() => ({}));
+  const token = body.token;
+  if (!token) return err("Missing token");
+
+  const raw = await env.KV.get("qr:" + token);
+  if (!raw) return err("Token expired or invalid", 404);
+
+  const data = JSON.parse(raw);
+  if (Date.now() > data.expires) return err("Token expired", 410);
+
+  data.status = "approved";
+  await env.KV.put("qr:" + token, JSON.stringify(data), { expirationTtl: 30 });
+  return ok({ message: "Approved" });
+}
+
+async function handleSessionCheck(request, env) {
+  const session = await getSession(request, env);
+  if (!session) return err("No valid session", 401);
+  return ok({ valid: true, session });
+}
+
+async function handleLogout(request, env) {
+  const token = request.headers.get("x-session-token");
+  if (token) await env.KV.delete("session:" + token);
+  return ok({ message: "Logged out" });
+}
+
+// ============================================================
+//  SETTINGS SYNC (encrypted in KV)
+// ============================================================
+
+async function handleSyncSave(request, env) {
+  const body = await request.json().catch(() => null);
+  if (!body) return err("Invalid JSON");
+
+  // Use a device fingerprint or session as the key namespace
+  // For now we use a user-supplied "deviceId" from the body
+  const deviceId = body.deviceId || "default";
+  const settings = body.settings || {};
+
+  // Save settings — in production you'd encrypt these
+  // For now stored as-is, accessible only via this Worker
+  await env.KV.put(
+    "settings:" + deviceId,
+    JSON.stringify({ ...settings, updatedAt: Date.now() }),
+    { expirationTtl: 86_400 * 365 } // 1 year
+  );
+  return ok({ message: "Settings saved" });
+}
+
+async function handleSyncLoad(request, env) {
+  const url      = new URL(request.url);
+  const deviceId = url.searchParams.get("deviceId") || "default";
+  const raw      = await env.KV.get("settings:" + deviceId);
+  if (!raw) return ok({ settings: null });
+  return ok({ settings: JSON.parse(raw) });
+}
+
+// ============================================================
+//  BYBIT PROXY
+// ============================================================
+async function handleBybit(request, env, path) {
+  const apiKey    = request.headers.get("x-api-key");
+  const apiSecret = request.headers.get("x-api-secret");
+  if (!apiKey || !apiSecret) return err("Missing Bybit credentials");
+
+  // Strip /bybit prefix to get the actual Bybit endpoint
+  const bybitPath = path.replace("/bybit", "");
+  const url       = new URL(request.url);
+  const query     = url.search; // e.g. ?category=linear&symbol=BTCUSDT
+  const fullUrl   = "https://api.bybit.com" + bybitPath + query;
+
+  const timestamp  = Date.now().toString();
+  const recvWindow = "5000";
+
+  let signPayload;
+  let body = null;
+
+  if (request.method === "GET") {
+    const qs = url.searchParams.toString();
+    signPayload = timestamp + apiKey + recvWindow + qs;
+  } else {
+    body        = await request.text();
+    signPayload = timestamp + apiKey + recvWindow + body;
+  }
+
+  const signature = await hmac256hex(apiSecret, signPayload);
+
+  const resp = await fetch(fullUrl, {
+    method:  request.method,
+    headers: {
+      "Content-Type":        "application/json",
+      "X-BAPI-API-KEY":      apiKey,
+      "X-BAPI-SIGN":         signature,
+      "X-BAPI-TIMESTAMP":    timestamp,
+      "X-BAPI-RECV-WINDOW":  recvWindow,
+      "X-BAPI-SIGN-TYPE":    "2",
+    },
+    body: body || undefined,
+  });
+
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+// Legacy endpoint — keeps old direct calls working
+async function handleBybitLegacy(request, env) {
+  const apiKey    = request.headers.get("x-api-key");
+  const apiSecret = request.headers.get("x-api-secret");
+  if (!apiKey || !apiSecret) return err("Missing credentials");
+
+  const timestamp   = Date.now().toString();
+  const recvWindow  = "5000";
+  const queryString = "accountType=UNIFIED";
+  const signature   = await hmac256hex(apiSecret, timestamp + apiKey + recvWindow + queryString);
+
+  const resp = await fetch("https://api.bybit.com/v5/account/wallet-balance?" + queryString, {
+    headers: {
+      "X-BAPI-API-KEY":     apiKey,
+      "X-BAPI-SIGN":        signature,
+      "X-BAPI-TIMESTAMP":   timestamp,
+      "X-BAPI-RECV-WINDOW": recvWindow,
+    }
+  });
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+// ============================================================
+//  GATE.IO PROXY
+// ============================================================
+async function handleGate(request, env, path) {
+  const apiKey    = request.headers.get("x-api-key");
+  const apiSecret = request.headers.get("x-api-secret");
+  if (!apiKey || !apiSecret) return err("Missing Gate.io credentials");
+
+  const gatePath = path.replace("/gate", "");
+  const url      = new URL(request.url);
+  const query    = url.search;
+  const fullUrl  = "https://api.gateio.ws" + gatePath + query;
+
+  const ts     = Math.floor(Date.now() / 1000).toString();
+  const method = request.method;
+  let   body   = "";
+
+  if (method !== "GET") body = await request.text();
+
+  // Gate.io signing: METHOD\npath\nquery\nbodyhash\ntimestamp
+  const bodyHash   = await sha512hex(body);
+  const queryStr   = url.searchParams.toString();
+  const signString = `${method}\n${gatePath}\n${queryStr}\n${bodyHash}\n${ts}`;
+  const signature  = await hmac512hex(apiSecret, signString);
+
+  const resp = await fetch(fullUrl, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "KEY":          apiKey,
+      "SIGN":         signature,
+      "Timestamp":    ts,
+    },
+    body: body || undefined,
+  });
+
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+async function sha512hex(msg) {
+  const enc  = new TextEncoder();
+  const buf  = await crypto.subtle.digest("SHA-512", enc.encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function hmac512hex(secret, message) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret),
+    { name: "HMAC", hash: "SHA-512" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ============================================================
+//  BINANCE PROXY
+// ============================================================
+async function handleBinance(request, env, path) {
+  const apiKey    = request.headers.get("x-api-key");
+  const apiSecret = request.headers.get("x-api-secret");
+  if (!apiKey || !apiSecret) return err("Missing Binance credentials");
+
+  const binancePath = path.replace("/binance", "");
+  const url         = new URL(request.url);
+  const ts          = Date.now().toString();
+
+  let params = url.searchParams;
+  params.set("timestamp", ts);
+  params.set("recvWindow", "5000");
+
+  const queryString = params.toString();
+  const signature   = await hmac256hex(apiSecret, queryString);
+  const finalUrl    = `https://fapi.binance.com${binancePath}?${queryString}&signature=${signature}`;
+
+  const resp = await fetch(finalUrl, {
+    method:  request.method,
+    headers: { "X-MBX-APIKEY": apiKey },
+  });
+
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+// ============================================================
+//  ALPACA PROXY
+// ============================================================
+async function handleAlpaca(request, env, path) {
+  const apiKey    = request.headers.get("x-api-key");
+  const apiSecret = request.headers.get("x-api-secret");
+  if (!apiKey || !apiSecret) return err("Missing Alpaca credentials");
+
+  const url         = new URL(request.url);
+  const alpacaPath  = path.replace("/alpaca", "");
+  const query       = url.search;
+
+  // Support paper vs live via header or query param
+  const mode    = url.searchParams.get("mode") || "paper";
+  const baseUrl = mode === "live"
+    ? "https://api.alpaca.markets"
+    : "https://paper-api.alpaca.markets";
+
+  const fullUrl = baseUrl + alpacaPath + query;
+
+  let body = null;
+  if (request.method !== "GET") body = await request.text();
+
+  const resp = await fetch(fullUrl, {
+    method:  request.method,
+    headers: {
+      "Content-Type":   "application/json",
+      "APCA-API-KEY-ID":    apiKey,
+      "APCA-API-SECRET-KEY": apiSecret,
+    },
+    body: body || undefined,
+  });
+
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+// ============================================================
+//  ARBITRAGE — MULTI-EXCHANGE PRICE FETCH
+// ============================================================
+async function handleArbPrices(request, env) {
+  const url    = new URL(request.url);
+  const symbol = url.searchParams.get("symbol") || "BTC";
+
+  // Fetch public prices in parallel — no auth needed
+  const [bybit, binance, gate] = await Promise.allSettled([
+    fetch(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${symbol}USDT`)
+      .then(r => r.json()),
+    fetch(`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${symbol}USDT`)
+      .then(r => r.json()),
+    fetch(`https://api.gateio.ws/api/v4/futures/usdt/tickers?contract=${symbol}_USDT`)
+      .then(r => r.json()),
+  ]);
+
+  const prices = {};
+
+  if (bybit.status === "fulfilled") {
+    const list = bybit.value?.result?.list;
+    if (list?.[0]) prices.bybit = parseFloat(list[0].lastPrice);
+  }
+  if (binance.status === "fulfilled") {
+    if (binance.value?.price) prices.binance = parseFloat(binance.value.price);
+  }
+  if (gate.status === "fulfilled") {
+    const t = gate.value?.[0];
+    if (t?.last) prices.gate = parseFloat(t.last);
+  }
+
+  return ok({ symbol, prices, timestamp: Date.now() });
+}
+
+// ============================================================
+//  ANTHROPIC AI PROXY
+// ============================================================
+async function handleAI(request, env) {
+  const body = await request.text();
+
+  // API key: from header, or stored in KV
+  let anthropicKey = request.headers.get("x-anthropic-key");
+  if (!anthropicKey) {
+    const stored = await env.KV.get("settings:default");
+    if (stored) {
+      const s = JSON.parse(stored);
+      anthropicKey = s["anthropic-key"] || s.anthropicKey || "";
+    }
+  }
+  if (!anthropicKey) return err("Missing Anthropic API key");
+
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type":      "application/json",
+      "x-api-key":         anthropicKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body,
+  });
+
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+// ============================================================
+//  FEAR & GREED PROXY (avoids CORS in some environments)
+// ============================================================
+async function handleFNG() {
+  const resp = await fetch("https://api.alternative.me/fng/?limit=3");
+  const data = await resp.json();
+  return cors(JSON.stringify(data));
+}
+
+
+// ── Forward to exnexus-data worker ─────────────────────────
+async function forwardToData(path, body) {
+  const DATA_WORKER = 'https://exnexus-data.drorbaron18.workers.dev';
+  try {
+    const opts = body
+      ? { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) }
+      : { method:'GET' };
+    const res  = await fetch(DATA_WORKER + path, opts);
+    const data = await res.text();
+    return cors(data);
+  } catch(e) {
+    return cors(JSON.stringify({ ok:false, error: 'Data worker: ' + e.message }));
+  }
+}
