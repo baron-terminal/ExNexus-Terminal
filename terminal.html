@@ -1549,6 +1549,77 @@
             animation:blink 1.5s ease infinite;
         }
 
+        
+        /* ======== SCREENER ======== */
+        .screener-table{ width:100%; border-collapse:collapse; font-size:11px; }
+        .screener-table th{ 
+            padding:6px 10px; text-align:left; 
+            font-size:9.5px; font-weight:600; 
+            text-transform:uppercase; letter-spacing:.06em;
+            color:rgba(255,255,255,0.45); 
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            cursor:pointer; white-space:nowrap;
+        }
+        .screener-table th:hover{ color:rgba(255,255,255,0.8); }
+        .screener-table td{ 
+            padding:7px 10px; 
+            border-bottom:1px solid rgba(255,255,255,0.05);
+            color:rgba(255,255,255,0.82);
+            white-space:nowrap;
+        }
+        .screener-table tr:hover td{ background:rgba(255,255,255,0.03); }
+        .score-bar{
+            display:inline-flex; align-items:center; gap:6px;
+        }
+        .score-fill{
+            height:4px; border-radius:2px;
+            background:linear-gradient(90deg, var(--neon), #44B828);
+        }
+        .signal-badge{
+            font-size:9px; font-weight:700; padding:2px 7px;
+            border-radius:4px; text-transform:uppercase;
+            letter-spacing:.05em; white-space:nowrap;
+        }
+        .signal-bullish{ background:rgba(68,184,40,0.12); color:var(--neon); border:1px solid rgba(68,184,40,0.2); }
+        .signal-bearish{ background:rgba(255,0,63,0.1); color:var(--hot-red); border:1px solid rgba(255,0,63,0.2); }
+        .signal-neutral{ background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.5); border:1px solid rgba(255,255,255,0.1); }
+        .pattern-tag{
+            display:inline-block; font-size:9px; padding:1px 6px;
+            border-radius:3px; margin:1px;
+            background:rgba(155,114,203,0.1); 
+            color:var(--purple); 
+            border:1px solid rgba(155,114,203,0.2);
+        }
+        .screener-filters{
+            display:flex; gap:8px; align-items:center;
+            padding:8px 12px; 
+            border-bottom:1px solid rgba(255,255,255,0.07);
+            flex-wrap:wrap;
+        }
+        .screener-filter-label{ 
+            font-size:10px; color:rgba(255,255,255,0.45);
+            white-space:nowrap;
+        }
+        .screener-inp{
+            background:#2a2a2a; border:1px solid rgba(255,255,255,0.12);
+            color:#fff; font-size:11px; padding:4px 8px;
+            border-radius:5px; outline:none; width:60px;
+        }
+        .screener-select{
+            background:#2a2a2a; border:1px solid rgba(255,255,255,0.12);
+            color:#fff; font-size:11px; padding:4px 8px;
+            border-radius:5px; outline:none;
+        }
+        .screener-run-btn{
+            background:var(--neon); color:#000; border:none;
+            font-size:11px; font-weight:700; padding:5px 14px;
+            border-radius:5px; cursor:pointer;
+        }
+        .screener-count{
+            font-size:10px; color:rgba(255,255,255,0.4);
+            margin-left:auto;
+        }
+
         </style>
 </head>
 <body>
@@ -3092,6 +3163,7 @@ function renderMobPerf(){
    https://exnexus-proxy.drorbaron18.workers.dev
 ============================================================ */
 const WORKER = 'https://exnexus-proxy.drorbaron18.workers.dev';
+const DATA   = 'https://exnexus-data.drorbaron18.workers.dev';
 const SITE_URL = window.location.hostname === 'exnexus.app' ? 'https://exnexus.co' : '../index.html';
 
 // Core fetch helper — attaches API keys from Settings
@@ -5835,6 +5907,123 @@ document.addEventListener('click', function(e) {
         openDemoBotConfig(botId);
     }
 });
+
+
+/* ============================================================
+   LIVE SCREENER — connects to exnexus-data worker
+============================================================ */
+let screenerRunning = false;
+
+async function runScreener() {
+    if(screenerRunning) return;
+    screenerRunning = true;
+
+    const btn     = document.getElementById('screener-run-btn') || document.querySelector('.screener-run-btn');
+    const count   = document.getElementById('screener-count');
+    const dot     = document.getElementById('screener-live-dot');
+    const tbody   = document.getElementById('screener-tbody');
+
+    if(btn) btn.textContent = '⏳ Scanning...';
+    if(dot) dot.style.background = '#F0B429';
+    if(count) count.textContent = 'Scanning 17 coins...';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">Scanning markets...</td></tr>';
+
+    try {
+        const minRsi = document.getElementById('scr-rsi-min')?.value || 25;
+        const maxRsi = document.getElementById('scr-rsi-max')?.value || 65;
+        const tf     = document.getElementById('scr-tf')?.value || '1h';
+
+        const res  = await fetch(`${DATA}/screener?tf=${tf}&min_rsi=${minRsi}&max_rsi=${maxRsi}&limit=50`);
+        const data = await res.json();
+
+        if(!data.ok) throw new Error(data.error);
+
+        const results = data.results || [];
+        if(count) count.textContent = `${results.length} of ${data.scanned} coins match`;
+        if(dot) dot.style.background = 'var(--neon)';
+
+        // Render table
+        if(tbody) {
+            tbody.innerHTML = results.length === 0
+                ? '<tr><td colspan="8" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">No coins match your filters</td></tr>'
+                : results.map(r => {
+                    const signalClass = r.signal?.includes('up') || r.signal?.includes('bull') || r.signal?.includes('bounce')
+                        ? 'signal-bullish'
+                        : r.signal?.includes('down') || r.signal?.includes('bear') || r.signal?.includes('overbought')
+                        ? 'signal-bearish'
+                        : 'signal-neutral';
+
+                    const patterns = (r.patterns || []).slice(0,2).map(p =>
+                        `<span class="pattern-tag">${p.pattern}</span>`
+                    ).join('');
+
+                    const rsiColor = r.rsi < 30 ? 'var(--neon)' 
+                        : r.rsi > 70 ? 'var(--hot-red)' 
+                        : 'rgba(255,255,255,0.82)';
+
+                    const macdColor = r.macd_hist > 0 ? 'var(--neon)' : 'var(--hot-red)';
+
+                    return `<tr>
+                        <td style="font-weight:600;color:#fff;">
+                            ${r.symbol.replace('USDT','')}
+                            <span style="color:rgba(255,255,255,0.35);font-size:9px;">/USDT</span>
+                        </td>
+                        <td style="font-family:'JetBrains Mono',monospace;color:${rsiColor};">${r.rsi}</td>
+                        <td style="font-family:'JetBrains Mono',monospace;color:${macdColor};">${r.macd_hist > 0 ? '+' : ''}${r.macd_hist?.toFixed(2)}</td>
+                        <td>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width:${r.score}px;max-width:60px;"></div>
+                                <span style="font-family:'JetBrains Mono',monospace;">${r.score}</span>
+                            </div>
+                        </td>
+                        <td><span class="signal-badge ${signalClass}">${r.signal?.replace(/_/g,' ') || 'neutral'}</span></td>
+                        <td>${patterns || '<span style="color:rgba(255,255,255,0.3);">—</span>'}</td>
+                        <td style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.55);">${r.volume_ratio?.toFixed(1)}x</td>
+                        <td>
+                            <button onclick="selectCoin('${r.symbol}')" 
+                                style="font-size:9px;padding:3px 8px;background:rgba(68,184,40,0.1);
+                                border:1px solid rgba(68,184,40,0.2);color:var(--neon);
+                                border-radius:4px;cursor:pointer;">
+                                Trade
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join('');
+        }
+
+        // Also update AI Scout with top result
+        if(results.length > 0) {
+            const top = results[0];
+            const sr  = document.getElementById('scout-reasoning');
+            if(sr) sr.textContent = 
+                `Top signal: ${top.symbol} — Score ${top.score}/100 · RSI ${top.rsi} · ${top.signal?.replace(/_/g,' ')}. ` +
+                (top.patterns?.length ? `Pattern: ${top.patterns[0].pattern}. ` : '') +
+                `Trend: ${top.trend?.replace(/_/g,' ')}`;
+        }
+
+    } catch(e) {
+        if(tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--hot-red);">Error: ${e.message}</td></tr>`;
+        if(dot) dot.style.background = 'var(--hot-red)';
+    }
+
+    if(btn) btn.textContent = '▶ Scan';
+    screenerRunning = false;
+}
+
+// Select coin from screener → update order form
+function selectCoin(symbol) {
+    // Update symbol display
+    const symEl = document.getElementById('current-symbol');
+    if(symEl) symEl.textContent = symbol;
+    // Start ticker for this symbol
+    startLiveTicker(symbol);
+    // Close panel
+    closePanel('analytics');
+    showToast('Selected ' + symbol);
+}
+
+// Auto-run screener when panel opens
+const _origTogglePanelScreener = togglePanel;
 
 </script>
 
