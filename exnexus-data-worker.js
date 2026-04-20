@@ -33,6 +33,7 @@ export default {
     const path = url.pathname;
 
     // ── Route Table ──────────────────────────────────────────
+    if (path === '/status')                  return handleStatus(request, env);
     if (path === '/init')                    return handleInit(request, env);
     if (path === '/collect')                 return handleCollect(request, env);
     if (path === '/collect/history')         return handleCollectHistory(request, env);
@@ -40,11 +41,17 @@ export default {
     if (path === '/indicators')              return handleIndicators(request, env);
     if (path === '/candles')                 return handleCandles(request, env);
     if (path === '/coins')                   return handleCoins(request, env);
-    if (path === '/status')                  return handleStatus(request, env);
     if (path === '/backtest')                return handleBacktest(request, env);
     if (path === '/patterns')                return handlePatterns(request, env);
 
-    return err('Route not found');
+    // Show available routes if no match
+    return new Response(JSON.stringify({
+      ok: true,
+      service: 'ExNexus Data Worker v1.0',
+      routes: ['/status','/init','/collect','/collect/history',
+               '/screener','/indicators','/candles','/coins',
+               '/backtest','/patterns']
+    }), { status: 200, headers: CORS });
   },
 
   // ── Scheduled collector (runs every 5 minutes via Cron) ───
