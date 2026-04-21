@@ -2988,12 +2988,6 @@ function openDataHub(){ togglePanel('datahub'); }
 
 
 
-    if(activePanel) closePanel(activePanel);
-    panel.classList.add('open');
-    activePanel='helpchat';
-    const bd = document.getElementById('mob-panel-backdrop');
-    if(bd) bd.style.display='block';
-}
 
 /* ============ SETTINGS ============ */
 function toggleSettingsPanel(){
