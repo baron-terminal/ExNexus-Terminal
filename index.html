@@ -810,74 +810,166 @@ footer{
         #slogan-bar span{ color:var(--neon); }
 
         
-        /* ── White Theme ── */
+        
+        /* ═══════════════════════════════════════════
+           COMPREHENSIVE WHITE THEME
+           Dark → Light Grey/Silver conversions
+        ═══════════════════════════════════════════ */
         body.white-theme {
-            background: #f5f5f5 !important;
+            background: #f0f0f0 !important;
             color: #111 !important;
         }
+        /* Navbar */
         body.white-theme nav {
-            background: rgba(255,255,255,0.95) !important;
-            border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+            background: rgba(255,255,255,0.97) !important;
+            border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
         }
-        body.white-theme .nav-link { color: #333 !important; }
-        body.white-theme .section-tag { color: #44B828 !important; }
-        body.white-theme h1, body.white-theme h2, body.white-theme h3 { color: #111 !important; }
-        body.white-theme p { color: #444 !important; }
-        body.white-theme .feature-card {
+        body.white-theme .nav-logo img { filter: none !important; }
+        body.white-theme .nav-item > span { color: #222 !important; }
+        body.white-theme .nav-caret { color: #555 !important; }
+        body.white-theme .nav-dropdown {
             background: #fff !important;
+            border-color: rgba(0,0,0,0.1) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+        }
+        body.white-theme .dd-text-title { color: #111 !important; }
+        body.white-theme .dd-text-sub { color: #666 !important; }
+        body.white-theme .dd-sep { background: rgba(0,0,0,0.08) !important; }
+        /* Buttons */
+        body.white-theme .btn-login {
+            border-color: rgba(0,0,0,0.2) !important;
+            color: #333 !important;
+            background: #fff !important;
+        }
+        body.white-theme .btn-login:hover { background: #f5f5f5 !important; }
+        body.white-theme .btn-launch {
+            background: #44B828 !important;
+            color: #fff !important;
+        }
+        /* Sloth bubble */
+        body.white-theme #draggable-ai { 
+            background: #fff !important;
+            border-color: rgba(0,0,0,0.1) !important;
+            color: #111 !important;
+        }
+        /* Slogan bar */
+        body.white-theme #slogan-bar {
+            background: linear-gradient(90deg,rgba(68,184,40,0.08),rgba(68,184,40,0.04)) !important;
+            border-color: rgba(68,184,40,0.2) !important;
+            color: #333 !important;
+        }
+        /* Section tags */
+        body.white-theme .section-tag { color: #2d8a1a !important; }
+        /* Headings */
+        body.white-theme h1, body.white-theme h2, 
+        body.white-theme h3, body.white-theme h4 { color: #111 !important; }
+        body.white-theme p { color: #444 !important; }
+        body.white-theme span:not([style]) { color: inherit !important; }
+        /* Cards → light grey */
+        body.white-theme .feature-card,
+        body.white-theme .intel-card,
+        body.white-theme .bot-card,
+        body.white-theme .pricing-card,
+        body.white-theme .stat-card {
+            background: #ffffff !important;
+            border-color: rgba(0,0,0,0.08) !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+        }
+        body.white-theme .feature-card h3,
+        body.white-theme .intel-card h3,
+        body.white-theme .bot-card h3 { color: #111 !important; }
+        body.white-theme .feature-card p,
+        body.white-theme .intel-card p,
+        body.white-theme .bot-card p { color: #555 !important; }
+        /* Dividers */
+        body.white-theme .divider { 
+            background: linear-gradient(90deg,transparent,rgba(0,0,0,0.08),transparent) !important;
+        }
+        /* Sections with dark bg → light grey */
+        body.white-theme section {
+            background: transparent !important;
+        }
+        body.white-theme .reveal {
+            background: transparent !important;
+        }
+        /* Ticker / price rows */
+        body.white-theme .ticker-item { color: #222 !important; }
+        body.white-theme .ticker-wrap {
+            background: #e8e8e8 !important;
             border-color: rgba(0,0,0,0.08) !important;
         }
-        body.white-theme .feature-card h3 { color: #111 !important; }
-        body.white-theme .feature-card p { color: #666 !important; }
-        body.white-theme #slogan-bar {
-            background: linear-gradient(90deg,rgba(68,184,40,0.08),rgba(68,184,40,0.04),rgba(68,184,40,0.08)) !important;
-            border-color: rgba(68,184,40,0.2) !important;
+        /* Tables */
+        body.white-theme table { background: #fff !important; }
+        body.white-theme th { 
+            background: #f0f0f0 !important;
+            color: #333 !important;
+            border-color: rgba(0,0,0,0.08) !important;
+        }
+        body.white-theme td {
+            color: #333 !important;
+            border-color: rgba(0,0,0,0.05) !important;
+        }
+        body.white-theme tr:hover { background: #f8f8f8 !important; }
+        /* Nav icons */
+        body.white-theme #site-globe-btn,
+        body.white-theme #site-theme-btn {
+            background: rgba(0,0,0,0.06) !important;
+            border-color: rgba(0,0,0,0.15) !important;
             color: #333 !important;
         }
-        body.white-theme footer {
+        body.white-theme #site-globe-btn:hover,
+        body.white-theme #site-theme-btn:hover {
+            background: rgba(0,0,0,0.1) !important;
+        }
+        body.white-theme #site-globe-menu {
             background: #fff !important;
-            border-top: 1px solid rgba(0,0,0,0.08) !important;
+            border-color: rgba(0,0,0,0.1) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+        }
+        body.white-theme .site-lang-opt { color: #333 !important; }
+        body.white-theme .site-lang-opt:hover { background: rgba(0,0,0,0.05) !important; }
+        /* Gradients with dark bg → grey */
+        body.white-theme [style*="background:#030303"],
+        body.white-theme [style*="background:#0a0a0a"],
+        body.white-theme [style*="background:#111"],
+        body.white-theme [style*="background:#1a1a1a"],
+        body.white-theme [style*="background:#0d0d0d"] {
+            background: #e8e8e8 !important;
+        }
+        body.white-theme [style*="color:#fff"],
+        body.white-theme [style*="color:white"],
+        body.white-theme [style*="color: #fff"],
+        body.white-theme [style*="color: white"] {
+            color: #111 !important;
+        }
+        body.white-theme [style*="color:rgba(255,255,255,0.4)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.5)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.6)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.7)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.8)"] {
+            color: #555 !important;
+        }
+        /* Footer */
+        body.white-theme footer {
+            background: #e0e0e0 !important;
+            border-top: 1px solid rgba(0,0,0,0.1) !important;
             color: #333 !important;
         }
-        body.white-theme footer a { color: #555 !important; }
-
-        /* Phone banner always dark in white theme */
-        body.white-theme #mobile-app-section {
+        body.white-theme footer a { color: #444 !important; }
+        body.white-theme footer a:hover { color: #44B828 !important; }
+        /* Mobile app section ALWAYS dark */
+        body.white-theme #mobile-app-section > div {
             background: linear-gradient(135deg,#1a1a1a,#111) !important;
-            border-color: rgba(68,184,40,0.2) !important;
         }
         body.white-theme #mobile-app-section h2 { color: #fff !important; }
         body.white-theme #mobile-app-section p { color: rgba(255,255,255,0.6) !important; }
         body.white-theme #mobile-app-section .step-text { color: rgba(255,255,255,0.7) !important; }
+        /* Inline dark text on dark bg fixes */
+        body.white-theme .dd-item:hover { background: rgba(0,0,0,0.04) !important; }
+        /* Sign In / Up button text visible */
+        body.white-theme .btn-login { color: #222 !important; }
 
-        /* theme toggle moved to navbar */
-
-        
-        /* ── Phone Mockup Nav ── */
-        .pscreen { transition: opacity .25s ease; }
-        .pnav-btn { 
-            transition: color .15s, transform .2s cubic-bezier(0.34,1.56,0.64,1); 
-            cursor: pointer;
-        }
-        .pnav-btn.active-nav { color: #00FF88 !important; }
-        .pnav-btn:hover { color: rgba(255,255,255,0.9) !important; }
-
-        
-        .site-lang-opt {
-            padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);
-            cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:8px;
-        }
-        .site-lang-opt:hover { background:rgba(255,255,255,0.07); }
-        /* White theme overrides for nav icons */
-        body.white-theme #site-globe-btn,
-        body.white-theme #site-theme-btn { 
-            background:rgba(0,0,0,0.06) !important; 
-            border-color:rgba(0,0,0,0.15) !important;
-            color:#333 !important;
-        }
-        body.white-theme #site-globe-menu { background:#fff; border-color:rgba(0,0,0,0.1); }
-        body.white-theme .site-lang-opt { color:#333; }
-        body.white-theme .site-lang-opt:hover { background:rgba(0,0,0,0.05); }
 
         </style>
 </head>
