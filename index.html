@@ -1093,31 +1093,38 @@ footer{
 
 
         
-        /* ── Phone Banner White Theme Fixes ── */
-        /* Inner white card stays white */
-        body.white-theme .phone-banner-inner {
-            background: #ffffff !important;
+        /* ── Phone Mockup - Always Dark ── */
+        .phone-mockup-screen {
+            background: linear-gradient(180deg,#1a1a1a,#111) !important;
+            color-scheme: dark;
+            isolation: isolate;
         }
-        /* Phone screen ALWAYS dark */
-        body.white-theme .phone-mockup-screen,
-        body.white-theme .phone-mockup-screen * {
-            background: inherit !important;
-            color: inherit !important;
-            border-color: inherit !important;
-        }
+        /* All children explicitly set to dark context */
         body.white-theme .phone-mockup-screen {
             background: linear-gradient(180deg,#1a1a1a,#111) !important;
         }
-        /* All children of phone screen keep their dark colors */
-        body.white-theme .phone-mockup-screen [style*="background:#111"],
-        body.white-theme .phone-mockup-screen [style*="background:#0d0d0d"],
-        body.white-theme .phone-mockup-screen [style*="background:#1a1a1a"] {
-            background: inherit !important;
+        /* Override nuclear white theme for phone children */
+        body.white-theme .phone-mockup-screen * {
+            color: unset !important;
+            background: unset !important;
+            border-color: unset !important;
         }
-        body.white-theme .phone-mockup-screen [style*="color:#fff"],
-        body.white-theme .phone-mockup-screen [style*="color:rgba(255,255,255"] {
-            color: inherit !important;
+        /* Phone status bar */
+        body.white-theme .phone-mockup-screen > div:first-child {
+            background: #111 !important;
+            color: rgba(255,255,255,0.6) !important;
         }
+        /* Protect specific phone elements */
+        body.white-theme #pwa-btc-price { color: #ffffff !important; }
+        body.white-theme #pwa-btc-change { color: #00FF88 !important; }
+        body.white-theme #phone-chart-bars div { background: rgba(68,184,40,0.5) !important; }
+        body.white-theme #phone-nav { background: #111 !important; border-top-color: rgba(255,255,255,0.08) !important; }
+        body.white-theme #phone-nav .pnav-btn { color: rgba(255,255,255,0.4) !important; }
+        body.white-theme #phone-nav .active-nav { color: #00FF88 !important; }
+        /* Phone screen sections */
+        body.white-theme .pscreen { background: transparent !important; }
+        body.white-theme .pscreen * { color: rgba(255,255,255,0.8) !important; }
+        body.white-theme #pscreen-home > div:first-child { color: rgba(255,255,255,0.4) !important; }
 
         /* ── Green bars keep dark background ── */
         /* Any element with neon green border/background stays dark */
