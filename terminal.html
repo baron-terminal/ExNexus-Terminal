@@ -2167,6 +2167,9 @@
                 <option value="15m">15m</option>
             </select>
             <button class="screener-run-btn" onclick="runScreener()">▶ Scan</button>
+            <span class="screener-filter-label" style="margin-left:4px;">Coin</span>
+            <input class="screener-inp" type="text" id="scr-coin-filter" placeholder="e.g. BTC" 
+                style="width:60px;" title="Filter by specific coin (leave empty for all)">
             <span class="screener-count" id="screener-count"></span>
         </div>
         <div class="panel-body" style="padding:0;overflow-x:auto;">
@@ -2286,7 +2289,7 @@
     </div>
 
     <!-- AI Scout -->
-    <div id="panel-scout" class="slide-panel" style="width:420px;">
+    <<div id="panel-scout" class="slide-panel" style="width:420px;">
         <div class="panel-header">
             <div class="panel-title">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="2"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
@@ -2297,11 +2300,110 @@
             <span class="panel-close" onclick="closePanel('scout')">×</span>
         </div>
         <div class="panel-body" style="padding:10px;">
+
+            <!-- Mode tabs -->
+            <div style="display:flex;gap:4px;margin-bottom:10px;">
+                <button id="scout-tab-scan" onclick="setScoutMode('scan')" style="flex:1;padding:5px;font-size:10px;font-weight:600;border:1px solid #9b72cb;background:rgba(155,114,203,0.2);color:#9b72cb;border-radius:4px;cursor:pointer;">🔍 Auto Scan</button>
+                <button id="scout-tab-single" onclick="setScoutMode('single')" style="flex:1;padding:5px;font-size:10px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-mid);border-radius:4px;cursor:pointer;">🎯 Single Coin</button>
+            </div>
+
+            <!-- AUTO SCAN MODE -->
+            <div id="scout-mode-scan">
+                <!-- Coin search filter -->
+                <div style="margin-bottom:6px;">
+                    <input id="scout-coin-search" type="text" placeholder="🔍 Search coin (e.g. SOL, BNB, INJ)..."
+                        style="width:100%;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:5px 8px;font-size:10px;border-radius:3px;outline:none;box-sizing:border-box;"
+                        oninput="filterScoutResults(this.value)">
+                </div>
+                <!-- Filters row -->
+                <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
+                    <select id="scout-mcap-filter" style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:4px 6px;font-size:10px;border-radius:3px;outline:none;">
+                        <option value="200">$200M+ MCap</option>
+                        <option value="500">$500M+ MCap</option>
+                        <option value="1000">$1B+ MCap</option>
+                        <option value="50">$50M+ MCap</option>
+                    </select>
+                    <select id="scout-min-score" style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:4px 6px;font-size:10px;border-radius:3px;outline:none;">
+                        <option value="60">Score 60%+</option>
+                        <option value="70">Score 70%+</option>
+                        <option value="75">Score 75%+</option>
+                        <option value="50">Score 50%+</option>
+                    </select>
+                    <button onclick="runAutoScout()" id="auto-scout-btn" style="background:linear-gradient(135deg,#4285f4,#9b72cb);color:#fff;border:none;padding:5px 12px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;">▶ Scan</button>
+                </div>
+                <div id="auto-scout-status" style="font-size:10px;color:var(--text-dim);margin-bottom:6px;"></div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:10px;">
+                        <thead><tr style="border-bottom:1px solid var(--border);">
+                            <th style="text-align:left;padding:4px 6px;color:var(--text-dim);font-weight:500;">Coin</th>
+                            <th style="text-align:center;padding:4px 6px;color:var(--text-dim);font-weight:500;">Score</th>
+                            <th style="text-align:center;padding:4px 6px;color:var(--text-dim);font-weight:500;">Bias</th>
+                            <th style="text-align:right;padding:4px 6px;color:var(--text-dim);font-weight:500;">TP1</th>
+                            <th style="text-align:right;padding:4px 6px;color:var(--text-dim);font-weight:500;">SL</th>
+                        </tr></thead>
+                        <tbody id="auto-scout-tbody">
+                            <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-dim);">Click ▶ Scan to find high-probability setups</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="auto-scout-detail" style="display:none;margin-top:8px;padding:8px;background:rgba(155,114,203,0.08);border:1px solid rgba(155,114,203,0.2);border-radius:6px;font-size:10px;color:var(--text-mid);line-height:1.6;"></div>
+            </div>
+
+            <!-- SINGLE COIN MODE -->
+            <div id="scout-mode-single" style="display:none;">
+                <div style="margin-bottom:8px;">
+                    <input id="scout-coin" type="text" placeholder="Type any coin: BTC, ETH, SOL, INJ, ARB..."
+                        style="width:100%;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:6px 10px;font-size:11px;border-radius:3px;outline:none;box-sizing:border-box;"
+                        value="BTC"
+                        onkeydown="if(event.key==='Enter') runScout();"
+                        list="scout-suggestions">
+                    <datalist id="scout-suggestions">
+                        <option value="BTC"><option value="ETH"><option value="SOL">
+                        <option value="XRP"><option value="BNB"><option value="ADA">
+                        <option value="AVAX"><option value="DOGE"><option value="DOT">
+                        <option value="LINK"><option value="MATIC"><option value="UNI">
+                        <option value="ATOM"><option value="LTC"><option value="TRX">
+                        <option value="APT"><option value="ARB"><option value="OP">
+                        <option value="INJ"><option value="SUI"><option value="SEI">
+                        <option value="NEAR"><option value="FIL"><option value="ICP">
+                        <option value="AAVE"><option value="MKR"><option value="CRV">
+                    </datalist>
+                </div>
+                <button onclick="runScout()" style="width:100%;background:linear-gradient(135deg,#4285f4,#9b72cb);color:white;border:none;padding:7px;border-radius:3px;font-size:11px;cursor:pointer;font-weight:600;margin-bottom:12px;">🔍 Analyze Coin</button>
+                <div class="panel-label" style="color:rgba(255,255,255,0.6);">Intelligence Sources</div>
+                <div id="scout-sources" style="margin-bottom:14px;">
+                    <div class="scout-row"><span class="scout-source">Signal Intelligence · RSI/MACD</span><span id="ss1" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                    <div class="scout-row"><span class="scout-source">Signal Intelligence · Trend Score</span><span id="ss2" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                    <div class="scout-row"><span class="scout-source">Smart Money Flow</span><span id="ss3" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                    <div class="scout-row"><span class="scout-source">Long/Short Ratio</span><span id="ss4" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                    <div class="scout-row"><span class="scout-source">Funding · OI · Sentiment</span><span id="ss5" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                </div>
+                <div style="text-align:center;margin-bottom:14px;">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+                        <circle id="prob-circle" cx="40" cy="40" r="34" fill="none" stroke="#9b72cb" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.8s ease;"/>
+                        <text id="prob-val" x="40" y="44" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">—</text>
+                    </svg>
+                    <div id="prob-summary" style="font-size:10px;color:var(--text-dim);margin-top:4px;line-height:1.5;"></div>
+                </div>
+                <div class="panel-label" style="color:rgba(255,255,255,0.6);">Trade Recommendation</div>
+                <div id="bot-rec" style="background:rgba(255,255,255,0.04);border-radius:5px;padding:8px;margin-bottom:10px;font-size:10.5px;color:var(--text-mid);"></div>
+                <div class="panel-label" style="color:rgba(255,255,255,0.6);">AI Reasoning</div>
+                <div id="scout-reasoning" style="font-size:10px;color:var(--text-dim);line-height:1.6;"></div>
+            </div>
+        </div>
+    </div>
+        <div class="panel-body" style="padding:10px;">
             <div style="display:flex;gap:4px;margin-bottom:10px;">
                 <button id="scout-tab-scan" onclick="setScoutMode('scan')" style="flex:1;padding:5px;font-size:10px;font-weight:600;border:1px solid #9b72cb;background:rgba(155,114,203,0.2);color:#9b72cb;border-radius:4px;cursor:pointer;">🔍 Auto Scan</button>
                 <button id="scout-tab-single" onclick="setScoutMode('single')" style="flex:1;padding:5px;font-size:10px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-mid);border-radius:4px;cursor:pointer;">🎯 Single Coin</button>
             </div>
             <div id="scout-mode-scan">
+                <div style="display:flex;gap:6px;margin-bottom:6px;">
+                    <input id="scout-coin-search" type="text" placeholder="Filter by coin (e.g. SOL, BNB)..."
+                        style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:4px 8px;font-size:10px;border-radius:3px;outline:none;"
+                        oninput="filterScoutResults(this.value)">
+                </div>
                 <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
                     <select id="scout-mcap-filter" style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:4px 6px;font-size:10px;border-radius:3px;outline:none;">
                         <option value="200">$200M+ MCap</option>
@@ -2336,9 +2438,20 @@
             </div>
             <div id="scout-mode-single" style="display:none;">
                 <div style="display:flex;gap:6px;margin-bottom:12px;">
-                    <select id="scout-coin" style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:5px 8px;font-size:11px;border-radius:3px;outline:none;">
-                        <option>BTCUSDT</option><option>ETHUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option><option>BNBUSDT</option><option>ADAUSDT</option>
-                    </select>
+                    <input id="scout-coin" type="text" placeholder="e.g. BTC, ETH, SOL..." 
+                        style="flex:1;background:#111;border:1px solid var(--border);color:var(--text-bright);padding:5px 8px;font-size:11px;border-radius:3px;outline:none;"
+                        value="BTC"
+                        onkeydown="if(event.key==='Enter') runScout();"
+                        list="scout-coin-suggestions">
+                    <datalist id="scout-coin-suggestions">
+                        <option value="BTC"><option value="ETH"><option value="SOL">
+                        <option value="XRP"><option value="BNB"><option value="ADA">
+                        <option value="AVAX"><option value="DOGE"><option value="DOT">
+                        <option value="LINK"><option value="MATIC"><option value="UNI">
+                        <option value="ATOM"><option value="LTC"><option value="TRX">
+                        <option value="APT"><option value="ARB"><option value="OP">
+                        <option value="INJ"><option value="SUI"><option value="SEI">
+                    </datalist>
                     <button onclick="runScout()" style="background:linear-gradient(135deg,#4285f4,#9b72cb);color:white;border:none;padding:5px 14px;border-radius:3px;font-size:10.5px;cursor:pointer;font-weight:500;">Scan</button>
                 </div>
                 <div class="panel-label" style="color:rgba(255,255,255,0.6);">Intelligence Sources</div>
@@ -6172,10 +6285,13 @@ async function runScreener() {
         const listings = await listRes.json();
         const sentiment = await sentRes.json();
 
-        const coins = (listings.coins || []).filter(c =>
-            c.mcap > 200000000 && // $200M+ mcap
-            c.volume_24h > 5000000 // $5M+ volume
-        );
+        const coinFilter = document.getElementById('scr-coin-filter')?.value?.trim().toUpperCase().replace('USDT','') || '';
+        const coins = (listings.coins || []).filter(c => {
+            const sym = (c.symbol||c.name||'').toUpperCase().replace('USDT','');
+            return c.mcap > 200000000 &&
+                   c.volume_24h > 5000000 &&
+                   (!coinFilter || sym.includes(coinFilter));
+        });
 
         // Score each coin
         const scored = coins.map(c => {
@@ -7980,6 +8096,17 @@ function showScoutDetail(data){
     el.innerHTML=`<b style="color:#9b72cb;">${data.sym} · ${data.bias} · ${data.score}%</b><br>Entry: ${fp(data.price)} · TP1: <span style="color:#44B828;">${fp(data.tp1)}</span> · SL: <span style="color:#FF003F;">${fp(data.sl)}</span><br>1H: ${data.ch1>=0?'+':''}${parseFloat(data.ch1).toFixed(2)}% · 24H: ${data.ch24>=0?'+':''}${parseFloat(data.ch24).toFixed(2)}% · Side: <b style="color:${data.score>=50?'#44B828':'#FF003F'}">${data.score>=50?'LONG':'SHORT'}</b><br><span style="color:var(--text-dim);">${data.score>=75?'⚡ High probability!':data.score>=65?'Watch for entry.':'Wait for confirmation.'}</span>`;
 }
 setInterval(()=>{if(document.getElementById('panel-scout')?.classList.contains('open'))runAutoScout();},5*60*1000);
+
+
+/* ── Scout coin filter (live filter on results) ── */
+function filterScoutResults(query) {
+    const q = query.trim().toUpperCase().replace('USDT','');
+    const rows = document.querySelectorAll('#auto-scout-tbody tr');
+    rows.forEach(row => {
+        const coin = row.querySelector('td')?.textContent?.replace('🔔','').trim().toUpperCase() || '';
+        row.style.display = (!q || coin.includes(q)) ? '' : 'none';
+    });
+}
 
 </script>
 
