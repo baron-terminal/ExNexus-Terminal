@@ -2345,8 +2345,10 @@ function closeAI(){ $("#ai-briefing").fadeOut(100,()=>{ $("#draggable-ai").css("
 window.onload = () => {
     // Check auth first — if not logged in, show login screen
     // bootBrain() called from completeLogin() → enterApp()
-    const isAuthed = checkAuthOnLoad();
-    if(!isAuthed) return; // stop here, bootBrain runs after login
+    // TODO: Restore auth check when login page is ready
+    // const isAuthed = checkAuthOnLoad();
+    // if(!isAuthed) return;
+    checkAuthOnLoad(); // run for session tracking only
 
     try {
         new Advanced Charts.widget({
@@ -6587,7 +6589,7 @@ async function sendSlothMsg() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 300,
         system: `You are Ex, the ExNexus AI trading assistant. 
                  Wear a top hat 🎩. Be concise — max 3-4 lines.
