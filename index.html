@@ -1092,6 +1092,60 @@ footer{
         body.white-theme .btn-login { color: #222 !important; }
 
 
+        
+        /* ── Phone Banner White Theme Fixes ── */
+        /* Inner white card stays white */
+        body.white-theme .phone-banner-inner {
+            background: #ffffff !important;
+        }
+        /* Phone screen ALWAYS dark */
+        body.white-theme .phone-mockup-screen,
+        body.white-theme .phone-mockup-screen * {
+            background: inherit !important;
+            color: inherit !important;
+            border-color: inherit !important;
+        }
+        body.white-theme .phone-mockup-screen {
+            background: linear-gradient(180deg,#1a1a1a,#111) !important;
+        }
+        /* All children of phone screen keep their dark colors */
+        body.white-theme .phone-mockup-screen [style*="background:#111"],
+        body.white-theme .phone-mockup-screen [style*="background:#0d0d0d"],
+        body.white-theme .phone-mockup-screen [style*="background:#1a1a1a"] {
+            background: inherit !important;
+        }
+        body.white-theme .phone-mockup-screen [style*="color:#fff"],
+        body.white-theme .phone-mockup-screen [style*="color:rgba(255,255,255"] {
+            color: inherit !important;
+        }
+
+        /* ── Green bars keep dark background ── */
+        /* Any element with neon green border/background stays dark */
+        body.white-theme [style*="background:rgba(68,184,40"],
+        body.white-theme [style*="background: rgba(68,184,40"],
+        body.white-theme [style*="background:rgba(34,168,73"],
+        body.white-theme [style*="border:1px solid rgba(68,184,40"],
+        body.white-theme [style*="border: 1px solid rgba(68,184,40"] {
+            background: rgba(68,184,40,0.12) !important;
+            border-color: rgba(68,184,40,0.3) !important;
+        }
+        /* Green progress/chart bars keep their color */
+        body.white-theme #phone-chart-bars div {
+            background: inherit !important;
+        }
+        /* Slogan bar green stays */
+        body.white-theme #slogan-bar {
+            background: linear-gradient(90deg,rgba(68,184,40,0.1),rgba(68,184,40,0.05),rgba(68,184,40,0.1)) !important;
+            border-color: rgba(68,184,40,0.2) !important;
+        }
+        body.white-theme #slogan-bar * { color: #333 !important; }
+
+        /* ── Feature/intel cards with green accents keep accent ── */
+        body.white-theme .feature-card [style*="background:rgba(68,184,40"],
+        body.white-theme .intel-card [style*="background:rgba(68,184,40"] {
+            background: rgba(68,184,40,0.1) !important;
+        }
+
         </style>
 </head>
 <body>
@@ -1480,7 +1534,7 @@ footer{
     padding:0 24px 60px;
     background:transparent;
 ">
-    <div style="
+    <div class="phone-banner-inner" style="
         background:#ffffff;
         border-radius:24px;
         padding:70px 60px;
@@ -1491,7 +1545,7 @@ footer{
         
         <!-- Phone mockup -->
         <div style="flex:0 0 auto;position:relative;display:flex;justify-content:center;">
-            <div style="
+            <div class="phone-mockup-screen" style="
                 width:240px;height:480px;
                 background:linear-gradient(180deg,#1a1a1a,#111);
                 border-radius:36px;
