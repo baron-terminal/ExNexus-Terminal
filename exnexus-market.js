@@ -2,437 +2,439 @@ export default {
   async fetch(request, env) {
     const url  = new URL(request.url);
     const path = url.pathname;
-    const CORS = { 'Content-Type':'application/json', 'Access-Control-Allow-Origin':'*' };
-    if(request.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    const H    = {'Content-Type':'application/json','Access-Control-Allow-Origin':'*'};
+    if(request.method === 'OPTIONS') return new Response(null, { headers: H });
 
-    if(path === '/oi')           return handleOI(url, CORS);
-    if(path === '/funding')      return handleFunding(url, CORS);
-    if(path === '/ls')           return handleLS(url, CORS);
-    if(path === '/liquidations') return handleLiquidations(url, CORS);
-    if(path === '/whales')       return handleWhales(url, CORS);
-    if(path === '/trending')     return handleTrending(CORS);
-    if(path === '/categories')   return handleCategories(CORS);
-    if(path === '/gainers')      return handleGainers(CORS);
-    if(path === '/onchain')      return handleOnChain(url, CORS);
-    if(path === '/etf')          return handleETF(CORS);
-    if(path === '/sentiment')    return handleSentiment(url, CORS);
+    // ── Routes ────────────────────────────────────────────────
+    if(path === '/trending')      return getTrending(H);
+    if(path === '/gainers')       return getGainers(H);
+    if(path === '/listings')      return getListings(url, H);
+    if(path === '/dex/quotes')    return getDexQuotes(url, H);
+    if(path === '/dex/pairs')     return getDexPairs(url, H);
+    if(path === '/dex/networks')  return getDexNetworks(H);
+    if(path === '/dex/history')   return getDexHistory(url, H);
+    if(path === '/dex/trades')    return getDexTrades(url, H);
+    if(path === '/global')        return getGlobal(H);
+    if(path === '/sentiment')     return getSentiment(url, H);
+    if(path === '/funding')       return getFunding(url, H);
+    if(path === '/oi')            return getOI(url, H);
+    if(path === '/ls')            return getLS(url, H);
+    if(path === '/liquidations')  return getLiqs(url, H);
+    if(path === '/whales')        return getWhales(url, H);
+    if(path === '/categories')    return getCategories(H);
+    if(path === '/coin')          return getCoin(url, H);
 
     return new Response(JSON.stringify({
-      ok: true, service: 'ExNexus Market Intelligence',
-      routes: ['/oi','/funding','/ls','/liquidations','/whales',
-               '/trending','/categories','/gainers','/onchain','/etf','/sentiment']
-    }), { headers: CORS });
+      ok: true, service: 'ExNexus Market Intelligence v2',
+      sources: ['CoinMarketCap API','Binance API','Bybit API'],
+      routes: ['/trending','/gainers','/listings','/global','/categories','/coin',
+               '/dex/quotes','/dex/pairs','/dex/networks','/dex/history','/dex/trades',
+               '/sentiment','/funding','/oi','/ls','/liquidations','/whales']
+    }), { headers: H });
   }
 };
 
-/* ============================================================
-   MARKET INTELLIGENCE — Free Exchange + Public APIs
-============================================================ */
-// Open Interest — Binance + Bybit
-async function handleOI(url, CORS) {
-  const symbol = url.searchParams.get('symbol') || 'BTCUSDT';
-  try {
-    const [binRes, bybitRes] = await Promise.allSettled([
-      fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`),
-      fetch(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${symbol}&intervalTime=5min&limit=1`)
-    ]);
+const CMC_KEY = 'c04da22f9d424843be9b76d4fd693bf8';
+const CMC     = 'https://pro-api.coinmarketcap.com';
+const CMC_H   = { 'X-CMC_PRO_API_KEY': CMC_KEY, 'Accept': 'application/json' };
 
-    const binOI  = binRes.status === 'fulfilled' ? await binRes.value.json() : null;
-    const bybitOI = bybitRes.status === 'fulfilled' ? await bybitRes.value.json() : null;
-
-    // OI History from Binance
-    const histRes = await fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=24`);
-    const hist = histRes.ok ? await histRes.json() : [];
-
-    return new Response(JSON.stringify({
-      ok: true, symbol,
-      binance: binOI ? { oi: parseFloat(binOI.openInterest), time: binOI.time } : null,
-      bybit: bybitOI?.result?.list?.[0] ? {
-        oi: parseFloat(bybitOI.result.list[0].openInterest),
-        time: bybitOI.result.list[0].timestamp
-      } : null,
-      history_24h: hist.slice(-24).map(h => ({
-        time: h.timestamp,
-        oi: parseFloat(h.sumOpenInterest),
-        oi_value: parseFloat(h.sumOpenInterestValue)
-      })),
-      trend: hist.length >= 2
-        ? (parseFloat(hist[hist.length-1].sumOpenInterest) > parseFloat(hist[0].sumOpenInterest) ? 'rising' : 'falling')
-        : 'unknown'
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
+// ── CMC Helpers ───────────────────────────────────────────────
+async function cmcGet(endpoint, params = {}) {
+  const qs  = new URLSearchParams(params).toString();
+  const res = await fetch(`${CMC}${endpoint}${qs ? '?' + qs : ''}`, { headers: CMC_H });
+  return res.json();
 }
 
-// Funding Rates — Binance + Bybit + Gate
-async function handleFunding(url, CORS) {
-  const symbol = url.searchParams.get('symbol') || 'BTCUSDT';
+// ── Trending Coins ────────────────────────────────────────────
+async function getTrending(H) {
   try {
-    const [binRes, bybitRes] = await Promise.allSettled([
-      fetch(`https://fapi.binance.com/fapi/v1/fundingRate?symbol=${symbol}&limit=8`),
-      fetch(`https://api.bybit.com/v5/market/funding/history?category=linear&symbol=${symbol}&limit=8`)
-    ]);
-
-    const binFunding  = binRes.status === 'fulfilled' ? await binRes.value.json() : [];
-    const bybitFunding = bybitRes.status === 'fulfilled' ? await bybitRes.value.json() : null;
-
-    // Current funding rate
-    const curRes = await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`);
-    const current = curRes.ok ? await curRes.json() : null;
-
-    const currentRate = current ? parseFloat(current.lastFundingRate) * 100 : 0;
-    const sentiment = currentRate > 0.05 ? 'very_bullish_longs_paying'
-      : currentRate > 0.01 ? 'bullish'
-      : currentRate < -0.05 ? 'very_bearish_shorts_paying'
-      : currentRate < -0.01 ? 'bearish'
-      : 'neutral';
-
+    const data = await cmcGet('/v1/cryptocurrency/trending/gainers-losers', { limit: 10, time_period: '24h' });
+    const coins = data.data || [];
     return new Response(JSON.stringify({
-      ok: true, symbol,
-      current_rate_pct: parseFloat(currentRate.toFixed(4)),
-      sentiment,
-      signal: currentRate < -0.05 ? 'extreme_negative_funding_long_opportunity'
-             : currentRate > 0.1 ? 'extreme_positive_funding_short_opportunity'
-             : 'normal',
-      next_funding: current?.nextFundingTime,
-      history: Array.isArray(binFunding) ? binFunding.slice(-8).map(f => ({
-        time: f.fundingTime,
-        rate_pct: parseFloat((parseFloat(f.fundingRate)*100).toFixed(4))
-      })) : [],
-      bybit_current: bybitFunding?.result?.list?.[0]
-        ? parseFloat((parseFloat(bybitFunding.result.list[0].fundingRate)*100).toFixed(4))
-        : null
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
-}
-
-// Long/Short Ratio — Binance
-async function handleLS(url, CORS) {
-  const symbol = url.searchParams.get('symbol') || 'BTCUSDT';
-  const period = url.searchParams.get('period') || '1h';
-  try {
-    const [globalRes, topTraderRes, topPosRes] = await Promise.allSettled([
-      fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=${period}&limit=24`),
-      fetch(`https://fapi.binance.com/futures/data/topLongShortAccountRatio?symbol=${symbol}&period=${period}&limit=1`),
-      fetch(`https://fapi.binance.com/futures/data/topLongShortPositionRatio?symbol=${symbol}&period=${period}&limit=1`)
-    ]);
-
-    const global    = globalRes.status === 'fulfilled' ? await globalRes.value.json() : [];
-    const topTrader = topTraderRes.status === 'fulfilled' ? await topTraderRes.value.json() : [];
-    const topPos    = topPosRes.status === 'fulfilled' ? await topPosRes.value.json() : [];
-
-    const latest = Array.isArray(global) && global.length > 0 ? global[global.length-1] : null;
-    const lsRatio = latest ? parseFloat(latest.longShortRatio) : 1;
-
-    return new Response(JSON.stringify({
-      ok: true, symbol, period,
-      current: {
-        long_pct:  latest ? parseFloat((parseFloat(latest.longAccount)*100).toFixed(1)) : 50,
-        short_pct: latest ? parseFloat((parseFloat(latest.shortAccount)*100).toFixed(1)) : 50,
-        ratio: parseFloat(lsRatio.toFixed(3))
-      },
-      signal: lsRatio > 2 ? 'crowded_longs_caution'
-             : lsRatio < 0.5 ? 'crowded_shorts_potential_squeeze'
-             : 'balanced',
-      top_traders: topTrader?.[0] ? {
-        long_pct: parseFloat((parseFloat(topTrader[0].longAccount)*100).toFixed(1)),
-        short_pct: parseFloat((parseFloat(topTrader[0].shortAccount)*100).toFixed(1))
-      } : null,
-      top_positions: topPos?.[0] ? {
-        long_pct: parseFloat((parseFloat(topPos[0].longAccount)*100).toFixed(1)),
-        short_pct: parseFloat((parseFloat(topPos[0].shortAccount)*100).toFixed(1))
-      } : null,
-      history: Array.isArray(global) ? global.slice(-24).map(g => ({
-        time: g.timestamp,
-        ratio: parseFloat(parseFloat(g.longShortRatio).toFixed(3)),
-        long_pct: parseFloat((parseFloat(g.longAccount)*100).toFixed(1))
-      })) : []
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
-}
-
-// Liquidations — Binance real-time
-async function handleLiquidations(url, CORS) {
-  const symbol = url.searchParams.get('symbol') || 'BTCUSDT';
-  try {
-    // Get recent liquidation orders from Binance
-    const res = await fetch(`https://fapi.binance.com/fapi/v1/allForceOrders?symbol=${symbol}&limit=50`);
-    const data = res.ok ? await res.json() : [];
-
-    if(!Array.isArray(data)) return new Response(JSON.stringify({ ok:true, liquidations:[], total_value:0 }), { headers: CORS });
-
-    const liquidations = data.map(l => ({
-      time: l.time,
-      side: l.side,
-      price: parseFloat(l.averagePrice),
-      qty: parseFloat(l.executedQty),
-      value: parseFloat(l.averagePrice) * parseFloat(l.executedQty)
-    }));
-
-    const longLiqs  = liquidations.filter(l => l.side === 'SELL');
-    const shortLiqs = liquidations.filter(l => l.side === 'BUY');
-    const totalVal  = liquidations.reduce((a,b) => a + b.value, 0);
-
-    return new Response(JSON.stringify({
-      ok: true, symbol,
-      total_liquidations: liquidations.length,
-      total_value_usd: parseFloat(totalVal.toFixed(0)),
-      long_liquidations: longLiqs.length,
-      short_liquidations: shortLiqs.length,
-      dominant: longLiqs.length > shortLiqs.length ? 'longs_liquidated' : 'shorts_liquidated',
-      signal: totalVal > 10000000 ? 'high_liquidation_event'
-             : totalVal > 1000000 ? 'moderate_liquidations'
-             : 'normal',
-      recent: liquidations.slice(-10)
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
-}
-
-// Whale Detection — large trades
-async function handleWhales(url, CORS) {
-  const symbol    = url.searchParams.get('symbol') || 'BTCUSDT';
-  const threshold = parseFloat(url.searchParams.get('min') || '500000');
-  try {
-    const res = await fetch(`https://fapi.binance.com/fapi/v1/aggTrades?symbol=${symbol}&limit=500`);
-    const trades = res.ok ? await res.json() : [];
-
-    if(!Array.isArray(trades)) return new Response(JSON.stringify({ ok:true, whales:[] }), { headers: CORS });
-
-    // Get current price
-    const priceRes = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-    const priceData = priceRes.ok ? await priceRes.json() : { price: '0' };
-    const price = parseFloat(priceData.price);
-
-    const whales = trades
-      .map(t => ({
-        time: t.T,
-        side: t.m ? 'SELL' : 'BUY',
-        price: parseFloat(t.p),
-        qty: parseFloat(t.q),
-        value: parseFloat(t.p) * parseFloat(t.q)
+      ok: true,
+      trending: coins.slice(0, 10).map(c => ({
+        name:       c.name,
+        symbol:     c.symbol,
+        price:      c.quote?.USD?.price,
+        change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+        volume_24h: c.quote?.USD?.volume_24h,
+        mcap:       c.quote?.USD?.market_cap,
+        mcap_rank:  c.cmc_rank
       }))
-      .filter(t => t.value >= threshold)
-      .sort((a,b) => b.value - a.value)
-      .slice(0, 20);
-
-    const buyVal  = whales.filter(w => w.side === 'BUY').reduce((a,b)=>a+b.value,0);
-    const sellVal = whales.filter(w => w.side === 'SELL').reduce((a,b)=>a+b.value,0);
-
-    return new Response(JSON.stringify({
-      ok: true, symbol,
-      threshold_usd: threshold,
-      whale_trades: whales.length,
-      buy_pressure_usd: parseFloat(buyVal.toFixed(0)),
-      sell_pressure_usd: parseFloat(sellVal.toFixed(0)),
-      bias: buyVal > sellVal * 1.2 ? 'whale_accumulation'
-           : sellVal > buyVal * 1.2 ? 'whale_distribution'
-           : 'balanced',
-      largest_trades: whales.slice(0,5)
-    }), { headers: CORS });
+    }), { headers: H });
   } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
 }
 
-// CoinGecko — Trending coins (free)
-async function handleTrending(CORS) {
+// ── Top Gainers & Losers ──────────────────────────────────────
+async function getGainers(H) {
   try {
-    const res  = await fetch('https://api.coingecko.com/api/v3/search/trending');
-    const data = res.ok ? await res.json() : null;
-    if(!data) throw new Error('CoinGecko unavailable');
-
-    return new Response(JSON.stringify({
-      ok: true,
-      trending: data.coins?.slice(0,10).map((c,i) => ({
-        rank: i+1,
-        name: c.item.name,
-        symbol: c.item.symbol.toUpperCase(),
-        market_cap_rank: c.item.market_cap_rank,
-        score: c.item.score
-      })) || [],
-      nfts: data.nfts?.slice(0,3).map(n => ({ name: n.name, symbol: n.symbol })) || []
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
-}
-
-// CoinGecko — Market categories
-async function handleCategories(CORS) {
-  try {
-    const res  = await fetch('https://api.coingecko.com/api/v3/coins/categories?order=market_cap_change_24h_desc');
-    const data = res.ok ? await res.json() : null;
-    if(!data) throw new Error('CoinGecko unavailable');
-
-    const top = data.slice(0,10).map(c => ({
-      name: c.name,
-      change_24h: parseFloat(c.market_cap_change_24h?.toFixed(2) || 0),
-      market_cap: c.market_cap,
-      volume_24h: c.volume_24h
+    const data = await cmcGet('/v1/cryptocurrency/listings/latest', {
+      limit: 100, sort: 'percent_change_24h', sort_dir: 'desc',
+      convert: 'USD', aux: 'num_market_pairs,cmc_rank'
+    });
+    const coins = data.data || [];
+    const gainers = coins.slice(0, 5).map(c => ({
+      symbol:     c.symbol,
+      name:       c.name,
+      price:      c.quote?.USD?.price,
+      change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+      volume_24h: c.quote?.USD?.volume_24h,
+      mcap_rank:  c.cmc_rank
     }));
+    const losers = coins.slice(-5).reverse().map(c => ({
+      symbol:     c.symbol,
+      name:       c.name,
+      price:      c.quote?.USD?.price,
+      change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+      volume_24h: c.quote?.USD?.volume_24h,
+      mcap_rank:  c.cmc_rank
+    }));
+    return new Response(JSON.stringify({ ok: true, gainers, losers }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
 
-    const bullish = top.filter(c => c.change_24h > 2);
-    const bearish = top.filter(c => c.change_24h < -2);
-
+// ── Full Market Listings ──────────────────────────────────────
+async function getListings(url, H) {
+  const limit  = url.searchParams.get('limit')  || 50;
+  const start  = url.searchParams.get('start')  || 1;
+  const filter = url.searchParams.get('filter') || 'market_cap';
+  try {
+    const data = await cmcGet('/v1/cryptocurrency/listings/latest', {
+      limit, start, sort: filter, convert: 'USD'
+    });
     return new Response(JSON.stringify({
       ok: true,
-      top_categories: top,
-      bullish_sectors: bullish.map(c=>c.name),
-      bearish_sectors: bearish.map(c=>c.name),
+      total: data.status?.total_count,
+      coins: (data.data || []).map(c => ({
+        rank:       c.cmc_rank,
+        symbol:     c.symbol,
+        name:       c.name,
+        price:      c.quote?.USD?.price,
+        change_1h:  parseFloat(c.quote?.USD?.percent_change_1h?.toFixed(2)  || 0),
+        change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+        change_7d:  parseFloat(c.quote?.USD?.percent_change_7d?.toFixed(2)  || 0),
+        volume_24h: c.quote?.USD?.volume_24h,
+        mcap:       c.quote?.USD?.market_cap,
+        circulating_supply: c.circulating_supply
+      }))
+    }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
+
+// ── Global Market Metrics ─────────────────────────────────────
+async function getGlobal(H) {
+  try {
+    const data = await cmcGet('/v1/global-metrics/quotes/latest', { convert: 'USD' });
+    const d    = data.data || {};
+    return new Response(JSON.stringify({
+      ok: true,
+      total_market_cap:    d.quote?.USD?.total_market_cap,
+      total_volume_24h:    d.quote?.USD?.total_volume_24h,
+      btc_dominance:       parseFloat(d.btc_dominance?.toFixed(2) || 0),
+      eth_dominance:       parseFloat(d.eth_dominance?.toFixed(2) || 0),
+      active_coins:        d.active_cryptocurrencies,
+      active_exchanges:    d.active_exchanges,
+      defi_volume_24h:     d.quote?.USD?.defi_volume_24h,
+      defi_market_cap:     d.quote?.USD?.defi_market_cap,
+      stablecoin_volume:   d.quote?.USD?.stablecoin_volume_24h,
+      last_updated:        d.last_updated
+    }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
+
+// ── Market Categories ─────────────────────────────────────────
+async function getCategories(H) {
+  try {
+    const data = await cmcGet('/v1/cryptocurrency/categories', { limit: 20 });
+    const cats = (data.data || []).map(c => ({
+      name:       c.name,
+      coins:      c.num_tokens,
+      avg_change: parseFloat(c.avg_price_change?.toFixed(2) || 0),
+      market_cap: c.market_cap,
+      volume_24h: c.volume
+    })).sort((a, b) => b.avg_change - a.avg_change);
+    const bullish = cats.filter(c => c.avg_change > 2).map(c => c.name);
+    const bearish = cats.filter(c => c.avg_change < -2).map(c => c.name);
+    return new Response(JSON.stringify({
+      ok: true, categories: cats,
+      bullish_sectors: bullish,
+      bearish_sectors: bearish,
       market_bias: bullish.length > bearish.length ? 'risk_on' : bearish.length > bullish.length ? 'risk_off' : 'mixed'
-    }), { headers: CORS });
+    }), { headers: H });
   } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
 }
 
-// CoinGecko — Top gainers/losers
-async function handleGainers(CORS) {
+// ── Single Coin Info ──────────────────────────────────────────
+async function getCoin(url, H) {
+  const symbol = url.searchParams.get('symbol') || 'BTC';
   try {
-    const res  = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=gecko_desc&per_page=50&page=1&price_change_percentage=24h&sparkline=false');
-    const data = res.ok ? await res.json() : null;
-    if(!data) throw new Error('CoinGecko unavailable');
-
-    const sorted = [...data].sort((a,b) => (b.price_change_percentage_24h||0) - (a.price_change_percentage_24h||0));
-    const gainers = sorted.slice(0,5).map(c=>({ symbol:c.symbol.toUpperCase(), name:c.name, change:parseFloat(c.price_change_percentage_24h?.toFixed(2)||0), price:c.current_price, mcap:c.market_cap }));
-    const losers  = sorted.slice(-5).reverse().map(c=>({ symbol:c.symbol.toUpperCase(), name:c.name, change:parseFloat(c.price_change_percentage_24h?.toFixed(2)||0), price:c.current_price, mcap:c.market_cap }));
-
+    const [quoteData, metaData] = await Promise.all([
+      cmcGet('/v2/cryptocurrency/quotes/latest', { symbol, convert: 'USD' }),
+      cmcGet('/v2/cryptocurrency/info', { symbol })
+    ]);
+    const coin = Object.values(quoteData.data || {})[0]?.[0];
+    const meta = Object.values(metaData.data || {})[0]?.[0];
+    if(!coin) return new Response(JSON.stringify({ ok: false, error: 'Coin not found' }), { headers: H });
     return new Response(JSON.stringify({
       ok: true,
-      gainers, losers,
-      avg_change: parseFloat((data.reduce((a,b)=>a+(b.price_change_percentage_24h||0),0)/data.length).toFixed(2)),
-      market_mood: gainers[0]?.change > 10 ? 'euphoric' : gainers[0]?.change > 5 ? 'bullish' : losers[0]?.change < -10 ? 'fearful' : 'neutral'
-    }), { headers: CORS });
+      symbol:      coin.symbol,
+      name:        coin.name,
+      rank:        coin.cmc_rank,
+      price:       coin.quote?.USD?.price,
+      change_1h:   parseFloat(coin.quote?.USD?.percent_change_1h?.toFixed(2)  || 0),
+      change_24h:  parseFloat(coin.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+      change_7d:   parseFloat(coin.quote?.USD?.percent_change_7d?.toFixed(2)  || 0),
+      volume_24h:  coin.quote?.USD?.volume_24h,
+      market_cap:  coin.quote?.USD?.market_cap,
+      circulating: coin.circulating_supply,
+      max_supply:  coin.max_supply,
+      description: meta?.description?.substring(0, 200),
+      website:     meta?.urls?.website?.[0],
+      logo:        meta?.logo
+    }), { headers: H });
   } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
 }
 
-// Glassnode free — On-chain basics
-async function handleOnChain(url, CORS) {
-  const asset = url.searchParams.get('asset') || 'BTC';
+// ── DEX Listings & Quotes ─────────────────────────────────────
+async function getDexQuotes(url, H) {
+  const network = url.searchParams.get('network') || 'ethereum';
+  const limit   = url.searchParams.get('limit')   || 20;
   try {
-    // Glassnode free tier endpoints
-    const [addrRes, exchRes] = await Promise.allSettled([
-      fetch(`https://api.glassnode.com/v1/metrics/addresses/active_count?a=${asset}&api_key=1111111111111111111111111111111111111111`),
-      fetch(`https://api.glassnode.com/v1/metrics/distribution/exchange_net_position_change?a=${asset}&api_key=1111111111111111111111111111111111111111`)
-    ]);
-
-    // Note: Glassnode requires API key - using placeholder
-    // Free tier gives daily data on Tier 1 metrics
-    // For now return signal based on available data
+    const data = await cmcGet('/v4/dex/listings/quotes', {
+      network_slug: network, limit, sort: 'volume_24h', sort_dir: 'desc'
+    });
     return new Response(JSON.stringify({
-      ok: true, asset,
-      note: 'Glassnode API key required for live data',
-      mock_data: {
-        active_addresses_trend: 'rising',
-        exchange_outflow: 'net_outflow_bullish',
-        signal: 'accumulation'
-      },
-      setup_required: 'Add GLASSNODE_KEY to Worker environment variables'
-    }), { headers: CORS });
+      ok: true, network,
+      pairs: (data.data || []).map(p => ({
+        name:       p.name,
+        address:    p.contract_address,
+        price:      p.quote?.USD?.price,
+        change_24h: parseFloat(p.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
+        volume_24h: p.quote?.USD?.volume_24h,
+        liquidity:  p.quote?.USD?.liquidity
+      }))
+    }), { headers: H });
   } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
 }
 
-// ETF Flows — Bitcoin/Ethereum ETF data
-async function handleETF(CORS) {
+// ── DEX Networks ──────────────────────────────────────────────
+async function getDexNetworks(H) {
   try {
-    // Use CoinGecko for ETF-related data (free)
-    const res  = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false');
-    const data = res.ok ? await res.json() : null;
-    if(!data) throw new Error('unavailable');
-
+    const data = await cmcGet('/v4/dex/networks/list', { limit: 30 });
     return new Response(JSON.stringify({
       ok: true,
-      btc: {
-        price: data.market_data?.current_price?.usd,
-        change_24h: parseFloat(data.market_data?.price_change_percentage_24h?.toFixed(2)||0),
-        market_cap: data.market_data?.market_cap?.usd,
-        volume_24h: data.market_data?.total_volume?.usd,
-        ath: data.market_data?.ath?.usd,
-        ath_change_pct: parseFloat(data.market_data?.ath_change_percentage?.usd?.toFixed(2)||0)
-      },
-      note: 'Full ETF flow data available via SEC EDGAR or paid providers'
-    }), { headers: CORS });
+      networks: (data.data || []).map(n => ({
+        id:     n.id,
+        name:   n.name,
+        slug:   n.slug,
+        volume: n.quote?.USD?.volume_24h
+      }))
+    }), { headers: H });
   } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
 }
 
-// Combined Market Sentiment Score
-async function handleSentiment(url, CORS) {
-  const symbol = url.searchParams.get('symbol') || 'BTCUSDT';
+// ── DEX Pairs ─────────────────────────────────────────────────
+async function getDexPairs(url, H) {
+  const network = url.searchParams.get('network') || 'ethereum';
+  const limit   = url.searchParams.get('limit')   || 20;
   try {
-    // Fetch multiple signals in parallel
-    const [fundRes, lsRes, oiRes] = await Promise.allSettled([
-      fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`),
-      fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`),
-      fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=2`)
+    const data = await cmcGet('/v4/dex/listings/info', {
+      network_slug: network, limit
+    });
+    return new Response(JSON.stringify({
+      ok: true, network,
+      pairs: data.data || []
+    }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
+
+// ── DEX Historical OHLCV ──────────────────────────────────────
+async function getDexHistory(url, H) {
+  const address = url.searchParams.get('address');
+  const network = url.searchParams.get('network') || 'ethereum';
+  if(!address) return new Response(JSON.stringify({ ok: false, error: 'address required' }), { headers: H });
+  try {
+    const data = await cmcGet('/v4/dex/pairs/ohlcv/historical', {
+      contract_address: address, network_slug: network,
+      time_period: '1h', count: 24
+    });
+    return new Response(JSON.stringify({
+      ok: true, address, network,
+      candles: data.data || []
+    }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
+
+// ── DEX Latest Trades ─────────────────────────────────────────
+async function getDexTrades(url, H) {
+  const address = url.searchParams.get('address');
+  const network = url.searchParams.get('network') || 'ethereum';
+  if(!address) return new Response(JSON.stringify({ ok: false, error: 'address required' }), { headers: H });
+  try {
+    const data = await cmcGet('/v4/dex/pairs/trade/latest', {
+      contract_address: address, network_slug: network
+    });
+    return new Response(JSON.stringify({
+      ok: true, address, network,
+      trades: data.data || []
+    }), { headers: H });
+  } catch(e) {
+    return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
+  }
+}
+
+// ── Exchange APIs (Binance/Bybit) ─────────────────────────────
+async function getFunding(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  try {
+    const r = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym);
+    const d = await r.json();
+    const rate = parseFloat(d.lastFundingRate) * 100;
+    return new Response(JSON.stringify({
+      ok: true, symbol: sym,
+      rate_pct: parseFloat(rate.toFixed(4)),
+      sentiment: rate < -0.03 ? 'bearish_shorts_paying' : rate > 0.08 ? 'bullish_longs_paying' : 'neutral',
+      next_funding: d.nextFundingTime
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
+}
+
+async function getOI(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  try {
+    const [binRes, histRes] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/openInterest?symbol=' + sym),
+      fetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=' + sym + '&period=1h&limit=24')
     ]);
+    const bin  = await binRes.json();
+    const hist = await histRes.json();
+    return new Response(JSON.stringify({
+      ok: true, symbol: sym,
+      oi: parseFloat(bin.openInterest),
+      history: Array.isArray(hist) ? hist.map(h => ({ time: h.timestamp, oi: parseFloat(h.sumOpenInterest) })) : [],
+      trend: Array.isArray(hist) && hist.length >= 2
+        ? parseFloat(hist[hist.length-1].sumOpenInterest) > parseFloat(hist[0].sumOpenInterest) ? 'rising' : 'falling'
+        : 'unknown'
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
+}
 
-    const funding = fundRes.status==='fulfilled' ? await fundRes.value.json() : null;
-    const ls      = lsRes.status==='fulfilled' ? await lsRes.value.json() : [];
-    const oi      = oiRes.status==='fulfilled' ? await oiRes.value.json() : [];
+async function getLS(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  try {
+    const r = await fetch('https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=' + sym + '&period=1h&limit=1');
+    const d = await r.json();
+    const latest = Array.isArray(d) ? d[0] : null;
+    return new Response(JSON.stringify({
+      ok: true, symbol: sym,
+      long_pct:  latest ? parseFloat((parseFloat(latest.longAccount)*100).toFixed(1))  : 50,
+      short_pct: latest ? parseFloat((parseFloat(latest.shortAccount)*100).toFixed(1)) : 50,
+      ratio:     latest ? parseFloat(parseFloat(latest.longShortRatio).toFixed(3))      : 1,
+      signal:    latest && parseFloat(latest.longShortRatio) < 0.7 ? 'shorts_crowded'
+               : latest && parseFloat(latest.longShortRatio) > 2.5 ? 'longs_crowded' : 'balanced'
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
+}
 
-    // Fear & Greed
-    const fngRes = await fetch('https://api.alternative.me/fng/?limit=1');
-    const fng    = fngRes.ok ? await fngRes.json() : null;
+async function getLiqs(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  try {
+    const r = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=' + sym + '&limit=20');
+    const d = await r.json();
+    if(!Array.isArray(d)) return new Response(JSON.stringify({ ok: true, liquidations: [] }), { headers: H });
+    const liqs = d.map(l => ({ time: l.time, side: l.side, price: parseFloat(l.averagePrice), value: parseFloat(l.averagePrice)*parseFloat(l.executedQty) }));
+    return new Response(JSON.stringify({
+      ok: true, symbol: sym,
+      count: liqs.length,
+      total_value: parseFloat(liqs.reduce((a,b)=>a+b.value,0).toFixed(0)),
+      recent: liqs.slice(0, 5)
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
+}
 
-    // Calculate composite sentiment score
-    let score = 50;
-    let signals = [];
+async function getWhales(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  const min = parseFloat(url.searchParams.get('min') || '500000');
+  try {
+    const [tradesRes, priceRes] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/aggTrades?symbol=' + sym + '&limit=500'),
+      fetch('https://api.binance.com/api/v3/ticker/price?symbol=' + sym)
+    ]);
+    const trades = await tradesRes.json();
+    if(!Array.isArray(trades)) return new Response(JSON.stringify({ ok: true, whales: [] }), { headers: H });
+    const whales = trades.map(t => ({ side: t.m?'SELL':'BUY', price: parseFloat(t.p), value: parseFloat(t.p)*parseFloat(t.q) })).filter(t=>t.value>=min).sort((a,b)=>b.value-a.value).slice(0,10);
+    const buyVal  = whales.filter(w=>w.side==='BUY').reduce((a,b)=>a+b.value,0);
+    const sellVal = whales.filter(w=>w.side==='SELL').reduce((a,b)=>a+b.value,0);
+    return new Response(JSON.stringify({
+      ok: true, symbol: sym,
+      count: whales.length,
+      bias: buyVal > sellVal*1.2 ? 'accumulation' : sellVal > buyVal*1.2 ? 'distribution' : 'balanced',
+      buy_usd: parseFloat(buyVal.toFixed(0)), sell_usd: parseFloat(sellVal.toFixed(0)),
+      trades: whales.slice(0, 5)
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
+}
 
-    const fundRate = funding ? parseFloat(funding.lastFundingRate)*100 : 0;
-    if(fundRate < -0.03) { score += 15; signals.push('negative_funding_bullish'); }
-    else if(fundRate > 0.08) { score -= 10; signals.push('high_funding_caution'); }
-
-    const lsData = Array.isArray(ls) && ls.length > 0 ? ls[0] : null;
-    const lsRatio = lsData ? parseFloat(lsData.longShortRatio) : 1;
-    if(lsRatio < 0.7) { score += 10; signals.push('shorts_crowded_squeeze_risk'); }
-    else if(lsRatio > 2.5) { score -= 10; signals.push('longs_crowded_caution'); }
-
-    const oiArr = Array.isArray(oi) ? oi : [];
-    if(oiArr.length >= 2) {
-      const oiChange = parseFloat(oiArr[1]?.sumOpenInterest||0) - parseFloat(oiArr[0]?.sumOpenInterest||0);
-      if(oiChange > 0) { score += 5; signals.push('oi_rising'); }
-      else { score -= 5; signals.push('oi_falling'); }
-    }
-
-    const fngVal = fng ? parseInt(fng.data[0].value) : 50;
-    if(fngVal < 25) { score += 15; signals.push('extreme_fear_buy_zone'); }
+async function getSentiment(url, H) {
+  const sym = url.searchParams.get('symbol') || 'BTCUSDT';
+  try {
+    const [fndRes, lsRes, fngRes, globalRes] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym),
+      fetch('https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=' + sym + '&period=1h&limit=1'),
+      fetch('https://api.alternative.me/fng/?limit=1'),
+      cmcGet('/v1/global-metrics/quotes/latest', { convert: 'USD' })
+    ]);
+    const fnd    = await fndRes.json();
+    const ls     = await lsRes.json();
+    const fng    = await fngRes.json();
+    const global = globalRes.data || {};
+    const rate   = parseFloat(fnd.lastFundingRate || 0) * 100;
+    const lsRatio = Array.isArray(ls) && ls.length ? parseFloat(ls[0].longShortRatio) : 1;
+    const fngVal  = parseInt(fng?.data?.[0]?.value || 50);
+    const btcDom  = parseFloat(global.btc_dominance || 50);
+    let score = 50, signals = [];
+    if(rate < -0.03)     { score += 15; signals.push('negative_funding_bullish'); }
+    else if(rate > 0.08) { score -= 10; signals.push('high_funding_caution'); }
+    if(lsRatio < 0.7)    { score += 10; signals.push('shorts_crowded_squeeze_risk'); }
+    else if(lsRatio > 2.5){ score -= 10; signals.push('longs_crowded_caution'); }
+    if(fngVal < 25)      { score += 15; signals.push('extreme_fear_buy_zone'); }
     else if(fngVal > 75) { score -= 10; signals.push('extreme_greed_caution'); }
-
+    if(btcDom > 55)      { score -= 5;  signals.push('btc_dominance_high_alts_weak'); }
+    else if(btcDom < 45) { score += 5;  signals.push('btc_dominance_low_alts_strong'); }
     score = Math.max(0, Math.min(100, score));
-
     return new Response(JSON.stringify({
-      ok: true, symbol,
-      sentiment_score: parseFloat(score.toFixed(0)),
-      sentiment_label: score > 75 ? 'Very Bullish' : score > 60 ? 'Bullish' : score > 40 ? 'Neutral' : score > 25 ? 'Bearish' : 'Very Bearish',
+      ok: true, symbol: sym,
+      score, label: score>75?'Very Bullish':score>60?'Bullish':score>40?'Neutral':score>25?'Bearish':'Very Bearish',
       signals,
       components: {
-        funding_rate_pct: parseFloat(fundRate.toFixed(4)),
-        long_short_ratio: parseFloat(lsRatio.toFixed(3)),
+        funding_pct: parseFloat(rate.toFixed(4)),
+        ls_ratio: parseFloat(lsRatio.toFixed(3)),
         fear_greed: fngVal,
-        fear_greed_label: fng?.data[0]?.value_classification || 'Unknown'
+        fear_greed_label: fng?.data?.[0]?.value_classification || 'Unknown',
+        btc_dominance: parseFloat(btcDom.toFixed(2)),
+        total_mcap: global.quote?.USD?.total_market_cap
       },
-      ai_summary: `Market sentiment for ${symbol}: Score ${score}/100. ` +
-        `Funding ${fundRate > 0 ? '+' : ''}${fundRate.toFixed(3)}%, ` +
-        `L/S ratio ${lsRatio.toFixed(2)}, ` +
-        `F&G ${fngVal}/100. ` +
-        signals.map(s=>s.replace(/_/g,' ')).join('. ') + '.'
-    }), { headers: CORS });
-  } catch(e) {
-    return new Response(JSON.stringify({ ok:false, error:e.message }), { headers: CORS });
-  }
+      ai_summary: `Score ${score}/100 — ${score>60?'Bullish':'Bearish'}. F&G ${fngVal}/100, funding ${rate.toFixed(3)}%, L/S ${lsRatio.toFixed(2)}, BTC dom ${btcDom.toFixed(1)}%. ${signals.map(s=>s.replace(/_/g,' ')).join('. ')}.`
+    }), { headers: H });
+  } catch(e) { return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H }); }
 }
-
-
