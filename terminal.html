@@ -2094,8 +2094,15 @@
     <!-- Analytics: Signal Intelligence -->
     <div id="panel-analytics" class="slide-panel">
         <div class="panel-header">
-            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);"></div>Analytics <span style="color:var(--text-dim);font-weight:400;"></span></div>
-            <span class="panel-close" onclick="closePanel('analytics')">×</span>
+            <div class="panel-title">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--blue);"></div>
+                Signal Intelligence
+                <span id="screener-live-dot" style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block;margin-left:4px;"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="mi-refresh-btn" onclick="runScreener()">▶ Scan</button>
+                <span class="panel-close" onclick="closePanel('analytics')">×</span>
+            </div>
         </div>
         <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
             <button class="tab-btn active" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-screener')">Screener</button>
@@ -2437,6 +2444,10 @@ function togglePanel(name){
             if(el) el.textContent = '⚠️ Add your Anthropic API key in Settings → Intelligence to enable AI Scout.';
         }, 100);
     }
+    // ── Market Intelligence auto-load ──────────────────────
+    if(name === 'smartmoney') setTimeout(loadSmartMoney, 150);
+    if(name === 'heatmap')    setTimeout(loadMarketDepth, 150);
+    if(name === 'analytics')  setTimeout(runScreener, 150);
     // Mobile backdrop — only on small screens
     if(window.innerWidth <= 767){
         const bd = document.getElementById('mob-panel-backdrop');
