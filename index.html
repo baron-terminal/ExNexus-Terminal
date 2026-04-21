@@ -2379,7 +2379,7 @@ window.addEventListener('DOMContentLoaded', () => {
    Short questions. Instant answers. Live data aware.
 ============================================================ */
 
-const EX_EMAIL = 'info@exnexus.co';
+const EX_EMAIL = 'info@exnexus.co</a> · <a href="/privacy.html" style="color:rgba(255,255,255,0.4);">Privacy Policy';
 
 // ── Pre-fixed Q&A Database ────────────────────────────────────
 const EX_QA = {
@@ -2883,7 +2883,7 @@ async function sendSlothMsg() {
         system: `You are Ex, the ExNexus AI trading assistant. 
                  Wear a top hat 🎩. Be concise — max 3-4 lines.
                  Focus on trading, crypto, ExNexus features.
-                 End with: 📧 info@exnexus.co for more help.`,
+                 End with: 📧 info@exnexus.co</a> · <a href="/privacy.html" style="color:rgba(255,255,255,0.4);">Privacy Policy for more help.`,
         messages: [{ role:'user', content: msg }]
       })
     });

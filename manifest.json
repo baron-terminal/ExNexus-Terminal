@@ -1,15 +1,20 @@
 {
   "name": "ExNexus Trading Intelligence",
   "short_name": "ExNexus",
-  "description": "Institutional trading terminal. Stay slow. Trade smart.",
+  "description": "Institutional trading terminal. CEX + DEX + AI. Stay slow. Trade smart.",
   "start_url": "/terminal.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0a0a0a",
   "theme_color": "#44B828",
-  "categories": ["finance", "productivity"],
+  "categories": [
+    "finance",
+    "productivity"
+  ],
   "lang": "en",
+  "related_applications": [],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "Icon.png",
@@ -30,23 +35,24 @@
       "short_name": "Trade",
       "description": "Open trading terminal",
       "url": "/terminal.html",
-      "icons": [{ "src": "Icon.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "Icon.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Demo Mode",
       "short_name": "Demo",
-      "description": "Practice with virtual funds",
+      "description": "Practice with $10K virtual funds",
       "url": "/terminal.html?demo=1",
-      "icons": [{ "src": "Icon.png", "sizes": "192x192" }]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "Icon.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "ExNexus Trading Terminal"
+      "icons": [
+        {
+          "src": "Icon.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
