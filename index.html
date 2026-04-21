@@ -795,7 +795,7 @@ footer{
             font-family:'Syne',sans-serif;
             font-size:clamp(14px,2vw,18px);
             font-weight:600;
-            color:rgba(255,255,255,0.7);
+            color:#333;
             letter-spacing:0.02em;
         }
         #slogan-bar span{ color:var(--neon); }
@@ -952,25 +952,8 @@ footer{
         <div id="sloth-glow"></div>
         <div id="sloth-bubble">Hey! Ask me anything 🎩</div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-right:8px;">
-    <div style="position:relative;">
-      <button id="site-globe-btn" onclick="toggleSiteGlobe()" title="Language" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌐</button>
-      <div id="site-globe-menu" style="display:none;position:absolute;right:0;top:44px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;z-index:99999;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.5);">
-        <div style="padding:8px 12px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06);">Language</div>
-        <div onclick="setLang('en');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇺🇸 English</div>
-        <div onclick="setLang('he');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇮🇱 עברית</div>
-        <div onclick="setLang('ar');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇸🇦 العربية</div>
-        <div onclick="setLang('es');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇪🇸 Español</div>
-        <div onclick="setLang('fr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇫🇷 Français</div>
-        <div onclick="setLang('ru');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇷🇺 Русский</div>
-        <div onclick="setLang('zh');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇨🇳 中文</div>
-        <div onclick="setLang('tr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇹🇷 Türkçe</div>
-      </div>
+    
     </div>
-    <div id="sloth-nav-btn" onclick="toggleSlothChat()" title="Ask Ex anything..." style="width:44px;height:44px;cursor:pointer;border-radius:50%;overflow:hidden;border:2px solid rgba(68,184,40,0.6);box-shadow:0 0 8px rgba(68,184,40,0.25);transition:all .2s;flex-shrink:0;" onmouseover="this.style.borderColor='#44B828';this.style.boxShadow='0 0 14px rgba(68,184,40,0.5)';this.style.transform='scale(1.1)'" onmouseout="this.style.borderColor='rgba(68,184,40,0.6)';this.style.boxShadow='0 0 8px rgba(68,184,40,0.25)';this.style.transform='scale(1)'">
-      <img src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;">
-    </div>
-</div>
 <button class="btn-login" onclick="launchTerminal()" data-i18n="btn_login">Sign In / Up</button>
     <button class="btn-launch" onclick="launchTerminal()" data-i18n="btn_launch">Launch Terminal →</button>
     <button id="mob-menu-btn" onclick="toggleMobMenu()">
@@ -1102,21 +1085,21 @@ footer{
     </div>
     <div style="flex:1;min-width:300px;max-width:500px;">
       <div style="font-size:11px;font-weight:600;color:#44B828;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Available Everywhere</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px;">Trade from your pocket.<br><span style="color:#44B828;">No app store needed.</span></h2>
-      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:32px;">ExNexus works as a native app on any device. Install from your browser — iOS, Android, Desktop. Full terminal. Real trades. Zero downloads.</p>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px;color:#111;">Trade from your pocket.<br><span style="color:#44B828;">No app store needed.</span></h2>
+      <p style="font-size:15px;color:#333;line-height:1.7;margin-bottom:32px;">ExNexus works as a native app on any device. Install from your browser — iOS, Android, Desktop. Full terminal. Real trades. Zero downloads.</p>
       <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">1</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">Open <strong style="color:#fff;">exnexus.app</strong> in your mobile browser</div></div>
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">2</div><div style="font-size:13px;color:rgba(255,255,255,0.7);"><strong style="color:#fff;">Android:</strong> Menu → Add to Home Screen &nbsp;|&nbsp; <strong style="color:#fff;">iOS:</strong> Share → Add to Home Screen</div></div>
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">3</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">ExNexus appears on your home screen like a native app ✅</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">1</div><div style="font-size:13px;color:#333;">Open <strong style="color:#111;">exnexus.app</strong> in your mobile browser</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">2</div><div style="font-size:13px;color:#333;"><strong style="color:#111;">Android:</strong> Menu → Add to Home Screen &nbsp;|&nbsp; <strong style="color:#111;">iOS:</strong> Share → Add to Home Screen</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">3</div><div style="font-size:13px;color:#333;">ExNexus appears on your home screen like a native app ✅</div></div>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
         <a href="https://exnexus.app/terminal.html" style="display:inline-flex;align-items:center;gap:8px;background:#44B828;color:#000;font-weight:700;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">📱 Open Trading App</a>
         <a href="https://exnexus.app/terminal.html?demo=1" style="display:inline-flex;align-items:center;gap:8px;background:rgba(68,184,40,0.08);color:#44B828;border:1px solid rgba(68,184,40,0.3);font-weight:600;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">🎮 Try Demo Free</a>
       </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🍎 iOS Safari</span>
-        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🤖 Android Chrome</span>
-        <span style="font-size:10px;color:rgba(255,255,255,0.35);">💻 Desktop</span>
+        <span style="font-size:10px;color:#888;">🍎 iOS Safari</span>
+        <span style="font-size:10px;color:#888;">🤖 Android Chrome</span>
+        <span style="font-size:10px;color:#888;">💻 Desktop</span>
       </div>
     </div>
   </div>
@@ -1137,10 +1120,10 @@ footer{
         ⚡ Unique Advantage
       </div>
       <h3 style="font-family:'Syne',sans-serif;font-size:clamp(22px,2.5vw,30px);font-weight:800;line-height:1.15;margin-bottom:14px;letter-spacing:-0.02em;" data-i18n="diff1_title">All Your Exchanges.<br>One Terminal.</h3>
-      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.65;margin-bottom:24px;" data-i18n="diff1_desc">Most traders juggle 3-4 browser tabs just to monitor their positions. ExNexus connects all your exchanges simultaneously — see unified balances, execute across any exchange, and move capital intelligently between them.</p>
+      <p style="font-size:15px;color:#333;line-height:1.65;margin-bottom:24px;" data-i18n="diff1_desc">Most traders juggle 3-4 browser tabs just to monitor their positions. ExNexus connects all your exchanges simultaneously — see unified balances, execute across any exchange, and move capital intelligently between them.</p>
       <!-- Exchange comparison visual -->
       <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:20px;">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.35);margin-bottom:12px;">WITHOUT EXNEXUS</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:12px;">WITHOUT EXNEXUS</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
           <span style="background:rgba(255,184,0,0.1);border:1px solid rgba(255,184,0,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(255,184,0,0.7);">Bybit tab</span>
           <span style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(0,200,150,0.7);">Gate tab</span>
@@ -1169,7 +1152,7 @@ footer{
         🌐 Industry First
       </div>
       <h3 style="font-family:'Syne',sans-serif;font-size:clamp(22px,2.5vw,30px);font-weight:800;line-height:1.15;margin-bottom:14px;letter-spacing:-0.02em;" data-i18n="diff2_title">Crypto. Stocks. Forex.<br>All In One Place.</h3>
-      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.65;margin-bottom:24px;" data-i18n="diff2_desc">Why use different platforms for different assets? ExNexus is the only terminal where you can trade Bitcoin futures on Bybit, Apple stock on Alpaca, and EUR/USD forex — all from one screen, with one AI brain analyzing everything.</p>
+      <p style="font-size:15px;color:#333;line-height:1.65;margin-bottom:24px;" data-i18n="diff2_desc">Why use different platforms for different assets? ExNexus is the only terminal where you can trade Bitcoin futures on Bybit, Apple stock on Alpaca, and EUR/USD forex — all from one screen, with one AI brain analyzing everything.</p>
       <!-- Asset class visual -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
         <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,184,0,0.2);border-radius:9px;padding:12px;text-align:center;">
@@ -2169,14 +2152,8 @@ document.addEventListener('click', function(e) {
 const _EX_SRC = 'data:image/jpeg;base64,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';
 let _slothBusy = false;
 
-function toggleSiteGlobe(){
-  const m=document.getElementById('site-globe-menu');
-  if(m) m.style.display = m.style.display==='none' ? 'block' : 'none';
-}
-function closeSiteGlobe(){
-  const m=document.getElementById('site-globe-menu');
-  if(m) m.style.display='none';
-}
+
+
 function toggleSlothChat(){
   const o=document.getElementById('sloth-chat-overlay');
   o.style.display = o.style.display==='flex' ? 'none' : 'flex';
@@ -2212,9 +2189,7 @@ function _addSlothMsg(text,role,isTyping=false){
 }
 document.addEventListener('click',e=>{
   const o=document.getElementById('sloth-chat-overlay');
-  const btn=document.getElementById('sloth-nav-btn');
-  if(o&&o.style.display==='flex'&&!o.contains(e.target)&&!btn?.contains(e.target)) o.style.display='none';
-  if(!e.target.closest('#site-globe-btn')&&!e.target.closest('#site-globe-menu')) closeSiteGlobe();
+  if(o&&o.style.display==='flex'&&!o.contains(e.target)) o.style.display='none';
 });
 
 /* Phone banner JS */
