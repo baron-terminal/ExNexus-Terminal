@@ -811,6 +811,127 @@ footer{
 
         
         
+        
+        /* ═══ WHITE THEME NUCLEAR OVERRIDE ═══ 
+           Converts ALL white/light text to dark */
+        body.white-theme *:not(#mobile-app-section):not(#mobile-app-section *):not(.btn-launch):not(.btn-launch *) {
+            color: inherit;
+        }
+        
+        /* Global text color reset for white theme */
+        body.white-theme {
+            --text: #111111;
+            --text-mid: #444444;
+            --text-dim: #777777;
+            --bg: #f0f0f0;
+            --bg2: #e8e8e8;
+            --bg3: #e0e0e0;
+            --border: rgba(0,0,0,0.08);
+            --border2: rgba(0,0,0,0.15);
+        }
+
+        /* Force ALL inline white/light colors to dark in white mode */
+        body.white-theme [style*="color:#fff"],
+        body.white-theme [style*="color: #fff"],
+        body.white-theme [style*="color:white"],
+        body.white-theme [style*="color: white"],
+        body.white-theme [style*="color:#ffffff"],
+        body.white-theme [style*="color: #ffffff"] {
+            color: #111111 !important;
+        }
+        body.white-theme [style*="color:rgba(255,255,255,1)"],
+        body.white-theme [style*="color:rgba(255,255,255, 1)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.9)"],
+        body.white-theme [style*="color:rgba(255,255,255, 0.9)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.85)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.82)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.8)"],
+        body.white-theme [style*="color:rgba(255,255,255,.8)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.75)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.7)"],
+        body.white-theme [style*="color:rgba(255,255,255,.7)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.65)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.6)"],
+        body.white-theme [style*="color:rgba(255,255,255,.6)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.55)"] {
+            color: #222222 !important;
+        }
+        body.white-theme [style*="color:rgba(255,255,255,0.5)"],
+        body.white-theme [style*="color:rgba(255,255,255,.5)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.45)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.4)"],
+        body.white-theme [style*="color:rgba(255,255,255,.4)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.35)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.3)"],
+        body.white-theme [style*="color:rgba(255,255,255,.3)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.25)"],
+        body.white-theme [style*="color:rgba(255,255,255,0.2)"] {
+            color: #666666 !important;
+        }
+
+        /* Dark backgrounds → light grey */
+        body.white-theme [style*="background:#030303"],
+        body.white-theme [style*="background: #030303"],
+        body.white-theme [style*="background:#0a0a0a"],
+        body.white-theme [style*="background:#0d0d0d"],
+        body.white-theme [style*="background:#111111"],
+        body.white-theme [style*="background:#111"],
+        body.white-theme [style*="background: #111"],
+        body.white-theme [style*="background:#131313"],
+        body.white-theme [style*="background:#151515"],
+        body.white-theme [style*="background:#161616"],
+        body.white-theme [style*="background:#181818"],
+        body.white-theme [style*="background:#1a1a1a"],
+        body.white-theme [style*="background:#1e1e1e"],
+        body.white-theme [style*="background:#222"],
+        body.white-theme [style*="background:#222222"],
+        body.white-theme [style*="background:#2a2a2a"],
+        body.white-theme [style*="background:#2d2d2d"] {
+            background: #e8e8e8 !important;
+            color: #111 !important;
+        }
+        
+        /* rgba dark backgrounds → light */
+        body.white-theme [style*="background:rgba(255,255,255,0.03)"],
+        body.white-theme [style*="background:rgba(255,255,255,0.04)"],
+        body.white-theme [style*="background:rgba(255,255,255,0.05)"],
+        body.white-theme [style*="background:rgba(255,255,255,0.06)"],
+        body.white-theme [style*="background:rgba(255,255,255,0.07)"],
+        body.white-theme [style*="background:rgba(255,255,255,0.08)"] {
+            background: rgba(0,0,0,0.05) !important;
+        }
+
+        /* Borders */
+        body.white-theme [style*="border:1px solid rgba(255,255,255,"],
+        body.white-theme [style*="border: 1px solid rgba(255,255,255,"],
+        body.white-theme [style*="border-bottom:1px solid rgba(255,255,255,"],
+        body.white-theme [style*="border-top:1px solid rgba(255,255,255,"] {
+            border-color: rgba(0,0,0,0.12) !important;
+        }
+
+        /* Crypto coin icons - keep colored backgrounds */
+        body.white-theme [style*="background:#F7931A"],
+        body.white-theme [style*="background:#627EEA"],
+        body.white-theme [style*="background:#9945FF"],
+        body.white-theme [style*="background:#00AAE4"],
+        body.white-theme [style*="background:#E84142"],
+        body.white-theme [style*="background:#2775CA"] {
+            color: #fff !important;
+        }
+
+        /* Keep phone mockup section dark */
+        body.white-theme #mobile-app-section > div,
+        body.white-theme #mobile-app-section > div * {
+            background: inherit;
+        }
+        body.white-theme .pscreen,
+        body.white-theme #phone-nav,
+        body.white-theme #phone-chart-bars,
+        body.white-theme #phone-chart-bars * {
+            color: inherit !important;
+            background: inherit !important;
+        }
+
         /* ═══════════════════════════════════════════
            COMPREHENSIVE WHITE THEME
            Dark → Light Grey/Silver conversions
