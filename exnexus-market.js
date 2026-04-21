@@ -26,7 +26,7 @@ export default {
 
     return new Response(JSON.stringify({
       ok: true, service: 'ExNexus Market Intelligence v2',
-      sources: ['CoinMarketCap API','Binance API','Bybit API'],
+      powered_by: 'ExNexus Intelligence Engine',
       routes: ['/trending','/gainers','/listings','/global','/categories','/coin',
                '/dex/quotes','/dex/pairs','/dex/networks','/dex/history','/dex/trades',
                '/sentiment','/funding','/oi','/ls','/liquidations','/whales']
@@ -70,17 +70,25 @@ async function getTrending(H) {
 // ── Top Gainers & Losers ──────────────────────────────────────
 async function getGainers(H) {
   try {
+    // Get top 200 coins by market cap first — filters out micro-cap pumps
     const data = await cmcGet('/v1/cryptocurrency/listings/latest', {
-      limit: 100, sort: 'percent_change_24h', sort_dir: 'desc',
+      limit: 200, sort: 'market_cap', sort_dir: 'desc',
       convert: 'USD', aux: 'num_market_pairs,cmc_rank'
     });
-    const coins = data.data || [];
+    const coins = (data.data || [])
+      .filter(c => 
+        c.quote?.USD?.volume_24h > 1000000 &&    // min $1M daily volume
+        c.quote?.USD?.market_cap > 50000000       // min $50M market cap
+      )
+      .sort((a,b) => (b.quote?.USD?.percent_change_24h||0) - (a.quote?.USD?.percent_change_24h||0));
+
     const gainers = coins.slice(0, 5).map(c => ({
       symbol:     c.symbol,
       name:       c.name,
       price:      c.quote?.USD?.price,
       change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
       volume_24h: c.quote?.USD?.volume_24h,
+      mcap:       c.quote?.USD?.market_cap,
       mcap_rank:  c.cmc_rank
     }));
     const losers = coins.slice(-5).reverse().map(c => ({
@@ -89,9 +97,19 @@ async function getGainers(H) {
       price:      c.quote?.USD?.price,
       change_24h: parseFloat(c.quote?.USD?.percent_change_24h?.toFixed(2) || 0),
       volume_24h: c.quote?.USD?.volume_24h,
+      mcap:       c.quote?.USD?.market_cap,
       mcap_rank:  c.cmc_rank
     }));
-    return new Response(JSON.stringify({ ok: true, gainers, losers }), { headers: H });
+
+    const avgChange = coins.reduce((a,c) => a + (c.quote?.USD?.percent_change_24h||0), 0) / coins.length;
+
+    return new Response(JSON.stringify({
+      ok: true,
+      filter: 'min_$50M_mcap_min_$1M_volume',
+      gainers, losers,
+      avg_change_24h: parseFloat(avgChange.toFixed(2)),
+      market_mood: avgChange > 3 ? 'bullish' : avgChange < -3 ? 'bearish' : 'neutral'
+    }), { headers: H });
   } catch(e) {
     return new Response(JSON.stringify({ ok: false, error: e.message }), { headers: H });
   }
