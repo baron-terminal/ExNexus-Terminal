@@ -2100,23 +2100,48 @@
                 <span id="screener-live-dot" style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block;margin-left:4px;"></span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-                <button class="mi-refresh-btn" onclick="runScreener()">▶ Scan</button>
                 <span class="panel-close" onclick="closePanel('analytics')">×</span>
             </div>
         </div>
-        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
-            <button class="tab-btn active" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-screener')">Screener</button>
-            <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-patterns')">Patterns</button>
-            <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-signals')">Signals</button>
+        <!-- Filters -->
+        <div class="screener-filters">
+            <span class="screener-filter-label">RSI</span>
+            <input class="screener-inp" type="number" id="scr-rsi-min" value="25" min="0" max="100">
+            <span class="screener-filter-label">—</span>
+            <input class="screener-inp" type="number" id="scr-rsi-max" value="65" min="0" max="100">
+            <select class="screener-select" id="scr-tf">
+                <option value="1h">1H</option>
+                <option value="4h">4H</option>
+                <option value="1d">1D</option>
+                <option value="15m">15m</option>
+            </select>
+            <button class="screener-run-btn" onclick="runScreener()">▶ Scan</button>
+            <span class="screener-count" id="screener-count"></span>
         </div>
-        <div style="flex:1;overflow:auto;">
-            <div id="af-screener"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">Connect Signal Intelligence API key in Settings</div></td></tr></tbody></table></div>
-            <div id="af-patterns" style="display:none;padding:14px;"><div class="panel-label">Chart Patterns</div><div class="empty-state">Connect Signal Intelligence API key</div></div>
-            <div id="af-signals" style="display:none;padding:14px;"><div class="panel-label">Trading Signals</div><div class="empty-state">Connect Signal Intelligence API key</div></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+            <table class="screener-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>RSI</th>
+                        <th>MACD</th>
+                        <th>Score</th>
+                        <th>Signal</th>
+                        <th>Pattern</th>
+                        <th>Vol</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="screener-tbody">
+                    <tr><td colspan="8" style="text-align:center;padding:24px;color:rgba(255,255,255,0.4);">
+                        Click ▶ Scan to find opportunities
+                    </td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Smart Money Flow -->
+
     <div id="panel-smartmoney" class="slide-panel">
         <div class="panel-header">
             <div class="panel-title">
