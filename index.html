@@ -1747,5 +1747,99 @@ window.addEventListener('DOMContentLoaded', () => {
   connectPriceFeed();
 });
 </script>
+
+
+<!-- ═══ EX THE SLOTH ═══ -->
+<div id="sloth-mascot" onclick="toggleSlothChat()" title="Ask Ex anything..." style="position:fixed;bottom:24px;right:24px;width:54px;height:54px;cursor:pointer;border-radius:50%;overflow:hidden;border:2px solid rgba(68,184,40,0.5);box-shadow:0 4px 20px rgba(68,184,40,0.3);z-index:9000;transition:all .25s;">
+  <img id="ex-avatar-main" src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+</div>
+
+<div id="sloth-chat-overlay" style="display:none;position:fixed;bottom:90px;right:24px;width:320px;background:#1a1a1a;border:1px solid rgba(68,184,40,0.25);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.7);z-index:9001;flex-direction:column;overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#222;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(68,184,40,0.3);">
+      <img id="ex-avatar-header" src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:13px;color:#fff;">Ex 🎩</div>
+      <div style="font-size:10px;color:#44B828;">● AI Trading Assistant</div>
+    </div>
+    <button onclick="toggleSlothChat()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;">×</button>
+  </div>
+  <div id="sloth-messages" style="max-height:320px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:160px;">
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img id="ex-avatar-msg0" src="data:image/jpeg;base64,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" style="width:100%;height:100%;object-fit:cover;"></div>
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:9px 12px;font-size:12.5px;color:rgba(255,255,255,0.88);max-width:80%;line-height:1.5;">Hey! I'm <b>Ex</b> 🎩 your ExNexus AI assistant.<br>Ask me anything about trading!</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.08);background:#1a1a1a;">
+    <textarea id="sloth-inp" placeholder="Ask Ex anything..." rows="1" style="flex:1;background:#2a2a2a;border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:12.5px;padding:8px 12px;border-radius:8px;outline:none;font-family:inherit;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSlothMsg();}"></textarea>
+    <button onclick="sendSlothMsg()" style="width:36px;height:36px;border-radius:8px;background:#44B828;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const _EX_SRC = document.getElementById('ex-avatar-main')?.src || '';
+let _slothBusy = false;
+
+function toggleSlothChat() {
+  const o = document.getElementById('sloth-chat-overlay');
+  o.style.display = o.style.display === 'flex' ? 'none' : 'flex';
+  if(o.style.display === 'flex') document.getElementById('sloth-inp')?.focus();
+}
+
+async function sendSlothMsg() {
+  if(_slothBusy) return;
+  const inp = document.getElementById('sloth-inp');
+  const msg = inp?.value?.trim();
+  if(!msg) return;
+  inp.value = '';
+  _addSlothMsg(msg, 'user');
+  _slothBusy = true;
+  const typing = _addSlothMsg('...', 'ai', true);
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: 'You are Ex, the ExNexus AI trading assistant. Wear a top hat 🎩. Be concise — max 3-4 lines. Focus on trading, crypto, and ExNexus features.',
+        messages: [{role: 'user', content: msg}]
+      })
+    });
+    const d = await r.json();
+    if(typing) typing.remove();
+    _addSlothMsg(d.content?.[0]?.text || 'Email info@exnexus.co 🎩', 'ai');
+  } catch(e) {
+    if(typing) typing.remove();
+    _addSlothMsg('Try again in a moment! 🎩', 'ai');
+  }
+  _slothBusy = false;
+}
+
+function _addSlothMsg(text, role, isTyping = false) {
+  const c = document.getElementById('sloth-messages');
+  if(!c) return null;
+  const d = document.createElement('div');
+  d.style.cssText = 'display:flex;gap:8px;align-items:flex-start;' + (role === 'user' ? 'flex-direction:row-reverse;' : '');
+  const avatarHtml = role === 'ai'
+    ? `<div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${_EX_SRC}" style="width:100%;height:100%;object-fit:cover;"></div>`
+    : '<div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);flex-shrink:0;">You</div>';
+  d.innerHTML = avatarHtml + `<div style="max-width:80%;padding:9px 12px;font-size:12.5px;line-height:1.5;border-radius:${role==='ai'?'4px 12px 12px 12px':'12px 4px 12px 12px'};background:${role==='ai'?'rgba(255,255,255,0.06)':'rgba(68,184,40,0.12)'};border:1px solid ${role==='ai'?'rgba(255,255,255,0.08)':'rgba(68,184,40,0.2)'};color:${role==='ai'?'rgba(255,255,255,0.88)':'#fff'};">${isTyping ? '<span style="opacity:.5;">Ex is thinking... 🎩</span>' : text}</div>`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+  return d;
+}
+
+document.addEventListener('click', e => {
+  const o = document.getElementById('sloth-chat-overlay');
+  const m = document.getElementById('sloth-mascot');
+  if(o && o.style.display === 'flex' && !o.contains(e.target) && !m?.contains(e.target))
+    o.style.display = 'none';
+});
+</script>
+
 </body>
 </html>

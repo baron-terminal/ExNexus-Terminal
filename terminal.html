@@ -108,7 +108,7 @@
         .bot-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:9px 11px;margin-top:6px;}
 
         /* AI bubble */
-        #draggable-ai{min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
+        #draggable-ai{display:none!important;min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
         #ai-briefing{display:none;padding:10px;width:210px;font-size:10px;}
 
         /* Bot Cards */
@@ -2326,13 +2326,6 @@
     </div>
 
 
-<!-- AI BUBBLE -->
-<div id="draggable-ai" onclick="toggleHelpChat()" style="cursor:pointer;" title="Ask Claude">
-    <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="0.7" fill="white"/><circle cx="12" cy="10" r="0.7" fill="white"/><circle cx="15" cy="10" r="0.7" fill="white"/></svg>
-    </div>
-</div>
-
 <!-- MOBILE BOTTOM NAV -->
 <nav id="mobile-nav">
     <button class="mob-btn active" data-view="chart" onclick="mobileView('chart')">
@@ -2867,10 +2860,7 @@ function renderMobBook(){
 function openDataHub(){ togglePanel('datahub'); }
 
 
-function toggleHelpChat(){
-    const panel = document.getElementById('panel-helpchat');
-    if(!panel) return;
-    if(activePanel==='helpchat'){ closePanel('helpchat'); return; }
+
     if(activePanel) closePanel(activePanel);
     panel.classList.add('open');
     activePanel='helpchat';
@@ -6552,7 +6542,7 @@ function showLoginScreen() {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5"/></svg>
       </div>
       <!-- Claude Help Chat -->
-      <div class="mhdr-btn" onclick="toggleHelpChat()" title="Ask Claude" style="background:rgba(66,133,244,0.1);border-color:rgba(155,114,203,0.25);">
+      <div class="mhdr-btn" onclick="void(0)" title="Ask Claude" style="background:rgba(66,133,244,0.1);border-color:rgba(155,114,203,0.25);">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="0.8" fill="#9b72cb"/><circle cx="12" cy="10" r="0.8" fill="#9b72cb"/><circle cx="15" cy="10" r="0.8" fill="#9b72cb"/></svg>
       </div>
     </div>
