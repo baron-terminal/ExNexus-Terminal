@@ -2380,7 +2380,7 @@ window.onload = () => {
     checkAuthOnLoad(); // run for session tracking only
 
     try {
-        new Advanced Charts.widget({
+        new TradingView.widget({
             autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
             container_id:"tradingview_widget",
             overrides:{
@@ -2392,7 +2392,7 @@ window.onload = () => {
                 "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
             }
         });
-    } catch(e){ console.warn('Advanced Charts widget error:', e); }
+    } catch(e){ console.warn('Chart widget error:', e); }
     renderOrderBook();
     renderRecentTrades();
     renderLSRows();
@@ -2688,7 +2688,7 @@ function toggleMobChart(){
     const open = sec.classList.toggle('open');
     btn.classList.toggle('on', open);
     if(open && !mobTVLoaded){
-        new Advanced Charts.widget({
+        new TradingView.widget({
             autosize:true, symbol:'BYBIT:BTCUSDT', interval:'5', theme:'dark',
             container_id:'mob-tv-widget',
             hide_top_toolbar:false, hide_legend:true, save_image:false,
@@ -4430,9 +4430,9 @@ function enterApp() {
     // Boot the app if not already booted
     if(!_appBooted) {
         _appBooted = true;
-        // Init Advanced Charts
+        // Init Chart
         try {
-            new Advanced Charts.widget({
+            new TradingView.widget({
                 autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
                 container_id:"tradingview_widget",
                 overrides:{
