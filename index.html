@@ -1612,11 +1612,26 @@ footer{
                 </div>
                 <!-- Mini chart bars -->
                 <div style="padding:8px 16px;display:flex;align-items:flex-end;gap:3px;height:80px;">
-                    ${' '.join([f'<div style="flex:1;background:rgba(68,184,40,{0.3+i*0.07});border-radius:2px;height:{30+i*8}px;"></div>' for i in range(12)])}
+                    <div style="flex:1;background:rgba(68,184,40,0.3);border-radius:2px;height:30px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.37);border-radius:2px;height:38px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.44);border-radius:2px;height:46px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.51);border-radius:2px;height:54px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.44);border-radius:2px;height:46px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.37);border-radius:2px;height:38px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.51);border-radius:2px;height:54px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.58);border-radius:2px;height:62px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.65);border-radius:2px;height:70px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.72);border-radius:2px;height:62px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.79);border-radius:2px;height:70px;"></div>
+                    <div style="flex:1;background:rgba(68,184,40,0.86);border-radius:2px;height:72px;"></div>
                 </div>
                 <!-- Bottom nav -->
                 <div style="position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;">
-                    {' '.join([f'<div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,{0.4 if i!=2 else 0.9});"><div style="font-size:16px;">{"🏠📊💹🤖⚙️"[i]}</div><div style="margin-top:2px;">{"Home Markets Trade Bots Settings".split()[i]}</div></div>' for i in range(5)])}
+                    <div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,0.4);"><div style="font-size:16px;">🏠</div><div style="margin-top:2px;">Home</div></div>
+                    <div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,0.4);"><div style="font-size:16px;">📊</div><div style="margin-top:2px;">Markets</div></div>
+                    <div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,0.9);"><div style="font-size:16px;">💹</div><div style="margin-top:2px;">Trade</div></div>
+                    <div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,0.4);"><div style="font-size:16px;">🤖</div><div style="margin-top:2px;">Bots</div></div>
+                    <div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,0.4);"><div style="font-size:16px;">⚙️</div><div style="margin-top:2px;">Settings</div></div>
                 </div>
             </div>
             <!-- Glow effect -->
