@@ -590,6 +590,22 @@ footer{
   .footer-bottom{flex-direction:column;text-align:center;}
   .btn-login{display:none;}
 }
+
+/* ═══ PHONE MOCKUP - ALWAYS DARK ═══ */
+body.white-theme [style*="all:initial"] {
+    color: unset !important;
+    background: unset !important;
+}
+body.white-theme div[style*="background:linear-gradient(180deg,#1a1a1a"] {
+    background: linear-gradient(180deg,#1a1a1a,#111) !important;
+}
+body.white-theme div[style*="background:#111"] { background: #111 !important; }
+body.white-theme div[style*="background:#0d0d0d"] { background: #0d0d0d !important; }
+body.white-theme div[style*="background:rgba(68,184,40"] { background: rgba(68,184,40,0.1) !important; }
+body.white-theme #pwa-btc-price { color: #ffffff !important; font-size:22px !important; }
+body.white-theme #pwa-btc-change { color: #00FF88 !important; }
+body.white-theme #phone-chart-bars div { background: rgba(68,184,40,0.55) !important; }
+
 </style>
 </head>
 <body>
