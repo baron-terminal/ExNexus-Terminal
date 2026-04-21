@@ -1569,187 +1569,214 @@ footer{
         
         <!-- Phone mockup -->
         <div style="flex:0 0 auto;position:relative;display:flex;justify-content:center;">
-            <div data-force-dark="true" class="phone-mockup-screen" style="
-                width:240px;height:480px;
-                background:linear-gradient(180deg,#1a1a1a,#111);
-                border-radius:36px;
-                border:2px solid rgba(255,255,255,0.1);
-                box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
-                overflow:hidden;
-                position:relative;
-                color-scheme:dark;
-            ">
-                <!-- Status bar -->
-                <div style="height:40px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:10px;color:rgba(255,255,255,0.6);">
-                    <span>9:41</span>
-                    <div style="display:flex;gap:4px;align-items:center;">
-                        <span>●●●</span>
-                        <span>WiFi</span>
-                        <span>⬛</span>
-                    </div>
-                </div>
-                <!-- App header -->
-                <div style="padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex;align-items:center;justify-content:space-between;">
-                        <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;">
-                            <span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span>
-                        </div>
-                        <div style="font-size:10px;color:#00FF88;">● LIVE</div>
-                    </div>
-                </div>
-                <!-- Price display -->
-                <div style="padding:16px;background:#0d0d0d;">
-                    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;">BTC/USDT</div>
-                    <div style="font-size:24px;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace;" id="pwa-btc-price">Loading...</div>
-                    <div style="font-size:10px;margin-top:2px;" id="pwa-btc-change">...</div>
-                </div>
-                <!-- Mini chart bars -->
-                <div id="phone-chart-bars" style="padding:8px 16px;display:flex;align-items:flex-end;gap:3px;height:80px;">
-                    <div style="flex:1;background:rgba(68,184,40,0.3);border-radius:2px;height:30px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.37);border-radius:2px;height:38px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.44);border-radius:2px;height:46px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.51);border-radius:2px;height:54px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.44);border-radius:2px;height:46px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.37);border-radius:2px;height:38px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.51);border-radius:2px;height:54px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.58);border-radius:2px;height:62px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.65);border-radius:2px;height:70px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.72);border-radius:2px;height:62px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.79);border-radius:2px;height:70px;"></div>
-                    <div style="flex:1;background:rgba(68,184,40,0.86);border-radius:2px;height:72px;"></div>
-                </div>
-                <!-- Phone screens content -->
-                <div id="phone-screen" style="flex:1;overflow:hidden;position:relative;min-height:120px;">
-
-                    <!-- Home Screen -->
-                    <div id="pscreen-home" class="pscreen active-screen" style="padding:0 16px 8px;">
-                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:6px;">Portfolio Value</div>
-                        <div style="font-size:20px;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace;">$12,483.21</div>
-                        <div style="font-size:9px;color:#00FF88;margin-bottom:10px;">+$284.50 today ↑</div>
-                        <div style="display:flex;gap:6px;">
-                            <div style="flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;">
-                                <div style="font-size:8px;color:rgba(255,255,255,0.4);">BTC</div>
-                                <div style="font-size:10px;color:#fff;font-weight:600;" id="phone-home-btc">$74,231</div>
-                                <div style="font-size:8px;color:#00FF88;">+1.5%</div>
-                            </div>
-                            <div style="flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;">
-                                <div style="font-size:8px;color:rgba(255,255,255,0.4);">ETH</div>
-                                <div style="font-size:10px;color:#fff;font-weight:600;">$2,320</div>
-                                <div style="font-size:8px;color:#FF003F;">-0.8%</div>
-                            </div>
-                            <div style="flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;">
-                                <div style="font-size:8px;color:rgba(255,255,255,0.4);">SOL</div>
-                                <div style="font-size:10px;color:#fff;font-weight:600;">$148</div>
-                                <div style="font-size:8px;color:#00FF88;">+3.2%</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Markets Screen -->
-                    <div id="pscreen-markets" class="pscreen" style="padding:0 16px 8px;display:none;">
-                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:8px;">Top Markets</div>
-                        <div style="display:flex;flex-direction:column;gap:5px;">
-                            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                                <div>
-                                    <div style="font-size:10px;font-weight:600;color:#fff;">BTC/USDT</div>
-                                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">Bitcoin</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:10px;font-weight:600;color:#fff;" id="phone-mkt-btc">$74,231</div>
-                                    <div style="font-size:8px;color:#00FF88;">+1.52%</div>
-                                </div>
-                            </div>
-                            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                                <div>
-                                    <div style="font-size:10px;font-weight:600;color:#fff;">ETH/USDT</div>
-                                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">Ethereum</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:10px;font-weight:600;color:#fff;">$2,320</div>
-                                    <div style="font-size:8px;color:#FF003F;">-0.82%</div>
-                                </div>
-                            </div>
-                            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                                <div>
-                                    <div style="font-size:10px;font-weight:600;color:#fff;">SOL/USDT</div>
-                                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">Solana</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:10px;font-weight:600;color:#fff;">$148.20</div>
-                                    <div style="font-size:8px;color:#00FF88;">+3.21%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Trade Screen -->
-                    <div id="pscreen-trade" class="pscreen" style="padding:0 16px 8px;display:none;">
-                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:6px;">Quick Trade · BTC/USDT</div>
-                        <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;" id="phone-trade-price">$74,231.70</div>
-                        <div style="display:flex;gap:6px;margin-bottom:8px;">
-                            <div style="flex:1;background:rgba(68,184,40,0.15);border:1px solid rgba(68,184,40,0.3);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#00FF88;font-weight:700;">LONG</div>
-                            <div style="flex:1;background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.2);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#FF003F;font-weight:700;">SHORT</div>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:6px;font-size:8px;">
-                            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);margin-bottom:3px;"><span>AI Score</span><span style="color:#00FF88;">72/100 Bullish</span></div>
-                            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);margin-bottom:3px;"><span>TP1</span><span style="color:#fff;">$75,800</span></div>
-                            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);"><span>SL</span><span style="color:#FF003F;">$73,100</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Bots Screen -->
-                    <div id="pscreen-bots" class="pscreen" style="padding:0 16px 8px;display:none;">
-                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:8px;">Active Bots</div>
-                        <div style="display:flex;flex-direction:column;gap:5px;">
-                            <div style="background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;">
-                                <div>
-                                    <div style="font-size:9px;font-weight:600;color:#fff;">Grid Scalper</div>
-                                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">BTC · $500</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:9px;color:#00FF88;font-weight:600;">+$24.50</div>
-                                    <div style="font-size:7px;color:rgba(255,255,255,0.3);">● Running</div>
-                                </div>
-                            </div>
-                            <div style="background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;">
-                                <div>
-                                    <div style="font-size:9px;font-weight:600;color:#fff;">AI Scout Bot</div>
-                                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">ETH · $200</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:9px;color:#00FF88;font-weight:600;">+$8.12</div>
-                                    <div style="font-size:7px;color:rgba(255,255,255,0.3);">● Running</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Bottom nav -->
-                <div style="position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;" id="phone-nav">
-                    <div class="pnav-btn active-nav" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;">
-                        <div style="font-size:16px;">🏠</div><div style="margin-top:2px;">Home</div>
-                    </div>
-                    <div class="pnav-btn" data-screen="markets" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);">
-                        <div style="font-size:16px;">📊</div><div style="margin-top:2px;">Markets</div>
-                    </div>
-                    <div class="pnav-btn" data-screen="trade" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);">
-                        <div style="font-size:16px;">💹</div><div style="margin-top:2px;">Trade</div>
-                    </div>
-                    <div class="pnav-btn" data-screen="bots" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);">
-                        <div style="font-size:16px;">🤖</div><div style="margin-top:2px;">Bots</div>
-                    </div>
-                    <div class="pnav-btn" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);">
-                        <div style="font-size:16px;">⚙️</div><div style="margin-top:2px;">Settings</div>
-                    </div>
-                </div>
+            <iframe 
+                srcdoc="<!DOCTYPE html>
+<html>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:transparent;width:240px;height:480px;overflow:hidden;}
+.phone{
+    width:240px;height:480px;
+    background:linear-gradient(180deg,#1a1a1a,#111);
+    border-radius:36px;
+    border:2px solid rgba(255,255,255,0.1);
+    box-shadow:0 40px 80px rgba(0,0,0,0.6);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    font-family:system-ui,sans-serif;
+}
+.status{height:40px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:10px;color:rgba(255,255,255,0.6);flex-shrink:0;}
+.app-header{padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo{font-size:13px;font-weight:700;}.logo-ex{color:#00FF88;}.logo-nx{color:#fff;}
+.live{font-size:10px;color:#00FF88;}
+.price-area{padding:16px;background:#0d0d0d;flex-shrink:0;}
+.pair{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;}
+.price{font-size:24px;font-weight:700;color:#fff;font-family:monospace;}
+.change{font-size:10px;margin-top:2px;}
+.screen-area{flex:1;overflow:hidden;position:relative;}
+.pscreen{display:none;padding:0 16px 8px;position:absolute;inset:0;overflow:hidden;}
+.pscreen.active{display:block;}
+.chart{display:flex;align-items:flex-end;gap:3px;height:70px;padding:8px 0;}
+.bar{flex:1;border-radius:2px;transition:height .5s ease;}
+.lbl{font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.val{font-size:18px;font-weight:700;color:#fff;font-family:monospace;}
+.sub{font-size:9px;color:#00FF88;margin-top:2px;}
+.mini-cards{display:flex;gap:6px;margin-top:8px;}
+.mc{flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;}
+.mc-sym{font-size:8px;color:rgba(255,255,255,0.4);}
+.mc-p{font-size:10px;font-weight:600;color:#fff;}
+.mc-c{font-size:8px;}
+.mkt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.mkt-sym{font-size:10px;font-weight:600;color:#fff;}
+.mkt-name{font-size:8px;color:rgba(255,255,255,0.4);}
+.mkt-price{font-size:10px;font-weight:600;color:#fff;text-align:right;}
+.mkt-chg{font-size:8px;text-align:right;}
+.trade-pair{font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.trade-price{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;font-family:monospace;}
+.trade-btns{display:flex;gap:6px;margin-bottom:8px;}
+.btn-long{flex:1;background:rgba(68,184,40,0.15);border:1px solid rgba(68,184,40,0.3);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#00FF88;font-weight:700;}
+.btn-short{flex:1;background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.2);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#FF003F;font-weight:700;}
+.ai-box{background:rgba(255,255,255,0.04);border-radius:6px;padding:6px;font-size:8px;}
+.ai-row{display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);margin-bottom:3px;}
+.bot-card{background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.bot-name{font-size:9px;font-weight:600;color:#fff;}
+.bot-pair{font-size:8px;color:rgba(255,255,255,0.4);}
+.bot-pnl{font-size:9px;color:#00FF88;font-weight:600;text-align:right;}
+.bot-status{font-size:7px;color:rgba(255,255,255,0.3);}
+.nav{position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;}
+.nav-btn{flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);transition:color .15s;transform:scale(1);transition:all .2s;}
+.nav-btn.active{color:#00FF88;transform:scale(1.15);}
+.nav-ico{font-size:16px;}
+</style>
+</head>
+<body>
+<div class=&quot;phone&quot;>
+    <div class=&quot;status&quot;>
+        <span>9:41</span>
+        <div style=&quot;display:flex;gap:4px;align-items:center;&quot;>
+            <span>●●●</span><span>WiFi</span><span>▮</span>
+        </div>
+    </div>
+    <div class=&quot;app-header&quot;>
+        <div class=&quot;logo&quot;><span class=&quot;logo-ex&quot;>Ex</span><span class=&quot;logo-nx&quot;>Nexus</span></div>
+        <div class=&quot;live&quot;>● LIVE</div>
+    </div>
+    <div class=&quot;price-area&quot;>
+        <div class=&quot;pair&quot;>BTC/USDT</div>
+        <div class=&quot;price&quot; id=&quot;btc-price&quot;>Loading...</div>
+        <div class=&quot;change&quot; id=&quot;btc-chg&quot; style=&quot;color:#00FF88;&quot;>+0.00%</div>
+    </div>
+    <div class=&quot;screen-area&quot;>
+        <!-- Home -->
+        <div class=&quot;pscreen active&quot; id=&quot;s-home&quot;>
+            <div class=&quot;chart&quot; id=&quot;chart-bars&quot;>
+                <div class=&quot;bar&quot; style=&quot;height:30px;background:rgba(68,184,40,0.4);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:45px;background:rgba(68,184,40,0.5);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:38px;background:rgba(68,184,40,0.45);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:55px;background:rgba(68,184,40,0.55);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:42px;background:rgba(68,184,40,0.48);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:60px;background:rgba(68,184,40,0.6);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:52px;background:rgba(68,184,40,0.55);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:65px;background:rgba(68,184,40,0.65);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:58px;background:rgba(68,184,40,0.6);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:70px;background:rgba(68,184,40,0.7);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:62px;background:rgba(68,184,40,0.65);&quot;></div>
+                <div class=&quot;bar&quot; style=&quot;height:72px;background:rgba(68,184,40,0.75);&quot;></div>
             </div>
-            <!-- Glow effect -->
-            <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;"></div>
+            <div class=&quot;mini-cards&quot;>
+                <div class=&quot;mc&quot;><div class=&quot;mc-sym&quot;>ETH</div><div class=&quot;mc-p&quot;>$2,320</div><div class=&quot;mc-c&quot; style=&quot;color:#FF003F;&quot;>-0.8%</div></div>
+                <div class=&quot;mc&quot;><div class=&quot;mc-sym&quot;>SOL</div><div class=&quot;mc-p&quot;>$148</div><div class=&quot;mc-c&quot; style=&quot;color:#00FF88;&quot;>+3.2%</div></div>
+                <div class=&quot;mc&quot;><div class=&quot;mc-sym&quot;>BNB</div><div class=&quot;mc-p&quot;>$605</div><div class=&quot;mc-c&quot; style=&quot;color:#00FF88;&quot;>+1.1%</div></div>
+            </div>
+        </div>
+        <!-- Markets -->
+        <div class=&quot;pscreen&quot; id=&quot;s-markets&quot;>
+            <div class=&quot;lbl&quot; style=&quot;margin-top:8px;&quot;>Top Markets</div>
+            <div class=&quot;mkt-row&quot;><div><div class=&quot;mkt-sym&quot;>BTC/USDT</div><div class=&quot;mkt-name&quot;>Bitcoin</div></div><div><div class=&quot;mkt-price&quot; id=&quot;m-btc&quot;>$74,231</div><div class=&quot;mkt-chg&quot; style=&quot;color:#00FF88;&quot;>+1.52%</div></div></div>
+            <div class=&quot;mkt-row&quot;><div><div class=&quot;mkt-sym&quot;>ETH/USDT</div><div class=&quot;mkt-name&quot;>Ethereum</div></div><div><div class=&quot;mkt-price&quot;>$2,320</div><div class=&quot;mkt-chg&quot; style=&quot;color:#FF003F;&quot;>-0.82%</div></div></div>
+            <div class=&quot;mkt-row&quot;><div><div class=&quot;mkt-sym&quot;>SOL/USDT</div><div class=&quot;mkt-name&quot;>Solana</div></div><div><div class=&quot;mkt-price&quot;>$148.20</div><div class=&quot;mkt-chg&quot; style=&quot;color:#00FF88;&quot;>+3.21%</div></div></div>
+        </div>
+        <!-- Trade -->
+        <div class=&quot;pscreen&quot; id=&quot;s-trade&quot;>
+            <div class=&quot;trade-pair&quot; style=&quot;margin-top:8px;&quot;>Quick Trade · BTC/USDT</div>
+            <div class=&quot;trade-price&quot; id=&quot;t-price&quot;>$74,231.70</div>
+            <div class=&quot;trade-btns&quot;><div class=&quot;btn-long&quot;>LONG</div><div class=&quot;btn-short&quot;>SHORT</div></div>
+            <div class=&quot;ai-box&quot;>
+                <div class=&quot;ai-row&quot;><span>AI Score</span><span style=&quot;color:#00FF88;&quot;>72/100 Bullish</span></div>
+                <div class=&quot;ai-row&quot;><span>TP1</span><span style=&quot;color:#fff;&quot;>$75,800</span></div>
+                <div class=&quot;ai-row&quot; style=&quot;margin:0;&quot;><span>SL</span><span style=&quot;color:#FF003F;&quot;>$73,100</span></div>
+            </div>
+        </div>
+        <!-- Bots -->
+        <div class=&quot;pscreen&quot; id=&quot;s-bots&quot;>
+            <div class=&quot;lbl&quot; style=&quot;margin-top:8px;&quot;>Active Bots</div>
+            <div class=&quot;bot-card&quot;><div><div class=&quot;bot-name&quot;>Grid Scalper</div><div class=&quot;bot-pair&quot;>BTC · $500</div></div><div><div class=&quot;bot-pnl&quot;>+$24.50</div><div class=&quot;bot-status&quot;>● Running</div></div></div>
+            <div class=&quot;bot-card&quot;><div><div class=&quot;bot-name&quot;>AI Scout Bot</div><div class=&quot;bot-pair&quot;>ETH · $200</div></div><div><div class=&quot;bot-pnl&quot;>+$8.12</div><div class=&quot;bot-status&quot;>● Running</div></div></div>
+        </div>
+    </div>
+    <div class=&quot;nav&quot;>
+        <div class=&quot;nav-btn active&quot; id=&quot;n-home&quot; onclick=&quot;sw('home')&quot;><div class=&quot;nav-ico&quot;>🏠</div><div>Home</div></div>
+        <div class=&quot;nav-btn&quot; id=&quot;n-markets&quot; onclick=&quot;sw('markets')&quot;><div class=&quot;nav-ico&quot;>📊</div><div>Markets</div></div>
+        <div class=&quot;nav-btn&quot; id=&quot;n-trade&quot; onclick=&quot;sw('trade')&quot;><div class=&quot;nav-ico&quot;>💹</div><div>Trade</div></div>
+        <div class=&quot;nav-btn&quot; id=&quot;n-bots&quot; onclick=&quot;sw('bots')&quot;><div class=&quot;nav-ico&quot;>🤖</div><div>Bots</div></div>
+        <div class=&quot;nav-btn&quot; id=&quot;n-settings&quot; onclick=&quot;sw('home')&quot;><div class=&quot;nav-ico&quot;>⚙️</div><div>Settings</div></div>
+    </div>
+</div>
+<script>
+const screens = ['home','markets','trade','bots'];
+let cur = 0, ws = null, prices = [], autoTimer = null;
+
+function sw(name) {
+    screens.forEach(s => {
+        document.getElementById('s-'+s).classList.remove('active');
+        document.getElementById('n-'+s) && document.getElementById('n-'+s).classList.remove('active');
+    });
+    document.getElementById('s-'+name) && document.getElementById('s-'+name).classList.add('active');
+    document.getElementById('n-'+name) && document.getElementById('n-'+name).classList.add('active');
+}
+
+function startAuto() {
+    autoTimer = setInterval(() => {
+        cur = (cur + 1) % screens.length;
+        sw(screens[cur]);
+    }, 3000);
+}
+
+function startWS() {
+    ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+    ws.onmessage = e => {
+        const d = JSON.parse(e.data);
+        const p = parseFloat(d.c), ch = parseFloat(d.P);
+        const fmt = '$' + p.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+        ['btc-price','m-btc','t-price'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.textContent = fmt;
+        });
+        const chEl = document.getElementById('btc-chg');
+        if(chEl) { chEl.textContent = (ch>=0?'+':'')+ch.toFixed(2)+'% today'; chEl.style.color = ch>=0?'#00FF88':'#FF003F'; }
+        prices.push(p); if(prices.length > 12) prices.shift();
+        updateBars(ch>=0);
+    };
+    ws.onclose = () => setTimeout(startWS, 3000);
+}
+
+function updateBars(bull) {
+    const bars = document.querySelectorAll('.bar');
+    if(prices.length < 2) return;
+    const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx-mn||1;
+    bars.forEach((b,i) => {
+        const pct = prices[i] ? (prices[i]-mn)/rng : 0.5;
+        b.style.height = (20+pct*50)+'px';
+        b.style.background = bull ? 'rgba(68,184,40,'+(0.4+i*0.03)+')' : 'rgba(255,0,63,'+(0.4+i*0.03)+')';
+    });
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+        clearInterval(autoTimer);
+        setTimeout(() => sw(btn.id.replace('n-','')), 150);
+    });
+    btn.addEventListener('mouseleave', () => {
+        clearInterval(autoTimer);
+        setTimeout(startAuto, 2000);
+    });
+});
+
+startWS();
+startAuto();
+</script>
+</body>
+</html>"
+                style="width:240px;height:480px;border:none;border-radius:36px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.6);"
+                scrolling="no"
+                title="ExNexus App Preview"
+            ></iframe>
+            <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;pointer-events:none;"></div>
         </div>
 
-        <!-- Content -->
+                <!-- Content -->
         <div style="flex:1;min-width:300px;max-width:520px;">
             <div style="font-size:11px;font-weight:600;color:#22a849;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">
                 Available Everywhere
@@ -3313,7 +3340,7 @@ document.addEventListener('click', function(e) {
 
 <script>
 /* ── Live Phone Mockup Prices ── */
-// ── Live Phone Mockup via WebSocket ──
+// Phone mockup moved to iframe — JS inside iframe
 let phonePrices = [];
 let phoneLastPrice = 0;
 
