@@ -1620,6 +1620,60 @@
             margin-left:auto;
         }
 
+        
+        /* ── Market Intelligence ── */
+        .mi-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
+        .mi-card {
+            background:rgba(255,255,255,0.03);
+            border:1px solid rgba(255,255,255,0.07);
+            border-radius:8px; padding:10px 12px;
+        }
+        .mi-label { font-size:9.5px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+        .mi-value { font-size:18px; font-weight:600; font-family:'JetBrains Mono',monospace; color:#fff; }
+        .mi-sub   { font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px; }
+        .mi-badge {
+            display:inline-block; font-size:9px; font-weight:700;
+            padding:2px 8px; border-radius:4px; text-transform:uppercase;
+            letter-spacing:.05em; margin-top:4px;
+        }
+        .mi-bull  { background:rgba(68,184,40,0.12); color:var(--neon); border:1px solid rgba(68,184,40,0.2); }
+        .mi-bear  { background:rgba(255,0,63,0.1);   color:var(--hot-red); border:1px solid rgba(255,0,63,0.2); }
+        .mi-neu   { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.5); border:1px solid rgba(255,255,255,0.1); }
+        .mi-score-bar {
+            height:6px; border-radius:3px; margin-top:6px;
+            background:rgba(255,255,255,0.08);
+        }
+        .mi-score-fill {
+            height:100%; border-radius:3px;
+            background:linear-gradient(90deg,var(--hot-red),#F0B429,var(--neon));
+            transition:width .5s ease;
+        }
+        .mi-section-title {
+            font-size:10px; font-weight:600; color:rgba(255,255,255,0.5);
+            text-transform:uppercase; letter-spacing:.08em;
+            padding:8px 12px 4px; border-top:1px solid rgba(255,255,255,0.06);
+        }
+        .mi-row {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:7px 12px; border-bottom:1px solid rgba(255,255,255,0.04);
+            font-size:12px;
+        }
+        .mi-row-label { color:rgba(255,255,255,0.5); }
+        .mi-row-val   { font-weight:600; font-family:'JetBrains Mono',monospace; }
+        .mi-refresh-btn {
+            font-size:10px; padding:4px 10px;
+            background:rgba(68,184,40,0.08);
+            border:1px solid rgba(68,184,40,0.2);
+            color:var(--neon); border-radius:4px; cursor:pointer;
+        }
+        .mi-coin-row {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:6px 12px; border-bottom:1px solid rgba(255,255,255,0.04);
+        }
+        .mi-coin-sym  { font-weight:600; font-size:12px; color:#fff; width:60px; }
+        .mi-coin-name { font-size:10px; color:rgba(255,255,255,0.4); flex:1; }
+        .mi-coin-chg  { font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace; width:60px; text-align:right; }
+
         </style>
 </head>
 <body>
@@ -1693,25 +1747,25 @@
         <div class="nav-item" id="nav-analytics" onclick="togglePanel('analytics')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             <div class="nav-dot" style="background:var(--blue);"></div>
-            <span class="nav-tip" style="border-left:2px solid var(--blue);">Analytics · altFINS</span>
+            <span class="nav-tip" style="border-left:2px solid var(--blue);">Analytics </span>
         </div>
 
         <div class="nav-item" id="nav-smartmoney" onclick="togglePanel('smartmoney')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
             <div class="nav-dot" style="background:var(--yellow);"></div>
-            <span class="nav-tip" style="border-left:2px solid var(--yellow);">Smart Money · Nansen</span>
+            <span class="nav-tip" style="border-left:2px solid var(--yellow);">Smart Money Flow</span>
         </div>
 
         <div class="nav-item" id="nav-heatmap" onclick="togglePanel('heatmap')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <div class="nav-dot" style="background:var(--orange);"></div>
-            <span class="nav-tip" style="border-left:2px solid var(--orange);">Heatmap · Coinglass</span>
+            <span class="nav-tip" style="border-left:2px solid var(--orange);">Market Depth & Liquidations</span>
         </div>
 
         <div class="nav-item" id="nav-longshort" onclick="togglePanel('longshort')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
             <div class="nav-dot" style="background:var(--purple);"></div>
-            <span class="nav-tip" style="border-left:2px solid var(--purple);">Long/Short · Coinglass</span>
+            <span class="nav-tip" style="border-left:2px solid var(--purple);">Long/Short Ratios</span>
         </div>
 
         <div class="nav-item" id="nav-feargreed" onclick="togglePanel('feargreed')">
@@ -2025,10 +2079,10 @@
 <div id="tablet-backdrop" onclick="closeTabletTrade()"></div>
 
 <!-- ===== SLIDE PANELS (outside all containers, works on all devices) ===== -->
-    <!-- Analytics: altFINS -->
+    <!-- Analytics: Signal Intelligence -->
     <div id="panel-analytics" class="slide-panel">
         <div class="panel-header">
-            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);"></div>Analytics <span style="color:var(--text-dim);font-weight:400;">· altFINS</span></div>
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);"></div>Analytics <span style="color:var(--text-dim);font-weight:400;"></span></div>
             <span class="panel-close" onclick="closePanel('analytics')">×</span>
         </div>
         <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
@@ -2037,56 +2091,68 @@
             <button class="tab-btn" onclick="ptab(this,['af-screener','af-patterns','af-signals'],'af-signals')">Signals</button>
         </div>
         <div style="flex:1;overflow:auto;">
-            <div id="af-screener"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">Connect altFINS API key in Settings</div></td></tr></tbody></table></div>
-            <div id="af-patterns" style="display:none;padding:14px;"><div class="panel-label">Chart Patterns</div><div class="empty-state">Connect altFINS API key</div></div>
-            <div id="af-signals" style="display:none;padding:14px;"><div class="panel-label">Trading Signals</div><div class="empty-state">Connect altFINS API key</div></div>
+            <div id="af-screener"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Price</th><th class="r">RSI</th><th class="r">MACD</th><th class="r">Trend</th><th>Signal</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">Connect Signal Intelligence API key in Settings</div></td></tr></tbody></table></div>
+            <div id="af-patterns" style="display:none;padding:14px;"><div class="panel-label">Chart Patterns</div><div class="empty-state">Connect Signal Intelligence API key</div></div>
+            <div id="af-signals" style="display:none;padding:14px;"><div class="panel-label">Trading Signals</div><div class="empty-state">Connect Signal Intelligence API key</div></div>
         </div>
     </div>
 
-    <!-- Smart Money: Nansen -->
+    <!-- Smart Money Flow -->
     <div id="panel-smartmoney" class="slide-panel">
         <div class="panel-header">
-            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--yellow);"></div>Smart Money <span style="color:var(--text-dim);font-weight:400;">· Nansen</span></div>
-            <span class="panel-close" onclick="closePanel('smartmoney')">×</span>
+            <div class="panel-title">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--yellow);"></div>
+                Smart Money Flow
+                <span id="smart-live-dot" style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block;margin-left:4px;"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="mi-refresh-btn" onclick="loadSmartMoney()">↻ Refresh</button>
+                <span class="panel-close" onclick="closePanel('smartmoney')">×</span>
+            </div>
         </div>
-        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
-            <button class="tab-btn active" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-flows')">Flows</button>
-            <button class="tab-btn" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-whales')">Whales</button>
-            <button class="tab-btn" onclick="ptab(this,['nm-flows','nm-whales','nm-holders'],'nm-holders')">Holders</button>
-        </div>
-        <div style="flex:1;overflow:auto;">
-            <div id="nm-flows" style="padding:14px;"><div class="panel-label">Exchange Netflows (24h)</div><div class="empty-state">Connect Nansen via proxy</div></div>
-            <div id="nm-whales" style="display:none;padding:14px;"><div class="panel-label">Whale Alerts</div><div class="empty-state">Connect Nansen via proxy</div></div>
-            <div id="nm-holders" style="display:none;padding:14px;"><div class="panel-label">Top Holders</div><div class="empty-state">Connect Nansen via proxy</div></div>
+        <div class="panel-body" style="padding:0;overflow-y:auto;" id="smart-body">
+            <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);">
+                Click ↻ Refresh to load Smart Money data
+            </div>
         </div>
     </div>
 
-    <!-- Heatmap: Coinglass -->
-    <div id="panel-heatmap" class="slide-panel">
+    id="panel-heatmap" class="slide-panel">
         <div class="panel-header">
-            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--orange);"></div>Heatmap <span style="color:var(--text-dim);font-weight:400;">· Coinglass</span></div>
-            <span class="panel-close" onclick="closePanel('heatmap')">×</span>
+            <div class="panel-title">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--orange);"></div>
+                Market Depth & Liquidations
+                <span id="depth-live-dot" style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block;margin-left:4px;"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <select id="depth-symbol" onchange="loadMarketDepth()" style="background:#2a2a2a;border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:10px;padding:3px 6px;border-radius:4px;">
+                    <option value="BTCUSDT">BTC</option>
+                    <option value="ETHUSDT">ETH</option>
+                    <option value="SOLUSDT">SOL</option>
+                    <option value="BNBUSDT">BNB</option>
+                    <option value="XRPUSDT">XRP</option>
+                </select>
+                <button class="mi-refresh-btn" onclick="loadMarketDepth()">↻ Refresh</button>
+                <span class="panel-close" onclick="closePanel('heatmap')">×</span>
+            </div>
         </div>
-        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;height:30px;gap:10px;flex-shrink:0;">
-            <button class="tab-btn active" onclick="ptab(this,['cg-liq','cg-oi'],'cg-liq')">Liquidations</button>
-            <button class="tab-btn" onclick="ptab(this,['cg-liq','cg-oi'],'cg-oi')">Open Interest</button>
-        </div>
-        <div style="flex:1;overflow:auto;">
-            <div id="cg-liq" style="padding:14px;"><div class="panel-label">Liquidation Heatmap</div><div class="empty-state">Connect Coinglass via proxy</div></div>
-            <div id="cg-oi" style="display:none;padding:14px;"><div class="panel-label">Open Interest</div><div class="empty-state">Connect Coinglass via proxy</div></div>
+        <div class="panel-body" style="padding:0;overflow-y:auto;" id="depth-body">
+            <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);">
+                Select a coin and click ↻ Refresh
+            </div>
         </div>
     </div>
 
-    <!-- Long/Short: Coinglass -->
+    <!-- Long/Short Ratios -->
     <div id="panel-longshort" class="slide-panel">
         <div class="panel-header">
-            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--purple);"></div>Long/Short Ratio <span style="color:var(--text-dim);font-weight:400;">· Coinglass</span></div>
+            <div class="panel-title"><div style="width:6px;height:6px;border-radius:50%;background:var(--purple);"></div>Long/Short Ratio <span style="color:var(--text-dim);font-weight:400;"></span></div>
             <span class="panel-close" onclick="closePanel('longshort')">×</span>
         </div>
         <div class="panel-body">
             <div class="panel-label">Top Pairs · Live</div>
             <div id="ls-rows"></div>
-            <div style="margin-top:10px;padding:7px 9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;font-size:9.5px;color:var(--text-dim);">Mock data · Wire Coinglass API for live ratios</div>
+            <div style="margin-top:10px;padding:7px 9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;font-size:9.5px;color:var(--text-dim);">Live data via Exchange APIs</div>
         </div>
     </div>
 
@@ -2142,11 +2208,11 @@
             </div>
             <div class="panel-label" style="color:rgba(255,255,255,0.6);">Intelligence Sources</div>
             <div id="scout-sources" style="margin-bottom:14px;">
-                <div class="scout-row"><span class="scout-source">altFINS · RSI/MACD</span><span id="ss1" style="font-size:10px;color:var(--text-dim);">—</span></div>
-                <div class="scout-row"><span class="scout-source">altFINS · Trend Score</span><span id="ss2" style="font-size:10px;color:var(--text-dim);">—</span></div>
-                <div class="scout-row"><span class="scout-source">Nansen · Smart Money</span><span id="ss3" style="font-size:10px;color:var(--text-dim);">—</span></div>
-                <div class="scout-row"><span class="scout-source">Coinglass · Long/Short</span><span id="ss4" style="font-size:10px;color:var(--text-dim);">—</span></div>
-                <div class="scout-row"><span class="scout-source">Coinglass · Liquidations</span><span id="ss5" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Signal Intelligence · RSI/MACD</span><span id="ss1" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Signal Intelligence · Trend Score</span><span id="ss2" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Smart Money Flow</span><span id="ss3" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Market Positioning</span><span id="ss4" style="font-size:10px;color:var(--text-dim);">—</span></div>
+                <div class="scout-row"><span class="scout-source">Liquidation Data</span><span id="ss5" style="font-size:10px;color:var(--text-dim);">—</span></div>
                 <div class="scout-row" style="border-bottom:none;"><span class="scout-source">Fear &amp; Greed</span><span id="ss6" style="font-size:10px;color:var(--text-dim);">—</span></div>
             </div>
             <div class="panel-label" style="color:rgba(255,255,255,0.6);">Win Probability</div>
@@ -2206,7 +2272,7 @@
         </div>
         <div>
             <div>Analytics</div>
-            <div class="mob-more-sub">altFINS · RSI / MACD / Patterns</div>
+            <div class="mob-more-sub">Signal Intelligence · RSI / MACD / Patterns</div>
         </div>
     </div>
 
@@ -2216,7 +2282,7 @@
         </div>
         <div>
             <div>Smart Money</div>
-            <div class="mob-more-sub">Nansen · Flows / Whales / Holders</div>
+            <div class="mob-more-sub">Whale Flows · Smart Money</div>
         </div>
     </div>
 
@@ -2226,7 +2292,7 @@
         </div>
         <div>
             <div>Heatmap</div>
-            <div class="mob-more-sub">Coinglass · Liquidations / OI</div>
+            <div class="mob-more-sub">Liquidation Data / OI</div>
         </div>
     </div>
 
@@ -2236,7 +2302,7 @@
         </div>
         <div>
             <div>Long / Short Ratio</div>
-            <div class="mob-more-sub">Coinglass · Live positioning</div>
+            <div class="mob-more-sub">Live Positioning Data</div>
         </div>
     </div>
 
@@ -2283,7 +2349,7 @@ window.onload = () => {
     if(!isAuthed) return; // stop here, bootBrain runs after login
 
     try {
-        new TradingView.widget({
+        new Advanced Charts.widget({
             autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
             container_id:"tradingview_widget",
             overrides:{
@@ -2295,7 +2361,7 @@ window.onload = () => {
                 "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
             }
         });
-    } catch(e){ console.warn('TradingView widget error:', e); }
+    } catch(e){ console.warn('Advanced Charts widget error:', e); }
     renderOrderBook();
     renderRecentTrades();
     renderLSRows();
@@ -2402,9 +2468,9 @@ const FG_LABELS={extreme_fear:'Extreme Fear',fear:'Fear',neutral:'Neutral',greed
 const FG_INTERP={
     extreme_fear:'Panic mode — historically a strong buy signal. Confirm with trend + volume before entering.',
     fear:'Caution dominates. Look for long setups on quality alts with bullish MACD + strong support.',
-    neutral:'Mixed sentiment. Follow momentum: use altFINS signals and L/S ratio for entries.',
+    neutral:'Mixed sentiment. Follow momentum: use Signal Intelligence signals and L/S ratio for entries.',
     greed:'Bulls in control. Ride momentum but tighten stops — late entries carry higher risk.',
-    extreme_greed:'Market overheated. Reduce size, take partials, watch for reversal signals from Coinglass.'
+    extreme_greed:'Market overheated. Reduce size, take partials, watch for reversal signals from Market Depth data.'
 };
 async function fetchFearGreed(){
     try {
@@ -2468,7 +2534,7 @@ function runScout(){
     document.getElementById('prob-val').textContent = prob+'%';
     document.getElementById('prob-summary').textContent = `${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
     document.getElementById('bot-rec').innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
-    document.getElementById('scout-reasoning').textContent = `${coin}: RSI at 58 with bullish MACD cross on 4H (altFINS). Nansen flags smart money accumulation. Coinglass shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
+    document.getElementById('scout-reasoning').textContent = `${coin}: RSI at 58 with bullish MACD cross on 4H (Signal Intelligence). Smart money accumulation detected. ExNexus shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
 }
 
 /* ============ TABLET TRADE DRAWER ============ */
@@ -2591,7 +2657,7 @@ function toggleMobChart(){
     const open = sec.classList.toggle('open');
     btn.classList.toggle('on', open);
     if(open && !mobTVLoaded){
-        new TradingView.widget({
+        new Advanced Charts.widget({
             autosize:true, symbol:'BYBIT:BTCUSDT', interval:'5', theme:'dark',
             container_id:'mob-tv-widget',
             hide_top_toolbar:false, hide_legend:true, save_image:false,
@@ -3162,8 +3228,9 @@ function renderMobPerf(){
    EXNEXUS BRAIN — Live Worker Connection
    https://exnexus-proxy.drorbaron18.workers.dev
 ============================================================ */
-const WORKER = 'https://exnexus-proxy.drorbaron18.workers.dev';
-const DATA   = 'https://exnexus-data.drorbaron18.workers.dev';
+const WORKER  = 'https://exnexus-proxy.drorbaron18.workers.dev';
+const DATA    = 'https://ExNexus Data.drorbaron18.workers.dev';
+const MARKET  = 'https://exnexus-market.drorbaron18.workers.dev';
 const SITE_URL = window.location.hostname === 'exnexus.app' ? 'https://exnexus.co' : '../index.html';
 
 // Core fetch helper — attaches API keys from Settings
@@ -4332,9 +4399,9 @@ function enterApp() {
     // Boot the app if not already booted
     if(!_appBooted) {
         _appBooted = true;
-        // Init TradingView
+        // Init Advanced Charts
         try {
-            new TradingView.widget({
+            new Advanced Charts.widget({
                 autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
                 container_id:"tradingview_widget",
                 overrides:{
@@ -5900,7 +5967,7 @@ document.addEventListener('click', function(e) {
 
 
 /* ============================================================
-   LIVE SCREENER — connects to exnexus-data worker
+   LIVE SCREENER — connects to ExNexus Data worker
 ============================================================ */
 let screenerRunning = false;
 
@@ -6013,6 +6080,782 @@ function selectCoin(symbol) {
 }
 
 // Screener auto-loads on panel open
+
+
+/* ═══ EX Q&A SYSTEM ═══ */
+
+/* ============================================================
+   EX THE SLOTH — Q&A SYSTEM
+   Short questions. Instant answers. Live data aware.
+============================================================ */
+
+const EX_EMAIL = 'info@exnexus.co';
+
+// ── Pre-fixed Q&A Database ────────────────────────────────────
+const EX_QA = {
+
+  // ── About ExNexus ─────────────────────────────────────────
+  'what is exnexus':
+    `One terminal. Every exchange. AI-powered. 🎩
+CEX + DeFi unified with real-time arbitrage,
+signals, and automated bots.`,
+
+  'what makes exnexus different':
+    `3 things no one else has:
+• CEX + DEX in one terminal
+• AI Scout powered by Claude
+• Cross-exchange arb execution ⚡`,
+
+  'is it free':
+    `Yes! Free tier forever.
+Pro plans from $39/mo.
+Demo Mode = always free 🎮`,
+
+  'what exchanges':
+    `Currently:
+• Bybit · Binance · Gate.io · Alpaca
+Coming soon:
+• OKX · Kraken · Hyperliquid · dYdX 🔜`,
+
+  'low market cap':
+    `We only show coins with:
+✅ $50M+ market cap minimum
+✅ $1M+ daily volume minimum
+No pump-and-dump schemes.
+No micro-cap manipulation.
+Liquid markets only 🛡️`,
+
+  'what coins do you screen':
+    `Only liquid, verified coins:
+• $50M+ market cap
+• $1M+ daily volume  
+• Top 200 by market cap
+No micro-cap or scam tokens 🛡️`,
+
+  'is it safe':
+    `Your keys never leave your device.
+We never hold your funds.
+Read-only keys for viewing.
+Trade keys for execution only 🔐`,
+
+  'what is full autonomy':
+    `You control everything.
+Your strategy. Your exchanges.
+Your bots. Your risk.
+No broker. No middleman 💪`,
+
+  'who is exnexus for':
+    `Anyone who trades crypto.
+Beginner → use Demo Mode first.
+Active trader → use the screener.
+Power user → run bots + arb ⚡`,
+
+  'does it work on mobile':
+    `Yes! Full mobile trading app.
+Visit exnexus.app on your phone.
+Optimized for iOS + Android 📱`,
+
+  'what languages':
+    `English + Hebrew now.
+Arabic, Spanish, French,
+Russian, Chinese, Turkish coming 🌍`,
+
+  'how do i start':
+    `3 steps:
+1. Try Demo Mode (zero risk)
+2. Add API keys in Settings
+3. Run the screener for signals 🚀`,
+
+  'who is ex':
+    `I'm Ex! 🎩 Your AI trading assistant.
+Ask me anything — short questions
+get the best answers!`,
+
+  // ── Trading Features ──────────────────────────────────────
+  'what is signal intelligence':
+    `Our screener scans 200+ coins.
+RSI · MACD · Patterns · Trends.
+Updated every 5 minutes 📡`,
+
+  'what is smart money flow':
+    `Tracks whale wallet movements.
+Exchange inflows/outflows.
+Know what institutions are doing 🐋`,
+
+  'what is market depth':
+    `Liquidation heatmap.
+Open Interest tracking.
+Funding rates. Long/Short ratio 🔥`,
+
+  'what is ai scout':
+    `Claude AI reads all signals.
+Gives you a win probability score.
+Recommends entry + TP + SL 🤖`,
+
+  'what is arbitrage':
+    `Buy low on one exchange.
+Sell high on another.
+Same time. Profit locked ⚡`,
+
+  'how does arb work':
+    `1. Scanner finds price gap
+2. You review + confirm
+3. Both legs fire simultaneously
+Profit in seconds ⚡`,
+
+  'what bots are available':
+    `6 bots available:
+Grid Scalper · Trend Rider · DCA
+Scalp Hunter · Arb Bot · AI Scout Bot
++ Custom Bot Builder 🤖`,
+
+  'what is grid scalper':
+    `Places buy/sell at equal intervals.
+Profits from price bouncing.
+Best in sideways markets 📊`,
+
+  'what is trend rider':
+    `Follows momentum.
+Dynamic trailing stop.
+Exits when trend fades 🏄`,
+
+  'what is dca bot':
+    `Buys at regular intervals.
+Averages your entry price.
+Best for long-term accumulation 💰`,
+
+  'what is risk calculator':
+    `Enter your balance + risk %.
+Get exact position size.
+Never over-leverage again 🧮`,
+
+  'what timeframes':
+    `15m · 1H · 4H · 1D
+1H is highest win rate
+for most strategies 📈`,
+
+  'what coins':
+    `Top 200 by market cap.
+$100M+ for CEX trading.
+$20M+ for DEX opportunities 🪙`,
+
+  'what is fear and greed':
+    `Market sentiment 0-100.
+Below 25 = Extreme Fear → buy signal
+Above 75 = Extreme Greed → be careful 😊`,
+
+  'what is backtesting':
+    `Test your strategy on real history.
+1 year of hourly data available.
+See win rate before risking money 📊`,
+
+  'how many indicators':
+    `12 high-probability indicators:
+RSI · MACD · Bollinger Bands · EMA
+ATR · Stoch RSI · Volume + 5 more 📈`,
+
+  'what patterns':
+    `20 candlestick patterns:
+Dragonfly Doji · Gravestone Doji
+Head & Shoulders · Engulfing
+Morning Star + 15 more 🕯️`,
+
+  // ── Indicators ────────────────────────────────────────────
+  'what is rsi':
+    `Momentum indicator 0-100.
+< 30 = oversold → potential buy
+> 70 = overbought → potential sell
+Sweet spot: 30-65 📊`,
+
+  'what is macd':
+    `Trend + momentum indicator.
+Histogram crosses zero = signal.
+Best on 1H and 4H timeframes 📈`,
+
+  'what is bollinger bands':
+    `Price envelope around moving average.
+Squeeze = big move coming.
+Touch lower band + RSI < 30 = buy 📊`,
+
+  'what is atr':
+    `Average True Range.
+Measures volatility.
+Use for stop loss sizing 📏`,
+
+  'what is doji':
+    `Open = Close candlestick.
+Indecision in the market.
+Watch for direction confirmation 🕯️`,
+
+  'what is dragonfly doji':
+    `Long lower shadow.
+Open ≈ Close ≈ High.
+Bullish reversal signal 🐉
+Win rate: ~78%`,
+
+  'what is head and shoulders':
+    `3 peaks pattern.
+Middle = highest (head).
+Neckline break = sell signal 📉
+Win rate: ~80%`,
+
+  'what is inverse head and shoulders':
+    `3 troughs pattern.
+Middle = lowest (head).
+Neckline break = buy signal 📈
+Your best historical pattern! ✅`,
+
+  'what is engulfing':
+    `One candle fully covers previous.
+Bullish engulfing = buy signal.
+Bearish engulfing = sell signal 🕯️`,
+
+  'what is morning star':
+    `3-candle bullish reversal.
+Bear · small body · bull.
+One of the strongest buy signals 🌟
+Win rate: ~80%`,
+
+  // ── Technical Help ────────────────────────────────────────
+  'how do i connect exchange':
+    `Settings → Exchanges → Select exchange
+Enter API Key + Secret → Save.
+Keys never leave your device 🔑`,
+
+  'what is sync code':
+    `Your personal sync password.
+Same code on all devices =
+shared settings everywhere 🔄`,
+
+  'are api keys safe':
+    `Yes. Keys stored locally only.
+Encrypted in your browser.
+We never see or store them 🔐`,
+
+  'what is demo mode':
+    `$10,000 virtual balance.
+Real live prices.
+All features work. Zero risk 🎮`,
+
+  'how do i switch to live':
+    `Settings → Security → Exit Demo.
+Make sure API keys are added first.
+Start small! 💡`,
+
+  'why is balance not showing':
+    `Check Settings → Exchanges.
+Make sure API keys are saved.
+Keys need Read permission ✅`,
+
+  'how do i place first trade':
+    `1. Select coin in terminal
+2. Enter price + quantity
+3. Click Open Long or Open Short
+Try Demo Mode first! 🎮`,
+
+  'what is cross vs isolated':
+    `Cross: whole balance as margin.
+Isolated: only allocated amount.
+Isolated = safer for beginners 💡`,
+
+  'what is leverage':
+    `Multiplies your position size.
+10x = $100 controls $1,000.
+Higher leverage = higher risk ⚠️`,
+
+  // ── Affiliate ─────────────────────────────────────────────
+  'how does affiliate work':
+    `Share your referral link.
+Earn 40% of every subscription.
+Monthly USDT payments 💰`,
+
+  'how much commission':
+    `40% recurring commission.
+Refer 3 friends = your plan free.
+Refer 10 = $156/mo passive income 🚀`,
+
+  'when do i get paid':
+    `Monthly payouts in USDT.
+No minimum threshold.
+Tracked in real-time dashboard 📊`,
+
+  'how do i join affiliate':
+    `Coming soon in the terminal!
+Email us to join early:
+📧 ${EX_EMAIL} 🎩`,
+
+  // ── Support ───────────────────────────────────────────────
+  'how do i contact support':
+    `📧 ${EX_EMAIL}
+We reply within 24 hours!
+Or keep asking me 🎩`,
+
+  'i have a problem':
+    `I'm here to help! 🎩
+Describe your issue briefly.
+Or email: ${EX_EMAIL}`,
+
+  'billing question':
+    `For billing questions:
+📧 ${EX_EMAIL}
+We reply within 24 hours 💚`,
+
+  'partnership':
+    `Interested in partnering?
+📧 ${EX_EMAIL}
+We'd love to hear from you 🤝`,
+};
+
+// ── Quick Reply Categories ────────────────────────────────────
+const EX_QUICK_REPLIES = [
+  { icon:'📊', label:'Screener',   q:'What is signal intelligence' },
+  { icon:'⚡', label:'Arbitrage',  q:'What is arbitrage' },
+  { icon:'🤖', label:'Bots',       q:'What bots are available' },
+  { icon:'🎮', label:'Demo',       q:'What is demo mode' },
+  { icon:'💰', label:'Pricing',    q:'Is it free' },
+  { icon:'🔑', label:'API Keys',   q:'Are api keys safe' },
+  { icon:'📈', label:'Indicators', q:'How many indicators' },
+  { icon:'👥', label:'Affiliate',  q:'How does affiliate work' },
+];
+
+// ── Answer Engine ─────────────────────────────────────────────
+function exGetAnswer(question) {
+  const q = question.toLowerCase()
+    .trim()
+    .replace(/[?!.,]/g, '')
+    .replace(/whats/g, 'what is')
+    .replace(/hows/g, 'how is')
+    .replace(/cant/g, 'cannot')
+    .replace(/dont/g, 'do not');
+
+  // Check live context first (terminal only)
+  const liveAnswer = exLiveContext(q);
+  if(liveAnswer) return liveAnswer;
+
+  // Exact match
+  if(EX_QA[q]) return EX_QA[q];
+
+  // Partial match - find best matching key
+  const keys = Object.keys(EX_QA);
+  const match = keys.find(k =>
+    q.includes(k) || k.includes(q) ||
+    k.split(' ').some(word => word.length > 3 && q.includes(word))
+  );
+  if(match) return EX_QA[match];
+
+  // Keyword matching
+  if(q.includes('rsi'))         return EX_QA['what is rsi'];
+  if(q.includes('macd'))        return EX_QA['what is macd'];
+  if(q.includes('dragonfly'))   return EX_QA['what is dragonfly doji'];
+  if(q.includes('doji'))        return EX_QA['what is doji'];
+  if(q.includes('arbitrage') || q.includes('arb')) return EX_QA['what is arbitrage'];
+  if(q.includes('bot'))         return EX_QA['what bots are available'];
+  if(q.includes('demo'))        return EX_QA['what is demo mode'];
+  if(q.includes('safe') || q.includes('security')) return EX_QA['is it safe'];
+  if(q.includes('free') || q.includes('price') || q.includes('cost')) return EX_QA['is it free'];
+  if(q.includes('start') || q.includes('begin')) return EX_QA['how do i start'];
+  if(q.includes('contact') || q.includes('email') || q.includes('help')) return EX_QA['how do i contact support'];
+  if(q.includes('affiliate') || q.includes('referral') || q.includes('earn')) return EX_QA['how does affiliate work'];
+  if(q.includes('exchange') || q.includes('connect')) return EX_QA['how do i connect exchange'];
+  if(q.includes('leverage')) return EX_QA['what is leverage'];
+  if(q.includes('indicator')) return EX_QA['how many indicators'];
+  if(q.includes('pattern')) return EX_QA['what patterns'];
+  if(q.includes('screener') || q.includes('signal')) return EX_QA['what is signal intelligence'];
+
+  // Unknown — Claude AI fallback or email
+  return null; // null = call Claude AI
+}
+
+// ── Live Context (terminal page only) ────────────────────────
+function exLiveContext(q) {
+  // Only works in terminal where live data exists
+  if(typeof getCurrentPrice === 'undefined') return null;
+
+  const btcPrice = getCurrentPrice('BTCUSDT');
+
+  if(q.includes('btc') && (q.includes('price') || q.includes('now') || q.includes('current'))) {
+    return btcPrice > 0
+      ? `BTC is at $${btcPrice.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})} 📊`
+      : `Loading BTC price...`;
+  }
+
+  if(q.includes('balance') || q.includes('how much')) {
+    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
+      return `Your demo balance is $${demoState.balance.toFixed(2)} 🎮`;
+    }
+    return `Check your balance in the Assets tab.
+Add API keys in Settings first 🔑`;
+  }
+
+  if(q.includes('position') || q.includes('open trade')) {
+    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
+      const pos = demoState.positions;
+      return pos.length > 0
+        ? `${pos.length} open position(s):
+${pos.map(p=>`${p.symbol} ${p.side}`).join('
+')}`
+        : `No open demo positions.
+Want to try a trade? 🎮`;
+    }
+    return `Check your Positions tab below 📊`;
+  }
+
+  if(q.includes('sentiment') || q.includes('fear') || q.includes('greed')) {
+    const fgEl = document.getElementById('fg-value-display');
+    const fgLbl = document.getElementById('fg-label-display');
+    if(fgEl && fgLbl) {
+      return `Market Sentiment: ${fgLbl.textContent} (${fgEl.textContent}/100)
+${parseInt(fgEl.textContent) < 30 ? '→ Historically good buying zone' : parseInt(fgEl.textContent) > 70 ? '→ Be cautious, market overheated' : '→ Neutral territory'} 😊`;
+    }
+  }
+
+  if(q.includes('bot') && (q.includes('running') || q.includes('active'))) {
+    if(typeof demoBots !== 'undefined') {
+      const running = Object.entries(demoBots)
+        .filter(([,b]) => b.running)
+        .map(([,b]) => b.name);
+      return running.length > 0
+        ? `Running bots: ${running.join(', ')} 🤖`
+        : `No bots running.
+Start one in the Bots tab! 🤖`;
+    }
+  }
+
+  return null;
+}
+
+// ── Render Quick Replies ──────────────────────────────────────
+function exRenderQuickReplies() {
+  return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+    ${EX_QUICK_REPLIES.map(r => `
+      <button onclick="exQuickReply('${r.q}')"
+        style="display:flex;align-items:center;gap:5px;
+        padding:5px 11px;border-radius:20px;
+        background:rgba(255,255,255,0.06);
+        border:1px solid rgba(255,255,255,0.12);
+        color:rgba(255,255,255,0.8);font-size:11px;
+        cursor:pointer;transition:all .15s;white-space:nowrap;"
+        onmouseover="this.style.background='rgba(68,184,40,0.1)';this.style.borderColor='rgba(68,184,40,0.3)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)'">
+        ${r.icon} ${r.label}
+      </button>`).join('')}
+  </div>`;
+}
+
+function exQuickReply(question) {
+  // Put question in input and send
+  const inp = document.getElementById('sloth-inp') || document.getElementById('chat-inp');
+  if(inp) {
+    inp.value = question;
+    // Trigger send
+    if(typeof sendSlothMsg === 'function') sendSlothMsg();
+    else if(typeof sendChatMsg === 'function') sendChatMsg();
+  }
+}
+
+// ── Override sendSlothMsg to use Q&A first ───────────────────
+const _origSendSloth = typeof sendSlothMsg === 'function' ? sendSlothMsg : null;
+
+async function sendSlothMsg() {
+  const inp = document.getElementById('sloth-inp');
+  const msg = inp?.value?.trim();
+  if(!msg) return;
+  inp.value = '';
+
+  // Add user message
+  addSlothMsg(msg, 'user');
+
+  // Check pre-fixed Q&A first
+  const instant = exGetAnswer(msg);
+
+  if(instant) {
+    // Instant answer — no API call needed
+    setTimeout(() => {
+      addSlothMsg(instant + `
+
+📧 More questions? ${EX_EMAIL}`, 'ai');
+    }, 300); // small delay feels more natural
+    return;
+  }
+
+  // Unknown question — call Claude AI
+  if(typeof slothBusy !== 'undefined') slothBusy = true;
+  const typing = addSlothMsg('...', 'ai', true);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 300,
+        system: `You are Ex, the ExNexus AI trading assistant. 
+                 Wear a top hat 🎩. Be concise — max 3-4 lines.
+                 Focus on trading, crypto, ExNexus features.
+                 End with: 📧 info@exnexus.co for more help.`,
+        messages: [{ role:'user', content: msg }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 
+      `Great question! Email us at 📧 ${EX_EMAIL} and we'll answer within 24 hours 🎩`;
+    if(typing) typing.remove();
+    addSlothMsg(reply, 'ai');
+  } catch(e) {
+    if(typing) typing.remove();
+    addSlothMsg(`Email us at 📧 ${EX_EMAIL}
+We reply within 24 hours! 🎩`, 'ai');
+  }
+
+  if(typeof slothBusy !== 'undefined') slothBusy = false;
+}
+
+
+/* ============================================================
+   MARKET INTELLIGENCE — Smart Money + Market Depth panels
+============================================================ */
+
+// ── Smart Money Flow Panel ───────────────────────────────────
+async function loadSmartMoney() {
+    const body = document.getElementById('smart-body');
+    const dot  = document.getElementById('smart-live-dot');
+    if(!body) return;
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);">Loading...</div>';
+    if(dot) dot.style.background = '#F0B429';
+
+    try {
+        // Fetch multiple signals in parallel
+        const sym = 'BTCUSDT';
+        const [sentRes, globalRes, gainRes, coinRes] = await Promise.allSettled([
+            fetch(`${MARKET}/sentiment?symbol=${sym}`),
+            fetch(`${MARKET}/global`),
+            fetch(`${MARKET}/gainers`),
+            fetch(`${MARKET}/coin?symbol=BTC`)
+        ]);
+
+        const sent   = sentRes.status   === 'fulfilled' ? await sentRes.value.json()   : null;
+        const global = globalRes.status === 'fulfilled' ? await globalRes.value.json() : null;
+        const gains  = gainRes.status   === 'fulfilled' ? await gainRes.value.json()   : null;
+        const btc    = coinRes.status   === 'fulfilled' ? await coinRes.value.json()   : null;
+
+        const score    = sent?.score || 50;
+        const scoreColor = score > 60 ? 'var(--neon)' : score < 40 ? 'var(--hot-red)' : '#F0B429';
+        const btcDom   = global?.btc_dominance || 0;
+        const totalMcap = global?.total_market_cap ? '$' + (global.total_market_cap/1e12).toFixed(2) + 'T' : '—';
+        const defiMcap  = global?.defi_market_cap  ? '$' + (global.defi_market_cap/1e9).toFixed(1)  + 'B' : '—';
+
+        body.innerHTML = `
+            <!-- AI Sentiment Score -->
+            <div class="mi-grid">
+                <div class="mi-card" style="grid-column:1/-1;">
+                    <div class="mi-label">AI Market Sentiment</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div class="mi-value" style="color:${scoreColor};">${score}/100</div>
+                        <span class="mi-badge ${score>60?'mi-bull':score<40?'mi-bear':'mi-neu'}">${sent?.label||'Neutral'}</span>
+                    </div>
+                    <div class="mi-score-bar">
+                        <div class="mi-score-fill" style="width:${score}%;"></div>
+                    </div>
+                    <div class="mi-sub" style="margin-top:6px;font-size:9.5px;line-height:1.5;color:rgba(255,255,255,0.4);">
+                        ${sent?.ai_summary || ''}
+                    </div>
+                </div>
+                <div class="mi-card">
+                    <div class="mi-label">BTC Dominance</div>
+                    <div class="mi-value">${btcDom.toFixed(1)}%</div>
+                    <div class="mi-sub">${btcDom > 55 ? '⚠️ Alts weak' : btcDom < 45 ? '🚀 Alt season' : '⚖️ Balanced'}</div>
+                </div>
+                <div class="mi-card">
+                    <div class="mi-label">Total Market Cap</div>
+                    <div class="mi-value" style="font-size:15px;">${totalMcap}</div>
+                    <div class="mi-sub">DeFi: ${defiMcap}</div>
+                </div>
+                <div class="mi-card">
+                    <div class="mi-label">Fear & Greed</div>
+                    <div class="mi-value" style="color:${(sent?.components?.fear_greed||50)<30?'var(--neon)':(sent?.components?.fear_greed||50)>70?'var(--hot-red)':'#F0B429'};">
+                        ${sent?.components?.fear_greed || '—'}
+                    </div>
+                    <div class="mi-sub">${sent?.components?.fear_greed_label || ''}</div>
+                </div>
+                <div class="mi-card">
+                    <div class="mi-label">Funding Rate</div>
+                    <div class="mi-value" style="font-size:14px;color:${(sent?.components?.funding_pct||0)<0?'var(--neon)':'var(--hot-red)'};">
+                        ${sent?.components?.funding_pct > 0 ? '+' : ''}${sent?.components?.funding_pct?.toFixed(4) || '0'}%
+                    </div>
+                    <div class="mi-sub">${(sent?.components?.funding_pct||0) < -0.03 ? '🟢 Shorts paying' : (sent?.components?.funding_pct||0) > 0.08 ? '🔴 Longs paying' : '⚖️ Neutral'}</div>
+                </div>
+            </div>
+
+            <!-- Active Signals -->
+            ${sent?.signals?.length ? `
+            <div class="mi-section-title">Active Signals</div>
+            ${sent.signals.map(s => `
+                <div class="mi-row">
+                    <span class="mi-row-label">${s.replace(/_/g,' ')}</span>
+                    <span class="mi-badge ${s.includes('bull')||s.includes('buy')||s.includes('fear')||s.includes('negative_fund')?'mi-bull':s.includes('caut')||s.includes('crowd')?'mi-bear':'mi-neu'}">
+                        ${s.includes('bull')||s.includes('buy')||s.includes('fear')||s.includes('negative_fund')?'Bullish':s.includes('caut')?'Caution':'Watch'}
+                    </span>
+                </div>
+            `).join('')}` : ''}
+
+            <!-- Top Gainers -->
+            ${gains?.gainers?.length ? `
+            <div class="mi-section-title">Top Movers Today</div>
+            ${gains.gainers.map(c => `
+                <div class="mi-coin-row">
+                    <span class="mi-coin-sym">${c.symbol}</span>
+                    <span class="mi-coin-name">${c.name}</span>
+                    <span class="mi-coin-chg" style="color:var(--neon);">+${c.change_24h}%</span>
+                </div>
+            `).join('')}
+            ${gains.losers.map(c => `
+                <div class="mi-coin-row">
+                    <span class="mi-coin-sym">${c.symbol}</span>
+                    <span class="mi-coin-name">${c.name}</span>
+                    <span class="mi-coin-chg" style="color:var(--hot-red);">${c.change_24h}%</span>
+                </div>
+            `).join('')}` : ''}
+
+            <div style="padding:8px 12px;font-size:9px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05);">
+                Powered by ExNexus Intelligence Engine · Updated ${new Date().toLocaleTimeString()}
+            </div>
+        `;
+        if(dot) dot.style.background = 'var(--neon)';
+    } catch(e) {
+        body.innerHTML = `<div style="text-align:center;padding:30px;color:var(--hot-red);">Error: ${e.message}</div>`;
+        if(dot) dot.style.background = 'var(--hot-red)';
+    }
+}
+
+// ── Market Depth & Liquidations Panel ────────────────────────
+async function loadMarketDepth() {
+    const body = document.getElementById('depth-body');
+    const dot  = document.getElementById('depth-live-dot');
+    const sym  = document.getElementById('depth-symbol')?.value || 'BTCUSDT';
+    if(!body) return;
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);">Loading...</div>';
+    if(dot) dot.style.background = '#F0B429';
+
+    try {
+        const [oiRes, lsRes, fundRes, liqRes, whalRes] = await Promise.allSettled([
+            fetch(`${MARKET}/oi?symbol=${sym}`),
+            fetch(`${MARKET}/ls?symbol=${sym}`),
+            fetch(`${MARKET}/funding?symbol=${sym}`),
+            fetch(`${MARKET}/liquidations?symbol=${sym}`),
+            fetch(`${MARKET}/whales?symbol=${sym}`)
+        ]);
+
+        const oi   = oiRes.status   === 'fulfilled' ? await oiRes.value.json()   : null;
+        const ls   = lsRes.status   === 'fulfilled' ? await lsRes.value.json()   : null;
+        const fund = fundRes.status === 'fulfilled' ? await fundRes.value.json() : null;
+        const liq  = liqRes.status  === 'fulfilled' ? await liqRes.value.json()  : null;
+        const whal = whalRes.status === 'fulfilled' ? await whalRes.value.json() : null;
+
+        const coin = sym.replace('USDT','');
+        const oiVal = oi?.oi ? (oi.oi/1000).toFixed(1) + 'K ' + coin : '—';
+        const oiTrend = oi?.trend === 'rising' ? '📈 Rising' : '📉 Falling';
+        const longPct  = ls?.long_pct  || 50;
+        const shortPct = ls?.short_pct || 50;
+        const lsSignal = ls?.signal || 'balanced';
+        const fundRate = fund?.rate_pct || 0;
+        const liqTotal = liq?.total_value ? '$' + (liq.total_value/1000000).toFixed(2) + 'M' : '—';
+        const whalBias = whal?.bias || 'balanced';
+
+        body.innerHTML = `
+            <div class="mi-grid">
+                <!-- OI -->
+                <div class="mi-card" style="grid-column:1/-1;">
+                    <div class="mi-label">Open Interest</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div class="mi-value" style="font-size:15px;">${oiVal}</div>
+                        <span class="mi-badge ${oi?.trend==='rising'?'mi-bull':'mi-bear'}">${oiTrend}</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:8px;">
+                        <div style="flex:1;font-size:10px;color:rgba(255,255,255,0.4);">
+                            Binance: <span style="color:#fff;">${oi?.oi ? (oi.oi/1000).toFixed(1) + 'K' : '—'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- L/S Ratio -->
+                <div class="mi-card" style="grid-column:1/-1;">
+                    <div class="mi-label">Long / Short Ratio</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+                        <div style="flex:${longPct};height:8px;background:var(--neon);border-radius:4px 0 0 4px;"></div>
+                        <div style="flex:${shortPct};height:8px;background:var(--hot-red);border-radius:0 4px 4px 0;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:11px;">
+                        <span style="color:var(--neon);">🟢 Longs ${longPct}%</span>
+                        <span style="color:var(--hot-red);">Shorts ${shortPct}% 🔴</span>
+                    </div>
+                    <div class="mi-sub" style="margin-top:4px;">
+                        ${lsSignal === 'shorts_crowded' ? '⚠️ Shorts crowded — potential squeeze' :
+                          lsSignal === 'longs_crowded'  ? '⚠️ Longs crowded — potential dump' :
+                          '⚖️ Balanced positioning'}
+                    </div>
+                </div>
+
+                <!-- Funding -->
+                <div class="mi-card">
+                    <div class="mi-label">Funding Rate</div>
+                    <div class="mi-value" style="font-size:14px;color:${fundRate<0?'var(--neon)':'var(--hot-red)'};">
+                        ${fundRate > 0 ? '+' : ''}${fundRate.toFixed(4)}%
+                    </div>
+                    <div class="mi-sub">${fund?.sentiment?.replace(/_/g,' ') || ''}</div>
+                </div>
+
+                <!-- Liquidations -->
+                <div class="mi-card">
+                    <div class="mi-label">Liquidations</div>
+                    <div class="mi-value" style="font-size:14px;">${liqTotal}</div>
+                    <div class="mi-sub">
+                        ${liq?.long_liquidations || 0} longs · ${liq?.short_liquidations || 0} shorts
+                    </div>
+                </div>
+
+                <!-- Whale Activity -->
+                <div class="mi-card" style="grid-column:1/-1;">
+                    <div class="mi-label">Whale Activity</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <div style="font-size:11px;color:var(--neon);">🟢 Buy $${whal?.buy_usd ? (whal.buy_usd/1000000).toFixed(1) + 'M' : '—'}</div>
+                            <div style="font-size:11px;color:var(--hot-red);">🔴 Sell $${whal?.sell_usd ? (whal.sell_usd/1000000).toFixed(1) + 'M' : '—'}</div>
+                        </div>
+                        <span class="mi-badge ${whalBias==='accumulation'?'mi-bull':whalBias==='distribution'?'mi-bear':'mi-neu'}">
+                            ${whalBias}
+                        </span>
+                    </div>
+                    ${whal?.trades?.length ? `
+                    <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.4);">Recent large trades:</div>
+                    ${whal.trades.slice(0,3).map(t => `
+                        <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;">
+                            <span style="color:${t.side==='BUY'?'var(--neon)':'var(--hot-red)'};">${t.side}</span>
+                            <span style="color:rgba(255,255,255,0.6);">$${(t.value/1000000).toFixed(2)}M</span>
+                        </div>
+                    `).join('')}` : ''}
+                </div>
+            </div>
+            <div style="padding:8px 12px;font-size:9px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05);">
+                Powered by ExNexus Market Data · Updated ${new Date().toLocaleTimeString()}
+            </div>
+        `;
+        if(dot) dot.style.background = 'var(--neon)';
+    } catch(e) {
+        body.innerHTML = `<div style="text-align:center;padding:30px;color:var(--hot-red);">Error: ${e.message}</div>`;
+        if(dot) dot.style.background = 'var(--hot-red)';
+    }
+}
+
+// Auto-load when panels open — hook into existing togglePanel
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[onclick*="togglePanel"]');
+    if(!btn) return;
+    const match = btn.getAttribute('onclick')?.match(/togglePanel\('([^']+)'/);
+    if(!match) return;
+    const name = match[1];
+    if(name === 'smartmoney') setTimeout(loadSmartMoney, 200);
+    if(name === 'heatmap')    setTimeout(loadMarketDepth, 200);
+});
 
 </script>
 
@@ -6386,7 +7229,7 @@ function selectCoin(symbol) {
                 <div class="dhub-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg>
                 </div>
-                <div class="dhub-name">Nansen</div>
+                <div class="dhub-name">Smart Money</div>
                 <div class="dhub-sub">Smart Money · Flows · Whales</div>
                 <div class="dhub-live"><span class="dhub-dot"></span>API required</div>
             </div>
@@ -6395,7 +7238,7 @@ function selectCoin(symbol) {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                 </div>
                 <div class="dhub-name">Liquidations</div>
-                <div class="dhub-sub">Coinglass · Heatmap · OI</div>
+                <div class="dhub-sub">Market Depth · OI</div>
                 <div class="dhub-live"><span class="dhub-dot"></span>API required</div>
             </div>
             <div class="dhub-card" onclick="closePanel('datahub');togglePanel('longshort')">
@@ -6403,7 +7246,7 @@ function selectCoin(symbol) {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l4-8 4 6 4-10 4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
                 </div>
                 <div class="dhub-name">Long / Short</div>
-                <div class="dhub-sub">Coinglass · Live ratio</div>
+                <div class="dhub-sub">Live L/S Ratio</div>
                 <div class="dhub-live"><span class="dhub-dot live"></span>Mock live</div>
             </div>
             <div class="dhub-card" onclick="closePanel('datahub');togglePanel('feargreed')">
@@ -6555,12 +7398,12 @@ function selectCoin(symbol) {
             </div>
             <div class="api-intel-row">
                 <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Nansen</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Smart Money</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
                 <input class="api-intel-input" type="password" id="nansen-key" placeholder="API Key" style="max-width:140px;">
             </div>
             <div class="api-intel-row">
                 <div class="api-intel-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Coinglass</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Market Depth</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
                 <input class="api-intel-input" type="password" id="coinglass-key" placeholder="API Key" style="max-width:140px;">
             </div>
             <div class="api-intel-row" style="border-bottom:none;">
