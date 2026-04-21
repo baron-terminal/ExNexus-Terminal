@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" id="html-root">
 <head>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ExNexus">
+    <meta name="theme-color" content="#44B828">
+    <link rel="apple-touch-icon" href="/Icon.png">
 <meta charset="UTF-8">
 <script>
 (function(){
@@ -986,6 +995,36 @@ footer{
     Stay slow. Trade smart. <span>Let ExNexus do the rest.</span>
 </div>
 
+
+<!-- ═══ MARKET INTEGRITY BADGE ═══ -->
+<div id="market-integrity-bar" style="
+    background:linear-gradient(90deg,rgba(68,184,40,0.06),rgba(68,184,40,0.03),rgba(68,184,40,0.06));
+    border-top:1px solid rgba(68,184,40,0.12);
+    border-bottom:1px solid rgba(68,184,40,0.12);
+    padding:12px 24px;
+    display:flex;align-items:center;justify-content:center;
+    gap:32px;flex-wrap:wrap;
+    font-size:12px;color:rgba(255,255,255,0.55);
+    letter-spacing:0.02em;
+    ">
+    <span style="display:flex;align-items:center;gap:7px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#44B828;flex-shrink:0;"></span>
+        <span>Minimum <strong style="color:rgba(255,255,255,0.8);">$50M market cap</strong> — no micro-cap tokens</span>
+    </span>
+    <span style="display:flex;align-items:center;gap:7px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#44B828;flex-shrink:0;"></span>
+        <span>Minimum <strong style="color:rgba(255,255,255,0.8);">$1M daily volume</strong> — liquid markets only</span>
+    </span>
+    <span style="display:flex;align-items:center;gap:7px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#44B828;flex-shrink:0;"></span>
+        <span>No pump-and-dump coins — <strong style="color:rgba(255,255,255,0.8);">verified data only</strong></span>
+    </span>
+    <span style="display:flex;align-items:center;gap:7px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#44B828;flex-shrink:0;"></span>
+        <span>Powered by <strong style="color:rgba(255,255,255,0.8);">CoinMarketCap</strong> — trusted by Coinbase</span>
+    </span>
+</div>
+
 <!-- ═══════════ HERO ═══════════ -->
 <div id="hero">
   <div class="hero-bg"></div>
@@ -1130,7 +1169,18 @@ footer{
       <div class="feat-icon" style="background:rgba(68,184,40,0.1);">🖥️</div>
       <div class="feat-title" data-i18n="feat1_title">Institutional Terminal</div>
       <div class="feat-desc" data-i18n="feat1_desc">Full-featured trading terminal with live order book, TradingView charts, multi-exchange order entry, and real-time position tracking.</div>
-      <div class="feat-tag" style="background:rgba(68,184,40,0.1);color:var(--neon);border:1px solid rgba(68,184,40,0.2);" data-i18n="feat1_tag">Web · Mobile · Tablet</div>
+      <div class="feat-tag" style="background:rgba(68,184,40,0.1);color:var(--neon);border:1px solid rgba(68,184,40,0.2);" data-i18n="feat1_tag">Web · Mobile · Tablet
+                <!-- Market Integrity Feature Card -->
+                <div class="feature-card" style="border-color:rgba(68,184,40,0.2);">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">Market Integrity Filter</div>
+                    <div class="feature-desc">
+                        We only show coins with <strong>$50M+ market cap</strong> and 
+                        <strong>$1M+ daily volume</strong>. No pump-and-dump schemes. 
+                        No micro-cap manipulation. Only real, liquid opportunities.
+                    </div>
+                </div>
+</div>
     </div>
     <div class="feat-card">
       <div class="feat-icon" style="background:rgba(155,114,203,0.1);">🤖</div>
@@ -1513,6 +1563,131 @@ footer{
       <span data-i18n="btn_earn">Earn as Affiliate</span>
     </button>
   </div>
+</section>
+
+
+<!-- ═══ MOBILE APP BANNER ═══ -->
+<section id="mobile-app-section" style="
+    padding:80px 24px;
+    background:linear-gradient(135deg,rgba(68,184,40,0.04),rgba(68,184,40,0.01));
+    border-top:1px solid rgba(68,184,40,0.1);
+    border-bottom:1px solid rgba(68,184,40,0.1);
+">
+    <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:60px;flex-wrap:wrap;">
+        
+        <!-- Phone mockup -->
+        <div style="flex:0 0 auto;position:relative;">
+            <div style="
+                width:240px;height:480px;
+                background:linear-gradient(180deg,#1a1a1a,#111);
+                border-radius:36px;
+                border:2px solid rgba(255,255,255,0.1);
+                box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+                overflow:hidden;
+                position:relative;
+            ">
+                <!-- Status bar -->
+                <div style="height:40px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:10px;color:rgba(255,255,255,0.6);">
+                    <span>9:41</span>
+                    <div style="display:flex;gap:4px;align-items:center;">
+                        <span>●●●</span>
+                        <span>WiFi</span>
+                        <span>⬛</span>
+                    </div>
+                </div>
+                <!-- App header -->
+                <div style="padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;">
+                            <span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span>
+                        </div>
+                        <div style="font-size:10px;color:#00FF88;">● LIVE</div>
+                    </div>
+                </div>
+                <!-- Price display -->
+                <div style="padding:16px;background:#0d0d0d;">
+                    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;">BTC/USDT</div>
+                    <div style="font-size:24px;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace;" id="pwa-btc-price">$74,231.70</div>
+                    <div style="font-size:10px;color:#00FF88;margin-top:2px;">+1.52% today</div>
+                </div>
+                <!-- Mini chart bars -->
+                <div style="padding:8px 16px;display:flex;align-items:flex-end;gap:3px;height:80px;">
+                    ${' '.join([f'<div style="flex:1;background:rgba(68,184,40,{0.3+i*0.07});border-radius:2px;height:{30+i*8}px;"></div>' for i in range(12)])}
+                </div>
+                <!-- Bottom nav -->
+                <div style="position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;">
+                    {' '.join([f'<div style="flex:1;text-align:center;font-size:9px;color:rgba(255,255,255,{0.4 if i!=2 else 0.9});"><div style="font-size:16px;">{"🏠📊💹🤖⚙️"[i]}</div><div style="margin-top:2px;">{"Home Markets Trade Bots Settings".split()[i]}</div></div>' for i in range(5)])}
+                </div>
+            </div>
+            <!-- Glow effect -->
+            <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;"></div>
+        </div>
+
+        <!-- Content -->
+        <div style="flex:1;min-width:280px;">
+            <div style="font-size:11px;font-weight:600;color:#00FF88;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">
+                Available Everywhere
+            </div>
+            <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,42px);font-weight:700;line-height:1.15;margin-bottom:16px;color:#fff;">
+                Trade from your pocket.<br>
+                <span style="color:#00FF88;">No app store needed.</span>
+            </h2>
+            <p style="font-size:15px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:32px;max-width:480px;">
+                ExNexus works as a native app on any device. 
+                Install directly from your browser — iOS, Android, or Desktop. 
+                Full terminal. Real trades. Zero downloads.
+            </p>
+
+            <!-- Install steps -->
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#00FF88;flex-shrink:0;">1</div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.7);">Open <strong style="color:#fff;">exnexus.app</strong> in your mobile browser</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#00FF88;flex-shrink:0;">2</div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.7);"><strong style="color:#fff;">Android:</strong> Tap menu → "Add to Home Screen" &nbsp;|&nbsp; <strong style="color:#fff;">iOS:</strong> Tap Share → "Add to Home Screen"</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#00FF88;flex-shrink:0;">3</div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.7);">ExNexus appears on your home screen like a native app ✅</div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <a href="https://exnexus.app/terminal.html" style="
+                    display:inline-flex;align-items:center;gap:8px;
+                    background:#00FF88;color:#000;font-weight:700;font-size:13px;
+                    padding:12px 24px;border-radius:8px;text-decoration:none;
+                ">
+                    📱 Open Trading App
+                </a>
+                <a href="https://exnexus.app/terminal.html?demo=1" style="
+                    display:inline-flex;align-items:center;gap:8px;
+                    background:rgba(68,184,40,0.08);color:#00FF88;
+                    border:1px solid rgba(68,184,40,0.3);
+                    font-weight:600;font-size:13px;
+                    padding:12px 24px;border-radius:8px;text-decoration:none;
+                ">
+                    🎮 Try Demo Free
+                </a>
+            </div>
+
+            <!-- Platform badges -->
+            <div style="display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;">
+                <div style="font-size:10px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:14px;">🍎</span> iOS Safari
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:14px;">🤖</span> Android Chrome
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:14px;">💻</span> Desktop
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- ═══════════ FOOTER ═══════════ -->
@@ -1980,12 +2155,546 @@ window.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <script>
+/* ═══ EX Q&A SYSTEM ═══ */
+
+/* ============================================================
+   EX THE SLOTH — Q&A SYSTEM
+   Short questions. Instant answers. Live data aware.
+============================================================ */
+
+const EX_EMAIL = 'info@exnexus.co';
+
+// ── Pre-fixed Q&A Database ────────────────────────────────────
+const EX_QA = {
+
+  // ── About ExNexus ─────────────────────────────────────────
+  'what is exnexus':
+    `One terminal. Every exchange. AI-powered. 🎩
+CEX + DeFi unified with real-time arbitrage,
+signals, and automated bots.`,
+
+  'what makes exnexus different':
+    `3 things no one else has:
+• CEX + DEX in one terminal
+• AI Scout powered by Claude
+• Cross-exchange arb execution ⚡`,
+
+  'is it free':
+    `Yes! Free tier forever.
+Pro plans from $39/mo.
+Demo Mode = always free 🎮`,
+
+  'what exchanges':
+    `Currently:
+• Bybit · Binance · Gate.io · Alpaca
+Coming soon:
+• OKX · Kraken · Hyperliquid · dYdX 🔜`,
+
+  'low market cap':
+    `We only show coins with:
+✅ $50M+ market cap minimum
+✅ $1M+ daily volume minimum
+No pump-and-dump schemes.
+No micro-cap manipulation.
+Liquid markets only 🛡️`,
+
+  'what coins do you screen':
+    `Only liquid, verified coins:
+• $50M+ market cap
+• $1M+ daily volume  
+• Top 200 by market cap
+• CEX + DEX verified
+No micro-cap or scam tokens 🛡️`,
+
+  'is it safe':
+    `Your keys never leave your device.
+We never hold your funds.
+Read-only keys for viewing.
+Trade keys for execution only 🔐`,
+
+  'what is full autonomy':
+    `You control everything.
+Your strategy. Your exchanges.
+Your bots. Your risk.
+No broker. No middleman 💪`,
+
+  'who is exnexus for':
+    `Anyone who trades crypto.
+Beginner → use Demo Mode first.
+Active trader → use the screener.
+Power user → run bots + arb ⚡`,
+
+  'does it work on mobile':
+    `Yes! Full mobile trading app.
+Visit exnexus.app on your phone.
+Optimized for iOS + Android 📱`,
+
+  'what languages':
+    `English + Hebrew now.
+Arabic, Spanish, French,
+Russian, Chinese, Turkish coming 🌍`,
+
+  'how do i start':
+    `3 steps:
+1. Try Demo Mode (zero risk)
+2. Add API keys in Settings
+3. Run the screener for signals 🚀`,
+
+  'who is ex':
+    `I'm Ex! 🎩 Your AI trading assistant.
+Ask me anything — short questions
+get the best answers!`,
+
+  // ── Trading Features ──────────────────────────────────────
+  'what is signal intelligence':
+    `Our screener scans 200+ coins.
+RSI · MACD · Patterns · Trends.
+Updated every 5 minutes 📡`,
+
+  'what is smart money flow':
+    `Tracks whale wallet movements.
+Exchange inflows/outflows.
+Know what institutions are doing 🐋`,
+
+  'what is market depth':
+    `Liquidation heatmap.
+Open Interest tracking.
+Funding rates. Long/Short ratio 🔥`,
+
+  'what is ai scout':
+    `Claude AI reads all signals.
+Gives you a win probability score.
+Recommends entry + TP + SL 🤖`,
+
+  'what is arbitrage':
+    `Buy low on one exchange.
+Sell high on another.
+Same time. Profit locked ⚡`,
+
+  'how does arb work':
+    `1. Scanner finds price gap
+2. You review + confirm
+3. Both legs fire simultaneously
+Profit in seconds ⚡`,
+
+  'what bots are available':
+    `6 bots available:
+Grid Scalper · Trend Rider · DCA
+Scalp Hunter · Arb Bot · AI Scout Bot
++ Custom Bot Builder 🤖`,
+
+  'what is grid scalper':
+    `Places buy/sell at equal intervals.
+Profits from price bouncing.
+Best in sideways markets 📊`,
+
+  'what is trend rider':
+    `Follows momentum.
+Dynamic trailing stop.
+Exits when trend fades 🏄`,
+
+  'what is dca bot':
+    `Buys at regular intervals.
+Averages your entry price.
+Best for long-term accumulation 💰`,
+
+  'what is risk calculator':
+    `Enter your balance + risk %.
+Get exact position size.
+Never over-leverage again 🧮`,
+
+  'what timeframes':
+    `15m · 1H · 4H · 1D
+1H is highest win rate
+for most strategies 📈`,
+
+  'what coins':
+    `Top 200 by market cap.
+$100M+ for CEX trading.
+$20M+ for DEX opportunities 🪙`,
+
+  'what is fear and greed':
+    `Market sentiment 0-100.
+Below 25 = Extreme Fear → buy signal
+Above 75 = Extreme Greed → be careful 😊`,
+
+  'what is backtesting':
+    `Test your strategy on real history.
+1 year of hourly data available.
+See win rate before risking money 📊`,
+
+  'how many indicators':
+    `12 high-probability indicators:
+RSI · MACD · Bollinger Bands · EMA
+ATR · Stoch RSI · Volume + 5 more 📈`,
+
+  'what patterns':
+    `20 candlestick patterns:
+Dragonfly Doji · Gravestone Doji
+Head & Shoulders · Engulfing
+Morning Star + 15 more 🕯️`,
+
+  // ── Indicators ────────────────────────────────────────────
+  'what is rsi':
+    `Momentum indicator 0-100.
+< 30 = oversold → potential buy
+> 70 = overbought → potential sell
+Sweet spot: 30-65 📊`,
+
+  'what is macd':
+    `Trend + momentum indicator.
+Histogram crosses zero = signal.
+Best on 1H and 4H timeframes 📈`,
+
+  'what is bollinger bands':
+    `Price envelope around moving average.
+Squeeze = big move coming.
+Touch lower band + RSI < 30 = buy 📊`,
+
+  'what is atr':
+    `Average True Range.
+Measures volatility.
+Use for stop loss sizing 📏`,
+
+  'what is doji':
+    `Open = Close candlestick.
+Indecision in the market.
+Watch for direction confirmation 🕯️`,
+
+  'what is dragonfly doji':
+    `Long lower shadow.
+Open ≈ Close ≈ High.
+Bullish reversal signal 🐉
+Win rate: ~78%`,
+
+  'what is head and shoulders':
+    `3 peaks pattern.
+Middle = highest (head).
+Neckline break = sell signal 📉
+Win rate: ~80%`,
+
+  'what is inverse head and shoulders':
+    `3 troughs pattern.
+Middle = lowest (head).
+Neckline break = buy signal 📈
+Your best historical pattern! ✅`,
+
+  'what is engulfing':
+    `One candle fully covers previous.
+Bullish engulfing = buy signal.
+Bearish engulfing = sell signal 🕯️`,
+
+  'what is morning star':
+    `3-candle bullish reversal.
+Bear · small body · bull.
+One of the strongest buy signals 🌟
+Win rate: ~80%`,
+
+  // ── Technical Help ────────────────────────────────────────
+  'how do i connect exchange':
+    `Settings → Exchanges → Select exchange
+Enter API Key + Secret → Save.
+Keys never leave your device 🔑`,
+
+  'what is sync code':
+    `Your personal sync password.
+Same code on all devices =
+shared settings everywhere 🔄`,
+
+  'are api keys safe':
+    `Yes. Keys stored locally only.
+Encrypted in your browser.
+We never see or store them 🔐`,
+
+  'what is demo mode':
+    `$10,000 virtual balance.
+Real live prices.
+All features work. Zero risk 🎮`,
+
+  'how do i switch to live':
+    `Settings → Security → Exit Demo.
+Make sure API keys are added first.
+Start small! 💡`,
+
+  'why is balance not showing':
+    `Check Settings → Exchanges.
+Make sure API keys are saved.
+Keys need Read permission ✅`,
+
+  'how do i place first trade':
+    `1. Select coin in terminal
+2. Enter price + quantity
+3. Click Open Long or Open Short
+Try Demo Mode first! 🎮`,
+
+  'what is cross vs isolated':
+    `Cross: whole balance as margin.
+Isolated: only allocated amount.
+Isolated = safer for beginners 💡`,
+
+  'what is leverage':
+    `Multiplies your position size.
+10x = $100 controls $1,000.
+Higher leverage = higher risk ⚠️`,
+
+  // ── Affiliate ─────────────────────────────────────────────
+  'how does affiliate work':
+    `Share your referral link.
+Earn 40% of every subscription.
+Monthly USDT payments 💰`,
+
+  'how much commission':
+    `40% recurring commission.
+Refer 3 friends = your plan free.
+Refer 10 = $156/mo passive income 🚀`,
+
+  'when do i get paid':
+    `Monthly payouts in USDT.
+No minimum threshold.
+Tracked in real-time dashboard 📊`,
+
+  'how do i join affiliate':
+    `Coming soon in the terminal!
+Email us to join early:
+📧 ${EX_EMAIL} 🎩`,
+
+  // ── Support ───────────────────────────────────────────────
+  'how do i contact support':
+    `📧 ${EX_EMAIL}
+We reply within 24 hours!
+Or keep asking me 🎩`,
+
+  'i have a problem':
+    `I'm here to help! 🎩
+Describe your issue briefly.
+Or email: ${EX_EMAIL}`,
+
+  'billing question':
+    `For billing questions:
+📧 ${EX_EMAIL}
+We reply within 24 hours 💚`,
+
+  'partnership':
+    `Interested in partnering?
+📧 ${EX_EMAIL}
+We'd love to hear from you 🤝`,
+};
+
+// ── Quick Reply Categories ────────────────────────────────────
+const EX_QUICK_REPLIES = [
+  { icon:'📊', label:'Screener',   q:'What is signal intelligence' },
+  { icon:'⚡', label:'Arbitrage',  q:'What is arbitrage' },
+  { icon:'🤖', label:'Bots',       q:'What bots are available' },
+  { icon:'🎮', label:'Demo',       q:'What is demo mode' },
+  { icon:'💰', label:'Pricing',    q:'Is it free' },
+  { icon:'🔑', label:'API Keys',   q:'Are api keys safe' },
+  { icon:'📈', label:'Indicators', q:'How many indicators' },
+  { icon:'👥', label:'Affiliate',  q:'How does affiliate work' },
+];
+
+// ── Answer Engine ─────────────────────────────────────────────
+function exGetAnswer(question) {
+  const q = question.toLowerCase()
+    .trim()
+    .replace(/[?!.,]/g, '')
+    .replace(/whats/g, 'what is')
+    .replace(/hows/g, 'how is')
+    .replace(/cant/g, 'cannot')
+    .replace(/dont/g, 'do not');
+
+  // Check live context first (terminal only)
+  const liveAnswer = exLiveContext(q);
+  if(liveAnswer) return liveAnswer;
+
+  // Exact match
+  if(EX_QA[q]) return EX_QA[q];
+
+  // Partial match - find best matching key
+  const keys = Object.keys(EX_QA);
+  const match = keys.find(k =>
+    q.includes(k) || k.includes(q) ||
+    k.split(' ').some(word => word.length > 3 && q.includes(word))
+  );
+  if(match) return EX_QA[match];
+
+  // Keyword matching
+  if(q.includes('rsi'))         return EX_QA['what is rsi'];
+  if(q.includes('macd'))        return EX_QA['what is macd'];
+  if(q.includes('dragonfly'))   return EX_QA['what is dragonfly doji'];
+  if(q.includes('doji'))        return EX_QA['what is doji'];
+  if(q.includes('arbitrage') || q.includes('arb')) return EX_QA['what is arbitrage'];
+  if(q.includes('bot'))         return EX_QA['what bots are available'];
+  if(q.includes('demo'))        return EX_QA['what is demo mode'];
+  if(q.includes('safe') || q.includes('security')) return EX_QA['is it safe'];
+  if(q.includes('free') || q.includes('price') || q.includes('cost')) return EX_QA['is it free'];
+  if(q.includes('start') || q.includes('begin')) return EX_QA['how do i start'];
+  if(q.includes('contact') || q.includes('email') || q.includes('help')) return EX_QA['how do i contact support'];
+  if(q.includes('affiliate') || q.includes('referral') || q.includes('earn')) return EX_QA['how does affiliate work'];
+  if(q.includes('exchange') || q.includes('connect')) return EX_QA['how do i connect exchange'];
+  if(q.includes('leverage')) return EX_QA['what is leverage'];
+  if(q.includes('indicator')) return EX_QA['how many indicators'];
+  if(q.includes('pattern')) return EX_QA['what patterns'];
+  if(q.includes('screener') || q.includes('signal')) return EX_QA['what is signal intelligence'];
+
+  // Unknown — Claude AI fallback or email
+  return null; // null = call Claude AI
+}
+
+// ── Live Context (terminal page only) ────────────────────────
+function exLiveContext(q) {
+  // Only works in terminal where live data exists
+  if(typeof getCurrentPrice === 'undefined') return null;
+
+  const btcPrice = getCurrentPrice('BTCUSDT');
+
+  if(q.includes('btc') && (q.includes('price') || q.includes('now') || q.includes('current'))) {
+    return btcPrice > 0
+      ? `BTC is at $${btcPrice.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})} 📊`
+      : `Loading BTC price...`;
+  }
+
+  if(q.includes('balance') || q.includes('how much')) {
+    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
+      return `Your demo balance is $${demoState.balance.toFixed(2)} 🎮`;
+    }
+    return `Check your balance in the Assets tab.
+Add API keys in Settings first 🔑`;
+  }
+
+  if(q.includes('position') || q.includes('open trade')) {
+    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
+      const pos = demoState.positions;
+      return pos.length > 0
+        ? `${pos.length} open position(s):
+${pos.map(p=>`${p.symbol} ${p.side}`).join('
+')}`
+        : `No open demo positions.
+Want to try a trade? 🎮`;
+    }
+    return `Check your Positions tab below 📊`;
+  }
+
+  if(q.includes('sentiment') || q.includes('fear') || q.includes('greed')) {
+    const fgEl = document.getElementById('fg-value-display');
+    const fgLbl = document.getElementById('fg-label-display');
+    if(fgEl && fgLbl) {
+      return `Market Sentiment: ${fgLbl.textContent} (${fgEl.textContent}/100)
+${parseInt(fgEl.textContent) < 30 ? '→ Historically good buying zone' : parseInt(fgEl.textContent) > 70 ? '→ Be cautious, market overheated' : '→ Neutral territory'} 😊`;
+    }
+  }
+
+  if(q.includes('bot') && (q.includes('running') || q.includes('active'))) {
+    if(typeof demoBots !== 'undefined') {
+      const running = Object.entries(demoBots)
+        .filter(([,b]) => b.running)
+        .map(([,b]) => b.name);
+      return running.length > 0
+        ? `Running bots: ${running.join(', ')} 🤖`
+        : `No bots running.
+Start one in the Bots tab! 🤖`;
+    }
+  }
+
+  return null;
+}
+
+// ── Render Quick Replies ──────────────────────────────────────
+function exRenderQuickReplies() {
+  return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+    ${EX_QUICK_REPLIES.map(r => `
+      <button onclick="exQuickReply('${r.q}')"
+        style="display:flex;align-items:center;gap:5px;
+        padding:5px 11px;border-radius:20px;
+        background:rgba(255,255,255,0.06);
+        border:1px solid rgba(255,255,255,0.12);
+        color:rgba(255,255,255,0.8);font-size:11px;
+        cursor:pointer;transition:all .15s;white-space:nowrap;"
+        onmouseover="this.style.background='rgba(68,184,40,0.1)';this.style.borderColor='rgba(68,184,40,0.3)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)'">
+        ${r.icon} ${r.label}
+      </button>`).join('')}
+  </div>`;
+}
+
+function exQuickReply(question) {
+  // Put question in input and send
+  const inp = document.getElementById('sloth-inp') || document.getElementById('chat-inp');
+  if(inp) {
+    inp.value = question;
+    // Trigger send
+    if(typeof sendSlothMsg === 'function') sendSlothMsg();
+    else if(typeof sendChatMsg === 'function') sendChatMsg();
+  }
+}
+
+// ── Override sendSlothMsg to use Q&A first ───────────────────
+const _origSendSloth = typeof sendSlothMsg === 'function' ? sendSlothMsg : null;
+
+async function sendSlothMsg() {
+  const inp = document.getElementById('sloth-inp');
+  const msg = inp?.value?.trim();
+  if(!msg) return;
+  inp.value = '';
+
+  // Add user message
+  addSlothMsg(msg, 'user');
+
+  // Check pre-fixed Q&A first
+  const instant = exGetAnswer(msg);
+
+  if(instant) {
+    // Instant answer — no API call needed
+    setTimeout(() => {
+      addSlothMsg(instant + `
+
+📧 More questions? ${EX_EMAIL}`, 'ai');
+    }, 300); // small delay feels more natural
+    return;
+  }
+
+  // Unknown question — call Claude AI
+  if(typeof slothBusy !== 'undefined') slothBusy = true;
+  const typing = addSlothMsg('...', 'ai', true);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 300,
+        system: `You are Ex, the ExNexus AI trading assistant. 
+                 Wear a top hat 🎩. Be concise — max 3-4 lines.
+                 Focus on trading, crypto, ExNexus features.
+                 End with: 📧 info@exnexus.co for more help.`,
+        messages: [{ role:'user', content: msg }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 
+      `Great question! Email us at 📧 ${EX_EMAIL} and we'll answer within 24 hours 🎩`;
+    if(typing) typing.remove();
+    addSlothMsg(reply, 'ai');
+  } catch(e) {
+    if(typing) typing.remove();
+    addSlothMsg(`Email us at 📧 ${EX_EMAIL}
+We reply within 24 hours! 🎩`, 'ai');
+  }
+
+  if(typeof slothBusy !== 'undefined') slothBusy = false;
+}
+
 /* ═══ SLOTH MASCOT & AI CHAT ═══ */
 const SLOTH_IMG = "data:image/jpeg;base64,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";
 let slothBusy = false;
 let slothHistory = [];
 
 function openSlothChat() {
+    // Add quick replies if first time
+    const msgs = document.getElementById('sloth-messages');
+    if(msgs && msgs.children.length === 1) {
+        setTimeout(addQuickReplies, 300);
+    }
     document.getElementById('sloth-chat-overlay').classList.add('open');
     document.getElementById('sloth-mascot').style.display = 'none';
     document.getElementById('sloth-inp')?.focus();

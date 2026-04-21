@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ExNexus">
+    <meta name="application-name" content="ExNexus">
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+    <meta name="theme-color" content="#44B828">
+    <link rel="apple-touch-icon" href="/Icon.png">
+    <link rel="apple-touch-startup-image" href="/Icon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ExNexus | Institutional Terminal</title>
@@ -7939,5 +7951,84 @@ function showLoginScreen() {
 </div>
 
 <div id="demo-order-toast"></div>
+
+<script>
+/* ── PWA Service Worker + Install Prompt ── */
+let deferredPrompt = null;
+
+if('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('ExNexus SW registered'))
+            .catch(err => console.log('SW error:', err));
+    });
+}
+
+// Capture install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallBanner();
+});
+
+function showInstallBanner() {
+    // Don't show if already installed
+    if(window.matchMedia('(display-mode: standalone)').matches) return;
+    if(localStorage.getItem('pwa_dismissed')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'pwa-banner';
+    banner.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;flex:1;">
+            <img src="/Icon.png" style="width:36px;height:36px;border-radius:8px;">
+            <div>
+                <div style="font-weight:600;font-size:13px;">Install ExNexus App</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.6);">Trade faster · Works offline · No browser bar</div>
+            </div>
+        </div>
+        <button onclick="installPWA()" style="background:#44B828;color:#000;border:none;padding:8px 16px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">
+            Install
+        </button>
+        <button onclick="dismissInstall()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;padding:0 4px;">×</button>
+    `;
+    banner.style.cssText = `
+        position:fixed;bottom:0;left:0;right:0;z-index:99999;
+        background:#1a1a1a;border-top:1px solid rgba(68,184,40,0.3);
+        padding:12px 16px;display:flex;align-items:center;gap:12px;
+        box-shadow:0 -4px 20px rgba(0,0,0,0.5);
+    `;
+    document.body.appendChild(banner);
+}
+
+async function installPWA() {
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    if(result.outcome === 'accepted') {
+        showToast('ExNexus installed successfully! 🎉');
+    }
+    deferredPrompt = null;
+    dismissInstall();
+}
+
+function dismissInstall() {
+    const banner = document.getElementById('pwa-banner');
+    if(banner) banner.remove();
+    localStorage.setItem('pwa_dismissed', '1');
+}
+
+// iOS install instructions
+window.addEventListener('load', () => {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if(isIOS && !isStandalone && !localStorage.getItem('ios_install_shown')) {
+        setTimeout(() => {
+            showToast('📱 Tap Share → "Add to Home Screen" to install ExNexus!');
+            localStorage.setItem('ios_install_shown', '1');
+        }, 3000);
+    }
+});
+</script>
+
 </body>
 </html>
