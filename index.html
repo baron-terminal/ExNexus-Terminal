@@ -1093,38 +1093,7 @@ footer{
 
 
         
-        /* ── Phone Mockup - Always Dark ── */
-        .phone-mockup-screen {
-            background: linear-gradient(180deg,#1a1a1a,#111) !important;
-            color-scheme: dark;
-            isolation: isolate;
-        }
-        /* All children explicitly set to dark context */
-        body.white-theme .phone-mockup-screen {
-            background: linear-gradient(180deg,#1a1a1a,#111) !important;
-        }
-        /* Override nuclear white theme for phone children */
-        body.white-theme .phone-mockup-screen * {
-            color: unset !important;
-            background: unset !important;
-            border-color: unset !important;
-        }
-        /* Phone status bar */
-        body.white-theme .phone-mockup-screen > div:first-child {
-            background: #111 !important;
-            color: rgba(255,255,255,0.6) !important;
-        }
-        /* Protect specific phone elements */
-        body.white-theme #pwa-btc-price { color: #ffffff !important; }
-        body.white-theme #pwa-btc-change { color: #00FF88 !important; }
-        body.white-theme #phone-chart-bars div { background: rgba(68,184,40,0.5) !important; }
-        body.white-theme #phone-nav { background: #111 !important; border-top-color: rgba(255,255,255,0.08) !important; }
-        body.white-theme #phone-nav .pnav-btn { color: rgba(255,255,255,0.4) !important; }
-        body.white-theme #phone-nav .active-nav { color: #00FF88 !important; }
-        /* Phone screen sections */
-        body.white-theme .pscreen { background: transparent !important; }
-        body.white-theme .pscreen * { color: rgba(255,255,255,0.8) !important; }
-        body.white-theme #pscreen-home > div:first-child { color: rgba(255,255,255,0.4) !important; }
+        /* phone handled by data-force-dark */
 
         /* ── Green bars keep dark background ── */
         /* Any element with neon green border/background stays dark */
@@ -1152,6 +1121,54 @@ footer{
         body.white-theme .intel-card [style*="background:rgba(68,184,40"] {
             background: rgba(68,184,40,0.1) !important;
         }
+
+        
+        /* ═══════════════════════════════
+           PHONE MOCKUP - ALWAYS DARK
+           Uses data-force-dark attribute
+           to fully isolate from themes
+        ═══════════════════════════════ */
+        [data-force-dark="true"],
+        [data-force-dark="true"] * {
+            color-scheme: dark !important;
+        }
+        [data-force-dark="true"] {
+            background: linear-gradient(180deg,#1a1a1a,#111) !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        /* Block ALL white-theme overrides */
+        body.white-theme [data-force-dark="true"],
+        body.white-theme [data-force-dark="true"] * {
+            all: revert-layer;
+        }
+        body.white-theme [data-force-dark="true"] {
+            background: linear-gradient(180deg,#1a1a1a,#111) !important;
+            border-radius: 36px !important;
+            border: 2px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6) !important;
+            overflow: hidden !important;
+            position: relative !important;
+            width: 240px !important;
+            height: 480px !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        /* Re-apply all internal dark styles */
+        body.white-theme [data-force-dark="true"] div {
+            color: rgba(255,255,255,0.8);
+        }
+        body.white-theme #pwa-btc-price { color: #ffffff !important; font-size:24px !important; font-weight:700 !important; }
+        body.white-theme #pwa-btc-change { color: #00FF88 !important; }
+        body.white-theme #phone-chart-bars { display:flex !important; align-items:flex-end !important; gap:3px !important; padding:8px 16px !important; height:80px !important; }
+        body.white-theme #phone-chart-bars div { background: rgba(68,184,40,0.55) !important; border-radius:2px !important; flex:1 !important; }
+        body.white-theme #phone-nav { 
+            position:absolute !important; bottom:0 !important; left:0 !important; right:0 !important;
+            background:#111 !important; border-top:1px solid rgba(255,255,255,0.08) !important;
+            display:flex !important; padding:8px 0 16px !important;
+        }
+        body.white-theme .pnav-btn { color: rgba(255,255,255,0.4) !important; flex:1 !important; text-align:center !important; font-size:9px !important; cursor:pointer !important; }
+        body.white-theme .active-nav { color: #00FF88 !important; }
+        body.white-theme .pscreen { background: transparent !important; padding: 0 16px 8px !important; }
 
         </style>
 </head>
@@ -1552,7 +1569,7 @@ footer{
         
         <!-- Phone mockup -->
         <div style="flex:0 0 auto;position:relative;display:flex;justify-content:center;">
-            <div class="phone-mockup-screen" style="
+            <div data-force-dark="true" class="phone-mockup-screen" style="
                 width:240px;height:480px;
                 background:linear-gradient(180deg,#1a1a1a,#111);
                 border-radius:36px;
