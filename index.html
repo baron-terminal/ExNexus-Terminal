@@ -808,6 +808,123 @@ footer{
   </div>
 </div>
 
+
+<!-- ═══ PHONE BANNER ═══ -->
+<section style="padding:0 24px 60px;background:transparent;">
+  <div style="background:#ffffff;border-radius:24px;padding:60px 50px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:80px;flex-wrap:wrap;">
+
+    <!-- Phone mockup — all:initial isolates it from any CSS -->
+    <div style="flex:0 0 auto;position:relative;">
+      <div style="width:240px;height:480px;border-radius:36px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.6);">
+        <div style="all:initial;display:flex;flex-direction:column;width:240px;height:480px;background:linear-gradient(180deg,#1a1a1a,#111);border-radius:36px;overflow:hidden;border:2px solid rgba(255,255,255,0.1);box-sizing:border-box;font-family:system-ui;">
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;height:40px;background:#111;padding:0 20px;box-sizing:border-box;font-family:system-ui;">
+            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">9:41</span>
+            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">●●● WiFi</span>
+          </div>
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);box-sizing:border-box;font-family:system-ui;">
+            <span style="all:initial;font-size:13px;font-weight:700;font-family:system-ui;"><span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span></span>
+            <span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">● LIVE</span>
+          </div>
+          <div style="all:initial;padding:16px;background:#0d0d0d;display:block;box-sizing:border-box;font-family:system-ui;">
+            <div style="all:initial;font-size:10px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;margin-bottom:4px;">BTC/USDT</div>
+            <div id="pwa-btc-price" style="all:initial;font-size:22px;font-weight:700;color:#fff;display:block;font-family:monospace;">Loading...</div>
+            <div id="pwa-btc-change" style="all:initial;font-size:10px;color:#00FF88;display:block;font-family:system-ui;margin-top:2px;">+0.00%</div>
+          </div>
+          <div id="phone-chart-bars" style="all:initial;display:flex;align-items:flex-end;gap:3px;padding:8px 16px;height:80px;background:#0d0d0d;box-sizing:border-box;">
+            <div style="flex:1;height:30px;background:rgba(68,184,40,0.4);border-radius:2px;"></div>
+            <div style="flex:1;height:45px;background:rgba(68,184,40,0.5);border-radius:2px;"></div>
+            <div style="flex:1;height:55px;background:rgba(68,184,40,0.55);border-radius:2px;"></div>
+            <div style="flex:1;height:42px;background:rgba(68,184,40,0.48);border-radius:2px;"></div>
+            <div style="flex:1;height:65px;background:rgba(68,184,40,0.65);border-radius:2px;"></div>
+            <div style="flex:1;height:52px;background:rgba(68,184,40,0.55);border-radius:2px;"></div>
+            <div style="flex:1;height:72px;background:rgba(68,184,40,0.75);border-radius:2px;"></div>
+            <div style="flex:1;height:60px;background:rgba(68,184,40,0.6);border-radius:2px;"></div>
+            <div style="flex:1;height:70px;background:rgba(68,184,40,0.7);border-radius:2px;"></div>
+          </div>
+          <div style="all:initial;flex:1;background:#0d0d0d;display:block;padding:8px 16px 60px;box-sizing:border-box;position:relative;overflow:hidden;font-family:system-ui;">
+            <div id="pscreen-home" class="pscreen" style="display:block;">
+              <div style="all:initial;display:flex;gap:6px;font-family:system-ui;padding-bottom:8px;">
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">ETH</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$2,320</div><div style="all:initial;font-size:8px;color:#FF003F;display:block;">-0.8%</div></div>
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">SOL</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$148</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+3.2%</div></div>
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">BNB</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$605</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+1.1%</div></div>
+              </div>
+            </div>
+            <div id="pscreen-markets" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:6px;">Top Markets</div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">BTC</span><span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+1.52%</span></div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">ETH</span><span style="all:initial;font-size:10px;color:#FF003F;font-family:system-ui;">-0.82%</span></div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">SOL</span><span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+3.21%</span></div></div>
+            <div id="pscreen-trade" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:4px;">Quick Trade · BTC</div><div style="all:initial;display:flex;gap:6px;margin-bottom:6px;font-family:system-ui;"><div style="all:initial;flex:1;background:rgba(68,184,40,0.15);border:1px solid rgba(68,184,40,0.3);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#00FF88;font-weight:700;display:block;box-sizing:border-box;">LONG</div><div style="all:initial;flex:1;background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.2);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#FF003F;font-weight:700;display:block;box-sizing:border-box;">SHORT</div></div><div style="all:initial;background:rgba(255,255,255,0.04);border-radius:6px;padding:6px;display:block;font-family:system-ui;"><div style="all:initial;display:flex;justify-content:space-between;font-size:8px;margin-bottom:3px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">AI Score</span><span style="color:#00FF88;">72/100</span></div><div style="all:initial;display:flex;justify-content:space-between;font-size:8px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">TP1</span><span style="color:#fff;">$75,800</span></div></div></div>
+            <div id="pscreen-bots" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:6px;">Active Bots</div><div style="all:initial;background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;margin-bottom:5px;font-family:system-ui;"><div style="all:initial;font-family:system-ui;"><div style="all:initial;font-size:9px;font-weight:600;color:#fff;display:block;">Grid Scalper</div><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;">BTC · $500</div></div><div style="all:initial;font-size:9px;color:#00FF88;font-weight:600;font-family:system-ui;">+$24.50</div></div></div>
+          </div>
+          <div style="all:initial;position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;font-family:system-ui;">
+            <div class="pnav-btn active-nav" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:#00FF88;font-family:system-ui;"><div style="font-size:16px;">🏠</div><div>Home</div></div>
+            <div class="pnav-btn" data-screen="markets" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">📊</div><div>Markets</div></div>
+            <div class="pnav-btn" data-screen="trade" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">💹</div><div>Trade</div></div>
+            <div class="pnav-btn" data-screen="bots" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">🤖</div><div>Bots</div></div>
+            <div class="pnav-btn" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">⚙️</div><div>Settings</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;pointer-events:none;"></div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;min-width:300px;max-width:500px;">
+      <div style="font-size:11px;font-weight:600;color:#44B828;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Available Everywhere</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px;">Trade from your pocket.<br><span style="color:#44B828;">No app store needed.</span></h2>
+      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:32px;">ExNexus works as a native app on any device. Install from your browser — iOS, Android, Desktop. Full terminal. Real trades. Zero downloads.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">1</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">Open <strong style="color:#fff;">exnexus.app</strong> in your mobile browser</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">2</div><div style="font-size:13px;color:rgba(255,255,255,0.7);"><strong style="color:#fff;">Android:</strong> Menu → Add to Home Screen &nbsp;|&nbsp; <strong style="color:#fff;">iOS:</strong> Share → Add to Home Screen</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">3</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">ExNexus appears on your home screen like a native app ✅</div></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+        <a href="https://exnexus.app/terminal.html" style="display:inline-flex;align-items:center;gap:8px;background:#44B828;color:#000;font-weight:700;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">📱 Open Trading App</a>
+        <a href="https://exnexus.app/terminal.html?demo=1" style="display:inline-flex;align-items:center;gap:8px;background:rgba(68,184,40,0.08);color:#44B828;border:1px solid rgba(68,184,40,0.3);font-weight:600;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">🎮 Try Demo Free</a>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🍎 iOS Safari</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🤖 Android Chrome</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">💻 Desktop</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── Phone Banner JS ── */
+(function(){
+  // Live price via WebSocket
+  function startPhoneWS(){
+    const ws=new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+    ws.onmessage=e=>{
+      const d=JSON.parse(e.data),p=parseFloat(d.c),ch=parseFloat(d.P);
+      const pe=document.getElementById('pwa-btc-price');
+      const ce=document.getElementById('pwa-btc-change');
+      if(pe)pe.textContent='$'+p.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if(ce){ce.textContent=(ch>=0?'+':'')+ch.toFixed(2)+'% today';ce.style.color=ch>=0?'#00FF88':'#FF003F';}
+    };
+    ws.onclose=()=>setTimeout(startPhoneWS,3000);
+  }
+  // Nav switching
+  let auto=null;
+  function sw(n){
+    document.querySelectorAll('.pscreen').forEach(s=>s.style.display='none');
+    const el=document.getElementById('pscreen-'+n);
+    if(el)el.style.display='block';
+    document.querySelectorAll('.pnav-btn').forEach(b=>b.style.color='rgba(255,255,255,0.4)');
+    document.querySelectorAll('.pnav-btn[data-screen="'+n+'"]').forEach(b=>b.style.color='#00FF88');
+  }
+  function startAuto(){const sc=['home','markets','trade','bots'];let i=0;auto=setInterval(()=>{i=(i+1)%sc.length;sw(sc[i]);},3000);}
+  document.addEventListener('DOMContentLoaded',()=>{
+    startPhoneWS();
+    startAuto();
+    document.querySelectorAll('.pnav-btn').forEach(b=>{
+      b.addEventListener('mouseenter',()=>{clearInterval(auto);setTimeout(()=>sw(b.dataset.screen),150);});
+      b.addEventListener('mouseleave',()=>setTimeout(startAuto,2000));
+      b.addEventListener('click',()=>{clearInterval(auto);sw(b.dataset.screen);setTimeout(startAuto,4000);});
+    });
+  });
+})();
+</script>
+
 <div class="divider"></div>
 
 <!-- ═══════════ FEATURES ═══════════ -->
