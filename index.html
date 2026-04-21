@@ -850,29 +850,7 @@ footer{
         body.white-theme #mobile-app-section p { color: rgba(255,255,255,0.6) !important; }
         body.white-theme #mobile-app-section .step-text { color: rgba(255,255,255,0.7) !important; }
 
-        /* Theme toggle button */
-        #theme-toggle {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(68,184,40,0.12);
-            border: 1px solid rgba(68,184,40,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            z-index: 9999;
-            transition: all .2s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-        #theme-toggle:hover {
-            background: rgba(68,184,40,0.2);
-            transform: scale(1.1);
-        }
+        /* theme toggle moved to navbar */
 
         
         /* ── Phone Mockup Nav ── */
@@ -884,21 +862,26 @@ footer{
         .pnav-btn.active-nav { color: #00FF88 !important; }
         .pnav-btn:hover { color: rgba(255,255,255,0.9) !important; }
 
+        
+        .site-lang-opt {
+            padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);
+            cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:8px;
+        }
+        .site-lang-opt:hover { background:rgba(255,255,255,0.07); }
+        /* White theme overrides for nav icons */
+        body.white-theme #site-globe-btn,
+        body.white-theme #site-theme-btn { 
+            background:rgba(0,0,0,0.06) !important; 
+            border-color:rgba(0,0,0,0.15) !important;
+            color:#333 !important;
+        }
+        body.white-theme #site-globe-menu { background:#fff; border-color:rgba(0,0,0,0.1); }
+        body.white-theme .site-lang-opt { color:#333; }
+        body.white-theme .site-lang-opt:hover { background:rgba(0,0,0,0.05); }
+
         </style>
 </head>
 <body>
-
-<!-- Language Bar -->
-<div id="lang-bar">
-  <span data-i18n="choose_lang">Language:</span>
-  <button class="lang-btn active" id="lang-en" onclick="setLang('en')">
-    <span class="lang-flag">🇺🇸</span> English
-  </button>
-  <button class="lang-btn" id="lang-he" onclick="setLang('he')">
-    <span class="lang-flag">🇮🇱</span> עברית
-  </button>
-  <button id="lang-more-btn" onclick="openLangModal()">+ More Languages</button>
-</div>
 
 <!-- Language Modal -->
 <div id="lang-modal">
@@ -1036,7 +1019,56 @@ footer{
         <div id="sloth-glow"></div>
         <div id="sloth-bubble">Hey! Ask me anything 🎩</div>
     </div>
-    <button class="btn-login" onclick="launchTerminal()" data-i18n="btn_login">Log In</button>
+    <!-- 3 Icon buttons -->
+    <div style="display:flex;align-items:center;gap:6px;margin-right:8px;">
+
+        <!-- 🌐 Globe Language -->
+        <div style="position:relative;">
+            <button id="site-globe-btn" onclick="toggleSiteGlobe()" title="Language" style="
+                background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+                color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;
+                font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+                transition:all .15s;
+            " onmouseover="this.style.background='rgba(255,255,255,0.12)'" 
+               onmouseout="this.style.background='rgba(255,255,255,0.06)'">🌐</button>
+            <div id="site-globe-menu" style="
+                display:none;position:absolute;right:0;top:44px;
+                background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);
+                border-radius:10px;overflow:hidden;z-index:99999;min-width:160px;
+                box-shadow:0 8px 24px rgba(0,0,0,0.5);
+            ">
+                <div style="padding:8px 12px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,0.06);">Select Language</div>
+                <div onclick="setLang('en');closeSiteGlobe()"  class="site-lang-opt">🇺🇸 English</div>
+                <div onclick="setLang('he');closeSiteGlobe()"  class="site-lang-opt">🇮🇱 עברית</div>
+                <div onclick="setLang('ar');closeSiteGlobe()"  class="site-lang-opt">🇸🇦 العربية</div>
+                <div onclick="setLang('es');closeSiteGlobe()"  class="site-lang-opt">🇪🇸 Español</div>
+                <div onclick="setLang('fr');closeSiteGlobe()"  class="site-lang-opt">🇫🇷 Français</div>
+                <div onclick="setLang('ru');closeSiteGlobe()"  class="site-lang-opt">🇷🇺 Русский</div>
+                <div onclick="setLang('zh');closeSiteGlobe()"  class="site-lang-opt">🇨🇳 中文</div>
+                <div onclick="setLang('tr');closeSiteGlobe()"  class="site-lang-opt">🇹🇷 Türkçe</div>
+            </div>
+        </div>
+
+        <!-- ⚙️ Settings -->
+        <button onclick="toggleSiteSettings()" title="Settings" style="
+            background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+            color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;
+            font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+            transition:all .15s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.12)'" 
+           onmouseout="this.style.background='rgba(255,255,255,0.06)'">⚙️</button>
+
+        <!-- ☀️/🌙 Theme Toggle -->
+        <button id="site-theme-btn" onclick="toggleSiteTheme()" title="Toggle theme" style="
+            background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+            color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;
+            font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+            transition:all .15s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.12)'" 
+           onmouseout="this.style.background='rgba(255,255,255,0.06)'">☀️</button>
+    </div>
+
+    <button class="btn-login" onclick="launchTerminal()" data-i18n="btn_login">Sign In / Up</button>
     <button class="btn-launch" onclick="launchTerminal()" data-i18n="btn_launch">Launch Terminal →</button>
     <button id="mob-menu-btn" onclick="toggleMobMenu()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -3054,26 +3086,10 @@ document.addEventListener('DOMContentLoaded', startPhoneWS);
 </script>
 
 
-<!-- Theme Toggle -->
-<button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark theme">☀️</button>
+
 
 <script>
-/* ── White Theme Toggle ── */
-function toggleTheme() {
-    const isWhite = document.body.classList.toggle('white-theme');
-    document.getElementById('theme-toggle').textContent = isWhite ? '🌙' : '☀️';
-    localStorage.setItem('exnexus_theme', isWhite ? 'white' : 'dark');
-}
 
-// Apply saved theme on load
-(function() {
-    const saved = localStorage.getItem('exnexus_theme');
-    if(saved === 'white') {
-        document.body.classList.add('white-theme');
-        const btn = document.getElementById('theme-toggle');
-        if(btn) btn.textContent = '🌙';
-    }
-})();
 </script>
 
 <script>
@@ -3147,6 +3163,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+</script>
+<script>
+/* ── Site Navbar Icons ── */
+function toggleSiteGlobe() {
+    const menu = document.getElementById('site-globe-menu');
+    if(menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+function closeSiteGlobe() {
+    const menu = document.getElementById('site-globe-menu');
+    if(menu) menu.style.display = 'none';
+}
+document.addEventListener('click', e => {
+    if(!e.target.closest('#site-globe-btn') && !e.target.closest('#site-globe-menu')) {
+        closeSiteGlobe();
+    }
+});
+
+function toggleSiteSettings() {
+    // Scroll to or show settings section — for now scroll to pricing
+    const el = document.getElementById('pricing') || document.getElementById('features');
+    if(el) el.scrollIntoView({behavior:'smooth'});
+}
+
+function toggleSiteTheme() {
+    const isWhite = document.body.classList.toggle('white-theme');
+    const btn = document.getElementById('site-theme-btn');
+    if(btn) btn.textContent = isWhite ? '🌙' : '☀️';
+    // Also update phone banner bg
+    const banner = document.getElementById('mobile-app-section');
+    localStorage.setItem('exnexus_site_theme', isWhite ? 'white' : 'dark');
+}
+
+// Apply saved theme on load
+(function(){
+    const saved = localStorage.getItem('exnexus_site_theme');
+    if(saved === 'white') {
+        document.body.classList.add('white-theme');
+        const btn = document.getElementById('site-theme-btn');
+        if(btn) btn.textContent = '🌙';
+    }
+})();
 </script>
 </body>
 </html>
