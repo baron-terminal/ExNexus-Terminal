@@ -6499,56 +6499,48 @@ function exGetAnswer(question) {
 
 // ── Live Context (terminal page only) ────────────────────────
 function exLiveContext(q) {
-  // Only works in terminal where live data exists
   if(typeof getCurrentPrice === 'undefined') return null;
-
   const btcPrice = getCurrentPrice('BTCUSDT');
 
   if(q.includes('btc') && (q.includes('price') || q.includes('now') || q.includes('current'))) {
     return btcPrice > 0
-      ? `BTC is at $${btcPrice.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})} 📊`
-      : `Loading BTC price...`;
+      ? 'BTC is at $' + btcPrice.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' 📊'
+      : 'Loading BTC price...';
   }
 
   if(q.includes('balance') || q.includes('how much')) {
     if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
-      return `Your demo balance is $${demoState.balance.toFixed(2)} 🎮`;
+      return 'Your demo balance is $' + demoState.balance.toFixed(2) + ' 🎮';
     }
-    return `Check your balance in the Assets tab.
-Add API keys in Settings first 🔑`;
+    return 'Check your balance in the Assets tab. Add API keys in Settings first 🔑';
   }
 
   if(q.includes('position') || q.includes('open trade')) {
     if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
       const pos = demoState.positions;
       return pos.length > 0
-        ? `${pos.length} open position(s):
-${pos.map(p=>`${p.symbol} ${p.side}`).join('
-')}`
-        : `No open demo positions.
-Want to try a trade? 🎮`;
+        ? pos.length + ' open position(s): ' + pos.map(p=>p.symbol+' '+p.side).join(', ')
+        : 'No open demo positions. Want to try a trade? 🎮';
     }
-    return `Check your Positions tab below 📊`;
+    return 'Check your Positions tab below 📊';
   }
 
   if(q.includes('sentiment') || q.includes('fear') || q.includes('greed')) {
-    const fgEl = document.getElementById('fg-value-display');
+    const fgEl  = document.getElementById('fg-value-display');
     const fgLbl = document.getElementById('fg-label-display');
     if(fgEl && fgLbl) {
-      return `Market Sentiment: ${fgLbl.textContent} (${fgEl.textContent}/100)
-${parseInt(fgEl.textContent) < 30 ? '→ Historically good buying zone' : parseInt(fgEl.textContent) > 70 ? '→ Be cautious, market overheated' : '→ Neutral territory'} 😊`;
+      const val = parseInt(fgEl.textContent);
+      return 'Market Sentiment: ' + fgLbl.textContent + ' (' + val + '/100). ' +
+        (val < 30 ? '→ Historically good buying zone' : val > 70 ? '→ Be cautious, market overheated' : '→ Neutral territory') + ' 😊';
     }
   }
 
   if(q.includes('bot') && (q.includes('running') || q.includes('active'))) {
     if(typeof demoBots !== 'undefined') {
-      const running = Object.entries(demoBots)
-        .filter(([,b]) => b.running)
-        .map(([,b]) => b.name);
+      const running = Object.entries(demoBots).filter(([,b]) => b.running).map(([,b]) => b.name);
       return running.length > 0
-        ? `Running bots: ${running.join(', ')} 🤖`
-        : `No bots running.
-Start one in the Bots tab! 🤖`;
+        ? 'Running bots: ' + running.join(', ') + ' 🤖'
+        : 'No bots running. Start one in the Bots tab! 🤖';
     }
   }
 
