@@ -1839,7 +1839,7 @@
             <span class="nav-tip" style="border-left:2px solid var(--neon);">Performance</span>
         </div>
 
-        <div class="nav-item" id="nav-scout" onclick="togglePanel('scout')" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.18);">
+        <div class="nav-item" id="nav-scout" onclick="togglePanel('scout'); setTimeout(()=>{if(document.getElementById('panel-scout')?.classList.contains('open'))runScout();},300);" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.18);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
             <span class="nav-tip" style="border-left:2px solid var(--purple);">AI Scout</span>
         </div>
@@ -2648,22 +2648,149 @@ async function fetchFearGreed(){
 }
 
 /* ============ AI SCOUT (MOCK) ============ */
-function runScout(){
-    const coin = document.getElementById('scout-coin').value;
-    const signals=[
-        {id:'ss1',text:'Bullish · RSI 58, MACD Cross ↑',color:'var(--neon)'},
-        {id:'ss2',text:'Strong · Score 7.2/10',color:'#6fff4a'},
-        {id:'ss3',text:'Accumulation detected',color:'var(--yellow)'},
-        {id:'ss4',text:'Longs 63% / Shorts 37%',color:'var(--neon)'},
-        {id:'ss5',text:'$2.1M short liq. below market',color:'var(--yellow)'},
-    ];
-    signals.forEach(s=>{ const el=document.getElementById(s.id); el.textContent=s.text; el.style.color=s.color; });
-    const prob = 71;
-    document.getElementById('prob-circle').style.strokeDashoffset = 213.6-(prob/100)*213.6;
-    document.getElementById('prob-val').textContent = prob+'%';
-    document.getElementById('prob-summary').textContent = `${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
-    document.getElementById('bot-rec').innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
-    document.getElementById('scout-reasoning').textContent = `${coin}: RSI at 58 with bullish MACD cross on 4H (Signal Intelligence). Smart money accumulation detected. ExNexus shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
+async function runScout(){
+    const coin = (document.getElementById('scout-coin')?.value || 'BTCUSDT').toUpperCase().replace('/','').replace('-','');
+    const sym  = coin.endsWith('USDT') ? coin : coin + 'USDT';
+
+    // Show loading state
+    ['ss1','ss2','ss3','ss4','ss5'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.textContent = 'Loading...'; el.style.color = 'rgba(255,255,255,0.3)'; }
+    });
+    const probEl  = document.getElementById('prob-val');
+    const circleEl= document.getElementById('prob-circle');
+    const summaryEl= document.getElementById('prob-summary');
+    const botEl   = document.getElementById('bot-rec');
+    const reasonEl= document.getElementById('scout-reasoning');
+    if(probEl) probEl.textContent = '...';
+    if(summaryEl) summaryEl.textContent = 'Fetching live market data...';
+
+    try {
+        // ── Fetch live data from Market Worker ──────────────────
+        const [coinRes, lsRes, fundRes, oiRes, sentRes] = await Promise.allSettled([
+            fetch(`${MARKET}/coin?symbol=${sym.replace('USDT','')}`),
+            fetch(`${MARKET}/ls?symbol=${sym}`),
+            fetch(`${MARKET}/funding?symbol=${sym}`),
+            fetch(`${MARKET}/oi?symbol=${sym}`),
+            fetch(`${MARKET}/sentiment?symbol=${sym}`)
+        ]);
+
+        const coinData = coinRes.status === 'fulfilled' ? await coinRes.value.json() : {};
+        const lsData   = lsRes.status   === 'fulfilled' ? await lsRes.value.json()   : {};
+        const fundData = fundRes.status === 'fulfilled' ? await fundRes.value.json() : {};
+        const oiData   = oiRes.status   === 'fulfilled' ? await oiRes.value.json()   : {};
+        const sentData = sentRes.status === 'fulfilled' ? await sentRes.value.json() : {};
+
+        // ── Extract key metrics ──────────────────────────────────
+        const price    = coinData.price   || coinData.quote?.USD?.price || 0;
+        const chg1h    = coinData.change_1h  || coinData.quote?.USD?.percent_change_1h  || 0;
+        const chg24h   = coinData.change_24h || coinData.quote?.USD?.percent_change_24h || 0;
+        const chg7d    = coinData.change_7d  || coinData.quote?.USD?.percent_change_7d  || 0;
+        const vol24h   = coinData.volume_24h || coinData.quote?.USD?.volume_24h || 0;
+        const mcap     = coinData.mcap       || coinData.quote?.USD?.market_cap || 0;
+
+        const longPct  = lsData.longRatio  || lsData.long_ratio  || lsData.buyRatio  || 55;
+        const shortPct = lsData.shortRatio || lsData.short_ratio || lsData.sellRatio || 45;
+        const funding  = fundData.fundingRate || fundData.funding_rate || fundData.rate || 0;
+        const oi       = oiData.openInterest || oiData.open_interest || oiData.oi || 0;
+        const fg       = sentData.value || sentData.score || 50;
+
+        // ── AI Score Calculation ─────────────────────────────────
+        let score = 50;
+
+        // Momentum signals
+        if(chg1h  > 0) score += Math.min(chg1h  * 3, 12);
+        if(chg24h > 0) score += Math.min(chg24h * 1.5, 15);
+        if(chg7d  > 0) score += Math.min(chg7d  * 0.5, 8);
+        if(chg1h  < 0) score += Math.max(chg1h  * 3, -12);
+        if(chg24h < 0) score += Math.max(chg24h * 1.5, -15);
+
+        // Long/Short positioning
+        if(longPct > 60) score += 8;
+        else if(longPct > 55) score += 4;
+        else if(longPct < 40) score -= 8;
+
+        // Funding rate (negative = bullish for longs)
+        const fundNum = parseFloat(funding) * 100;
+        if(fundNum < -0.01) score += 6;
+        else if(fundNum > 0.05) score -= 5;
+
+        // Fear & Greed
+        if(fg < 30) score += 5;  // extreme fear = buying opportunity
+        else if(fg > 75) score -= 5; // extreme greed = caution
+
+        score = Math.max(5, Math.min(95, Math.round(score)));
+
+        // ── Bias & Signal ────────────────────────────────────────
+        const bias  = score >= 65 ? 'Bullish' : score <= 35 ? 'Bearish' : 'Neutral';
+        const biasColor = score >= 65 ? 'var(--neon)' : score <= 35 ? 'var(--hot-red)' : '#F0B429';
+
+        // ── TP / SL Calculation ──────────────────────────────────
+        const atr   = Math.abs(chg24h) * price / 100 * 1.5 || price * 0.02;
+        const side  = score >= 50 ? 'Long' : 'Short';
+        const tp1   = side === 'Long' ? price + atr * 1.2 : price - atr * 1.2;
+        const tp2   = side === 'Long' ? price + atr * 2.5 : price - atr * 2.5;
+        const sl    = side === 'Long' ? price - atr * 0.8 : price + atr * 0.8;
+
+        const fmt = (n) => n > 1000 ? '$' + n.toLocaleString('en',{maximumFractionDigits:2})
+                         : n > 1    ? '$' + n.toFixed(3)
+                         : '$' + n.toFixed(5);
+
+        // ── Update Signal Rows ───────────────────────────────────
+        const rows = [
+            { id:'ss1', text:`${bias} · ${chg1h>=0?'+':''}${chg1h.toFixed(2)}% 1H, ${chg24h>=0?'+':''}${chg24h.toFixed(2)}% 24H`, color: biasColor },
+            { id:'ss2', text:`AI Score ${score}/100 · ${bias}`, color: score>=65?'#6fff4a':score<=35?'var(--hot-red)':'#F0B429' },
+            { id:'ss3', text:`L/S Ratio: ${parseFloat(longPct).toFixed(1)}% Long / ${parseFloat(shortPct).toFixed(1)}% Short`, color: longPct>55?'var(--neon)':'var(--yellow)' },
+            { id:'ss4', text:`Funding: ${(parseFloat(funding)*100).toFixed(4)}% · F&G Index: ${fg}`, color: fundNum<0?'var(--neon)':'rgba(255,255,255,0.6)' },
+            { id:'ss5', text:`Vol 24H: $${(vol24h/1e6).toFixed(0)}M · OI: ${oi?'$'+(oi/1e6).toFixed(0)+'M':'N/A'}`, color:'rgba(255,255,255,0.6)' },
+        ];
+        rows.forEach(r => {
+            const el = document.getElementById(r.id);
+            if(el){ el.textContent = r.text; el.style.color = r.color; }
+        });
+
+        // ── Update Probability Circle ────────────────────────────
+        if(circleEl) circleEl.style.strokeDashoffset = 213.6 - (score/100) * 213.6;
+        if(probEl)   probEl.textContent = score + '%';
+
+        // ── Summary ──────────────────────────────────────────────
+        if(summaryEl) summaryEl.textContent =
+            `${score}% estimated win probability for ${sym.replace('USDT','')} ${side.toLowerCase()} · ` +
+            `${bias} momentum, L/S ${parseFloat(longPct).toFixed(0)}/${parseFloat(shortPct).toFixed(0)}, ` +
+            `funding ${(parseFloat(funding)*100).toFixed(4)}%.`;
+
+        // ── Trade Recommendation ─────────────────────────────────
+        if(botEl) botEl.innerHTML =
+            `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:11px;font-weight:600;color:${biasColor};">Smart Trade · ${side}</span>
+                <span style="font-size:9.5px;color:var(--text-dim);">Bybit · ExNexus AI</span>
+            </div>
+            <div style="font-size:10px;color:var(--text-mid);line-height:1.8;">
+                Entry: ${fmt(price)}<br>
+                TP1: ${fmt(tp1)} <span style="color:var(--neon);">(${((Math.abs(tp1-price)/price)*100).toFixed(1)}%)</span><br>
+                TP2: ${fmt(tp2)} <span style="color:var(--neon);">(${((Math.abs(tp2-price)/price)*100).toFixed(1)}%)</span><br>
+                SL: ${fmt(sl)} <span style="color:var(--hot-red);">(${((Math.abs(sl-price)/price)*100).toFixed(1)}%)</span>
+            </div>`;
+
+        // ── AI Reasoning ─────────────────────────────────────────
+        if(reasonEl) reasonEl.textContent =
+            `${sym.replace('USDT','')}: ${bias} bias with score ${score}/100. ` +
+            `Price ${chg24h>=0?'up':'down'} ${Math.abs(chg24h).toFixed(2)}% in 24H. ` +
+            `Long/Short ratio ${parseFloat(longPct).toFixed(0)}/${parseFloat(shortPct).toFixed(0)} — ` +
+            `${longPct>60?'long dominant, squeeze risk for shorts.':longPct<40?'short dominant, potential short squeeze.':'balanced positioning.'} ` +
+            `Funding ${(parseFloat(funding)*100).toFixed(4)}% — ` +
+            `${fundNum<0?'negative funding favors longs.':fundNum>0.03?'elevated funding, longs paying premium.':'neutral.'} ` +
+            `Fear & Greed: ${fg} — ${fg<30?'extreme fear, historically good entry.':fg>75?'extreme greed, take profits.':'neutral market sentiment.'} ` +
+            `Recommendation: ${side} ${sym.replace('USDT','')} · TP1 ${fmt(tp1)} · TP2 ${fmt(tp2)} · SL ${fmt(sl)}.`;
+
+    } catch(err) {
+        console.error('AI Scout error:', err);
+        if(summaryEl) summaryEl.textContent = 'Error fetching live data. Check connection.';
+        ['ss1','ss2','ss3','ss4','ss5'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el){ el.textContent = 'Data unavailable'; el.style.color = 'rgba(255,255,255,0.3)'; }
+        });
+    }
 }
 
 /* ============ TABLET TRADE DRAWER ============ */
