@@ -2342,6 +2342,35 @@ $(function(){
 function closeAI(){ $("#ai-briefing").fadeOut(100,()=>{ $("#draggable-ai").css("width","40px"); }); }
 
 /* ============ TRADINGVIEW ============ */
+
+/* ============================================================
+   BOOT BRAIN — App initialization after auth
+============================================================ */
+function bootBrain() {
+    try {
+        // Start live ticker
+        if(typeof startLiveTicker === 'function') startLiveTicker('BTCUSDT');
+        // Start session timer
+        if(typeof startSessionTimer === 'function') startSessionTimer();
+        // Check demo mode
+        if(typeof checkDemoOnBoot === 'function') checkDemoOnBoot();
+        // Check sync code
+        if(typeof checkSyncOnBoot === 'function') checkSyncOnBoot();
+        // Load exchange status
+        if(typeof updateExchangeStatus === 'function') updateExchangeStatus();
+        // Load positions
+        if(typeof loadPositions === 'function') loadPositions();
+        // Load assets
+        if(typeof loadAssets === 'function') loadAssets();
+        // Fear & Greed
+        if(typeof fetchFearGreed === 'function') fetchFearGreed();
+        // Update user header
+        if(typeof updateUserHeader === 'function') updateUserHeader();
+    } catch(e) {
+        console.log('bootBrain error:', e.message);
+    }
+}
+
 window.onload = () => {
     // Check auth first — if not logged in, show login screen
     // bootBrain() called from completeLogin() → enterApp()
