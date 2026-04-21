@@ -851,6 +851,326 @@ footer{
         
         
 
+</style>
+</head>
+<body>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav>
+  <div class="nav-logo">
+    <img src="https://raw.githubusercontent.com/baron-terminal/ExNexus-Terminal/main/Logo.png" alt="ExNexus" id="nav-logo-img">
+  </div>
+
+  <div class="nav-links" id="nav-links">
+    <div class="nav-item"><span>Markets</span><span class="nav-caret">▾</span>
+      <div class="nav-dropdown">
+        <div class="dd-item" onclick="goto('#prices')"><div class="dd-icon" style="background:rgba(68,184,40,0.1);">📊</div><div><div class="dd-text-title">Live Prices</div><div class="dd-text-sub">Real-time across all exchanges</div></div></div>
+        <div class="dd-item" onclick="goto('#intelligence')"><div class="dd-icon" style="background:rgba(240,180,41,0.1);">🌊</div><div><div class="dd-text-title">Market Sentiment</div><div class="dd-text-sub">Fear & Greed + Smart Money Flow</div></div></div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="goto('#arbitrage')"><div class="dd-icon" style="background:rgba(66,133,244,0.1);">⚡</div><div><div class="dd-text-title">Arb Opportunities</div><div class="dd-text-sub">Live cross-exchange spreads</div></div></div>
+      </div>
+    </div>
+    <div class="nav-item"><span>Trade</span><span class="nav-caret">▾</span>
+      <div class="nav-dropdown" style="min-width:280px;">
+        <div class="dd-item" onclick="launchTerminal()"><div class="dd-icon" style="background:rgba(68,184,40,0.1);">🖥️</div><div><div class="dd-text-title">Trading Terminal</div><div class="dd-text-sub">Full institutional-grade terminal</div></div></div>
+        <div class="dd-item" onclick="launchTerminal()"><div class="dd-icon" style="background:rgba(240,180,41,0.1);">🎮</div><div><div class="dd-text-title">Demo Mode</div><div class="dd-text-sub">Practice with $10K virtual</div></div></div>
+      </div>
+    </div>
+    <div class="nav-item"><span>Tools</span><span class="nav-caret">▾</span>
+      <div class="nav-dropdown">
+        <div class="dd-item" onclick="goto('#screener')"><div class="dd-icon" style="background:rgba(155,114,203,0.1);">🔍</div><div><div class="dd-text-title">Signal Intelligence</div><div class="dd-text-sub">AI-powered coin screener</div></div></div>
+        <div class="dd-item" onclick="goto('#bots')"><div class="dd-icon" style="background:rgba(68,184,40,0.1);">🤖</div><div><div class="dd-text-title">Trading Bots</div><div class="dd-text-sub">6 automated strategies</div></div></div>
+      </div>
+    </div>
+    <div class="nav-item" onclick="goto('#why')"><span>Why ExNexus</span></div>
+    <div class="nav-item" onclick="goto('#bots')"><span>Bots</span></div>
+    <div class="nav-item" onclick="goto('#intelligence')"><span>Intelligence</span></div>
+    <div class="nav-item" onclick="goto('#learn')"><span>Learn</span></div>
+  </div>
+
+  <div class="nav-right">
+    <!-- 🌐 Globe -->
+    <div style="position:relative;">
+      <button id="site-globe-btn" onclick="toggleSiteGlobe()" title="Language" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌐</button>
+      <div id="site-globe-menu" style="display:none;position:absolute;right:0;top:44px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;z-index:99999;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+        <div style="padding:8px 12px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,0.06);">Language</div>
+        <div onclick="setLang('en');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇺🇸 English</div>
+        <div onclick="setLang('he');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇮🇱 עברית</div>
+        <div onclick="setLang('ar');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇸🇦 العربية</div>
+        <div onclick="setLang('es');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇪🇸 Español</div>
+        <div onclick="setLang('fr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇫🇷 Français</div>
+        <div onclick="setLang('ru');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇷🇺 Русский</div>
+        <div onclick="setLang('zh');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇨🇳 中文</div>
+        <div onclick="setLang('tr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇹🇷 Türkçe</div>
+      </div>
+    </div>
+    <!-- ⚙️ Settings -->
+    <button onclick="toggleSiteSettings()" title="Settings" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⚙️</button>
+    <!-- ☀️ Theme -->
+    <button id="site-theme-btn" onclick="toggleSiteTheme()" title="Toggle theme" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">☀️</button>
+
+    <!-- Ex the Sloth -->
+    <div id="sloth-mascot" onclick="openSlothChat()" title="Ask Ex anything..." style="position:relative;width:38px;height:38px;cursor:pointer;border-radius:50%;overflow:hidden;border:2px solid rgba(68,184,40,0.35);transition:all .25s;flex-shrink:0;">
+      <img id="sloth-img" src="https://raw.githubusercontent.com/baron-terminal/ExNexus-Terminal/main/Logo.png" alt="Ex" style="width:100%;height:100%;object-fit:cover;">
+      <div id="sloth-bubble" style="position:absolute;top:calc(100% + 10px);right:0;background:#1e1e1e;border:1px solid rgba(68,184,40,0.3);color:#fff;font-size:12px;padding:8px 14px;border-radius:12px 4px 12px 12px;white-space:nowrap;opacity:0;pointer-events:none;">Ask me anything... 🎩</div>
+    </div>
+
+    <button class="btn-login" onclick="launchTerminal()">Sign In / Up</button>
+    <button class="btn-launch" onclick="launchTerminal()">Launch Terminal →</button>
+    <button id="mob-menu-btn" onclick="toggleMobMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mob-menu">
+  <div class="mob-nav-item" onclick="launchTerminal();toggleMobMenu()">Trading Terminal</div>
+  <div class="mob-nav-item" onclick="goto('#features');toggleMobMenu()">Features</div>
+  <div class="mob-nav-item" onclick="goto('#bots');toggleMobMenu()">Bots</div>
+  <div class="mob-nav-item" onclick="goto('#learn');toggleMobMenu()">Learn</div>
+  <div class="mob-nav-item" onclick="launchTerminal()">Sign In / Up</div>
+</div>
+
+<!-- ═══ TICKER ═══ -->
+<div class="ticker-bar">
+  <div class="ticker-inner" id="ticker-inner">
+    <span class="ticker-item"><span class="ticker-sym">BTC/USDT</span> <span class="ticker-price" id="hc-btc">$—</span> <span class="ticker-chg" id="hc-btc-chg">—</span></span>
+    <span class="ticker-item"><span class="ticker-sym">ETH/USDT</span> <span class="ticker-price" id="hc-eth">$—</span> <span class="ticker-chg" id="hc-eth-chg">—</span></span>
+    <span class="ticker-item"><span class="ticker-sym">SOL/USDT</span> <span class="ticker-price" id="hc-sol">$—</span> <span class="ticker-chg" id="hc-sol-chg">—</span></span>
+    <span class="ticker-item"><span class="ticker-sym">XRP/USDT</span> <span class="ticker-price" id="hc-xrp">$—</span> <span class="ticker-chg" id="hc-xrp-chg">—</span></span>
+    <span class="ticker-item"><span class="ticker-sym">BNB/USDT</span> <span class="ticker-price" id="hc-bnb">$—</span> <span class="ticker-chg" id="hc-bnb-chg">—</span></span>
+    <span class="ticker-item"><span class="ticker-sym">AVAX/USDT</span> <span class="ticker-price" id="hc-avax">$—</span> <span class="ticker-chg" id="hc-avax-chg">—</span></span>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Live Trading Intelligence</div>
+    <h1>Trade smarter.<br>Not harder.<br><span class="accent">Stay slow.</span></h1>
+    <p class="hero-sub">ExNexus unifies CEX + DeFi in one institutional terminal. AI signals, automated bots, real-time arbitrage — all in your browser.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="launchTerminal()">🚀 Launch Terminal</button>
+      <button class="btn-secondary" onclick="launchTerminal()">🎮 Try Demo Free</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-val">$2.5T+</div><div class="hero-stat-lbl">Market Cap Tracked</div></div>
+      <div><div class="hero-stat-val">6</div><div class="hero-stat-lbl">Trading Bots</div></div>
+      <div><div class="hero-stat-val">200+</div><div class="hero-stat-lbl">Coins Screened</div></div>
+      <div><div class="hero-stat-val">$0</div><div class="hero-stat-lbl">To Start</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="price-card"><div class="price-card-sym"><div class="price-card-icon" style="background:#F7931A;">₿</div>BTC/USDT</div><div class="price-card-price" id="hc-btc2">$—</div><div class="price-card-chg pos" id="hc-btc-chg2">—</div></div>
+    <div class="price-card"><div class="price-card-sym"><div class="price-card-icon" style="background:#627EEA;">Ξ</div>ETH/USDT</div><div class="price-card-price" id="hc-eth2">$—</div><div class="price-card-chg pos" id="hc-eth-chg2">—</div></div>
+    <div class="price-card"><div class="price-card-sym"><div class="price-card-icon" style="background:#9945FF;">◎</div>SOL/USDT</div><div class="price-card-price" id="hc-sol2">$—</div><div class="price-card-chg pos" id="hc-sol-chg2">—</div></div>
+    <div class="price-card"><div class="price-card-sym"><div class="price-card-icon" style="background:#00AAE4;">✕</div>XRP/USDT</div><div class="price-card-price" id="hc-xrp2">$—</div><div class="price-card-chg pos" id="hc-xrp-chg2">—</div></div>
+  </div>
+</div>
+
+<!-- ═══ SLOGAN ═══ -->
+<div id="slogan-bar">
+  <span>Stay slow. Trade smart.</span> Let ExNexus do the rest. 🦥
+</div>
+
+<!-- ═══ PHONE BANNER ═══ -->
+<section style="padding:0 24px 60px;background:transparent;">
+  <div style="background:#ffffff;border-radius:24px;padding:70px 60px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:100px;flex-wrap:wrap;">
+
+    <!-- Phone mockup — ALWAYS DARK via shadow DOM isolation -->
+    <div style="flex:0 0 auto;position:relative;display:flex;justify-content:center;">
+      <div style="width:240px;height:480px;border-radius:36px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.6);position:relative;isolation:isolate;">
+        <!-- Self-contained dark phone — not affected by parent CSS -->
+        <div style="all:initial;display:block;width:240px;height:480px;background:linear-gradient(180deg,#1a1a1a,#111);font-family:system-ui;position:relative;border:2px solid rgba(255,255,255,0.1);border-radius:36px;overflow:hidden;box-sizing:border-box;">
+          <!-- Status bar -->
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;height:40px;background:#111;padding:0 20px;font-size:10px;color:rgba(255,255,255,0.6);border-radius:34px 34px 0 0;box-sizing:border-box;font-family:system-ui;">
+            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">9:41</span>
+            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">●●● WiFi ▮</span>
+          </div>
+          <!-- App header -->
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);box-sizing:border-box;font-family:system-ui;">
+            <span style="all:initial;font-size:13px;font-weight:700;font-family:system-ui;"><span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span></span>
+            <span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">● LIVE</span>
+          </div>
+          <!-- Price area -->
+          <div style="all:initial;padding:16px;background:#0d0d0d;display:block;box-sizing:border-box;font-family:system-ui;">
+            <div style="all:initial;font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;display:block;font-family:system-ui;">BTC/USDT</div>
+            <div id="pwa-btc-price" style="all:initial;font-size:24px;font-weight:700;color:#ffffff;display:block;font-family:monospace;">Loading...</div>
+            <div id="pwa-btc-change" style="all:initial;font-size:10px;color:#00FF88;margin-top:2px;display:block;font-family:system-ui;">+0.00% today</div>
+          </div>
+          <!-- Chart bars -->
+          <div id="phone-chart-bars" style="all:initial;display:flex;align-items:flex-end;gap:3px;padding:8px 16px;height:80px;box-sizing:border-box;font-family:system-ui;">
+            <div style="flex:1;height:30px;background:rgba(68,184,40,0.4);border-radius:2px;"></div>
+            <div style="flex:1;height:45px;background:rgba(68,184,40,0.5);border-radius:2px;"></div>
+            <div style="flex:1;height:38px;background:rgba(68,184,40,0.45);border-radius:2px;"></div>
+            <div style="flex:1;height:55px;background:rgba(68,184,40,0.55);border-radius:2px;"></div>
+            <div style="flex:1;height:42px;background:rgba(68,184,40,0.48);border-radius:2px;"></div>
+            <div style="flex:1;height:60px;background:rgba(68,184,40,0.6);border-radius:2px;"></div>
+            <div style="flex:1;height:52px;background:rgba(68,184,40,0.55);border-radius:2px;"></div>
+            <div style="flex:1;height:65px;background:rgba(68,184,40,0.65);border-radius:2px;"></div>
+            <div style="flex:1;height:58px;background:rgba(68,184,40,0.6);border-radius:2px;"></div>
+            <div style="flex:1;height:70px;background:rgba(68,184,40,0.7);border-radius:2px;"></div>
+            <div style="flex:1;height:62px;background:rgba(68,184,40,0.65);border-radius:2px;"></div>
+            <div style="flex:1;height:72px;background:rgba(68,184,40,0.75);border-radius:2px;"></div>
+          </div>
+          <!-- Screen content -->
+          <div style="all:initial;flex:1;position:relative;display:block;font-family:system-ui;">
+            <div id="pscreen-home" class="pscreen" style="padding:0 16px 8px;">
+              <div style="all:initial;display:flex;gap:6px;padding:0 16px 8px;box-sizing:border-box;font-family:system-ui;">
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;font-family:system-ui;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">ETH</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$2,320</div><div style="all:initial;font-size:8px;color:#FF003F;display:block;font-family:system-ui;">-0.8%</div></div>
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;font-family:system-ui;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">SOL</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$148</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;font-family:system-ui;">+3.2%</div></div>
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;font-family:system-ui;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">BNB</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$605</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;font-family:system-ui;">+1.1%</div></div>
+              </div>
+            </div>
+            <div id="pscreen-markets" class="pscreen" style="display:none;padding:0 16px 8px;">
+              <div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;padding:8px 0 6px;font-family:system-ui;">Top Markets</div>
+              <div style="all:initial;display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><div style="all:initial;font-size:10px;font-weight:600;color:#fff;font-family:system-ui;">BTC/USDT</div><div style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+1.52%</div></div>
+              <div style="all:initial;display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><div style="all:initial;font-size:10px;font-weight:600;color:#fff;font-family:system-ui;">ETH/USDT</div><div style="all:initial;font-size:10px;color:#FF003F;font-family:system-ui;">-0.82%</div></div>
+              <div style="all:initial;display:flex;justify-content:space-between;padding:5px 0;font-family:system-ui;"><div style="all:initial;font-size:10px;font-weight:600;color:#fff;font-family:system-ui;">SOL/USDT</div><div style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+3.21%</div></div>
+            </div>
+            <div id="pscreen-trade" class="pscreen" style="display:none;padding:0 16px 8px;">
+              <div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;padding:8px 0 4px;font-family:system-ui;">Quick Trade · BTC/USDT</div>
+              <div style="all:initial;font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;display:block;font-family:monospace;">$74,231.70</div>
+              <div style="all:initial;display:flex;gap:6px;margin-bottom:8px;font-family:system-ui;">
+                <div style="all:initial;flex:1;background:rgba(68,184,40,0.15);border:1px solid rgba(68,184,40,0.3);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#00FF88;font-weight:700;display:block;box-sizing:border-box;font-family:system-ui;">LONG</div>
+                <div style="all:initial;flex:1;background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.2);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#FF003F;font-weight:700;display:block;box-sizing:border-box;font-family:system-ui;">SHORT</div>
+              </div>
+              <div style="all:initial;background:rgba(255,255,255,0.04);border-radius:6px;padding:6px;display:block;font-family:system-ui;">
+                <div style="all:initial;display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">AI Score</span><span style="color:#00FF88;">72/100 Bullish</span></div>
+                <div style="all:initial;display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">TP1</span><span style="color:#fff;">$75,800</span></div>
+                <div style="all:initial;display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,0.5);font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">SL</span><span style="color:#FF003F;">$73,100</span></div>
+              </div>
+            </div>
+            <div id="pscreen-bots" class="pscreen" style="display:none;padding:0 16px 8px;">
+              <div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;padding:8px 0 6px;font-family:system-ui;">Active Bots</div>
+              <div style="all:initial;background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-family:system-ui;"><div style="all:initial;font-family:system-ui;"><div style="all:initial;font-size:9px;font-weight:600;color:#fff;display:block;font-family:system-ui;">Grid Scalper</div><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">BTC · $500</div></div><div style="all:initial;text-align:right;font-family:system-ui;"><div style="all:initial;font-size:9px;color:#00FF88;font-weight:600;display:block;font-family:system-ui;">+$24.50</div><div style="all:initial;font-size:7px;color:rgba(255,255,255,0.3);display:block;font-family:system-ui;">● Running</div></div></div>
+              <div style="all:initial;background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;font-family:system-ui;"><div style="all:initial;font-family:system-ui;"><div style="all:initial;font-size:9px;font-weight:600;color:#fff;display:block;font-family:system-ui;">AI Scout Bot</div><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">ETH · $200</div></div><div style="all:initial;text-align:right;font-family:system-ui;"><div style="all:initial;font-size:9px;color:#00FF88;font-weight:600;display:block;font-family:system-ui;">+$8.12</div><div style="all:initial;font-size:7px;color:rgba(255,255,255,0.3);display:block;font-family:system-ui;">● Running</div></div></div>
+            </div>
+          </div>
+          <!-- Bottom nav -->
+          <div style="all:initial;position:absolute;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,255,255,0.08);display:flex;padding:8px 0 16px;font-family:system-ui;">
+            <div class="pnav-btn active-nav" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:#00FF88;font-family:system-ui;"><div style="font-size:16px;">🏠</div><div>Home</div></div>
+            <div class="pnav-btn" data-screen="markets" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">📊</div><div>Markets</div></div>
+            <div class="pnav-btn" data-screen="trade" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">💹</div><div>Trade</div></div>
+            <div class="pnav-btn" data-screen="bots" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">🤖</div><div>Bots</div></div>
+            <div class="pnav-btn" data-screen="home" style="flex:1;text-align:center;font-size:9px;cursor:pointer;color:rgba(255,255,255,0.4);font-family:system-ui;"><div style="font-size:16px;">⚙️</div><div>Settings</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;pointer-events:none;"></div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;min-width:300px;max-width:520px;">
+      <div style="font-size:11px;font-weight:600;color:#22a849;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Available Everywhere</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,42px);font-weight:700;line-height:1.15;margin-bottom:16px;color:#111;">
+        Trade from your pocket.<br>
+        <span style="color:#22a849;">No app store needed.</span>
+      </h2>
+      <p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:32px;max-width:480px;">
+        ExNexus works as a native app on any device. Install directly from your browser — iOS, Android, or Desktop. Full terminal. Real trades. Zero downloads.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(34,168,73,0.1);border:1px solid rgba(34,168,73,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#22a849;flex-shrink:0;">1</div>
+          <div style="font-size:13px;color:#444;">Open <strong style="color:#111;">exnexus.app</strong> in your mobile browser</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(34,168,73,0.1);border:1px solid rgba(34,168,73,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#22a849;flex-shrink:0;">2</div>
+          <div style="font-size:13px;color:#444;"><strong style="color:#111;">Android:</strong> Tap menu → "Add to Home Screen" | <strong style="color:#111;">iOS:</strong> Tap Share → "Add to Home Screen"</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(34,168,73,0.1);border:1px solid rgba(34,168,73,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#22a849;flex-shrink:0;">3</div>
+          <div style="font-size:13px;color:#444;">ExNexus appears on your home screen like a native app ✅</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="https://exnexus.app/terminal.html" style="display:inline-flex;align-items:center;gap:8px;background:#00FF88;color:#000;font-weight:700;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">📱 Open Trading App</a>
+        <a href="https://exnexus.app/terminal.html?demo=1" style="display:inline-flex;align-items:center;gap:8px;background:rgba(34,168,73,0.08);color:#22a849;border:1px solid rgba(34,168,73,0.3);font-weight:600;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">🎮 Try Demo Free</a>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;">
+        <div style="font-size:10px;color:#888;display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🍎</span> iOS Safari</div>
+        <div style="font-size:10px;color:#888;display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🤖</span> Android Chrome</div>
+        <div style="font-size:10px;color:#888;display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">💻</span> Desktop</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<div class="divider"></div>
+<section id="features" class="reveal">
+  <div class="section-tag">⚡ Platform Features</div>
+  <h2>Everything a pro trader needs</h2>
+  <p class="section-sub">Built for active traders who demand speed, precision, and intelligence.</p>
+  <div class="features-grid">
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(68,184,40,0.1);">📊</div><div class="feat-title">Signal Intelligence</div><div class="feat-desc">AI-powered screener scans 200+ coins. RSI, MACD, patterns, trends — all in real-time.</div></div>
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(240,180,41,0.1);">⚡</div><div class="feat-title">Cross-Exchange Arbitrage</div><div class="feat-desc">Find price gaps across exchanges instantly. Execute both legs simultaneously.</div></div>
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(66,133,244,0.1);">🤖</div><div class="feat-title">Automated Trading Bots</div><div class="feat-desc">6 proven strategies. Grid scalper, trend rider, DCA, AI Scout and more.</div></div>
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(155,114,203,0.1);">🐋</div><div class="feat-title">Smart Money Flow</div><div class="feat-desc">Track whale movements, exchange flows, and institutional positioning.</div></div>
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(255,0,63,0.1);">🔥</div><div class="feat-title">Market Depth & Liquidations</div><div class="feat-desc">Liquidation heatmap, OI tracking, funding rates, long/short ratio.</div></div>
+    <div class="feat-card"><div class="feat-icon" style="background:rgba(68,184,40,0.1);">🌐</div><div class="feat-title">CEX + DeFi Unified</div><div class="feat-desc">Bybit, Binance, Gate.io, Alpaca + Hyperliquid, dYdX coming soon.</div></div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="divider"></div>
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="https://raw.githubusercontent.com/baron-terminal/ExNexus-Terminal/main/Logo.png" alt="ExNexus" class="footer-logo">
+      <p class="footer-tagline">Stay slow. Trade smart.<br>Let ExNexus do the rest. 🦥</p>
+      <div class="footer-social">
+        <div class="social-btn">𝕏</div>
+        <div class="social-btn">📱</div>
+        <div class="social-btn">💬</div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <div class="footer-link" onclick="launchTerminal()">Trading Terminal</div>
+      <div class="footer-link" onclick="launchTerminal()">Demo Mode</div>
+      <div class="footer-link" onclick="goto('#features')">Features</div>
+      <div class="footer-link" onclick="goto('#bots')">Bots</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-link">About</div>
+      <div class="footer-link">Blog</div>
+      <div class="footer-link">Careers</div>
+      <div class="footer-link">Contact</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <a href="/privacy.html" class="footer-link">Privacy Policy</a>
+      <div class="footer-link">Terms of Service</div>
+      <div class="footer-link">Cookie Policy</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <div class="footer-link">Documentation</div>
+      <div class="footer-link">API Reference</div>
+      <div class="footer-link">Status</div>
+      <div class="footer-link">Community</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 ExNexus. All rights reserved.</div>
+    <div class="footer-bottom-links">
+      <a href="/privacy.html" style="color:inherit;">Privacy</a>
+      <span>Terms</span>
+      <span>info@exnexus.co</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+/* ── Navigation & Core JS ── */
 /* ── Navigation ────────────────────────────────── */
 function goto(hash) {
   const el = document.querySelector(hash);
@@ -936,7 +1256,27 @@ window.addEventListener('DOMContentLoaded', () => {
   // Start price feed
   connectPriceFeed();
 });
+
+/* ── Site Theme Toggle ── */
+function toggleSiteTheme() {
+    const isWhite = document.body.classList.toggle("white-theme");
+    const btn = document.getElementById("site-theme-btn");
+    if(btn) btn.textContent = isWhite ? "🌙" : "☀️";
+    localStorage.setItem("exnexus_site_theme", isWhite ? "white" : "dark");
+}
+(function(){
+    window.addEventListener("DOMContentLoaded", function() {
+        const saved = localStorage.getItem("exnexus_site_theme");
+        if(saved === "white") {
+            document.body.classList.add("white-theme");
+            const btn = document.getElementById("site-theme-btn");
+            if(btn) btn.textContent = "🌙";
+        }
+    });
+})();
+
 </script>
+
 
 
 <!-- ═══ SLOTH MASCOT ═══ -->
