@@ -2161,7 +2161,7 @@
         </div>
     </div>
 
-    id="panel-heatmap" class="slide-panel">
+    <div id="panel-heatmap" class="slide-panel">
         <div class="panel-header">
             <div class="panel-title">
                 <div style="width:6px;height:6px;border-radius:50%;background:var(--orange);"></div>
@@ -6060,578 +6060,111 @@ async function runScreener() {
     if(screenerRunning) return;
     screenerRunning = true;
 
-    const btn     = document.getElementById('screener-run-btn') || document.querySelector('.screener-run-btn');
-    const count   = document.getElementById('screener-count');
-    const dot     = document.getElementById('screener-live-dot');
-    const tbody   = document.getElementById('screener-tbody');
+    const btn   = document.getElementById('screener-run-btn') || document.querySelector('.screener-run-btn');
+    const count = document.getElementById('screener-count');
+    const dot   = document.getElementById('screener-live-dot');
+    const tbody = document.getElementById('screener-tbody');
+
+    const minRsi = parseFloat(document.getElementById('scr-rsi-min')?.value || 25);
+    const maxRsi = parseFloat(document.getElementById('scr-rsi-max')?.value || 65);
 
     if(btn) btn.textContent = '⏳ Scanning...';
     if(dot) dot.style.background = '#F0B429';
-    if(count) count.textContent = 'Scanning 17 coins...';
     if(tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">Scanning markets...</td></tr>';
 
     try {
-        const minRsi = document.getElementById('scr-rsi-min')?.value || 25;
-        const maxRsi = document.getElementById('scr-rsi-max')?.value || 65;
-        const tf     = document.getElementById('scr-tf')?.value || '1h';
+        // Fetch listings + sentiment from market worker
+        const [listRes, sentRes] = await Promise.all([
+            fetch(`${MARKET}/listings?limit=100`),
+            fetch(`${MARKET}/sentiment?symbol=BTCUSDT`)
+        ]);
+        const listings = await listRes.json();
+        const sentiment = await sentRes.json();
 
-        const res  = await fetch(`${DATA}/screener?tf=${tf}&min_rsi=${minRsi}&max_rsi=${maxRsi}&limit=50`);
-        const data = await res.json();
+        const coins = (listings.coins || []).filter(c =>
+            c.mcap > 200000000 && // $200M+ mcap
+            c.volume_24h > 5000000 // $5M+ volume
+        );
 
-        if(!data.ok) throw new Error(data.error);
+        // Score each coin
+        const scored = coins.map(c => {
+            const chg1h  = c.change_1h  || 0;
+            const chg24h = c.change_24h || 0;
+            const chg7d  = c.change_7d  || 0;
 
-        const results = data.results || [];
-        if(count) count.textContent = `${results.length} of ${data.scanned} coins match`;
+            // Simple momentum score (0-100)
+            let score = 50;
+            if(chg1h > 0)   score += Math.min(chg1h  * 3, 15);
+            if(chg24h > 0)  score += Math.min(chg24h * 1.5, 20);
+            if(chg7d > 0)   score += Math.min(chg7d  * 0.5, 10);
+            if(chg1h < 0)   score += Math.max(chg1h  * 3, -15);
+            if(chg24h < 0)  score += Math.max(chg24h * 1.5, -20);
+            score = Math.max(0, Math.min(100, Math.round(score)));
+
+            // Signal
+            const signal = score >= 70 ? 'BUY' : score <= 30 ? 'AVOID' : score >= 55 ? 'WATCH' : 'NEUTRAL';
+            const signalColor = signal === 'BUY' ? 'var(--neon)' : signal === 'AVOID' ? 'var(--hot-red)' : '#F0B429';
+
+            // Estimate RSI from price action (simplified)
+            const estRsi = Math.round(50 + (chg24h * 2.5));
+            const rsi = Math.max(10, Math.min(90, estRsi));
+
+            return { ...c, score, signal, signalColor, rsi };
+        })
+        .filter(c => c.rsi >= minRsi && c.rsi <= maxRsi)
+        .sort((a,b) => b.score - a.score)
+        .slice(0, 30);
+
+        if(!scored.length) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">No coins match your filters</td></tr>';
+            screenerRunning = false;
+            if(btn) btn.textContent = '▶ Scan';
+            return;
+        }
+
+        // Render results
+        tbody.innerHTML = scored.map(c => `
+            <tr style="cursor:pointer;" onclick="document.getElementById('sym-input')&&(document.getElementById('sym-input').value='${c.symbol}USDT')">
+                <td><span style="font-weight:600;color:#fff;">${c.symbol}</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${c.rsi}</td>
+                <td style="color:${c.change_24h>=0?'var(--neon)':'var(--hot-red)'};">
+                    ${c.change_24h>=0?'+':''}${c.change_24h?.toFixed(2)}%
+                </td>
+                <td>
+                    <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px;width:60px;display:inline-block;vertical-align:middle;">
+                        <div style="width:${c.score}%;height:100%;background:${c.score>60?'var(--neon)':c.score<40?'var(--hot-red)':'#F0B429'};border-radius:3px;"></div>
+                    </div>
+                    <span style="font-size:10px;margin-left:4px;">${c.score}</span>
+                </td>
+                <td><span style="color:${c.signalColor};font-weight:700;font-size:10px;">${c.signal}</span></td>
+                <td style="font-size:10px;color:rgba(255,255,255,0.5);">
+                    ${c.change_7d > 5 ? 'Momentum' : c.change_24h > 3 ? 'Breakout' : c.change_1h > 1 ? 'Rising' : 'Ranging'}
+                </td>
+                <td style="font-size:10px;color:rgba(255,255,255,0.4);">
+                    $${c.volume_24h > 1e9 ? (c.volume_24h/1e9).toFixed(1)+'B' : (c.volume_24h/1e6).toFixed(0)+'M'}
+                </td>
+                <td>
+                    <button onclick="event.stopPropagation();loadCoinToTerminal('${c.symbol}')" 
+                        style="font-size:9px;padding:2px 6px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.2);color:var(--neon);border-radius:3px;cursor:pointer;">
+                        Trade
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        const scanned = scored.length;
+        if(count) count.textContent = `${scanned} signals`;
         if(dot) dot.style.background = 'var(--neon)';
-
-        // Render table
-        if(tbody) {
-            tbody.innerHTML = results.length === 0
-                ? '<tr><td colspan="8" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">No coins match your filters</td></tr>'
-                : results.map(r => {
-                    const signalClass = r.signal?.includes('up') || r.signal?.includes('bull') || r.signal?.includes('bounce')
-                        ? 'signal-bullish'
-                        : r.signal?.includes('down') || r.signal?.includes('bear') || r.signal?.includes('overbought')
-                        ? 'signal-bearish'
-                        : 'signal-neutral';
-
-                    const patterns = (r.patterns || []).slice(0,2).map(p =>
-                        `<span class="pattern-tag">${p.pattern}</span>`
-                    ).join('');
-
-                    const rsiColor = r.rsi < 30 ? 'var(--neon)' 
-                        : r.rsi > 70 ? 'var(--hot-red)' 
-                        : 'rgba(255,255,255,0.82)';
-
-                    const macdColor = r.macd_hist > 0 ? 'var(--neon)' : 'var(--hot-red)';
-
-                    return `<tr>
-                        <td style="font-weight:600;color:#fff;">
-                            ${r.symbol.replace('USDT','')}
-                            <span style="color:rgba(255,255,255,0.35);font-size:9px;">/USDT</span>
-                        </td>
-                        <td style="font-family:'JetBrains Mono',monospace;color:${rsiColor};">${r.rsi}</td>
-                        <td style="font-family:'JetBrains Mono',monospace;color:${macdColor};">${r.macd_hist > 0 ? '+' : ''}${r.macd_hist?.toFixed(2)}</td>
-                        <td>
-                            <div class="score-bar">
-                                <div class="score-fill" style="width:${r.score}px;max-width:60px;"></div>
-                                <span style="font-family:'JetBrains Mono',monospace;">${r.score}</span>
-                            </div>
-                        </td>
-                        <td><span class="signal-badge ${signalClass}">${r.signal?.replace(/_/g,' ') || 'neutral'}</span></td>
-                        <td>${patterns || '<span style="color:rgba(255,255,255,0.3);">—</span>'}</td>
-                        <td style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.55);">${r.volume_ratio?.toFixed(1)}x</td>
-                        <td>
-                            <button onclick="selectCoin('${r.symbol}')" 
-                                style="font-size:9px;padding:3px 8px;background:rgba(68,184,40,0.1);
-                                border:1px solid rgba(68,184,40,0.2);color:var(--neon);
-                                border-radius:4px;cursor:pointer;">
-                                Trade
-                            </button>
-                        </td>
-                    </tr>`;
-                }).join('');
-        }
-
-        // Also update AI Scout with top result
-        if(results.length > 0) {
-            const top = results[0];
-            const sr  = document.getElementById('scout-reasoning');
-            if(sr) sr.textContent = 
-                `Top signal: ${top.symbol} — Score ${top.score}/100 · RSI ${top.rsi} · ${top.signal?.replace(/_/g,' ')}. ` +
-                (top.patterns?.length ? `Pattern: ${top.patterns[0].pattern}. ` : '') +
-                `Trend: ${top.trend?.replace(/_/g,' ')}`;
-        }
+        if(btn) btn.textContent = '▶ Scan';
 
     } catch(e) {
         if(tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--hot-red);">Error: ${e.message}</td></tr>`;
         if(dot) dot.style.background = 'var(--hot-red)';
+        if(btn) btn.textContent = '▶ Scan';
     }
-
-    if(btn) btn.textContent = '▶ Scan';
     screenerRunning = false;
 }
 
-// Select coin from screener → update order form
-function selectCoin(symbol) {
-    // Update symbol display
-    const symEl = document.getElementById('current-symbol');
-    if(symEl) symEl.textContent = symbol;
-    // Start ticker for this symbol
-    startLiveTicker(symbol);
-    // Close panel
-    closePanel('analytics');
-    showToast('Selected ' + symbol);
-}
-
-// Screener auto-loads on panel open
-
-
-/* ═══ EX Q&A SYSTEM ═══ */
-
-/* ============================================================
-   EX THE SLOTH — Q&A SYSTEM
-   Short questions. Instant answers. Live data aware.
-============================================================ */
-
-const EX_EMAIL = 'info@exnexus.co';
-
-// ── Pre-fixed Q&A Database ────────────────────────────────────
-const EX_QA = {
-
-  // ── About ExNexus ─────────────────────────────────────────
-  'what is exnexus':
-    `One terminal. Every exchange. AI-powered. 🎩
-CEX + DeFi unified with real-time arbitrage,
-signals, and automated bots.`,
-
-  'what makes exnexus different':
-    `3 things no one else has:
-• CEX + DEX in one terminal
-• AI Scout powered by Claude
-• Cross-exchange arb execution ⚡`,
-
-  'is it free':
-    `Yes! Free tier forever.
-Pro plans from $39/mo.
-Demo Mode = always free 🎮`,
-
-  'what exchanges':
-    `Currently:
-• Bybit · Binance · Gate.io · Alpaca
-Coming soon:
-• OKX · Kraken · Hyperliquid · dYdX 🔜`,
-
-  'low market cap':
-    `We only show coins with:
-✅ $50M+ market cap minimum
-✅ $1M+ daily volume minimum
-No pump-and-dump schemes.
-No micro-cap manipulation.
-Liquid markets only 🛡️`,
-
-  'what coins do you screen':
-    `Only liquid, verified coins:
-• $50M+ market cap
-• $1M+ daily volume  
-• Top 200 by market cap
-No micro-cap or scam tokens 🛡️`,
-
-  'is it safe':
-    `Your keys never leave your device.
-We never hold your funds.
-Read-only keys for viewing.
-Trade keys for execution only 🔐`,
-
-  'what is full autonomy':
-    `You control everything.
-Your strategy. Your exchanges.
-Your bots. Your risk.
-No broker. No middleman 💪`,
-
-  'who is exnexus for':
-    `Anyone who trades crypto.
-Beginner → use Demo Mode first.
-Active trader → use the screener.
-Power user → run bots + arb ⚡`,
-
-  'does it work on mobile':
-    `Yes! Full mobile trading app.
-Visit exnexus.app on your phone.
-Optimized for iOS + Android 📱`,
-
-  'what languages':
-    `English + Hebrew now.
-Arabic, Spanish, French,
-Russian, Chinese, Turkish coming 🌍`,
-
-  'how do i start':
-    `3 steps:
-1. Try Demo Mode (zero risk)
-2. Add API keys in Settings
-3. Run the screener for signals 🚀`,
-
-  'who is ex':
-    `I'm Ex! 🎩 Your AI trading assistant.
-Ask me anything — short questions
-get the best answers!`,
-
-  // ── Trading Features ──────────────────────────────────────
-  'what is signal intelligence':
-    `Our screener scans 200+ coins.
-RSI · MACD · Patterns · Trends.
-Updated every 5 minutes 📡`,
-
-  'what is smart money flow':
-    `Tracks whale wallet movements.
-Exchange inflows/outflows.
-Know what institutions are doing 🐋`,
-
-  'what is market depth':
-    `Liquidation heatmap.
-Open Interest tracking.
-Funding rates. Long/Short ratio 🔥`,
-
-  'what is ai scout':
-    `Claude AI reads all signals.
-Gives you a win probability score.
-Recommends entry + TP + SL 🤖`,
-
-  'what is arbitrage':
-    `Buy low on one exchange.
-Sell high on another.
-Same time. Profit locked ⚡`,
-
-  'how does arb work':
-    `1. Scanner finds price gap
-2. You review + confirm
-3. Both legs fire simultaneously
-Profit in seconds ⚡`,
-
-  'what bots are available':
-    `6 bots available:
-Grid Scalper · Trend Rider · DCA
-Scalp Hunter · Arb Bot · AI Scout Bot
-+ Custom Bot Builder 🤖`,
-
-  'what is grid scalper':
-    `Places buy/sell at equal intervals.
-Profits from price bouncing.
-Best in sideways markets 📊`,
-
-  'what is trend rider':
-    `Follows momentum.
-Dynamic trailing stop.
-Exits when trend fades 🏄`,
-
-  'what is dca bot':
-    `Buys at regular intervals.
-Averages your entry price.
-Best for long-term accumulation 💰`,
-
-  'what is risk calculator':
-    `Enter your balance + risk %.
-Get exact position size.
-Never over-leverage again 🧮`,
-
-  'what timeframes':
-    `15m · 1H · 4H · 1D
-1H is highest win rate
-for most strategies 📈`,
-
-  'what coins':
-    `Top 200 by market cap.
-$100M+ for CEX trading.
-$20M+ for DEX opportunities 🪙`,
-
-  'what is fear and greed':
-    `Market sentiment 0-100.
-Below 25 = Extreme Fear → buy signal
-Above 75 = Extreme Greed → be careful 😊`,
-
-  'what is backtesting':
-    `Test your strategy on real history.
-1 year of hourly data available.
-See win rate before risking money 📊`,
-
-  'how many indicators':
-    `12 high-probability indicators:
-RSI · MACD · Bollinger Bands · EMA
-ATR · Stoch RSI · Volume + 5 more 📈`,
-
-  'what patterns':
-    `20 candlestick patterns:
-Dragonfly Doji · Gravestone Doji
-Head & Shoulders · Engulfing
-Morning Star + 15 more 🕯️`,
-
-  // ── Indicators ────────────────────────────────────────────
-  'what is rsi':
-    `Momentum indicator 0-100.
-< 30 = oversold → potential buy
-> 70 = overbought → potential sell
-Sweet spot: 30-65 📊`,
-
-  'what is macd':
-    `Trend + momentum indicator.
-Histogram crosses zero = signal.
-Best on 1H and 4H timeframes 📈`,
-
-  'what is bollinger bands':
-    `Price envelope around moving average.
-Squeeze = big move coming.
-Touch lower band + RSI < 30 = buy 📊`,
-
-  'what is atr':
-    `Average True Range.
-Measures volatility.
-Use for stop loss sizing 📏`,
-
-  'what is doji':
-    `Open = Close candlestick.
-Indecision in the market.
-Watch for direction confirmation 🕯️`,
-
-  'what is dragonfly doji':
-    `Long lower shadow.
-Open ≈ Close ≈ High.
-Bullish reversal signal 🐉
-Win rate: ~78%`,
-
-  'what is head and shoulders':
-    `3 peaks pattern.
-Middle = highest (head).
-Neckline break = sell signal 📉
-Win rate: ~80%`,
-
-  'what is inverse head and shoulders':
-    `3 troughs pattern.
-Middle = lowest (head).
-Neckline break = buy signal 📈
-Your best historical pattern! ✅`,
-
-  'what is engulfing':
-    `One candle fully covers previous.
-Bullish engulfing = buy signal.
-Bearish engulfing = sell signal 🕯️`,
-
-  'what is morning star':
-    `3-candle bullish reversal.
-Bear · small body · bull.
-One of the strongest buy signals 🌟
-Win rate: ~80%`,
-
-  // ── Technical Help ────────────────────────────────────────
-  'how do i connect exchange':
-    `Settings → Exchanges → Select exchange
-Enter API Key + Secret → Save.
-Keys never leave your device 🔑`,
-
-  'what is sync code':
-    `Your personal sync password.
-Same code on all devices =
-shared settings everywhere 🔄`,
-
-  'are api keys safe':
-    `Yes. Keys stored locally only.
-Encrypted in your browser.
-We never see or store them 🔐`,
-
-  'what is demo mode':
-    `$10,000 virtual balance.
-Real live prices.
-All features work. Zero risk 🎮`,
-
-  'how do i switch to live':
-    `Settings → Security → Exit Demo.
-Make sure API keys are added first.
-Start small! 💡`,
-
-  'why is balance not showing':
-    `Check Settings → Exchanges.
-Make sure API keys are saved.
-Keys need Read permission ✅`,
-
-  'how do i place first trade':
-    `1. Select coin in terminal
-2. Enter price + quantity
-3. Click Open Long or Open Short
-Try Demo Mode first! 🎮`,
-
-  'what is cross vs isolated':
-    `Cross: whole balance as margin.
-Isolated: only allocated amount.
-Isolated = safer for beginners 💡`,
-
-  'what is leverage':
-    `Multiplies your position size.
-10x = $100 controls $1,000.
-Higher leverage = higher risk ⚠️`,
-
-  // ── Affiliate ─────────────────────────────────────────────
-  'how does affiliate work':
-    `Share your referral link.
-Earn 40% of every subscription.
-Monthly USDT payments 💰`,
-
-  'how much commission':
-    `40% recurring commission.
-Refer 3 friends = your plan free.
-Refer 10 = $156/mo passive income 🚀`,
-
-  'when do i get paid':
-    `Monthly payouts in USDT.
-No minimum threshold.
-Tracked in real-time dashboard 📊`,
-
-  'how do i join affiliate':
-    `Coming soon in the terminal!
-Email us to join early:
-📧 ${EX_EMAIL} 🎩`,
-
-  // ── Support ───────────────────────────────────────────────
-  'how do i contact support':
-    `📧 ${EX_EMAIL}
-We reply within 24 hours!
-Or keep asking me 🎩`,
-
-  'i have a problem':
-    `I'm here to help! 🎩
-Describe your issue briefly.
-Or email: ${EX_EMAIL}`,
-
-  'billing question':
-    `For billing questions:
-📧 ${EX_EMAIL}
-We reply within 24 hours 💚`,
-
-  'partnership':
-    `Interested in partnering?
-📧 ${EX_EMAIL}
-We'd love to hear from you 🤝`,
-};
-
-// ── Quick Reply Categories ────────────────────────────────────
-const EX_QUICK_REPLIES = [
-  { icon:'📊', label:'Screener',   q:'What is signal intelligence' },
-  { icon:'⚡', label:'Arbitrage',  q:'What is arbitrage' },
-  { icon:'🤖', label:'Bots',       q:'What bots are available' },
-  { icon:'🎮', label:'Demo',       q:'What is demo mode' },
-  { icon:'💰', label:'Pricing',    q:'Is it free' },
-  { icon:'🔑', label:'API Keys',   q:'Are api keys safe' },
-  { icon:'📈', label:'Indicators', q:'How many indicators' },
-  { icon:'👥', label:'Affiliate',  q:'How does affiliate work' },
-];
-
-// ── Answer Engine ─────────────────────────────────────────────
-function exGetAnswer(question) {
-  const q = question.toLowerCase()
-    .trim()
-    .replace(/[?!.,]/g, '')
-    .replace(/whats/g, 'what is')
-    .replace(/hows/g, 'how is')
-    .replace(/cant/g, 'cannot')
-    .replace(/dont/g, 'do not');
-
-  // Check live context first (terminal only)
-  const liveAnswer = exLiveContext(q);
-  if(liveAnswer) return liveAnswer;
-
-  // Exact match
-  if(EX_QA[q]) return EX_QA[q];
-
-  // Partial match - find best matching key
-  const keys = Object.keys(EX_QA);
-  const match = keys.find(k =>
-    q.includes(k) || k.includes(q) ||
-    k.split(' ').some(word => word.length > 3 && q.includes(word))
-  );
-  if(match) return EX_QA[match];
-
-  // Keyword matching
-  if(q.includes('rsi'))         return EX_QA['what is rsi'];
-  if(q.includes('macd'))        return EX_QA['what is macd'];
-  if(q.includes('dragonfly'))   return EX_QA['what is dragonfly doji'];
-  if(q.includes('doji'))        return EX_QA['what is doji'];
-  if(q.includes('arbitrage') || q.includes('arb')) return EX_QA['what is arbitrage'];
-  if(q.includes('bot'))         return EX_QA['what bots are available'];
-  if(q.includes('demo'))        return EX_QA['what is demo mode'];
-  if(q.includes('safe') || q.includes('security')) return EX_QA['is it safe'];
-  if(q.includes('free') || q.includes('price') || q.includes('cost')) return EX_QA['is it free'];
-  if(q.includes('start') || q.includes('begin')) return EX_QA['how do i start'];
-  if(q.includes('contact') || q.includes('email') || q.includes('help')) return EX_QA['how do i contact support'];
-  if(q.includes('affiliate') || q.includes('referral') || q.includes('earn')) return EX_QA['how does affiliate work'];
-  if(q.includes('exchange') || q.includes('connect')) return EX_QA['how do i connect exchange'];
-  if(q.includes('leverage')) return EX_QA['what is leverage'];
-  if(q.includes('indicator')) return EX_QA['how many indicators'];
-  if(q.includes('pattern')) return EX_QA['what patterns'];
-  if(q.includes('screener') || q.includes('signal')) return EX_QA['what is signal intelligence'];
-
-  // Unknown — Claude AI fallback or email
-  return null; // null = call Claude AI
-}
-
-// ── Live Context (terminal page only) ────────────────────────
-function exLiveContext(q) {
-  if(typeof getCurrentPrice === 'undefined') return null;
-  const btcPrice = getCurrentPrice('BTCUSDT');
-
-  if(q.includes('btc') && (q.includes('price') || q.includes('now') || q.includes('current'))) {
-    return btcPrice > 0
-      ? 'BTC is at $' + btcPrice.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' 📊'
-      : 'Loading BTC price...';
-  }
-
-  if(q.includes('balance') || q.includes('how much')) {
-    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
-      return 'Your demo balance is $' + demoState.balance.toFixed(2) + ' 🎮';
-    }
-    return 'Check your balance in the Assets tab. Add API keys in Settings first 🔑';
-  }
-
-  if(q.includes('position') || q.includes('open trade')) {
-    if(typeof demoMode !== 'undefined' && demoMode && typeof demoState !== 'undefined') {
-      const pos = demoState.positions;
-      return pos.length > 0
-        ? pos.length + ' open position(s): ' + pos.map(p=>p.symbol+' '+p.side).join(', ')
-        : 'No open demo positions. Want to try a trade? 🎮';
-    }
-    return 'Check your Positions tab below 📊';
-  }
-
-  if(q.includes('sentiment') || q.includes('fear') || q.includes('greed')) {
-    const fgEl  = document.getElementById('fg-value-display');
-    const fgLbl = document.getElementById('fg-label-display');
-    if(fgEl && fgLbl) {
-      const val = parseInt(fgEl.textContent);
-      return 'Market Sentiment: ' + fgLbl.textContent + ' (' + val + '/100). ' +
-        (val < 30 ? '→ Historically good buying zone' : val > 70 ? '→ Be cautious, market overheated' : '→ Neutral territory') + ' 😊';
-    }
-  }
-
-  if(q.includes('bot') && (q.includes('running') || q.includes('active'))) {
-    if(typeof demoBots !== 'undefined') {
-      const running = Object.entries(demoBots).filter(([,b]) => b.running).map(([,b]) => b.name);
-      return running.length > 0
-        ? 'Running bots: ' + running.join(', ') + ' 🤖'
-        : 'No bots running. Start one in the Bots tab! 🤖';
-    }
-  }
-
-  return null;
-}
-
-// ── Render Quick Replies ──────────────────────────────────────
-function exRenderQuickReplies() {
-  return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
-    ${EX_QUICK_REPLIES.map(r => `
-      <button onclick="exQuickReply('${r.q}')"
-        style="display:flex;align-items:center;gap:5px;
-        padding:5px 11px;border-radius:20px;
-        background:rgba(255,255,255,0.06);
-        border:1px solid rgba(255,255,255,0.12);
-        color:rgba(255,255,255,0.8);font-size:11px;
-        cursor:pointer;transition:all .15s;white-space:nowrap;"
-        onmouseover="this.style.background='rgba(68,184,40,0.1)';this.style.borderColor='rgba(68,184,40,0.3)'"
-        onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)'">
-        ${r.icon} ${r.label}
-      </button>`).join('')}
-  </div>`;
-}
-
-function exQuickReply(question) {
-  // Put question in input and send
-  const inp = document.getElementById('sloth-inp') || document.getElementById('chat-inp');
-  if(inp) {
-    inp.value = question;
-    // Trigger send
-    if(typeof sendSlothMsg === 'function') sendSlothMsg();
-    else if(typeof sendChatMsg === 'function') sendChatMsg();
-  }
-}
-
-// ── Override sendSlothMsg to use Q&A first ───────────────────
-const _origSendSloth = typeof sendSlothMsg === 'function' ? sendSlothMsg : null;
 
 async function sendSlothMsg() {
   const inp = document.getElementById('sloth-inp');
