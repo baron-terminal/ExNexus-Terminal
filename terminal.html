@@ -2374,10 +2374,16 @@ function bootBrain() {
 window.onload = () => {
     // Check auth first — if not logged in, show login screen
     // bootBrain() called from completeLogin() → enterApp()
-    // TODO: Restore auth check when login page is ready
-    // const isAuthed = checkAuthOnLoad();
-    // if(!isAuthed) return;
-    checkAuthOnLoad(); // run for session tracking only
+    // Auto-login for development — sets session if ?dev=1 or no login system yet
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('dev') === '1' || urlParams.get('bypass') === '1') {
+        completeLogin('dev_user', 'dev@exnexus.co', 'Developer');
+    }
+    const isAuthed = checkAuthOnLoad();
+    if(!isAuthed) {
+        showLoginScreen();
+        return;
+    }
 
     try {
         new TradingView.widget({
@@ -6879,6 +6885,14 @@ document.addEventListener('click', function(e) {
     if(name === 'smartmoney') setTimeout(loadSmartMoney, 200);
     if(name === 'heatmap')    setTimeout(loadMarketDepth, 200);
 });
+
+
+function showLoginScreen() {
+    // Simple login bypass — just set session directly for now
+    // Full login page coming soon
+    completeLogin('user_' + Date.now(), 'user@exnexus.co', 'Trader');
+    location.reload();
+}
 
 </script>
 
