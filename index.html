@@ -2,6 +2,29 @@
 <html lang="en" dir="ltr" id="html-root">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){
+    var host     = window.location.hostname;
+    var ua       = navigator.userAgent.toLowerCase();
+    var w        = window.innerWidth || screen.width;
+    var isMobile = w <= 1024 || /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+
+    // exnexus.app → always go to terminal
+    if(host === 'exnexus.app' || host === 'www.exnexus.app'){
+        window.location.replace('terminal.html');
+        return;
+    }
+
+    // Mobile/tablet on any domain → go to terminal
+    if(isMobile && host !== 'localhost' && host !== '127.0.0.1'){
+        window.location.replace('terminal.html');
+        return;
+    }
+
+    // exnexus.co on desktop → show landing page (do nothing)
+    // pages.dev on desktop → show landing page (do nothing)
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ExNexus | Trading Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +121,7 @@ nav{
   display:flex;align-items:center;gap:0;
   margin-right:32px;flex-shrink:0;
 }
-.nav-logo img{height:32px;width:auto;}
+.nav-logo img{height:44px;width:auto;}
 .nav-links{display:flex;align-items:center;gap:2px;flex:1;}
 .nav-item{
   position:relative;
@@ -171,9 +194,15 @@ nav{
 /* ═══ HERO ═══ */
 #hero{
   min-height:calc(100vh - var(--nav-h) - 36px);
-  display:flex;align-items:center;
-  padding:80px 24px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:40px;
+  padding:80px 80px 80px 80px;
+  max-width:1400px;
+  margin:0 auto;
   position:relative;overflow:hidden;
+  width:100%;
 }
 .hero-bg{
   position:absolute;inset:0;z-index:0;
@@ -189,7 +218,7 @@ nav{
   background-size:60px 60px;
   mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
 }
-.hero-content{position:relative;z-index:1;max-width:560px;}
+.hero-content{position:relative;z-index:1;max-width:600px;}
 .hero-badge{
   display:inline-flex;align-items:center;gap:7px;
   background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);
@@ -236,9 +265,9 @@ h1 .accent{color:var(--neon);}
 .hero-stat-lbl{font-size:12px;color:var(--text-dim);margin-top:1px;}
 /* Hero right — live price cards */
 .hero-right{
-  position:absolute;right:5%;top:50%;transform:translateY(-50%);
   display:grid;grid-template-columns:1fr 1fr;gap:12px;
   z-index:1;
+  position:relative;
 }
 .price-card{
   background:rgba(255,255,255,0.04);
@@ -572,6 +601,7 @@ footer{
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:1100px){
+  #hero{grid-template-columns:1fr;padding:60px 24px;}
   .hero-right{display:none;}
   .affiliate-grid{grid-template-columns:1fr;}
   .intel-grid{grid-template-columns:1fr;}
@@ -590,9 +620,201 @@ footer{
   .footer-bottom{flex-direction:column;text-align:center;}
   .btn-login{display:none;}
 }
-</style>
+
+        /* ═══ SLOTH MASCOT ═══ */
+        #sloth-mascot{
+            width:38px;
+            height:38px;
+            cursor:pointer;
+            z-index:9000;
+            border-radius:50%;
+            overflow:hidden;
+            border:2px solid rgba(68,184,40,0.35);
+            transition:all .25s cubic-bezier(0.34,1.56,0.64,1);
+            flex-shrink:0;
+            position:relative;
+        }
+        #sloth-mascot:hover{
+            transform:scale(1.15);
+            border-color:rgba(68,184,40,0.8);
+            box-shadow:0 0 12px rgba(68,184,40,0.4);
+            animation:none;
+        }
+        #sloth-mascot:hover{
+            transform:scale(1.12) translateY(-8px);
+            animation:none;
+        }
+        #sloth-mascot:hover #sloth-bubble{
+            opacity:1;
+            transform:translateY(0);
+        }
+        #sloth-mascot:hover #sloth-glow{
+            opacity:1;
+        }
+        #sloth-img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+        #sloth-glow{
+            position:absolute;
+            inset:-8px;
+            border-radius:20px;
+            background:radial-gradient(ellipse at center, rgba(68,184,40,0.25), transparent 70%);
+            opacity:0;
+            transition:opacity .3s;
+            pointer-events:none;
+        }
+        #sloth-bubble{
+            position:absolute;
+            top:calc(100% + 10px);
+            right:0;
+            background:#1e1e1e;
+            border:1px solid rgba(68,184,40,0.3);
+            color:#fff;
+            font-size:12px;
+            font-weight:500;
+            padding:8px 14px;
+            border-radius:12px 4px 12px 12px;
+            white-space:nowrap;
+            opacity:0;
+            transform:translateY(6px);
+            transition:all .2s;
+            pointer-events:none;
+            box-shadow:0 4px 16px rgba(0,0,0,0.4);
+        }
+        #sloth-bubble::after{
+            content:'';
+            position:absolute;
+            top:-6px;right:14px;
+            border:6px solid transparent;
+            border-bottom-color:#1e1e1e;
+            border-top:none;
+        }
+        @keyframes sloth-float{
+            0%,100%{ transform:translateY(0) rotate(-1deg); }
+            50%{ transform:translateY(-10px) rotate(1deg); }
+        }
+
+        /* ═══ AI CHAT OVERLAY ═══ */
+        #sloth-chat-overlay{
+            display:none;
+            position:fixed;
+            top:calc(var(--nav-h) + 40px);right:24px;
+            width:340px;
+            background:#1a1a1a;
+            border:1px solid rgba(68,184,40,0.25);
+            border-radius:16px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.7);
+            z-index:9001;
+            flex-direction:column;
+            overflow:hidden;
+        }
+        #sloth-chat-overlay.open{ display:flex; }
+        .sloth-chat-header{
+            display:flex;align-items:center;gap:10px;
+            padding:12px 16px;
+            background:#222;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+        .sloth-chat-avatar{
+            width:36px;height:36px;border-radius:50%;
+            overflow:hidden;flex-shrink:0;
+            border:2px solid rgba(68,184,40,0.3);
+        }
+        .sloth-chat-avatar img{ width:100%;height:100%;object-fit:cover; }
+        .sloth-chat-name{ font-weight:700;font-size:13px;color:#fff; }
+        .sloth-chat-status{ font-size:10px;color:var(--neon);display:flex;align-items:center;gap:4px; }
+        .sloth-chat-close{
+            margin-left:auto;background:none;border:none;
+            color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;
+            transition:color .15s;
+        }
+        .sloth-chat-close:hover{ color:#fff; }
+        .sloth-chat-messages{
+            flex:1;overflow-y:auto;padding:14px;
+            display:flex;flex-direction:column;gap:10px;
+            min-height:280px;max-height:380px;
+        }
+        .sloth-msg{
+            display:flex;gap:8px;align-items:flex-start;
+        }
+        .sloth-msg.user{ flex-direction:row-reverse; }
+        .sloth-msg-avatar{
+            width:26px;height:26px;border-radius:50%;
+            flex-shrink:0;overflow:hidden;
+            background:rgba(255,255,255,0.08);
+            display:flex;align-items:center;justify-content:center;
+            font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);
+        }
+        .sloth-msg-avatar img{ width:100%;height:100%;object-fit:cover; }
+        .sloth-msg-bubble{
+            max-width:80%;padding:9px 12px;
+            border-radius:12px;font-size:12.5px;line-height:1.5;
+        }
+        .sloth-msg.ai .sloth-msg-bubble{
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.08);
+            color:rgba(255,255,255,0.88);
+            border-radius:12px 4px 12px 12px;
+        }
+        .sloth-msg.user .sloth-msg-bubble{
+            background:rgba(68,184,40,0.12);
+            border:1px solid rgba(68,184,40,0.2);
+            color:#fff;
+            border-radius:12px 4px 12px 12px;
+        }
+        .sloth-chat-input-row{
+            display:flex;gap:8px;padding:12px;
+            border-top:1px solid rgba(255,255,255,0.08);
+            background:#1a1a1a;
+        }
+        .sloth-chat-inp{
+            flex:1;background:#2a2a2a;border:1px solid rgba(255,255,255,0.12);
+            color:#fff;font-size:12.5px;padding:8px 12px;border-radius:8px;
+            outline:none;font-family:'DM Sans',sans-serif;
+            resize:none;
+        }
+        .sloth-chat-inp:focus{ border-color:rgba(68,184,40,0.3); }
+        .sloth-send-btn{
+            width:36px;height:36px;border-radius:8px;
+            background:var(--neon);border:none;
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;flex-shrink:0;transition:opacity .15s;
+        }
+        .sloth-send-btn:hover{ opacity:0.85; }
+
+        /* ═══ SLOGAN BANNER ═══ */
+        #slogan-bar{
+            background:linear-gradient(90deg,rgba(68,184,40,0.06),rgba(68,184,40,0.02),rgba(68,184,40,0.06));
+            border-top:1px solid rgba(68,184,40,0.1);
+            border-bottom:1px solid rgba(68,184,40,0.1);
+            padding:14px 24px;
+            text-align:center;
+            font-family:'Syne',sans-serif;
+            font-size:clamp(14px,2vw,18px);
+            font-weight:600;
+            color:rgba(255,255,255,0.7);
+            letter-spacing:0.02em;
+        }
+        #slogan-bar span{ color:var(--neon); }
+
+        </style>
 </head>
 <body>
+
+<!-- Language Bar -->
+<div id="lang-bar">
+  <span data-i18n="choose_lang">Language:</span>
+  <button class="lang-btn active" id="lang-en" onclick="setLang('en')">
+    <span class="lang-flag">🇺🇸</span> English
+  </button>
+  <button class="lang-btn" id="lang-he" onclick="setLang('he')">
+    <span class="lang-flag">🇮🇱</span> עברית
+  </button>
+  <button id="lang-more-btn" onclick="openLangModal()">+ More Languages</button>
+</div>
 
 <!-- Language Modal -->
 <div id="lang-modal">
@@ -681,6 +903,23 @@ footer{
     </div>
 
     <!-- Bots -->
+    <div class="nav-item" data-i18n="nav_why">
+      <span>Why ExNexus</span><span class="nav-caret">▾</span>
+      <div class="nav-dropdown">
+        <div class="dd-item" onclick="goto('#differentiators')">
+          <div class="dd-icon" style="background:rgba(68,184,40,0.1);">🔗</div>
+          <div><div class="dd-text-title" data-i18n="diff1_nav">Multi-Exchange in One Place</div><div class="dd-text-sub" data-i18n="diff1_nav_sub">All your exchanges, unified</div></div>
+        </div>
+        <div class="dd-item" onclick="goto('#differentiators')">
+          <div class="dd-icon" style="background:rgba(66,133,244,0.1);">🌐</div>
+          <div><div class="dd-text-title" data-i18n="diff2_nav">Crypto + Stocks + Forex</div><div class="dd-text-sub" data-i18n="diff2_nav_sub">Every asset class, one terminal</div></div>
+        </div>
+        <div class="dd-item" onclick="goto('#arbitrage')">
+          <div class="dd-icon" style="background:rgba(255,140,0,0.1);">⚡</div>
+          <div><div class="dd-text-title" data-i18n="arb_engine">Arbitrage Engine</div><div class="dd-text-sub" data-i18n="arb_engine_sub">CEX + DEX cross-exchange execution</div></div>
+        </div>
+      </div>
+    </div>
     <div class="nav-item" onclick="goto('#bots')" data-i18n="nav_bots">Bots</div>
 
     <!-- Intelligence -->
@@ -707,26 +946,30 @@ footer{
   </div>
 
   <div class="nav-right">
+    <!-- Ex the Mascot -->
+    <div id="sloth-mascot" onclick="openSlothChat()" title="Ask Ex...">
+        <img id="sloth-img" src="data:image/jpeg;base64,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" alt="Ex">
+        <div id="sloth-glow"></div>
+        <div id="sloth-bubble">Hey! Ask me anything 🎩</div>
+    </div>
     <div style="display:flex;align-items:center;gap:6px;margin-right:8px;">
     <div style="position:relative;">
       <button id="site-globe-btn" onclick="toggleSiteGlobe()" title="Language" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌐</button>
       <div id="site-globe-menu" style="display:none;position:absolute;right:0;top:44px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;z-index:99999;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.5);">
         <div style="padding:8px 12px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06);">Language</div>
-        <div onclick="setLang('en');closeSiteGlobe()" class="site-lang-opt">🇺🇸 English</div>
-        <div onclick="setLang('he');closeSiteGlobe()" class="site-lang-opt">🇮🇱 עברית</div>
-        <div onclick="setLang('ar');closeSiteGlobe()" class="site-lang-opt">🇸🇦 العربية</div>
-        <div onclick="setLang('es');closeSiteGlobe()" class="site-lang-opt">🇪🇸 Español</div>
-        <div onclick="setLang('fr');closeSiteGlobe()" class="site-lang-opt">🇫🇷 Français</div>
-        <div onclick="setLang('ru');closeSiteGlobe()" class="site-lang-opt">🇷🇺 Русский</div>
-        <div onclick="setLang('zh');closeSiteGlobe()" class="site-lang-opt">🇨🇳 中文</div>
-        <div onclick="setLang('tr');closeSiteGlobe()" class="site-lang-opt">🇹🇷 Türkçe</div>
+        <div onclick="setLang('en');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇺🇸 English</div>
+        <div onclick="setLang('he');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇮🇱 עברית</div>
+        <div onclick="setLang('ar');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇸🇦 العربية</div>
+        <div onclick="setLang('es');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇪🇸 Español</div>
+        <div onclick="setLang('fr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇫🇷 Français</div>
+        <div onclick="setLang('ru');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇷🇺 Русский</div>
+        <div onclick="setLang('zh');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇨🇳 中文</div>
+        <div onclick="setLang('tr');closeSiteGlobe()" class="site-lang-opt" style="padding:9px 14px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;display:flex;align-items:center;gap:8px;">🇹🇷 Türkçe</div>
       </div>
     </div>
-    <button onclick="toggleSiteSettings()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⚙️</button>
-    <div id="sloth-nav-btn" onclick="toggleSlothChat()" title="Ask Ex anything..." style="width:44px;height:44px;cursor:pointer;border-radius:50%;overflow:hidden;border:2px solid rgba(68,184,40,0.6);transition:all .2s;flex-shrink:0;box-shadow:0 0 8px rgba(68,184,40,0.25);" onmouseover="this.style.borderColor='#44B828';this.style.boxShadow='0 0 14px rgba(68,184,40,0.5)';this.style.transform='scale(1.1)'" onmouseout="this.style.borderColor='rgba(68,184,40,0.6)';this.style.boxShadow='0 0 8px rgba(68,184,40,0.25)';this.style.transform='scale(1)'">
+    <div id="sloth-nav-btn" onclick="toggleSlothChat()" title="Ask Ex anything..." style="width:44px;height:44px;cursor:pointer;border-radius:50%;overflow:hidden;border:2px solid rgba(68,184,40,0.6);box-shadow:0 0 8px rgba(68,184,40,0.25);transition:all .2s;flex-shrink:0;" onmouseover="this.style.borderColor='#44B828';this.style.boxShadow='0 0 14px rgba(68,184,40,0.5)';this.style.transform='scale(1.1)'" onmouseout="this.style.borderColor='rgba(68,184,40,0.6)';this.style.boxShadow='0 0 8px rgba(68,184,40,0.25)';this.style.transform='scale(1)'">
       <img src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;">
     </div>
-    
 </div>
 <button class="btn-login" onclick="launchTerminal()" data-i18n="btn_login">Sign In / Up</button>
     <button class="btn-launch" onclick="launchTerminal()" data-i18n="btn_launch">Launch Terminal →</button>
@@ -735,95 +978,6 @@ footer{
     </button>
   </div>
 </nav>
-
-<!-- ═══ EX CHAT OVERLAY ═══ -->
-<div id="sloth-chat-overlay" style="display:none;position:fixed;top:72px;right:24px;width:320px;background:#1a1a1a;border:1px solid rgba(68,184,40,0.25);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.7);z-index:9001;flex-direction:column;overflow:hidden;">
-  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#222;border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(68,184,40,0.3);">
-      <img src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;">
-    </div>
-    <div>
-      <div style="font-weight:700;font-size:13px;color:#fff;">Ex 🎩</div>
-      <div style="font-size:10px;color:#44B828;">● AI Trading Assistant</div>
-    </div>
-    <button onclick="toggleSlothChat()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;">×</button>
-  </div>
-  <div id="sloth-messages" style="max-height:320px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:160px;">
-    <div style="display:flex;gap:8px;align-items:flex-start;">
-      <div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="data:image/jpeg;base64,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" style="width:100%;height:100%;object-fit:cover;"></div>
-      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:9px 12px;font-size:12.5px;color:rgba(255,255,255,0.88);max-width:80%;line-height:1.5;">Hey! I'm <b>Ex</b> 🎩 your ExNexus AI assistant.<br>Ask me anything about trading!</div>
-    </div>
-  </div>
-  <div style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.08);background:#1a1a1a;">
-    <textarea id="sloth-inp" placeholder="Ask Ex anything..." rows="1" style="flex:1;background:#2a2a2a;border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:12.5px;padding:8px 12px;border-radius:8px;outline:none;font-family:inherit;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSlothMsg();}"></textarea>
-    <button onclick="sendSlothMsg()" style="width:36px;height:36px;border-radius:8px;background:#44B828;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
-
-<script>
-const _EX_SRC = 'data:image/jpeg;base64,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';
-let _slothBusy = false;
-
-function toggleSlothChat() {
-  const o = document.getElementById('sloth-chat-overlay');
-  o.style.display = o.style.display === 'flex' ? 'none' : 'flex';
-  if(o.style.display === 'flex') document.getElementById('sloth-inp')?.focus();
-}
-
-async function sendSlothMsg() {
-  if(_slothBusy) return;
-  const inp = document.getElementById('sloth-inp');
-  const msg = inp?.value?.trim();
-  if(!msg) return;
-  inp.value = '';
-  _addSlothMsg(msg, 'user');
-  _slothBusy = true;
-  const typing = _addSlothMsg('...', 'ai', true);
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        system: 'You are Ex, the ExNexus AI trading assistant. Wear a top hat 🎩. Be concise — max 3-4 lines. Focus on trading, crypto, and ExNexus features.',
-        messages: [{role: 'user', content: msg}]
-      })
-    });
-    const d = await r.json();
-    if(typing) typing.remove();
-    _addSlothMsg(d.content?.[0]?.text || 'Email info@exnexus.co 🎩', 'ai');
-  } catch(e) {
-    if(typing) typing.remove();
-    _addSlothMsg('Try again in a moment! 🎩', 'ai');
-  }
-  _slothBusy = false;
-}
-
-function _addSlothMsg(text, role, isTyping = false) {
-  const c = document.getElementById('sloth-messages');
-  if(!c) return null;
-  const d = document.createElement('div');
-  d.style.cssText = 'display:flex;gap:8px;align-items:flex-start;' + (role === 'user' ? 'flex-direction:row-reverse;' : '');
-  const av = role === 'ai'
-    ? `<div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${_EX_SRC}" style="width:100%;height:100%;object-fit:cover;"></div>`
-    : '<div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);flex-shrink:0;">You</div>';
-  d.innerHTML = av + `<div style="max-width:80%;padding:9px 12px;font-size:12.5px;line-height:1.5;border-radius:${role==='ai'?'4px 12px 12px 12px':'12px 4px 12px 12px'};background:${role==='ai'?'rgba(255,255,255,0.06)':'rgba(68,184,40,0.12)'};border:1px solid ${role==='ai'?'rgba(255,255,255,0.08)':'rgba(68,184,40,0.2)'};color:${role==='ai'?'rgba(255,255,255,0.88)':'#fff'};">${isTyping ? '<span style="opacity:.5;">Ex is thinking... 🎩</span>' : text}</div>`;
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
-  return d;
-}
-
-document.addEventListener('click', e => {
-  const o = document.getElementById('sloth-chat-overlay');
-  const btn = document.getElementById('sloth-nav-btn');
-  if(o && o.style.display === 'flex' && !o.contains(e.target) && !btn?.contains(e.target))
-    o.style.display = 'none';
-});
-</script>
-
 
 <!-- Mobile Menu -->
 <div id="mob-menu">
@@ -846,10 +1000,9 @@ document.addEventListener('click', e => {
   </div>
 </div>
 
-
 <!-- ═══ SLOGAN BAR ═══ -->
-<div id="slogan-bar" style="background:linear-gradient(90deg,rgba(68,184,40,0.06),rgba(68,184,40,0.02),rgba(68,184,40,0.06));border-top:1px solid rgba(68,184,40,0.1);border-bottom:1px solid rgba(68,184,40,0.1);padding:14px 24px;text-align:center;font-family:'Syne',sans-serif;font-size:clamp(14px,2vw,18px);font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.02em;">
-  <span style="color:var(--neon);">Stay slow. Trade smart.</span> Let ExNexus do the rest. 🦥
+<div id="slogan-bar">
+    Stay slow. Trade smart. <span>Let ExNexus do the rest.</span>
 </div>
 
 <!-- ═══════════ HERO ═══════════ -->
@@ -863,7 +1016,7 @@ document.addEventListener('click', e => {
     </div>
     <h1 data-i18n="hero_title">Trade <span class="accent">Smarter.</span><br>Across Every<br>Market.</h1>
     <p class="hero-sub" data-i18n="hero_sub">
-      One institutional terminal. Every exchange. AI-powered signals, real-time arbitrage, and automated bots — CEX and DeFi unified.
+      One terminal. Every exchange. Every asset class.<br>Trade crypto, stocks, and forex simultaneously across Bybit, Binance, Gate.io and Alpaca — with AI-powered signals, cross-exchange arbitrage, and automated bots.
     </p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="launchTerminal()">
@@ -877,20 +1030,20 @@ document.addEventListener('click', e => {
     </div>
     <div class="hero-stats">
       <div>
-        <div class="hero-stat-val">3+</div>
-        <div class="hero-stat-lbl" data-i18n="stat_exchanges">Exchanges Connected</div>
+        <div class="hero-stat-val">4+</div>
+        <div class="hero-stat-lbl" data-i18n="stat_exchanges">Exchanges</div>
       </div>
       <div>
-        <div class="hero-stat-val" style="color:var(--neon);">AI</div>
-        <div class="hero-stat-lbl" data-i18n="stat_ai">Claude-Powered Brain</div>
+        <div class="hero-stat-val" style="color:var(--neon);">3</div>
+        <div class="hero-stat-lbl" data-i18n="stat_assets">Asset Classes</div>
       </div>
       <div>
-        <div class="hero-stat-val">24/7</div>
-        <div class="hero-stat-lbl" data-i18n="stat_uptime">Always On</div>
+        <div class="hero-stat-val" style="color:var(--blue);">AI</div>
+        <div class="hero-stat-lbl" data-i18n="stat_ai">Claude Brain</div>
       </div>
       <div>
         <div class="hero-stat-val">⚡</div>
-        <div class="hero-stat-lbl" data-i18n="stat_arb">Live Arb Scanner</div>
+        <div class="hero-stat-lbl" data-i18n="stat_arb">Live Arb</div>
       </div>
     </div>
   </div>
@@ -910,19 +1063,11 @@ document.addEventListener('click', e => {
 <!-- ═══ PHONE BANNER ═══ -->
 <section style="padding:0 24px 60px;background:transparent;">
   <div style="background:#f0f0f0;border-radius:24px;padding:60px 50px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:80px;flex-wrap:wrap;">
-
-    <!-- Phone mockup — all:initial isolates it from any CSS -->
     <div style="flex:0 0 auto;position:relative;">
       <div style="width:240px;height:480px;border-radius:36px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.6);">
         <div style="all:initial;display:flex;flex-direction:column;width:240px;height:480px;background:linear-gradient(180deg,#1a1a1a,#111);border-radius:36px;overflow:hidden;border:2px solid rgba(255,255,255,0.1);box-sizing:border-box;font-family:system-ui;">
-          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;height:40px;background:#111;padding:0 20px;box-sizing:border-box;font-family:system-ui;">
-            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">9:41</span>
-            <span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">●●● WiFi</span>
-          </div>
-          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);box-sizing:border-box;font-family:system-ui;">
-            <span style="all:initial;font-size:13px;font-weight:700;font-family:system-ui;"><span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span></span>
-            <span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">● LIVE</span>
-          </div>
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;height:40px;background:#111;padding:0 20px;box-sizing:border-box;font-family:system-ui;"><span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">9:41</span><span style="all:initial;font-size:10px;color:rgba(255,255,255,0.6);font-family:system-ui;">●●● WiFi</span></div>
+          <div style="all:initial;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);box-sizing:border-box;font-family:system-ui;"><span style="all:initial;font-size:13px;font-weight:700;font-family:system-ui;"><span style="color:#00FF88;">Ex</span><span style="color:#fff;">Nexus</span></span><span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">● LIVE</span></div>
           <div style="all:initial;padding:16px;background:#0d0d0d;display:block;box-sizing:border-box;font-family:system-ui;">
             <div style="all:initial;font-size:10px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;margin-bottom:4px;">BTC/USDT</div>
             <div id="pwa-btc-price" style="all:initial;font-size:22px;font-weight:700;color:#fff;display:block;font-family:monospace;">Loading...</div>
@@ -940,13 +1085,7 @@ document.addEventListener('click', e => {
             <div style="flex:1;height:70px;background:rgba(68,184,40,0.7);border-radius:2px;"></div>
           </div>
           <div style="all:initial;flex:1;background:#0d0d0d;display:block;padding:8px 16px 60px;box-sizing:border-box;position:relative;overflow:hidden;font-family:system-ui;">
-            <div id="pscreen-home" class="pscreen" style="display:block;">
-              <div style="all:initial;display:flex;gap:6px;font-family:system-ui;padding-bottom:8px;">
-                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">ETH</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$2,320</div><div style="all:initial;font-size:8px;color:#FF003F;display:block;">-0.8%</div></div>
-                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">SOL</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$148</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+3.2%</div></div>
-                <div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">BNB</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$605</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+1.1%</div></div>
-              </div>
-            </div>
+            <div id="pscreen-home" class="pscreen" style="display:block;"><div style="all:initial;display:flex;gap:6px;font-family:system-ui;padding-bottom:8px;"><div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">ETH</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$2,320</div><div style="all:initial;font-size:8px;color:#FF003F;display:block;">-0.8%</div></div><div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">SOL</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$148</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+3.2%</div></div><div style="all:initial;flex:1;background:rgba(68,184,40,0.1);border-radius:6px;padding:6px;text-align:center;display:block;box-sizing:border-box;"><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;">BNB</div><div style="all:initial;font-size:10px;font-weight:600;color:#fff;display:block;font-family:system-ui;">$605</div><div style="all:initial;font-size:8px;color:#00FF88;display:block;">+1.1%</div></div></div></div>
             <div id="pscreen-markets" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:6px;">Top Markets</div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">BTC</span><span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+1.52%</span></div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">ETH</span><span style="all:initial;font-size:10px;color:#FF003F;font-family:system-ui;">-0.82%</span></div><div style="all:initial;display:flex;justify-content:space-between;padding:4px 0;font-family:system-ui;"><span style="all:initial;font-size:10px;color:#fff;font-family:system-ui;">SOL</span><span style="all:initial;font-size:10px;color:#00FF88;font-family:system-ui;">+3.21%</span></div></div>
             <div id="pscreen-trade" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:4px;">Quick Trade · BTC</div><div style="all:initial;display:flex;gap:6px;margin-bottom:6px;font-family:system-ui;"><div style="all:initial;flex:1;background:rgba(68,184,40,0.15);border:1px solid rgba(68,184,40,0.3);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#00FF88;font-weight:700;display:block;box-sizing:border-box;">LONG</div><div style="all:initial;flex:1;background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.2);border-radius:6px;padding:5px;text-align:center;font-size:9px;color:#FF003F;font-weight:700;display:block;box-sizing:border-box;">SHORT</div></div><div style="all:initial;background:rgba(255,255,255,0.04);border-radius:6px;padding:6px;display:block;font-family:system-ui;"><div style="all:initial;display:flex;justify-content:space-between;font-size:8px;margin-bottom:3px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">AI Score</span><span style="color:#00FF88;">72/100</span></div><div style="all:initial;display:flex;justify-content:space-between;font-size:8px;font-family:system-ui;"><span style="color:rgba(255,255,255,0.5);">TP1</span><span style="color:#fff;">$75,800</span></div></div></div>
             <div id="pscreen-bots" class="pscreen" style="display:none;"><div style="all:initial;font-size:9px;color:rgba(255,255,255,0.4);display:block;font-family:system-ui;padding-bottom:6px;">Active Bots</div><div style="all:initial;background:rgba(68,184,40,0.08);border:1px solid rgba(68,184,40,0.2);border-radius:6px;padding:6px;display:flex;justify-content:space-between;margin-bottom:5px;font-family:system-ui;"><div style="all:initial;font-family:system-ui;"><div style="all:initial;font-size:9px;font-weight:600;color:#fff;display:block;">Grid Scalper</div><div style="all:initial;font-size:8px;color:rgba(255,255,255,0.4);display:block;">BTC · $500</div></div><div style="all:initial;font-size:9px;color:#00FF88;font-weight:600;font-family:system-ui;">+$24.50</div></div></div>
@@ -960,72 +1099,106 @@ document.addEventListener('click', e => {
           </div>
         </div>
       </div>
-      <div style="position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(68,184,40,0.1),transparent 70%);z-index:-1;border-radius:50%;pointer-events:none;"></div>
     </div>
-
-    <!-- Content -->
     <div style="flex:1;min-width:300px;max-width:500px;">
-      <div style="font-size:11px;font-weight:600;color:#2d8a1a;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Available Everywhere</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px;color:#111;">Trade from your pocket.<br><span style="color:#44B828;">No app store needed.</span></h2>
-      <p style="font-size:15px;color:#444;line-height:1.7;margin-bottom:32px;">ExNexus works as a native app on any device. Install from your browser — iOS, Android, Desktop. Full terminal. Real trades. Zero downloads.</p>
+      <div style="font-size:11px;font-weight:600;color:#44B828;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Available Everywhere</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px;">Trade from your pocket.<br><span style="color:#44B828;">No app store needed.</span></h2>
+      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:32px;">ExNexus works as a native app on any device. Install from your browser — iOS, Android, Desktop. Full terminal. Real trades. Zero downloads.</p>
       <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2d8a1a;flex-shrink:0;">1</div><div style="font-size:13px;color:#333;">Open <strong style="color:#111;">exnexus.app</strong> in your mobile browser</div></div>
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2d8a1a;flex-shrink:0;">2</div><div style="font-size:13px;color:#333;"><strong style="color:#111;">Android:</strong> Menu → Add to Home Screen &nbsp;|&nbsp; <strong style="color:#111;">iOS:</strong> Share → Add to Home Screen</div></div>
-        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.12);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2d8a1a;flex-shrink:0;">3</div><div style="font-size:13px;color:#333;">ExNexus appears on your home screen like a native app ✅</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">1</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">Open <strong style="color:#fff;">exnexus.app</strong> in your mobile browser</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">2</div><div style="font-size:13px;color:rgba(255,255,255,0.7);"><strong style="color:#fff;">Android:</strong> Menu → Add to Home Screen &nbsp;|&nbsp; <strong style="color:#fff;">iOS:</strong> Share → Add to Home Screen</div></div>
+        <div style="display:flex;align-items:center;gap:14px;"><div style="width:32px;height:32px;border-radius:50%;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#44B828;flex-shrink:0;">3</div><div style="font-size:13px;color:rgba(255,255,255,0.7);">ExNexus appears on your home screen like a native app ✅</div></div>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
         <a href="https://exnexus.app/terminal.html" style="display:inline-flex;align-items:center;gap:8px;background:#44B828;color:#000;font-weight:700;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">📱 Open Trading App</a>
-        <a href="https://exnexus.app/terminal.html?demo=1" style="display:inline-flex;align-items:center;gap:8px;background:rgba(68,184,40,0.1);color:#2d8a1a;border:1px solid rgba(68,184,40,0.4);font-weight:600;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">🎮 Try Demo Free</a>
+        <a href="https://exnexus.app/terminal.html?demo=1" style="display:inline-flex;align-items:center;gap:8px;background:rgba(68,184,40,0.08);color:#44B828;border:1px solid rgba(68,184,40,0.3);font-weight:600;font-size:13px;padding:12px 24px;border-radius:8px;text-decoration:none;">🎮 Try Demo Free</a>
       </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:#888;">🍎 iOS Safari</span>
-        <span style="font-size:10px;color:#888;">🤖 Android Chrome</span>
-        <span style="font-size:10px;color:#888;">💻 Desktop</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🍎 iOS Safari</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">🤖 Android Chrome</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.35);">💻 Desktop</span>
       </div>
     </div>
   </div>
 </section>
 
-<script>
-/* ── Phone Banner JS ── */
-(function(){
-  // Live price via WebSocket
-  function startPhoneWS(){
-    const ws=new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-    ws.onmessage=e=>{
-      const d=JSON.parse(e.data),p=parseFloat(d.c),ch=parseFloat(d.P);
-      const pe=document.getElementById('pwa-btc-price');
-      const ce=document.getElementById('pwa-btc-change');
-      if(pe)pe.textContent='$'+p.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-      if(ce){ce.textContent=(ch>=0?'+':'')+ch.toFixed(2)+'% today';ce.style.color=ch>=0?'#00FF88':'#FF003F';}
-    };
-    ws.onclose=()=>setTimeout(startPhoneWS,3000);
-  }
-  // Nav switching
-  let auto=null;
-  function sw(n){
-    document.querySelectorAll('.pscreen').forEach(s=>s.style.display='none');
-    const el=document.getElementById('pscreen-'+n);
-    if(el)el.style.display='block';
-    document.querySelectorAll('.pnav-btn').forEach(b=>b.style.color='rgba(255,255,255,0.4)');
-    document.querySelectorAll('.pnav-btn[data-screen="'+n+'"]').forEach(b=>b.style.color='#00FF88');
-  }
-  function startAuto(){const sc=['home','markets','trade','bots'];let i=0;auto=setInterval(()=>{i=(i+1)%sc.length;sw(sc[i]);},3000);}
-  document.addEventListener('DOMContentLoaded',()=>{
-    startPhoneWS();
-    startAuto();
-    document.querySelectorAll('.pnav-btn').forEach(b=>{
-      b.addEventListener('mouseenter',()=>{clearInterval(auto);setTimeout(()=>sw(b.dataset.screen),150);});
-      b.addEventListener('mouseleave',()=>setTimeout(startAuto,2000));
-      b.addEventListener('click',()=>{clearInterval(auto);sw(b.dataset.screen);setTimeout(startAuto,4000);});
-    });
-  });
-})();
-</script>
-
 <div class="divider"></div>
 
 <!-- ═══════════ FEATURES ═══════════ -->
+
+<!-- ═══════════ DIFFERENTIATORS ═══════════ -->
+<section id="differentiators" style="padding:80px 24px;max-width:1200px;margin:0 auto;" class="reveal">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+    <!-- Card 1: Multi-Exchange -->
+    <div style="background:linear-gradient(135deg,rgba(68,184,40,0.07),rgba(68,184,40,0.02));border:1px solid rgba(68,184,40,0.25);border-radius:16px;padding:36px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(68,184,40,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px;">
+        ⚡ Unique Advantage
+      </div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:clamp(22px,2.5vw,30px);font-weight:800;line-height:1.15;margin-bottom:14px;letter-spacing:-0.02em;" data-i18n="diff1_title">All Your Exchanges.<br>One Terminal.</h3>
+      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.65;margin-bottom:24px;" data-i18n="diff1_desc">Most traders juggle 3-4 browser tabs just to monitor their positions. ExNexus connects all your exchanges simultaneously — see unified balances, execute across any exchange, and move capital intelligently between them.</p>
+      <!-- Exchange comparison visual -->
+      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.35);margin-bottom:12px;">WITHOUT EXNEXUS</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+          <span style="background:rgba(255,184,0,0.1);border:1px solid rgba(255,184,0,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(255,184,0,0.7);">Bybit tab</span>
+          <span style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(0,200,150,0.7);">Gate tab</span>
+          <span style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(240,180,41,0.7);">Binance tab</span>
+          <span style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.2);border-radius:5px;padding:4px 10px;font-size:11px;color:rgba(66,133,244,0.7);">Alpaca tab</span>
+          <span style="font-size:11px;color:rgba(255,0,63,0.7);padding:4px 6px;">= chaos</span>
+        </div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--neon);margin-bottom:10px;">WITH EXNEXUS</div>
+        <div style="background:rgba(68,184,40,0.06);border:1px solid rgba(68,184,40,0.15);border-radius:7px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">🖥️</span>
+          <span>One terminal · All exchanges · Unified view · <b style="color:var(--neon);">Total control</b></span>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--neon);">✓</span> Unified portfolio</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--neon);">✓</span> Cross-exchange arb</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--neon);">✓</span> Capital awareness</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--neon);">✓</span> One click execution</span>
+      </div>
+    </div>
+
+    <!-- Card 2: All Asset Classes -->
+    <div style="background:linear-gradient(135deg,rgba(66,133,244,0.07),rgba(66,133,244,0.02));border:1px solid rgba(66,133,244,0.25);border-radius:16px;padding:36px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(66,133,244,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px;">
+        🌐 Industry First
+      </div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:clamp(22px,2.5vw,30px);font-weight:800;line-height:1.15;margin-bottom:14px;letter-spacing:-0.02em;" data-i18n="diff2_title">Crypto. Stocks. Forex.<br>All In One Place.</h3>
+      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.65;margin-bottom:24px;" data-i18n="diff2_desc">Why use different platforms for different assets? ExNexus is the only terminal where you can trade Bitcoin futures on Bybit, Apple stock on Alpaca, and EUR/USD forex — all from one screen, with one AI brain analyzing everything.</p>
+      <!-- Asset class visual -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
+        <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,184,0,0.2);border-radius:9px;padding:12px;text-align:center;">
+          <div style="font-size:22px;margin-bottom:6px;">₿</div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,184,0,0.9);margin-bottom:3px;" data-i18n="asset_crypto">Crypto</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);">Bybit · Gate<br>Binance · DeFi</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(68,184,40,0.2);border-radius:9px;padding:12px;text-align:center;">
+          <div style="font-size:22px;margin-bottom:6px;">📈</div>
+          <div style="font-size:11px;font-weight:700;color:rgba(68,184,40,0.9);margin-bottom:3px;" data-i18n="asset_stocks">Stocks</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);">US Equities<br>ETFs · Options</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(66,133,244,0.2);border-radius:9px;padding:12px;text-align:center;">
+          <div style="font-size:22px;margin-bottom:6px;">💱</div>
+          <div style="font-size:11px;font-weight:700;color:rgba(66,133,244,0.9);margin-bottom:3px;" data-i18n="asset_forex">Forex</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);">Major pairs<br>via Alpaca</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--blue);">✓</span> One AI brain for all</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--blue);">✓</span> Unified P/L tracking</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--blue);">✓</span> Cross-asset signals</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:5px;"><span style="color:var(--blue);">✓</span> DeFi coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
 <section id="features" class="reveal">
   <div class="section-tag">
     <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--neon)"><circle cx="12" cy="12" r="10"/></svg>
@@ -1502,14 +1675,15 @@ const LANGS = {
       btn_earn: 'Earn as Affiliate', btn_join_affiliate: 'Join Affiliate Program →',
       hero_badge: 'Live · AI-Powered Trading Intelligence',
       hero_title: 'Trade <span class="accent">Smarter.</span><br>Across Every<br>Market.',
-      hero_sub: 'One institutional terminal. Every exchange. AI-powered signals, real-time arbitrage, and automated bots — CEX and DeFi unified.',
+      stat_assets: '3 Asset Classes', diff1_title: 'All Your Exchanges.<br>One Terminal.', diff2_title: 'Crypto. Stocks. Forex.<br>All In One Place.', diff1_desc: 'Most traders juggle 3-4 browser tabs just to monitor their positions. ExNexus connects all your exchanges simultaneously.', diff2_desc: 'Why use different platforms for different assets? ExNexus is the only terminal where you can trade Bitcoin, Apple stock, and EUR/USD forex from one screen.', diff1_nav: 'Multi-Exchange in One Place', diff1_nav_sub: 'All your exchanges, unified', diff2_nav: 'Crypto + Stocks + Forex', diff2_nav_sub: 'Every asset class, one terminal', nav_why: 'Why ExNexus', asset_crypto: 'Crypto', asset_stocks: 'Stocks', asset_forex: 'Forex',
+      hero_sub: 'One terminal. Every exchange. Every asset class.<br>Trade crypto, stocks, and forex simultaneously across Bybit, Binance, Gate.io and Alpaca — with AI-powered signals, cross-exchange arbitrage, and automated bots.',
       stat_exchanges: 'Exchanges Connected', stat_ai: 'Claude-Powered Brain',
       stat_uptime: 'Always On', stat_arb: 'Live Arb Scanner',
       tag_platform: 'Platform', tag_intelligence: 'Intelligence',
       tag_arb: 'Arbitrage', tag_bots: 'Automated Bots',
       tag_exchanges: 'Exchanges', tag_affiliate: 'Affiliate Program',
       tag_academy: 'Academy',
-      features_title: "Everything you need.<br>Nothing you don't.",
+      features_title: 'Everything you need.<br>Nothing you don\'t.',
       features_sub: 'ExNexus combines institutional-grade tools with AI intelligence — purpose-built for serious traders who demand an edge.',
       feat1_title: 'Institutional Terminal', feat1_desc: 'Full-featured trading terminal with live order book, TradingView charts, multi-exchange order entry, and real-time position tracking.', feat1_tag: 'Web · Mobile · Tablet',
       feat2_title: 'AI Scout Engine', feat2_desc: 'Claude AI aggregates signals from Signal Intelligence, Smart Money Flow, and Market Depth to generate win probability scores and trade recommendations.', feat2_tag: 'Powered by Claude',
@@ -1599,7 +1773,7 @@ const LANGS = {
       btn_earn: 'הרוויח כשותף', btn_join_affiliate: 'הצטרף לתוכנית השותפים ←',
       hero_badge: 'חי · אינטליגנציית מסחר מבוססת AI',
       hero_title: 'סחר <span class="accent">חכם יותר.</span><br>בכל שוק.<br>בכל בורסה.',
-      hero_sub: 'טרמינל מוסדי אחד. כל הבורסות. איתותים מבוססי AI, ארביטראז׳ בזמן אמת, ובוטים אוטומטיים — CEX ו-DeFi מאוחדים.',
+      hero_sub: 'טרמינל אחד. כל הבורסות. כל סוגי הנכסים.<br>סחר בקריפטו, מניות ופורקס בו-זמנית דרך Bybit, Binance, Gate.io ו-Alpaca — עם איתותים מבוססי AI, ארביטראז׳ בין בורסות ובוטים אוטומטיים.',
       stat_exchanges: 'בורסות מחוברות', stat_ai: 'מוח מבוסס Claude',
       stat_uptime: 'זמין תמיד', stat_arb: 'סורק ארביטראז׳ חי',
       tag_platform: 'פלטפורמה', tag_intelligence: 'אינטליגנציה',
@@ -1763,12 +1937,7 @@ function goto(hash) {
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function launchTerminal() {
-  const host = window.location.hostname;
-  if(host === 'exnexus.co' || host === 'www.exnexus.co') {
-    window.location.href = 'https://exnexus.app/terminal.html';
-  } else {
-    window.location.href = 'terminal.html';
-  }
+  window.location.href = window.location.hostname === 'exnexus.co' || window.location.hostname === 'www.exnexus.co' ? 'https://exnexus.app/terminal.html' : 'terminal.html';
 }
 function toggleMobMenu() {
   const m = document.getElementById('mob-menu');
@@ -1780,18 +1949,22 @@ const SYMBOLS = ['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','AVAXUSDT','BNBUSDT'];
 const CARD_IDS = { BTCUSDT:'btc', ETHUSDT:'eth', SOLUSDT:'sol', XRPUSDT:'xrp', AVAXUSDT:'avax', BNBUSDT:'bnb' };
 let ws;
 
+const prevPrices = {};
 function connectPriceFeed() {
   const streams = SYMBOLS.map(s => `${s.toLowerCase()}@miniTicker`).join('/');
   ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
   ws.onmessage = (e) => {
     try {
       const d = JSON.parse(e.data).data;
-      if(!d) return;
+      if(!d || !d.s) return;
       const sym = d.s;
       const id = CARD_IDS[sym];
       if(!id) return;
       const price = parseFloat(d.c);
-      const chg   = parseFloat(d.P);
+      // P = price change percent in 24h for miniTicker
+      const chgRaw = d.P !== undefined ? parseFloat(d.P) : null;
+      const chg = (chgRaw !== null && !isNaN(chgRaw)) ? chgRaw : (prevPrices[sym] ? ((price - prevPrices[sym]) / prevPrices[sym]) * 100 : 0);
+      prevPrices[sym] = price;
       const fmt = price >= 1000 ? price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
                 : price >= 10 ? price.toFixed(3)
                 : price.toFixed(4);
@@ -1799,12 +1972,11 @@ function connectPriceFeed() {
       const chgEl   = document.getElementById('hc-'+id+'-chg');
       if(priceEl) priceEl.textContent = '$' + fmt;
       if(chgEl) {
-        if(!isNaN(chg)){chgEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';}
+        chgEl.textContent = (chg>=0?'+':'') + chg.toFixed(2) + '%';
         chgEl.className = 'price-card-chg ' + (chg>=0?'pos':'neg');
       }
-      // Update ticker
       updateTicker(sym, fmt, chg);
-    } catch(e){}
+    } catch(err){}
   };
   ws.onclose = () => setTimeout(connectPriceFeed, 3000);
 }
@@ -1846,6 +2018,238 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+
+<!-- ═══ SLOTH MASCOT ═══ -->
+<div id="sloth-mascot" onclick="openSlothChat()" title="Ask Ex anything...">
+    <div id="sloth-bubble">Ask me anything... 🎩</div>
+    <img id="sloth-img" src="data:image/jpeg;base64,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" alt="Ex - ExNexus AI Assistant">
+    <div id="sloth-glow"></div>
+</div>
+
+
+<!-- ═══ SLOTH AI CHAT ═══ -->
+<div id="sloth-chat-overlay">
+    <div class="sloth-chat-header">
+        <div class="sloth-chat-avatar">
+            <img src="data:image/jpeg;base64,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" alt="Ex">
+        </div>
+        <div>
+            <div class="sloth-chat-name">Ex 🎩</div>
+            <div class="sloth-chat-status">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--neon);display:inline-block;"></span>
+                AI Trading Assistant
+            </div>
+        </div>
+        <button class="sloth-chat-close" onclick="closeSlothChat()">×</button>
+    </div>
+    <div class="sloth-chat-messages" id="sloth-messages">
+        <div class="sloth-msg ai">
+            <div class="sloth-msg-avatar"><img src="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAI8CAIAAADgF044AAAAA3NCSVQICAjb4U/gAAAgAElEQVR4nEy925ZkS24kZgb43pGnuzla..." alt="Ex"></div>
+            <div class="sloth-msg-bubble">
+                Hey! I'm <b>Ex</b> 🎩 — your ExNexus AI assistant.<br><br>
+                Ask me anything about trading, arbitrage, market conditions, or how to use ExNexus. I'm slow but I know my stuff! 😄
+            </div>
+        </div>
+    </div>
+    <div class="sloth-chat-input-row">
+        <textarea class="sloth-chat-inp" id="sloth-inp" 
+            placeholder="Ask Ex anything..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSlothMsg();}"></textarea>
+        <button class="sloth-send-btn" onclick="sendSlothMsg()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+    </div>
+</div>
+
+<script>
+/* ═══ SLOTH MASCOT & AI CHAT ═══ */
+const SLOTH_IMG = "data:image/jpeg;base64,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";
+let slothBusy = false;
+let slothHistory = [];
+
+function openSlothChat() {
+    document.getElementById('sloth-chat-overlay').classList.add('open');
+    document.getElementById('sloth-mascot').style.display = 'none';
+    document.getElementById('sloth-inp')?.focus();
+}
+
+function closeSlothChat() {
+    document.getElementById('sloth-chat-overlay').classList.remove('open');
+    document.getElementById('sloth-mascot').style.display = 'block';
+}
+
+async function sendSlothMsg() {
+    if(slothBusy) return;
+    const inp = document.getElementById('sloth-inp');
+    const msg = inp?.value?.trim();
+    if(!msg) return;
+    inp.value = '';
+
+    // Add user message
+    addSlothMsg(msg, 'user');
+    slothHistory.push({ role:'user', content: msg });
+    slothBusy = true;
+
+    // Typing indicator
+    const typing = addSlothMsg('...', 'ai', true);
+
+    try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-5',
+                max_tokens: 500,
+                system: `You are Ex, the ExNexus AI trading assistant mascot. You wear a top hat and green vest. You are wise, charming, and slightly slow in personality but lightning fast in analysis. You help traders understand markets, arbitrage, trading strategies, and how to use ExNexus. Keep responses concise and friendly. Use occasional trading wisdom. Sign off with a 🎩 sometimes.`,
+                messages: slothHistory.slice(-8)
+            })
+        });
+        const data = await res.json();
+        const reply = data.content?.[0]?.text || "Hmm, let me think about that one... 🎩";
+
+        if(typing) typing.remove();
+        addSlothMsg(reply, 'ai');
+        slothHistory.push({ role:'assistant', content: reply });
+    } catch(e) {
+        if(typing) typing.remove();
+        addSlothMsg("I seem to be moving a bit slow right now... try again in a moment! 🎩", 'ai');
+    }
+    slothBusy = false;
+}
+
+function addSlothMsg(text, role, isTyping=false) {
+    const container = document.getElementById('sloth-messages');
+    if(!container) return null;
+    const div = document.createElement('div');
+    div.className = 'sloth-msg ' + role;
+    const avatarHtml = role === 'ai'
+        ? `<div class="sloth-msg-avatar"><img src="${SLOTH_IMG}" alt="Ex" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+        : `<div class="sloth-msg-avatar">You</div>`;
+    div.innerHTML = avatarHtml + `<div class="sloth-msg-bubble">${isTyping ? '<span style="opacity:.5;">Ex is thinking... 🎩</span>' : text}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return div;
+}
+
+// Close on outside click
+document.addEventListener('click', function(e) {
+    const overlay = document.getElementById('sloth-chat-overlay');
+    const mascot  = document.getElementById('sloth-mascot');
+    if(overlay?.classList.contains('open') &&
+       !overlay.contains(e.target) &&
+       !mascot?.contains(e.target)) {
+        closeSlothChat();
+    }
+});
+</script>
+
+
+<!-- ═══ EX CHAT OVERLAY ═══ -->
+<div id="sloth-chat-overlay" style="display:none;position:fixed;top:72px;right:24px;width:320px;background:#1a1a1a;border:1px solid rgba(68,184,40,0.25);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.7);z-index:9001;flex-direction:column;overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#222;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(68,184,40,0.3);"><img src="data:image/jpeg;base64,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" alt="Ex" style="width:100%;height:100%;object-fit:cover;"></div>
+    <div><div style="font-weight:700;font-size:13px;color:#fff;">Ex 🎩</div><div style="font-size:10px;color:#44B828;">● AI Trading Assistant</div></div>
+    <button onclick="toggleSlothChat()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;">×</button>
+  </div>
+  <div id="sloth-messages" style="max-height:320px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:160px;">
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="data:image/jpeg;base64,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" style="width:100%;height:100%;object-fit:cover;"></div>
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:9px 12px;font-size:12.5px;color:rgba(255,255,255,0.88);max-width:80%;line-height:1.5;">Hey! I'm <b>Ex</b> 🎩 your ExNexus AI assistant.<br>Ask me anything about trading!</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.08);background:#1a1a1a;">
+    <textarea id="sloth-inp" placeholder="Ask Ex anything..." rows="1" style="flex:1;background:#2a2a2a;border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:12.5px;padding:8px 12px;border-radius:8px;outline:none;font-family:inherit;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSlothMsg();}"></textarea>
+    <button onclick="sendSlothMsg()" style="width:36px;height:36px;border-radius:8px;background:#44B828;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const _EX_SRC = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABQAFADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5J/te8PH7v/vij+1rv0i/75/+vVAUtHKjO5fGrXeP+Wf/AHz/APXpf7WvP70f/fNUD93pSqBxxzRZDNrSZdU1S8W0tpLRXKlt0zrGgA65YnFWtTsvEVhaG8uLWJrRSFa4gdZolJ6ZZGIH44rb+Gei6I8M2p63qv2VXhaK3jKFN0mcH52XYRgdjnJrsbfT9O8IeHptf0u7tNVu/InSO3VkJjdkKrI6k4IUFm9yBisKtVU9LXZtTpc93c8cOqXf/TP/AL5pP7Vu/VP++f8A69U+wA5pMDpxke9b2RiXf7Wu/wDpn/3z/wDXoGrXf/TP/vmqWOKTviiyFdiClyOlJSrjvTAd/D7Vc0O0W/1mysnYKtxcJEzE4ABYAnNUz060+2MqzxmDd5oYbNvXdnjHvmkPqfXfgi98MeIXk8OPpVvY6Xp8IT7VeSLEAeNoUg4G7n5COx44NQa9pngTVDrngs6CLS5t0KLcJGCkj7SVIbnDfKWBGOMdQ2K8h8Rahevpg0m9mns3jdHktMKIldV28DaQCOc/jzXY+HprrxHbpE17JcXf2dYo7to0Qw7AdoDKoJHQYORgZrzcRpaVz0cPq2jxLwVbaZN4xsLbWypsRcYmXOBJjOEz2DEAZ9DXuHxMv/Buu+G9X0O38MWenS6VYtcW11bW8cSpKuDtQKNxU8qdxOeuBivn/WtNvtG1a50vUYvKvLV9kqbg2G69RwQeua9TswHg8Sw3DHfJpMuSOfm2Zx+ldNXW0kzmo21i0ePngimd6Vjk9aQ+ua6kc4e1Kp7YptOB5GaBDu+K9G+E2iRW0E/jHUSBDalorOIxhvNlx8zc9AoPBHO76VxvhPRLrxD4gs9HtAd9w+GfGfLQcu59goJr0X4hajb2t3pvhnRo2isrUpDAmMMRn7xPck5JPc1lVfu2LUbptkOtE6jeOxZCx+bg5yPWrllrkui2oit5NiAAPtHLnI7eg/Wql3alJIwGQbWXLFflUe/esi8triZAqtkHkHGAfpmvPfvxUXsVTrNR0PRb6LwT470+C612O5t7+GMiO4tZAHK9QrggggYx7ZNck94sGn+I7tmVCbKRMYyNz/KAP++qwPEtveaD4e0me2kMbTSzCUhRycKVB/DP61zN5rOoXVm1pLMPIZw7qqgbiOmfzropRU4Ll2/yZaqKLu9zOI9KQYyc0pJyQOlN712nOJ3pT2FFFAHffB/xPa+GNQvLt0T7VMscSuxxti3ZkA+uBn2Fe2/ETWfDfjHwtLOlj5+paSrTWlwkJ3KyruKZxgqyc4+hx3r5WXNeq/DnxozNb6fdu4FtbRY/ulod8Yz6hopSp/3RWFaLtdG1JrZlOfVXL7kSV5kbgSRqFB9xk1p6Q3nsC1vJG56kooU/+Pf0qj8SorOwvra/s7lDFecGMdiO9R+Bp0fWITqE4EKfOiE9cEc1yyoxnHQqMFB2ZZ+OFvdabYaLp9xAg80PcCRGyMjC7emM8g/lXlrYwRXtn7SF7Z3WhaAIP9Yk8x/4CUX/AOtXiGSTmujCRUaSSFiFaow5o70Gjp2rpMAoq8dKusZzH+Z/wpf7Kutud0X5n/CldDsUM9q7D4YeF9U8Rao8lm0MNvbqRPNM+1BlWOPc4RmPoFJrnf7Kuc/ej/M/4V1+garJpnhxNPWSXeWm8xQuU2yIyHHvtZhUTb5fdKha+oz4n6XcaQbWwuryC4mjCttjJJQOgYBh2OCvFZvw20261rxRHpltNFHNPDJhpWwoCruOT7BSfwrUm1q5kvZ7x55/OnffKy5Xcenb6VatvEE0RldZ7oPJDJAScn5ZEKN+jGoimoW6lSledy/8aPD99onh3w+11NBKkkkozG+7kxxOvX/YZT+PvXlZ6V6H4k8RXmsaNcabMx8qRvNUEEYcJFGv4BYl/M1xX9mXH96PH4/4U6XuxswqvmldGfSmr39l3OOGjP5/4UHTLnGSU/M/4VrzIzsz/9k=';
+let _slothBusy = false;
+
+function toggleSiteGlobe(){
+  const m=document.getElementById('site-globe-menu');
+  if(m) m.style.display = m.style.display==='none' ? 'block' : 'none';
+}
+function closeSiteGlobe(){
+  const m=document.getElementById('site-globe-menu');
+  if(m) m.style.display='none';
+}
+function toggleSlothChat(){
+  const o=document.getElementById('sloth-chat-overlay');
+  o.style.display = o.style.display==='flex' ? 'none' : 'flex';
+  if(o.style.display==='flex') document.getElementById('sloth-inp')?.focus();
+}
+async function sendSlothMsg(){
+  if(_slothBusy) return;
+  const inp=document.getElementById('sloth-inp');
+  const msg=inp?.value?.trim();
+  if(!msg) return;
+  inp.value='';
+  _addSlothMsg(msg,'user');
+  _slothBusy=true;
+  const typing=_addSlothMsg('...','ai',true);
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:'You are Ex, the ExNexus AI trading assistant. Top hat 🎩. Max 3-4 lines. Focus on trading and ExNexus.',messages:[{role:'user',content:msg}]})});
+    const d=await r.json();
+    if(typing) typing.remove();
+    _addSlothMsg(d.content?.[0]?.text||'Email info@exnexus.co 🎩','ai');
+  }catch(e){if(typing) typing.remove();_addSlothMsg('Try again! 🎩','ai');}
+  _slothBusy=false;
+}
+function _addSlothMsg(text,role,isTyping=false){
+  const c=document.getElementById('sloth-messages');
+  if(!c) return null;
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;gap:8px;align-items:flex-start;'+(role==='user'?'flex-direction:row-reverse;':'');
+  const av=role==='ai'?`<div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${_EX_SRC}" style="width:100%;height:100%;object-fit:cover;"></div>`:'<div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);flex-shrink:0;">You</div>';
+  d.innerHTML=av+`<div style="max-width:80%;padding:9px 12px;font-size:12.5px;line-height:1.5;border-radius:${role==='ai'?'4px 12px 12px 12px':'12px 4px 12px 12px'};background:${role==='ai'?'rgba(255,255,255,0.06)':'rgba(68,184,40,0.12)'};border:1px solid ${role==='ai'?'rgba(255,255,255,0.08)':'rgba(68,184,40,0.2)'};color:${role==='ai'?'rgba(255,255,255,0.88)':'#fff'};">${isTyping?'<span style="opacity:.5;">Ex is thinking... 🎩</span>':text}</div>`;
+  c.appendChild(d);
+  c.scrollTop=c.scrollHeight;
+  return d;
+}
+document.addEventListener('click',e=>{
+  const o=document.getElementById('sloth-chat-overlay');
+  const btn=document.getElementById('sloth-nav-btn');
+  if(o&&o.style.display==='flex'&&!o.contains(e.target)&&!btn?.contains(e.target)) o.style.display='none';
+  if(!e.target.closest('#site-globe-btn')&&!e.target.closest('#site-globe-menu')) closeSiteGlobe();
+});
+
+/* Phone banner JS */
+(function(){
+  function startPhoneWS(){
+    const ws=new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+    ws.onmessage=e=>{
+      const d=JSON.parse(e.data),p=parseFloat(d.c),ch=parseFloat(d.P);
+      const pe=document.getElementById('pwa-btc-price');
+      const ce=document.getElementById('pwa-btc-change');
+      if(pe) pe.textContent='$'+p.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if(ce){ce.textContent=(ch>=0?'+':'')+ch.toFixed(2)+'% today';ce.style.color=ch>=0?'#00FF88':'#FF003F';}
+    };
+    ws.onclose=()=>setTimeout(startPhoneWS,3000);
+  }
+  let _pAuto=null;
+  function _pSw(n){
+    document.querySelectorAll('.pscreen').forEach(s=>s.style.display='none');
+    const el=document.getElementById('pscreen-'+n);
+    if(el) el.style.display='block';
+    document.querySelectorAll('.pnav-btn').forEach(b=>b.style.color='rgba(255,255,255,0.4)');
+    document.querySelectorAll('.pnav-btn[data-screen="'+n+'"]').forEach(b=>b.style.color='#00FF88');
+  }
+  function _pStart(){const sc=['home','markets','trade','bots'];let i=0;_pAuto=setInterval(()=>{i=(i+1)%sc.length;_pSw(sc[i]);},3000);}
+  document.addEventListener('DOMContentLoaded',()=>{
+    startPhoneWS();
+    _pStart();
+    document.querySelectorAll('.pnav-btn').forEach(b=>{
+      b.addEventListener('mouseenter',()=>{clearInterval(_pAuto);setTimeout(()=>_pSw(b.dataset.screen),150);});
+      b.addEventListener('mouseleave',()=>setTimeout(_pStart,2000));
+      b.addEventListener('click',()=>{clearInterval(_pAuto);_pSw(b.dataset.screen);setTimeout(_pStart,4000);});
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
