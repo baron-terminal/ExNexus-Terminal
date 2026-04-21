@@ -32,22 +32,57 @@ button{cursor:pointer;font-family:inherit;}
 ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
 
 /* ═══ LANGUAGE SWITCHER ═══ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#lang-bar{
+  height:36px;
+  background:#050505;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding:0 24px;
+  gap:6px;
+  font-size:12px;
+  color:var(--text-dim);
+}
+.lang-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:4px;
+  background:none;border:1px solid transparent;
+  color:var(--text-dim);font-size:12px;
+  transition:all .15s;cursor:pointer;
+}
+.lang-btn:hover{border-color:var(--border2);color:var(--text);}
+.lang-btn.active{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.3);color:var(--neon);}
+.lang-flag{font-size:14px;}
+#lang-more-btn{
+  padding:3px 10px;border-radius:4px;
+  background:none;border:1px solid var(--border);
+  color:var(--text-dim);font-size:11px;cursor:pointer;
+  transition:all .15s;
+}
+#lang-more-btn:hover{border-color:var(--border2);color:var(--text);}
+#lang-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);z-index:9999;
+  align-items:center;justify-content:center;
+}
+#lang-modal.open{display:flex;}
+.lang-modal-box{
+  background:#141414;border:1px solid var(--border2);
+  border-radius:12px;padding:28px;width:min(600px,90vw);
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+.lang-modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:20px;}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+.lang-option{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:7px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  cursor:pointer;font-size:13px;transition:all .15s;
+}
+.lang-option:hover{background:rgba(255,255,255,0.08);border-color:var(--border2);}
+.lang-option.active{background:rgba(68,184,40,0.08);border-color:rgba(68,184,40,0.25);color:var(--neon);}
+.lang-modal-close{float:right;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;margin-top:-4px;}
 
 /* ═══ NAVBAR ═══ */
 nav{
@@ -563,7 +598,10 @@ footer{
 <body>
 
 <!-- Language Modal -->
-
+<div id="lang-modal">
+  <div class="lang-modal-box">
+    <button class="lang-modal-close" onclick="closeLangModal()">×</button>
+    <div class="lang-modal-title" data-i18n="choose_language">Choose Your Language</div>
     <div class="lang-grid" id="lang-grid"></div>
     <div style="margin-top:16px;font-size:12px;color:var(--text-dim);border-top:1px solid var(--border);padding-top:12px;" data-i18n="lang_note">
       Your language preference is saved and can be changed at any time.
@@ -1291,7 +1329,7 @@ footer{
   </div>
   <div class="footer-bottom">
     <div>© 2026 ExNexus · <span data-i18n="footer_tagline_short">Trading Intelligence</span></div>
-    <div id="footer-lang-switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="void(0)">
+    <div id="footer-lang-switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openLangModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <span id="footer-lang-name">English</span> ▾
     </div>
@@ -1330,7 +1368,7 @@ const LANGS = {
       tag_arb: 'Arbitrage', tag_bots: 'Automated Bots',
       tag_exchanges: 'Exchanges', tag_affiliate: 'Affiliate Program',
       tag_academy: 'Academy',
-      features_title: 'Everything you need.<br>Nothing you don\\'t.',
+      features_title: "Everything you need.<br>Nothing you don't.",
       features_sub: 'ExNexus combines institutional-grade tools with AI intelligence — purpose-built for serious traders who demand an edge.',
       feat1_title: 'Institutional Terminal', feat1_desc: 'Full-featured trading terminal with live order book, TradingView charts, multi-exchange order entry, and real-time position tracking.', feat1_tag: 'Web · Mobile · Tablet',
       feat2_title: 'AI Scout Engine', feat2_desc: 'Claude AI aggregates signals from Signal Intelligence, Smart Money Flow, and Market Depth to generate win probability scores and trade recommendations.', feat2_tag: 'Powered by Claude',
@@ -1536,7 +1574,25 @@ function applyTranslations() {
   });
 
   // Update lang buttons
-  document.querySelectorAll('
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('lang-' + currentLang);
+  if(activeBtn) activeBtn.classList.add('active');
+
+  // Update footer lang name
+  const fln = document.getElementById('footer-lang-name');
+  if(fln) fln.textContent = lang.name;
+
+  // Rebuild lang modal grid
+  buildLangGrid();
+}
+
+function setLang(code) {
+  if(!LANGS[code]) return;
+  currentLang = code;
+  localStorage.setItem('exnexus_lang', code);
+  applyTranslations();
+  closeLangModal();
+}
 
 function buildLangGrid() {
   const grid = document.getElementById('lang-grid');
@@ -1549,12 +1605,15 @@ function buildLangGrid() {
   `).join('');
 }
 
-function void(0) {
+function openLangModal() {
   buildLangGrid();
-  
+  document.getElementById('lang-modal').classList.add('open');
 }
-
-
+function closeLangModal() {
+  document.getElementById('lang-modal').classList.remove('open');
+}
+document.getElementById('lang-modal').addEventListener('click', function(e) {
+  if(e.target===this) closeLangModal();
 });
 
 /* ── Navigation ────────────────────────────────── */
@@ -1594,7 +1653,7 @@ function connectPriceFeed() {
       const chgEl   = document.getElementById('hc-'+id+'-chg');
       if(priceEl) priceEl.textContent = '$' + fmt;
       if(chgEl) {
-        if(!isNaN(chg)){chgEl.textContent = (chg>=0?'+':'') + chg.toFixed(2) + '%';}
+        if(!isNaN(chg)){chgEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';}
         chgEl.className = 'price-card-chg ' + (chg>=0?'pos':'neg');
       }
       // Update ticker
@@ -1748,7 +1807,8 @@ function startPhoneWS(){
 
 window.addEventListener('DOMContentLoaded',function(){
   // Theme
-  }
+  
+  if(t==='white'){document.body.classList.add('white-theme');const b=document.getElementById('site-theme-btn');if(b)b.textContent='🌙';}
   // Language
   const l=localStorage.getItem('exnexus_lang');
   if(l&&typeof setLang==='function')setLang(l);
@@ -1809,22 +1869,57 @@ button{cursor:pointer;font-family:inherit;}
 ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
 
 /* ═══ LANGUAGE SWITCHER ═══ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#lang-bar{
+  height:36px;
+  background:#050505;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding:0 24px;
+  gap:6px;
+  font-size:12px;
+  color:var(--text-dim);
+}
+.lang-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:4px;
+  background:none;border:1px solid transparent;
+  color:var(--text-dim);font-size:12px;
+  transition:all .15s;cursor:pointer;
+}
+.lang-btn:hover{border-color:var(--border2);color:var(--text);}
+.lang-btn.active{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.3);color:var(--neon);}
+.lang-flag{font-size:14px;}
+#lang-more-btn{
+  padding:3px 10px;border-radius:4px;
+  background:none;border:1px solid var(--border);
+  color:var(--text-dim);font-size:11px;cursor:pointer;
+  transition:all .15s;
+}
+#lang-more-btn:hover{border-color:var(--border2);color:var(--text);}
+#lang-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);z-index:9999;
+  align-items:center;justify-content:center;
+}
+#lang-modal.open{display:flex;}
+.lang-modal-box{
+  background:#141414;border:1px solid var(--border2);
+  border-radius:12px;padding:28px;width:min(600px,90vw);
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+.lang-modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:20px;}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+.lang-option{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:7px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  cursor:pointer;font-size:13px;transition:all .15s;
+}
+.lang-option:hover{background:rgba(255,255,255,0.08);border-color:var(--border2);}
+.lang-option.active{background:rgba(68,184,40,0.08);border-color:rgba(68,184,40,0.25);color:var(--neon);}
+.lang-modal-close{float:right;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;margin-top:-4px;}
 
 /* ═══ NAVBAR ═══ */
 nav{
@@ -2337,7 +2432,10 @@ footer{
 <body>
 
 <!-- Language Modal -->
-
+<div id="lang-modal">
+  <div class="lang-modal-box">
+    <button class="lang-modal-close" onclick="closeLangModal()">×</button>
+    <div class="lang-modal-title" data-i18n="choose_language">Choose Your Language</div>
     <div class="lang-grid" id="lang-grid"></div>
     <div style="margin-top:16px;font-size:12px;color:var(--text-dim);border-top:1px solid var(--border);padding-top:12px;" data-i18n="lang_note">
       Your language preference is saved and can be changed at any time.
@@ -2994,7 +3092,7 @@ footer{
   </div>
   <div class="footer-bottom">
     <div>© 2026 ExNexus · <span data-i18n="footer_tagline_short">Trading Intelligence</span></div>
-    <div id="footer-lang-switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="void(0)">
+    <div id="footer-lang-switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openLangModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <span id="footer-lang-name">English</span> ▾
     </div>
@@ -3033,7 +3131,7 @@ const LANGS = {
       tag_arb: 'Arbitrage', tag_bots: 'Automated Bots',
       tag_exchanges: 'Exchanges', tag_affiliate: 'Affiliate Program',
       tag_academy: 'Academy',
-      features_title: 'Everything you need.<br>Nothing you don\'t.',
+      features_title: "Everything you need.<br>Nothing you don't.",
       features_sub: 'ExNexus combines institutional-grade tools with AI intelligence — purpose-built for serious traders who demand an edge.',
       feat1_title: 'Institutional Terminal', feat1_desc: 'Full-featured trading terminal with live order book, TradingView charts, multi-exchange order entry, and real-time position tracking.', feat1_tag: 'Web · Mobile · Tablet',
       feat2_title: 'AI Scout Engine', feat2_desc: 'Claude AI aggregates signals from Signal Intelligence, Smart Money Flow, and Market Depth to generate win probability scores and trade recommendations.', feat2_tag: 'Powered by Claude',
@@ -3239,7 +3337,25 @@ function applyTranslations() {
   });
 
   // Update lang buttons
-  document.querySelectorAll('
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('lang-' + currentLang);
+  if(activeBtn) activeBtn.classList.add('active');
+
+  // Update footer lang name
+  const fln = document.getElementById('footer-lang-name');
+  if(fln) fln.textContent = lang.name;
+
+  // Rebuild lang modal grid
+  buildLangGrid();
+}
+
+function setLang(code) {
+  if(!LANGS[code]) return;
+  currentLang = code;
+  localStorage.setItem('exnexus_lang', code);
+  applyTranslations();
+  closeLangModal();
+}
 
 function buildLangGrid() {
   const grid = document.getElementById('lang-grid');
@@ -3252,12 +3368,15 @@ function buildLangGrid() {
   `).join('');
 }
 
-function void(0) {
+function openLangModal() {
   buildLangGrid();
-  
+  document.getElementById('lang-modal').classList.add('open');
 }
-
-
+function closeLangModal() {
+  document.getElementById('lang-modal').classList.remove('open');
+}
+document.getElementById('lang-modal').addEventListener('click', function(e) {
+  if(e.target===this) closeLangModal();
 });
 
 /* ── Navigation ────────────────────────────────── */
@@ -3297,7 +3416,7 @@ function connectPriceFeed() {
       const chgEl   = document.getElementById('hc-'+id+'-chg');
       if(priceEl) priceEl.textContent = '$' + fmt;
       if(chgEl) {
-        if(!isNaN(chg)){chgEl.textContent = (chg>=0?'+':'') + chg.toFixed(2) + '%';}
+        if(!isNaN(chg)){chgEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';}
         chgEl.className = 'price-card-chg ' + (chg>=0?'pos':'neg');
       }
       // Update ticker
