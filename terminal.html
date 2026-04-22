@@ -7992,16 +7992,43 @@ async function loadBinanceAssets() {
     if(!key || !secret) return;
     if(statusEl) statusEl.textContent = 'Loading...';
     try {
-        const res  = await fetch(WORKER + '/binance/fapi/v2/account', {
-            headers: { 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret }
-        });
-        const data = await res.json();
+        // Try futures first, fallback to spot
+        let data = null;
+        const headers = { 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret };
+        try {
+            const r1 = await fetch(WORKER + '/binance/fapi/v2/account', { headers });
+            data = await r1.json();
+            if(data.code === -2015 || data.code === -1102 || !data.totalWalletBalance) {
+                // Futures auth failed - try spot
+                const r2 = await fetch(WORKER + '/binance/api/v3/account', { headers });
+                data = await r2.json();
+                data._type = 'spot';
+            }
+        } catch(e2) {
+            const r2 = await fetch(WORKER + '/binance/api/v3/account', { headers });
+            data = await r2.json();
+            data._type = 'spot';
+        }
+        if(data.code) {
+            if(statusEl){ statusEl.textContent='❌ Auth failed (check keys + permissions)'; statusEl.style.color='var(--hot-red)'; }
+            return;
+        }
         const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
         const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
-        setEl('binance-balance', fmt(data.totalWalletBalance));
-        setEl('binance-avail',   fmt(data.availableBalance));
-        setEl('binance-equity',  fmt(data.totalMarginBalance));
-        if(statusEl) { statusEl.textContent='● Connected'; statusEl.style.color='var(--neon)'; }
+        if(data._type === 'spot') {
+            // Spot account
+            const usdt = (data.balances||[]).find(b=>b.asset==='USDT');
+            const totalUSD = (data.balances||[]).reduce((s,b)=>s+parseFloat(b.free||0)+parseFloat(b.locked||0),0);
+            setEl('binance-balance', usdt ? fmt(parseFloat(usdt.free)+parseFloat(usdt.locked)) : '—');
+            setEl('binance-avail',   usdt ? fmt(parseFloat(usdt.free)) : '—');
+            setEl('binance-equity',  '—');
+            if(statusEl){ statusEl.textContent='● Spot Connected'; statusEl.style.color='var(--neon)'; }
+        } else {
+            setEl('binance-balance', fmt(data.totalWalletBalance));
+            setEl('binance-avail',   fmt(data.availableBalance));
+            setEl('binance-equity',  fmt(data.totalMarginBalance));
+            if(statusEl){ statusEl.textContent='● Futures Connected'; statusEl.style.color='var(--neon)'; }
+        }
     } catch(e) {
         if(statusEl) { statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
     }
@@ -8020,8 +8047,10 @@ async function loadAlpacaAssets() {
             headers:{ 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret }
         });
         const acct = await res.json();
-        if(acct.code || acct.error) {
-            if(statusEl){ statusEl.textContent='❌ '+(acct.message||acct.error); statusEl.style.color='var(--hot-red)'; }
+        if(acct.code || acct.message || acct['error-type']) {
+            const msg = acct.message || acct.error || acct['error-type'] || 'Auth failed';
+            if(statusEl){ statusEl.textContent='❌ '+msg; statusEl.style.color='var(--hot-red)'; }
+            console.error('Alpaca error:', acct);
             return;
         }
         const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
