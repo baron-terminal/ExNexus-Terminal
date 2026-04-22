@@ -1759,19 +1759,7 @@
         }
 
 
-        /* Whole terminal gentle scroll */
-        html, body {
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            min-height: 100vh;
-            scrollbar-width: thin;
-        }
-        body::-webkit-scrollbar { width: 4px; }
-        body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-        /* Keep app at least viewport height but allow slight scroll */
-        .app-container {
-            min-height: 100vh;
-        }
+        /* body scroll removed - terminal is fixed viewport */
 
 </style>
 </head>
