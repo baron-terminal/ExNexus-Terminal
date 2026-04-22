@@ -2829,19 +2829,29 @@ async function runScout(){
 
     try {
         // Fetch all data in parallel
-        const [coinRes, lsRes, fundRes, oiRes, sentRes] = await Promise.allSettled([
+        const [coinRes, lsRes, fundRes, oiRes, sentRes, bybitRes] = await Promise.allSettled([
             fetch(`${MARKET}/coin?symbol=${rawCoin}`),
             fetch(`${MARKET}/ls?symbol=${sym}`),
             fetch(`${MARKET}/funding?symbol=${sym}`),
             fetch(`${MARKET}/oi?symbol=${sym}`),
-            fetch(`${MARKET}/sentiment?symbol=${sym}`)
+            fetch(`${MARKET}/sentiment?symbol=${sym}`),
+            fetch(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${sym}`)
         ]);
 
-        const coin = coinRes.status==='fulfilled' ? await coinRes.value.json() : {};
-        const ls   = lsRes.status==='fulfilled'   ? await lsRes.value.json()   : {};
-        const fund = fundRes.status==='fulfilled'  ? await fundRes.value.json() : {};
-        const oi   = oiRes.status==='fulfilled'    ? await oiRes.value.json()   : {};
-        const sent = sentRes.status==='fulfilled'  ? await sentRes.value.json() : {};
+        const coin   = coinRes.status==='fulfilled'   ? await coinRes.value.json()   : {};
+        const ls     = lsRes.status==='fulfilled'     ? await lsRes.value.json()     : {};
+        const fund   = fundRes.status==='fulfilled'   ? await fundRes.value.json()   : {};
+        const oi     = oiRes.status==='fulfilled'     ? await oiRes.value.json()     : {};
+        const sent   = sentRes.status==='fulfilled'   ? await sentRes.value.json()   : {};
+        const bybit  = bybitRes.status==='fulfilled'  ? await bybitRes.value.json()  : {};
+
+        // Prefer Bybit live price over CMC (more accurate for futures)
+        const bybitTicker = bybit.result?.list?.[0];
+        if(bybitTicker && !coin.price) {
+            coin.price      = parseFloat(bybitTicker.lastPrice);
+            coin.change_24h = parseFloat(bybitTicker.price24hPcnt) * 100;
+            coin.volume_24h = parseFloat(bybitTicker.turnover24h);
+        }
 
         // Extract metrics — handle multiple response shapes
         const price  = coin.price  || coin.quote?.USD?.price || 0;
@@ -8176,9 +8186,15 @@ async function runAutoScout(){
     if(status)status.textContent='Fetching...';
     if(badge)badge.style.display='none';
     try{
-        const r=await fetch(`${MARKET}/listings?limit=80`);
-        const d=await r.json();
-        const coins=(d.coins||[]).filter(c=>(c.mcap||0)>minMcap&&(c.volume_24h||0)>1e6);
+        // Fetch multiple pages to get more coins
+        const [r1,r2,r3] = await Promise.all([
+            fetch(`${MARKET}/listings?limit=50&start=1`),
+            fetch(`${MARKET}/listings?limit=50&start=51`),
+            fetch(`${MARKET}/listings?limit=50&start=101`)
+        ]);
+        const [d1,d2,d3] = await Promise.all([r1.json(), r2.json(), r3.json()]);
+        const allCoins = [...(d1.coins||[]), ...(d2.coins||[]), ...(d3.coins||[])];
+        const coins = allCoins.filter(c=>(c.mcap||0)>minMcap&&(c.volume_24h||0)>1e6);
         const scored=coins.map(c=>{
             const ch1=c.change_1h||0,ch24=c.change_24h||0,ch7=c.change_7d||0,p=c.price||0;
             let s=50;
