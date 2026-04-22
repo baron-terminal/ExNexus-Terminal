@@ -32,7 +32,7 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 260px;height:100vh;gap:3px;padding:3px;}
+        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 180px;height:100vh;gap:3px;padding:3px;}
         ::-webkit-scrollbar{width:3px;height:3px;}
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
@@ -2070,8 +2070,15 @@
 </aside>
 
     <!-- BOTTOM TABS -->
-    <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
+    <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden" style="transition:flex 0.2s;">
+        <!-- Resize handle -->
+        <div id="bottom-resize-handle" style="height:4px;background:transparent;cursor:row-resize;flex-shrink:0;position:relative;z-index:10;"
+            onmousedown="startBottomResize(event)"
+            onmouseover="this.style.background='rgba(68,184,40,0.3)'"
+            onmouseout="this.style.background='transparent'">
+        </div>
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
+            <button onclick="toggleBottomPanel()" title="Collapse/Expand" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;" id="bottom-toggle-btn">⬇</button>
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions')">Positions</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-orderhistory')">Order History</button>
@@ -8639,6 +8646,86 @@ document.addEventListener('DOMContentLoaded', () => {
     setOrderType('Limit');
     setMarginMode('cross');
 });
+
+
+/* ── Bottom Panel Collapse + Resize ── */
+let _bottomCollapsed = false;
+let _bottomHeight = 180;
+
+function toggleBottomPanel() {
+    const section = document.getElementById('bottom-section');
+    const btn = document.getElementById('bottom-toggle-btn');
+    const grid = document.querySelector('.grid') || document.querySelector('[style*="grid-template-rows"]');
+
+    _bottomCollapsed = !_bottomCollapsed;
+
+    if(_bottomCollapsed) {
+        _bottomHeight = section.offsetHeight || 180;
+        section.style.height = '34px';
+        section.style.minHeight = '34px';
+        section.style.overflow = 'hidden';
+        if(btn) btn.textContent = '⬆';
+        // Update grid
+        updateGridRows(34);
+    } else {
+        section.style.height = _bottomHeight + 'px';
+        section.style.minHeight = '120px';
+        section.style.overflow = '';
+        if(btn) btn.textContent = '⬇';
+        updateGridRows(_bottomHeight);
+    }
+}
+
+function updateGridRows(bottomH) {
+    const app = document.getElementById('app') || document.querySelector('[style*="grid-template-rows"]');
+    if(app) {
+        const style = app.getAttribute('style') || '';
+        const updated = style.replace(/grid-template-rows:[^;]+;/, `grid-template-rows:38px 1fr ${bottomH}px;`);
+        app.setAttribute('style', updated);
+    }
+}
+
+/* ── Bottom Panel Drag Resize ── */
+let _resizing = false;
+let _resizeStartY = 0;
+let _resizeStartH = 0;
+
+function startBottomResize(e) {
+    _resizing = true;
+    _resizeStartY = e.clientY;
+    const section = document.getElementById('bottom-section');
+    _resizeStartH = section ? section.offsetHeight : 180;
+    document.addEventListener('mousemove', doBottomResize);
+    document.addEventListener('mouseup', stopBottomResize);
+    e.preventDefault();
+}
+
+function doBottomResize(e) {
+    if(!_resizing) return;
+    const section = document.getElementById('bottom-section');
+    if(!section) return;
+    const delta = _resizeStartY - e.clientY;
+    const newH = Math.max(34, Math.min(500, _resizeStartH + delta));
+    section.style.height = newH + 'px';
+    section.style.minHeight = newH + 'px';
+    _bottomHeight = newH;
+    updateGridRows(newH);
+    if(newH <= 40) {
+        _bottomCollapsed = true;
+        const btn = document.getElementById('bottom-toggle-btn');
+        if(btn) btn.textContent = '⬆';
+    } else {
+        _bottomCollapsed = false;
+        const btn = document.getElementById('bottom-toggle-btn');
+        if(btn) btn.textContent = '⬇';
+    }
+}
+
+function stopBottomResize() {
+    _resizing = false;
+    document.removeEventListener('mousemove', doBottomResize);
+    document.removeEventListener('mouseup', stopBottomResize);
+}
 
 </script>
 
