@@ -1900,47 +1900,165 @@
     </aside>
 
     <!-- ORDER ENTRY -->
-    <aside id="aside-orderentry" class="glass flex flex-col overflow-hidden" style="padding:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(68,184,40,0.2);">Isolated</button></div>
-            <button class="lev-badge" style="color:var(--text-bright);">10.00×</button>
+    <aside id="aside-orderentry" class="glass flex flex-col overflow-hidden" style="padding:10px;overflow-y:auto;">
+
+    <!-- ── Margin Mode + Leverage ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;gap:3px;">
+            <button id="btn-cross" class="lev-badge" onclick="setMarginMode('cross')" style="color:var(--neon);border-color:rgba(68,184,40,0.2);">Cross</button>
+            <button id="btn-isolated" class="lev-badge" onclick="setMarginMode('isolated')">Isolated</button>
         </div>
-        <div style="display:flex;gap:3px;margin-bottom:10px;">
-            <button class="ot-tab active" onclick="switchOT(this)">Limit</button>
-            <button class="ot-tab" onclick="switchOT(this)">Market</button>
-            <button class="ot-tab" onclick="switchOT(this)">Chase</button>
+        <button onclick="openLevModal()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-bright);padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;">
+            <span id="lev-display">10.00</span>×
+        </button>
+    </div>
+
+    <!-- ── Order Type Tabs ── -->
+    <div style="display:flex;gap:2px;margin-bottom:10px;background:rgba(255,255,255,0.03);border-radius:4px;padding:2px;">
+        <button id="ot-limit"  onclick="setOrderType('Limit')"  class="order-type-btn active-ot" style="flex:1;padding:4px;font-size:10px;font-weight:600;border:none;border-radius:3px;cursor:pointer;background:rgba(255,255,255,0.08);color:var(--text-bright);">Limit</button>
+        <button id="ot-market" onclick="setOrderType('Market')" class="order-type-btn" style="flex:1;padding:4px;font-size:10px;font-weight:500;border:none;border-radius:3px;cursor:pointer;background:none;color:var(--text-dim);">Market</button>
+        <button id="ot-chase"  onclick="setOrderType('Chase')"  class="order-type-btn" style="flex:1;padding:4px;font-size:10px;font-weight:500;border:none;border-radius:3px;cursor:pointer;background:none;color:var(--text-dim);">Chase</button>
+    </div>
+
+    <!-- ── Last Price ── -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:10px;color:var(--text-dim);">Last</span>
+        <span id="order-last-price" class="mono" style="font-size:11px;color:var(--text-bright);font-weight:600;">—</span>
+    </div>
+
+    <!-- ── Price Input ── -->
+    <div id="price-row" style="margin-bottom:6px;">
+        <div style="display:flex;align-items:center;background:#0f0f0f;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <span style="font-size:10px;color:var(--text-dim);padding:0 8px;white-space:nowrap;">Price</span>
+            <input id="order-price" type="number" step="0.01" placeholder="Order Price"
+                style="flex:1;background:none;border:none;color:var(--text-bright);font-size:11px;font-family:monospace;padding:6px 4px;outline:none;text-align:right;"
+                oninput="calcOrderValues()">
+            <span style="font-size:10px;color:var(--text-dim);padding:0 8px;">USDT</span>
         </div>
-        <div style="margin-bottom:6px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Price</span><span class="mono" style="font-size:9.5px;color:var(--text-dim);">Last 74,231.70</span></div>
-            <div style="position:relative;"><input class="ex-input" type="text" value="74231.70"><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9.5px;color:var(--text-dim);">USDT</span></div>
+    </div>
+
+    <!-- ── Quantity Input ── -->
+    <div style="margin-bottom:6px;">
+        <div style="display:flex;align-items:center;background:#0f0f0f;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <span style="font-size:10px;color:var(--text-dim);padding:0 8px;white-space:nowrap;">Qty</span>
+            <input id="order-qty" type="number" step="0.001" placeholder="Order Qty"
+                style="flex:1;background:none;border:none;color:var(--text-bright);font-size:11px;font-family:monospace;padding:6px 4px;outline:none;text-align:right;"
+                oninput="calcOrderValues()">
+            <span id="order-qty-unit" style="font-size:10px;color:var(--text-dim);padding:0 8px;">BTC</span>
         </div>
-        <div style="margin-bottom:6px;">
-            <div style="margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Qty</span></div>
-            <div style="position:relative;"><input class="ex-input" type="text" placeholder="0.000"><span style="font-size:9.5px;color:var(--text-dim);position:absolute;right:8px;top:50%;transform:translateY(-50%);">BTC</span></div>
+    </div>
+
+    <!-- ── % Slider ── -->
+    <div style="margin-bottom:8px;">
+        <input type="range" id="order-pct-slider" min="0" max="100" value="0"
+            style="width:100%;accent-color:var(--neon);cursor:pointer;"
+            oninput="setOrderPct(this.value)">
+        <div style="display:flex;justify-content:space-between;margin-top:2px;">
+            <span style="font-size:8.5px;color:var(--text-dim);cursor:pointer;" onclick="setOrderPct(0)">0%</span>
+            <span style="font-size:8.5px;color:var(--text-dim);cursor:pointer;" onclick="setOrderPct(25)">25%</span>
+            <span style="font-size:8.5px;color:var(--text-dim);cursor:pointer;" onclick="setOrderPct(50)">50%</span>
+            <span style="font-size:8.5px;color:var(--text-dim);cursor:pointer;" onclick="setOrderPct(75)">75%</span>
+            <span style="font-size:8.5px;color:var(--text-dim);cursor:pointer;" onclick="setOrderPct(100)">100%</span>
         </div>
-        <div style="margin-bottom:6px;">
-            <input type="range" min="0" max="100" value="0">
-            <div style="display:flex;justify-content:space-between;margin-top:2px;">
-                <span style="font-size:8.5px;color:var(--text-dim);">0%</span><span style="font-size:8.5px;color:var(--text-dim);">25%</span><span style="font-size:8.5px;color:var(--text-dim);">50%</span><span style="font-size:8.5px;color:var(--text-dim);">75%</span><span style="font-size:8.5px;color:var(--text-dim);">100%</span>
+    </div>
+
+    <!-- ── TP / SL ── -->
+    <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <div style="flex:1;background:#0f0f0f;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <div style="font-size:8px;color:var(--neon);padding:2px 6px 0;font-weight:600;">TP</div>
+            <input id="order-tp" type="number" step="0.01" placeholder="Take Profit"
+                style="width:100%;background:none;border:none;color:var(--text-bright);font-size:10px;font-family:monospace;padding:2px 6px 4px;outline:none;box-sizing:border-box;"
+                oninput="calcOrderValues()">
+        </div>
+        <div style="flex:1;background:#0f0f0f;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <div style="font-size:8px;color:var(--hot-red);padding:2px 6px 0;font-weight:600;">SL</div>
+            <input id="order-sl" type="number" step="0.01" placeholder="Stop Loss"
+                style="width:100%;background:none;border:none;color:var(--text-bright);font-size:10px;font-family:monospace;padding:2px 6px 4px;outline:none;box-sizing:border-box;"
+                oninput="calcOrderValues()">
+        </div>
+    </div>
+
+    <!-- ── Trailing Stop toggle ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:10px;color:var(--text-dim);">Trailing Stop</span>
+        <label style="position:relative;display:inline-block;width:32px;height:17px;cursor:pointer;">
+            <input type="checkbox" id="order-trailing" style="opacity:0;width:0;height:0;" onchange="toggleTrailing(this.checked)">
+            <span id="trailing-slider" style="position:absolute;inset:0;background:#333;border-radius:17px;transition:.2s;"></span>
+            <span id="trailing-knob" style="position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;"></span>
+        </label>
+    </div>
+
+    <!-- ── Trailing % input (hidden by default) ── -->
+    <div id="trailing-row" style="display:none;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;background:#0f0f0f;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <span style="font-size:10px;color:var(--text-dim);padding:0 8px;">Callback</span>
+            <input id="order-trail-pct" type="number" step="0.1" value="1.0" min="0.1" max="10"
+                style="flex:1;background:none;border:none;color:var(--text-bright);font-size:11px;padding:6px 4px;outline:none;text-align:right;">
+            <span style="font-size:10px;color:var(--text-dim);padding:0 8px;">%</span>
+        </div>
+    </div>
+
+    <!-- ── Value / Cost / Available ── -->
+    <div style="background:#0f0f0f;border:1px solid var(--border);border-radius:3px;padding:6px 8px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:10px;color:var(--text-dim);">Available</span>
+            <span id="order-avail" class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:10px;color:var(--text-dim);">Value</span>
+            <span id="order-value" class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:10px;color:var(--text-dim);">Cost (Margin)</span>
+            <span id="order-cost" class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+            <span style="font-size:10px;color:var(--text-dim);">Liq. Price</span>
+            <span id="order-liq" class="mono" style="font-size:10px;color:var(--hot-red);">—</span>
+        </div>
+    </div>
+
+    <!-- ── Open Long / Short ── -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+        <button id="btn-open-long" onclick="submitOrder('Buy')"
+            style="width:100%;padding:9px;background:var(--neon);color:#000;font-size:11px;font-weight:700;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(68,184,40,0.28);transition:opacity .15s;"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Open Long
+        </button>
+        <button id="btn-open-short" onclick="submitOrder('Sell')"
+            style="width:100%;padding:9px;background:transparent;color:var(--hot-red);font-size:11px;font-weight:700;border-radius:3px;border:1px solid rgba(255,0,63,0.4);cursor:pointer;transition:all .15s;"
+            onmouseover="this.style.background='rgba(255,0,63,0.08)'" onmouseout="this.style.background='transparent'">
+            Open Short
+        </button>
+    </div>
+
+    <!-- ── Order Status Message ── -->
+    <div id="order-status" style="display:none;padding:6px 8px;border-radius:3px;font-size:10px;margin-bottom:8px;text-align:center;"></div>
+
+    <!-- ── Contract Details ── -->
+    <div style="border-top:1px solid var(--border);padding-top:8px;">
+        <div style="font-size:10px;font-weight:500;color:var(--text-mid);margin-bottom:6px;" id="contract-label">Contract Details BTCUSDT</div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--text-dim);">Expiration</span>
+                <span class="mono" style="font-size:10px;color:var(--text-mid);">Perpetual</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--text-dim);">Index Price</span>
+                <span id="index-price" class="mono" style="font-size:10px;color:var(--text-mid);">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--text-dim);">Mark Price</span>
+                <span id="mark-price" class="mono" style="font-size:10px;color:var(--text-mid);">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--text-dim);">Funding Rate</span>
+                <span id="funding-rate-display" class="mono" style="font-size:10px;color:var(--text-mid);">—</span>
             </div>
         </div>
-        <div style="background:#0f0f0f;border:1px solid var(--border);border-radius:3px;padding:6px 8px;margin-bottom:10px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Value</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Cost</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-            <button style="width:100%;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:600;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(68,184,40,0.28);">Open Long</button>
-            <button style="width:100%;padding:8px;background:transparent;color:var(--hot-red);font-size:11px;font-weight:600;border-radius:3px;border:1px solid rgba(255,0,63,0.35);cursor:pointer;">Open Short</button>
-        </div>
-        <div style="border-top:1px solid var(--border);padding-top:8px;">
-            <div style="font-size:10px;font-weight:500;color:var(--text-mid);margin-bottom:6px;">Contract Details BTCUSDT</div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Expiration</span><span class="mono" style="font-size:10px;color:var(--text-mid);">Perpetual</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Index Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,022.96</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Mark Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,018.34</span></div>
-            </div>
-        </div>
-    </aside>
+    </div>
+
+</aside>
 
     <!-- BOTTOM TABS -->
     <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
@@ -8271,6 +8389,247 @@ function resetScout() {
     const circleEl = document.getElementById('prob-circle');
     if(circleEl) circleEl.style.strokeDashoffset = '213.6';
 }
+
+
+/* ══════════════════════════════════════════════
+   ORDER PANEL — Full UI Logic
+══════════════════════════════════════════════ */
+
+let _orderType    = 'Limit';
+let _marginMode   = 'cross';
+let _leverage     = 10;
+let _currentSym   = 'BTCUSDT';
+let _lastPrice    = 0;
+let _availBalance = 0;
+
+/* ── Order Type ── */
+function setOrderType(type) {
+    _orderType = type;
+    ['Limit','Market','Chase'].forEach(t => {
+        const btn = document.getElementById('ot-' + t.toLowerCase());
+        if(!btn) return;
+        if(t === type) {
+            btn.style.background = 'rgba(255,255,255,0.08)';
+            btn.style.color = 'var(--text-bright)';
+            btn.style.fontWeight = '600';
+        } else {
+            btn.style.background = 'none';
+            btn.style.color = 'var(--text-dim)';
+            btn.style.fontWeight = '500';
+        }
+    });
+    // Hide price input for Market orders
+    const priceRow = document.getElementById('price-row');
+    if(priceRow) priceRow.style.display = type === 'Market' ? 'none' : '';
+    calcOrderValues();
+}
+
+/* ── Margin Mode ── */
+function setMarginMode(mode) {
+    _marginMode = mode;
+    const btnC = document.getElementById('btn-cross');
+    const btnI = document.getElementById('btn-isolated');
+    if(btnC) { btnC.style.color = mode==='cross'    ? 'var(--neon)' : ''; btnC.style.borderColor = mode==='cross'    ? 'rgba(68,184,40,0.2)' : ''; }
+    if(btnI) { btnI.style.color = mode==='isolated' ? 'var(--neon)' : ''; btnI.style.borderColor = mode==='isolated' ? 'rgba(68,184,40,0.2)' : ''; }
+    calcOrderValues();
+}
+
+/* ── Leverage Modal ── */
+function openLevModal() {
+    const val = prompt(`Set Leverage (1-100x)\nCurrent: ${_leverage}x`, _leverage);
+    if(val === null) return;
+    const n = Math.max(1, Math.min(100, parseInt(val) || _leverage));
+    _leverage = n;
+    const el = document.getElementById('lev-display');
+    if(el) el.textContent = n.toFixed(2);
+    calcOrderValues();
+}
+
+/* ── % Slider → Qty ── */
+function setOrderPct(pct) {
+    pct = parseFloat(pct);
+    const slider = document.getElementById('order-pct-slider');
+    if(slider) slider.value = pct;
+    if(!_availBalance || !_lastPrice) return;
+    const price = parseFloat(document.getElementById('order-price')?.value) || _lastPrice;
+    if(!price) return;
+    const totalValue = (_availBalance * _leverage * pct / 100);
+    const qty = totalValue / price;
+    const qtyEl = document.getElementById('order-qty');
+    if(qtyEl) {
+        // Round to appropriate decimals based on price
+        const decimals = price > 1000 ? 3 : price > 10 ? 2 : 0;
+        qtyEl.value = qty.toFixed(decimals);
+    }
+    calcOrderValues();
+}
+
+/* ── Calculate Value / Cost / Liq ── */
+function calcOrderValues() {
+    const price  = parseFloat(document.getElementById('order-price')?.value) || _lastPrice;
+    const qty    = parseFloat(document.getElementById('order-qty')?.value)   || 0;
+    const tp     = parseFloat(document.getElementById('order-tp')?.value)    || 0;
+    const sl     = parseFloat(document.getElementById('order-sl')?.value)    || 0;
+
+    const value  = price * qty;
+    const cost   = value / _leverage;
+    // Simplified liq price (long): entry - (cost / qty) * 0.9
+    const liqLong  = qty > 0 ? price - (cost / qty) * 0.9 : 0;
+    const liqShort = qty > 0 ? price + (cost / qty) * 0.9 : 0;
+
+    const fmtUSD = n => n > 0 ? '$' + n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+
+    const valEl   = document.getElementById('order-value');
+    const costEl  = document.getElementById('order-cost');
+    const liqEl   = document.getElementById('order-liq');
+    const availEl = document.getElementById('order-avail');
+
+    if(valEl)   valEl.textContent   = value > 0  ? fmtUSD(value)  + ' USDT' : '— USDT';
+    if(costEl)  costEl.textContent  = cost > 0   ? fmtUSD(cost)   + ' USDT' : '— USDT';
+    if(liqEl)   liqEl.textContent   = liqLong > 0 ? fmtUSD(liqLong) : '—';
+    if(availEl) availEl.textContent = _availBalance > 0 ? fmtUSD(_availBalance) + ' USDT' : '— USDT';
+
+    // TP/SL RRR preview
+    if(tp && sl && price) {
+        const tpPct = ((Math.abs(tp - price) / price) * 100).toFixed(1);
+        const slPct = ((Math.abs(sl - price) / price) * 100).toFixed(1);
+        const rrr   = (Math.abs(tp - price) / Math.abs(sl - price)).toFixed(1);
+        const tpEl  = document.getElementById('order-tp');
+        const slEl  = document.getElementById('order-sl');
+        if(tpEl) tpEl.title = `TP: +${tpPct}%`;
+        if(slEl) slEl.title = `SL: -${slPct}% | RRR: ${rrr}:1`;
+    }
+}
+
+/* ── Trailing Stop toggle ── */
+function toggleTrailing(on) {
+    const row    = document.getElementById('trailing-row');
+    const slider = document.getElementById('trailing-slider');
+    const knob   = document.getElementById('trailing-knob');
+    if(row)    row.style.display = on ? '' : 'none';
+    if(slider) slider.style.background = on ? 'var(--neon)' : '#333';
+    if(knob)   knob.style.left = on ? '17px' : '2px';
+}
+
+/* ── Submit Order ── */
+async function submitOrder(side) {
+    const price    = parseFloat(document.getElementById('order-price')?.value) || 0;
+    const qty      = parseFloat(document.getElementById('order-qty')?.value)   || 0;
+    const tp       = parseFloat(document.getElementById('order-tp')?.value)    || 0;
+    const sl       = parseFloat(document.getElementById('order-sl')?.value)    || 0;
+    const trailing = document.getElementById('order-trailing')?.checked || false;
+    const trailPct = parseFloat(document.getElementById('order-trail-pct')?.value) || 1.0;
+
+    const statusEl = document.getElementById('order-status');
+
+    // Demo mode check
+    if(typeof demoMode !== 'undefined' && demoMode) {
+        if(qty <= 0) { showOrderStatus('Enter a valid quantity', 'error'); return; }
+        showOrderStatus(`Demo: ${side === 'Buy' ? '📈 Long' : '📉 Short'} ${qty} ${_currentSym.replace('USDT','')} @ ${_orderType === 'Market' ? 'Market' : '$'+price.toFixed(2)}`, 'success');
+        // Fire demo trade if available
+        if(typeof placeDemoOrder === 'function') {
+            placeDemoOrder(side, _currentSym, qty, _orderType === 'Market' ? _lastPrice : price, tp, sl);
+        }
+        return;
+    }
+
+    // Live trading validation
+    if(qty <= 0) { showOrderStatus('Enter a valid quantity', 'error'); return; }
+    if(_orderType === 'Limit' && price <= 0) { showOrderStatus('Enter a valid price', 'error'); return; }
+
+    const btnEl = document.getElementById(side === 'Buy' ? 'btn-open-long' : 'btn-open-short');
+    if(btnEl) { btnEl.textContent = '⏳ Placing...'; btnEl.disabled = true; }
+
+    try {
+        // Find active exchange
+        const exch = window.EXCHANGES?.find(e => e.active);
+        if(!exch) { showOrderStatus('No exchange connected. Add API keys in Settings.', 'error'); return; }
+
+        const orderPayload = {
+            category:    'linear',
+            symbol:      _currentSym,
+            side:        side,
+            orderType:   _orderType === 'Chase' ? 'Limit' : _orderType,
+            qty:         String(qty),
+            price:       _orderType !== 'Market' ? String(price) : undefined,
+            timeInForce: 'GTC',
+            takeProfit:  tp > 0 ? String(tp) : undefined,
+            stopLoss:    sl > 0 ? String(sl) : undefined,
+            tpOrderType: tp > 0 ? 'Market' : undefined,
+            slOrderType: sl > 0 ? 'Market' : undefined,
+        };
+
+        const result = await exch.placeOrder(
+            exch.apiKey, exch.apiSecret,
+            _currentSym, side, qty, price, orderPayload
+        );
+
+        if(result?.retCode === 0 || result?.orderId) {
+            showOrderStatus(`✅ ${side === 'Buy' ? 'Long' : 'Short'} order placed!`, 'success');
+            // Refresh positions
+            setTimeout(() => { if(typeof loadPositions === 'function') loadPositions(); }, 1000);
+        } else {
+            showOrderStatus('❌ ' + (result?.retMsg || 'Order failed'), 'error');
+        }
+    } catch(err) {
+        showOrderStatus('❌ ' + err.message, 'error');
+    } finally {
+        if(btnEl) { btnEl.textContent = side === 'Buy' ? 'Open Long' : 'Open Short'; btnEl.disabled = false; }
+    }
+}
+
+function showOrderStatus(msg, type) {
+    const el = document.getElementById('order-status');
+    if(!el) return;
+    el.style.display = 'block';
+    el.style.background = type === 'success' ? 'rgba(68,184,40,0.12)' : 'rgba(255,0,63,0.12)';
+    el.style.border = '1px solid ' + (type === 'success' ? 'rgba(68,184,40,0.3)' : 'rgba(255,0,63,0.3)');
+    el.style.color = type === 'success' ? 'var(--neon)' : 'var(--hot-red)';
+    el.textContent = msg;
+    setTimeout(() => { if(el) el.style.display = 'none'; }, 4000);
+}
+
+/* ── Update order panel when price changes ── */
+function updateOrderPanel(price, symbol) {
+    _lastPrice = price;
+    _currentSym = symbol || _currentSym;
+
+    // Update last price display
+    const lastEl = document.getElementById('order-last-price');
+    if(lastEl) lastEl.textContent = '$' + price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    // Auto-fill price for limit orders if empty
+    const priceEl = document.getElementById('order-price');
+    if(priceEl && !priceEl.value) priceEl.value = price.toFixed(2);
+
+    // Update qty unit
+    const unitEl = document.getElementById('order-qty-unit');
+    if(unitEl) unitEl.textContent = _currentSym.replace('USDT','');
+
+    // Update contract label
+    const labelEl = document.getElementById('contract-label');
+    if(labelEl) labelEl.textContent = 'Contract Details ' + _currentSym;
+
+    calcOrderValues();
+}
+
+/* ── Set TP/SL from AI Scout ── */
+function setTPSLFromScout(tp1, tp2, sl, price) {
+    const tpEl = document.getElementById('order-tp');
+    const slEl = document.getElementById('order-sl');
+    const prEl = document.getElementById('order-price');
+    if(tpEl) tpEl.value = tp1.toFixed(2);
+    if(slEl) slEl.value = sl.toFixed(2);
+    if(prEl && !prEl.value) prEl.value = price.toFixed(2);
+    calcOrderValues();
+    showOrderStatus('✅ TP/SL loaded from AI Scout', 'success');
+}
+
+/* Init on load */
+document.addEventListener('DOMContentLoaded', () => {
+    setOrderType('Limit');
+    setMarginMode('cross');
+});
 
 </script>
 
