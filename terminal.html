@@ -7989,48 +7989,49 @@ async function loadBinanceAssets() {
     const key    = getSetting('binance-key','');
     const secret = getSetting('binance-secret','');
     const statusEl = document.getElementById('binance-asset-status');
-    if(!key || !secret) return;
-    if(statusEl) statusEl.textContent = 'Loading...';
+    console.log('[Binance] key present:', !!key, 'secret present:', !!secret);
+    if(!key || !secret) {
+        if(statusEl) statusEl.textContent = 'Add API keys in Settings ⚙️';
+        return;
+    }
+    if(statusEl) statusEl.textContent = 'Testing...';
     try {
-        // Try futures first, fallback to spot
-        let data = null;
         const headers = { 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret };
-        try {
-            const r1 = await fetch(WORKER + '/binance/fapi/v2/account', { headers });
-            data = await r1.json();
-            if(data.code === -2015 || data.code === -1102 || !data.totalWalletBalance) {
-                // Futures auth failed - try spot
-                const r2 = await fetch(WORKER + '/binance/api/v3/account', { headers });
-                data = await r2.json();
-                data._type = 'spot';
-            }
-        } catch(e2) {
+        // Try futures first
+        const r1 = await fetch(WORKER + '/binance/fapi/v2/account', { headers });
+        const d1 = await r1.json();
+        console.log('[Binance] futures response:', d1);
+        
+        if(d1.code) {
+            // Futures failed - try spot
             const r2 = await fetch(WORKER + '/binance/api/v3/account', { headers });
-            data = await r2.json();
-            data._type = 'spot';
-        }
-        if(data.code) {
-            if(statusEl){ statusEl.textContent='❌ Auth failed (check keys + permissions)'; statusEl.style.color='var(--hot-red)'; }
-            return;
-        }
-        const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-        const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
-        if(data._type === 'spot') {
-            // Spot account
-            const usdt = (data.balances||[]).find(b=>b.asset==='USDT');
-            const totalUSD = (data.balances||[]).reduce((s,b)=>s+parseFloat(b.free||0)+parseFloat(b.locked||0),0);
-            setEl('binance-balance', usdt ? fmt(parseFloat(usdt.free)+parseFloat(usdt.locked)) : '—');
-            setEl('binance-avail',   usdt ? fmt(parseFloat(usdt.free)) : '—');
+            const d2 = await r2.json();
+            console.log('[Binance] spot response:', d2);
+            
+            if(d2.code) {
+                if(statusEl){ statusEl.textContent='❌ Code '+d2.code+': '+(d2.msg||'Auth failed'); statusEl.style.color='var(--hot-red)'; }
+                return;
+            }
+            // Spot success
+            const usdt = (d2.balances||[]).find(b=>b.asset==='USDT') || {};
+            const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toFixed(2);
+            const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+            setEl('binance-balance', fmt(parseFloat(usdt.free||0)+parseFloat(usdt.locked||0)));
+            setEl('binance-avail',   fmt(usdt.free||0));
             setEl('binance-equity',  '—');
             if(statusEl){ statusEl.textContent='● Spot Connected'; statusEl.style.color='var(--neon)'; }
-        } else {
-            setEl('binance-balance', fmt(data.totalWalletBalance));
-            setEl('binance-avail',   fmt(data.availableBalance));
-            setEl('binance-equity',  fmt(data.totalMarginBalance));
-            if(statusEl){ statusEl.textContent='● Futures Connected'; statusEl.style.color='var(--neon)'; }
+            return;
         }
+        // Futures success
+        const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toFixed(2);
+        const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+        setEl('binance-balance', fmt(d1.totalWalletBalance));
+        setEl('binance-avail',   fmt(d1.availableBalance));
+        setEl('binance-equity',  fmt(d1.totalMarginBalance));
+        if(statusEl){ statusEl.textContent='● Futures Connected'; statusEl.style.color='var(--neon)'; }
     } catch(e) {
-        if(statusEl) { statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
+        console.error('[Binance] error:', e);
+        if(statusEl){ statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
     }
 }
 
@@ -8039,43 +8040,51 @@ async function loadAlpacaAssets() {
     const secret = getSetting('alpaca-secret','');
     const mode   = getSetting('alpaca-mode','paper');
     const statusEl = document.getElementById('alpaca-asset-status');
-    if(!key || !secret) return;
-    if(statusEl) statusEl.textContent = 'Loading...';
+    console.log('[Alpaca] key present:', !!key, 'mode:', mode);
+    if(!key || !secret) {
+        if(statusEl) statusEl.textContent = 'Add API keys in Settings ⚙️';
+        return;
+    }
+    if(statusEl) statusEl.textContent = 'Connecting...';
     try {
-        const sep = mode==='paper' ? 'paper-api.' : 'api.';
-        const res = await fetch(WORKER + '/alpaca/v2/account?mode='+mode, {
-            headers:{ 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret }
-        });
+        const headers = { 'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret };
+        const url = WORKER + '/alpaca/v2/account?mode=' + mode;
+        console.log('[Alpaca] fetching:', url);
+        const res  = await fetch(url, { headers });
         const acct = await res.json();
-        if(acct.code || acct.message || acct['error-type']) {
-            const msg = acct.message || acct.error || acct['error-type'] || 'Auth failed';
+        console.log('[Alpaca] account response:', acct);
+
+        if(acct.code || acct.message || acct['status_code'] >= 400) {
+            const msg = acct.message || acct.error || ('Error '+acct.code);
             if(statusEl){ statusEl.textContent='❌ '+msg; statusEl.style.color='var(--hot-red)'; }
-            console.error('Alpaca error:', acct);
             return;
         }
-        const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+        const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toFixed(2);
         const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
         setEl('alpaca-equity',   fmt(acct.equity));
         setEl('alpaca-avail',    fmt(acct.cash));
         setEl('alpaca-buypower', fmt(acct.buying_power));
-        if(statusEl) { 
-            statusEl.textContent = '● '+(mode==='paper'?'Paper':'Live')+' · $'+parseFloat(acct.equity||0).toFixed(2);
-            statusEl.style.color='var(--neon)';
+        if(statusEl){
+            statusEl.textContent = '● '+(mode==='paper'?'Paper':'Live')+' $'+parseFloat(acct.equity||0).toFixed(2);
+            statusEl.style.color = 'var(--neon)';
         }
         // Load positions
-        const posRes = await fetch(WORKER+'/alpaca/v2/positions?mode='+mode,{
-            headers:{'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret}
-        });
+        const posRes = await fetch(WORKER+'/alpaca/v2/positions?mode='+mode, { headers });
         const positions = await posRes.json();
+        console.log('[Alpaca] positions:', positions);
         const rowsEl = document.getElementById('alpaca-coin-rows');
         if(rowsEl && Array.isArray(positions)) {
-            rowsEl.innerHTML = positions.length ? positions.map(p=>{
-                const upnl=parseFloat(p.unrealized_pl||0);
-                return `<div class="exch-asset-row"><label>${p.symbol} <span style="font-size:9px;color:var(--text-dim);">${p.side}</span></label><span style="font-family:monospace;color:${upnl>=0?'var(--neon)':'var(--hot-red)'};">${parseFloat(p.qty).toFixed(4)}</span></div>`;
-            }).join('') : '<div class="exch-asset-row" style="color:var(--text-dim);">No positions</div>';
+            rowsEl.innerHTML = positions.length
+                ? positions.map(p=>{
+                    const upnl=parseFloat(p.unrealized_pl||0);
+                    return `<div class="exch-asset-row"><label>${p.symbol} <span style="font-size:9px;color:var(--text-dim);">${p.side}</span></label><span style="font-family:monospace;color:${upnl>=0?'var(--neon)':'var(--hot-red)'};">${parseFloat(p.qty).toFixed(4)}</span></div>`;
+                }).join('')
+                : '<div class="exch-asset-row" style="color:var(--text-dim);">No open positions</div>';
         }
     } catch(e) {
-        if(statusEl) { statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
+        console.error('[Alpaca] error:', e);
+        if(statusEl){ statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
     }
 }
 
