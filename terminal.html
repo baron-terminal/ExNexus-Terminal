@@ -2115,10 +2115,10 @@
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button onclick="toggleBottomPanel()" title="Collapse/Expand" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;" id="bottom-toggle-btn">⬇</button>
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions')">Positions</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions();">Positions</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-orderhistory')">Order History</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-tradehistory')">Trade History</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets')">Assets</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets');loadAssets();">Assets</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-borrowings')">Borrowings</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools')">Tools</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-bots')">🤖 Bots</button>
@@ -2127,10 +2127,10 @@
         </div>
         <div style="flex:1;overflow:hidden;min-height:0;">
             <div id="bt-openorders" class="tab-panel active" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Filled</th><th class="r">Order Value</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="10"><div class="empty-state">No open orders</div></td></tr></tbody></table></div>
-            <div id="bt-positions" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
+            <div id="bt-positions" class="tab-panel" style="height:100%;overflow-y:auto;" onshow="loadPositions()" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
             <div id="bt-orderhistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Avg Fill</th><th class="r">Qty</th><th class="r">Order Value</th><th>Status</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No order history</div></td></tr></tbody></table></div>
             <div id="bt-tradehistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Fee</th><th class="r">Realized PNL</th></tr></thead><tbody><tr><td colspan="7"><div class="empty-state">No trade history</div></td></tr></tbody></table></div>
-            <div id="bt-assets" class="tab-panel" style="height:100%;overflow-y:auto;flex-direction:column;gap:0;">
+            <div id="bt-assets" class="tab-panel" style="height:100%;overflow-y:auto;" style="height:100%;overflow-y:auto;flex-direction:column;gap:0;">
                 <!-- Portfolio Hero -->
                 <div class="asset-hero">
                     <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:4px;">Total Portfolio</div>
@@ -9125,6 +9125,188 @@ document.addEventListener('DOMContentLoaded', () => {
     loadExchKeys('bybit');
     loadExchKeys('alpaca');
 });
+
+
+/* ══════════════════════════════════════════════
+   LOAD POSITIONS & ASSETS FROM BYBIT
+══════════════════════════════════════════════ */
+
+async function loadPositions() {
+    const tbody = document.getElementById('bt-positions');
+    if(!tbody) return;
+    
+    const key    = getSetting('bybit-key','');
+    const secret = getSetting('bybit-secret','');
+    if(!key || !secret) {
+        tbody.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">Add Bybit API keys in Settings ⚙️</div>';
+        return;
+    }
+
+    try {
+        tbody.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">Loading positions...</div>';
+        const data = await workerFetch('/bybit/v5/position/list?category=linear&settleCoin=USDT');
+        const positions = data?.result?.list || [];
+
+        if(!positions.length) {
+            tbody.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">No open positions</div>';
+            return;
+        }
+
+        const rows = positions.map(p => {
+            const side      = p.side === 'Buy' ? 'Long' : 'Short';
+            const sideColor = p.side === 'Buy' ? 'var(--neon)' : 'var(--hot-red)';
+            const pnl       = parseFloat(p.unrealisedPnl || 0);
+            const pnlColor  = pnl >= 0 ? 'var(--neon)' : 'var(--hot-red)';
+            const pnlSign   = pnl >= 0 ? '+' : '';
+            const entryPrice = parseFloat(p.avgPrice || 0).toFixed(2);
+            const markPrice  = parseFloat(p.markPrice || 0).toFixed(2);
+            const qty        = parseFloat(p.size || 0);
+            const lev        = p.leverage || '—';
+            const liqPrice   = parseFloat(p.liqPrice || 0).toFixed(2);
+            const roe        = parseFloat(p.unrealisedPnl || 0) / parseFloat(p.positionIM || 1) * 100;
+
+            return `<tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:6px 8px;font-weight:600;color:var(--text-bright);">${p.symbol}</td>
+                <td style="padding:6px 8px;color:${sideColor};font-weight:600;">${side} ${lev}×</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-bright);">${qty}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-mid);">$${entryPrice}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-mid);">$${markPrice}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--hot-red);">$${liqPrice}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:${pnlColor};font-weight:600;">${pnlSign}$${Math.abs(pnl).toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:${pnlColor};">${pnlSign}${roe.toFixed(1)}%</td>
+                <td style="padding:6px 8px;">
+                    <button onclick="closePosition('${p.symbol}','${p.side}','${qty}')"
+                        style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.3);color:var(--hot-red);padding:2px 8px;border-radius:3px;font-size:10px;cursor:pointer;">
+                        Close
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        tbody.innerHTML = `<table class="data-table" style="width:100%;">
+            <thead><tr>
+                <th>Symbol</th><th>Side</th><th>Size</th>
+                <th>Entry</th><th>Mark</th><th>Liq.</th>
+                <th>PnL</th><th>ROE</th><th>Action</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+
+        // Update available balance in order panel
+        fetchAvailableBalance();
+
+    } catch(e) {
+        console.error('loadPositions:', e);
+        tbody.innerHTML = '<div style="text-align:center;padding:20px;color:var(--hot-red);">Error loading positions: ' + e.message + '</div>';
+    }
+}
+
+async function loadAssets() {
+    const container = document.getElementById('bt-assets');
+    if(!container) return;
+
+    const key    = getSetting('bybit-key','');
+    const secret = getSetting('bybit-secret','');
+    if(!key || !secret) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">Add Bybit API keys in Settings ⚙️</div>';
+        return;
+    }
+
+    try {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">Loading assets...</div>';
+        const data = await workerFetch('/bybit/v5/account/wallet-balance?accountType=UNIFIED');
+        const coins = data?.result?.list?.[0]?.coin || [];
+
+        if(!coins.length) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">No assets found</div>';
+            return;
+        }
+
+        // Filter coins with balance
+        const active = coins.filter(c => parseFloat(c.walletBalance || 0) > 0);
+
+        // Update total balance in header
+        const totalEq = parseFloat(data?.result?.list?.[0]?.totalEquity || 0);
+        const headerEl = document.getElementById('live-balance');
+        if(headerEl && totalEq > 0) {
+            headerEl.textContent = '$' + totalEq.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+        }
+
+        // Update available balance in order panel
+        const usdt = coins.find(c => c.coin === 'USDT');
+        if(usdt) {
+            _availBalance = parseFloat(usdt.availableToWithdraw || usdt.walletBalance || 0);
+            const availEl = document.getElementById('order-avail');
+            if(availEl) availEl.textContent = '$' + _availBalance.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' USDT';
+        }
+
+        const rows = active.map(c => {
+            const wallet  = parseFloat(c.walletBalance || 0);
+            const avail   = parseFloat(c.availableToWithdraw || c.walletBalance || 0);
+            const usdVal  = parseFloat(c.usdValue || 0);
+            const unreal  = parseFloat(c.unrealisedPnl || 0);
+            const pnlColor = unreal >= 0 ? 'var(--neon)' : 'var(--hot-red)';
+
+            return `<tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:6px 8px;font-weight:600;color:var(--text-bright);">${c.coin}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-bright);">${wallet.toFixed(4)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-mid);">${avail.toFixed(4)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--text-bright);">$${usdVal.toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:${pnlColor};">${unreal >= 0 ? '+' : ''}$${Math.abs(unreal).toFixed(2)}</td>
+            </tr>`;
+        }).join('');
+
+        const totalHtml = `<div style="padding:8px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:11px;font-weight:600;color:var(--text-bright);">Total Equity</span>
+            <span style="font-family:monospace;font-size:13px;font-weight:700;color:var(--neon);">$${totalEq.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+        </div>`;
+
+        container.innerHTML = totalHtml + `<table class="data-table" style="width:100%;">
+            <thead><tr>
+                <th>Coin</th><th>Balance</th><th>Available</th><th>USD Value</th><th>Unrealized PnL</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+
+    } catch(e) {
+        console.error('loadAssets:', e);
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--hot-red);">Error loading assets: ' + e.message + '</div>';
+    }
+}
+
+async function closePosition(symbol, side, size) {
+    if(!confirm(`Close ${side === 'Buy' ? 'Long' : 'Short'} position on ${symbol}?`)) return;
+    try {
+        const closeSide = side === 'Buy' ? 'Sell' : 'Buy';
+        const result = await workerFetch('/bybit/v5/order/create', {
+            method: 'POST',
+            body: JSON.stringify({
+                category: 'linear',
+                symbol, side: closeSide,
+                orderType: 'Market',
+                qty: String(size),
+                timeInForce: 'IOC',
+                reduceOnly: true
+            })
+        });
+        if(result?.retCode === 0) {
+            showOrderStatus('✅ Position closed!', 'success');
+            setTimeout(loadPositions, 1500);
+        } else {
+            showOrderStatus('❌ ' + (result?.retMsg || 'Failed'), 'error');
+        }
+    } catch(e) {
+        showOrderStatus('❌ ' + e.message, 'error');
+    }
+}
+
+/* Auto-refresh positions + assets every 30s */
+setInterval(() => {
+    const posTab  = document.getElementById('bt-positions');
+    const assTab  = document.getElementById('bt-assets');
+    if(posTab?.classList.contains('active'))  loadPositions();
+    if(assTab?.classList.contains('active'))  loadAssets();
+}, 30000);
 
 </script>
 
