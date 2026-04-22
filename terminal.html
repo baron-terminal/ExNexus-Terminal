@@ -2296,6 +2296,7 @@
                 AI Scout
                 <span id="scout-badge" style="display:none;background:#FF003F;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;">🔔</span>
             </div>
+            <button onclick="resetScout()" title="Reset / Cancel" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:2px 6px;border-radius:3px;" onmouseover="this.style.color='var(--text-bright)'" onmouseout="this.style.color='var(--text-dim)'">↺</button>
             <button class="panel-expand-btn" onclick="expandPanel(this)" title="Expand panel">⤢</button>
             <span class="panel-close" onclick="closePanel('scout')">×</span>
         </div>
@@ -2829,28 +2830,28 @@ async function runScout(){
 
     try {
         // Fetch all data in parallel
-        const [coinRes, lsRes, fundRes, oiRes, sentRes, bybitRes] = await Promise.allSettled([
-            fetch(`${MARKET}/coin?symbol=${rawCoin}`),
-            fetch(`${MARKET}/ls?symbol=${sym}`),
-            fetch(`${MARKET}/funding?symbol=${sym}`),
-            fetch(`${MARKET}/oi?symbol=${sym}`),
-            fetch(`${MARKET}/sentiment?symbol=${sym}`),
-            fetch(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${sym}`)
+        // Bybit first (fastest, most accurate) with 5s timeout
+        const [bybitRes, coinRes, lsRes, fundRes] = await Promise.allSettled([
+            fetchWithTimeout(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${sym}`, 5000),
+            fetchWithTimeout(`${MARKET}/coin?symbol=${rawCoin}`, 6000),
+            fetchWithTimeout(`${MARKET}/ls?symbol=${sym}`, 6000),
+            fetchWithTimeout(`${MARKET}/funding?symbol=${sym}`, 6000),
         ]);
 
-        const coin   = coinRes.status==='fulfilled'   ? await coinRes.value.json()   : {};
-        const ls     = lsRes.status==='fulfilled'     ? await lsRes.value.json()     : {};
-        const fund   = fundRes.status==='fulfilled'   ? await fundRes.value.json()   : {};
-        const oi     = oiRes.status==='fulfilled'     ? await oiRes.value.json()     : {};
-        const sent   = sentRes.status==='fulfilled'   ? await sentRes.value.json()   : {};
-        const bybit  = bybitRes.status==='fulfilled'  ? await bybitRes.value.json()  : {};
+        const bybit = bybitRes.status==='fulfilled' ? await bybitRes.value.json() : {};
+        const coin  = coinRes.status==='fulfilled'  ? await coinRes.value.json()  : {};
+        const ls    = lsRes.status==='fulfilled'    ? await lsRes.value.json()    : {};
+        const fund  = fundRes.status==='fulfilled'  ? await fundRes.value.json()  : {};
+        const oi = {}, sent = {fg: 50};
 
-        // Prefer Bybit live price over CMC (more accurate for futures)
+        // Bybit ticker is primary source — always available
         const bybitTicker = bybit.result?.list?.[0];
-        if(bybitTicker && !coin.price) {
-            coin.price      = parseFloat(bybitTicker.lastPrice);
-            coin.change_24h = parseFloat(bybitTicker.price24hPcnt) * 100;
-            coin.volume_24h = parseFloat(bybitTicker.turnover24h);
+        if(bybitTicker) {
+            if(!coin.price)      coin.price      = parseFloat(bybitTicker.lastPrice || 0);
+            if(!coin.change_24h) coin.change_24h = parseFloat(bybitTicker.price24hPcnt || 0) * 100;
+            if(!coin.change_1h)  coin.change_1h  = parseFloat(bybitTicker.price1hPcnt || 0) * 100;
+            if(!coin.volume_24h) coin.volume_24h = parseFloat(bybitTicker.turnover24h || 0);
+            if(!ls.longRatio)    ls.longRatio    = parseFloat(bybitTicker.bid1Size||0) > parseFloat(bybitTicker.ask1Size||0) ? 55 : 45;
         }
 
         // Extract metrics — handle multiple response shapes
@@ -8186,14 +8187,14 @@ async function runAutoScout(){
     if(status)status.textContent='Fetching...';
     if(badge)badge.style.display='none';
     try{
-        // Fetch multiple pages to get more coins
-        const [r1,r2,r3] = await Promise.all([
-            fetch(`${MARKET}/listings?limit=50&start=1`),
-            fetch(`${MARKET}/listings?limit=50&start=51`),
-            fetch(`${MARKET}/listings?limit=50&start=101`)
+        // Fetch 2 batches with timeouts (100 coins total, fast)
+        const [r1,r2] = await Promise.allSettled([
+            fetchWithTimeout(`${MARKET}/listings?limit=50&start=1`, 8000),
+            fetchWithTimeout(`${MARKET}/listings?limit=50&start=51`, 8000),
         ]);
-        const [d1,d2,d3] = await Promise.all([r1.json(), r2.json(), r3.json()]);
-        const allCoins = [...(d1.coins||[]), ...(d2.coins||[]), ...(d3.coins||[])];
+        const d1 = r1.status==='fulfilled' ? await r1.value.json() : {coins:[]};
+        const d2 = r2.status==='fulfilled' ? await r2.value.json() : {coins:[]};
+        const allCoins = [...(d1.coins||[]), ...(d2.coins||[])];
         const coins = allCoins.filter(c=>(c.mcap||0)>minMcap&&(c.volume_24h||0)>1e6);
         const scored=coins.map(c=>{
             const ch1=c.change_1h||0,ch24=c.change_24h||0,ch7=c.change_7d||0,p=c.price||0;
@@ -8234,6 +8235,41 @@ function filterScoutResults(query) {
         const coin = row.querySelector('td')?.textContent?.replace('🔔','').trim().toUpperCase() || '';
         row.style.display = (!q || coin.includes(q)) ? '' : 'none';
     });
+}
+
+
+function fetchWithTimeout(url, ms=6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    return fetch(url, {signal: controller.signal}).finally(() => clearTimeout(timer));
+}
+
+function resetScout() {
+    _asRunning = false;
+    const btn    = document.getElementById('auto-scout-btn');
+    const status = document.getElementById('auto-scout-status');
+    const tbody  = document.getElementById('auto-scout-tbody');
+    const detail = document.getElementById('auto-scout-detail');
+    const badge  = document.getElementById('scout-badge');
+    if(btn)    btn.textContent = '▶ Scan';
+    if(status) status.textContent = 'Reset. Ready to scan.';
+    if(tbody)  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text-dim);">Click ▶ Scan to start</td></tr>';
+    if(detail) detail.style.display = 'none';
+    if(badge)  badge.style.display = 'none';
+    ['ss1','ss2','ss3','ss4','ss5'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.textContent = '—'; el.style.color = 'var(--text-dim)'; }
+    });
+    const probEl = document.getElementById('prob-val');
+    const summaryEl = document.getElementById('prob-summary');
+    const botEl = document.getElementById('bot-rec');
+    const reasonEl = document.getElementById('scout-reasoning');
+    if(probEl)   probEl.textContent = '—';
+    if(summaryEl)summaryEl.textContent = '';
+    if(botEl)    botEl.innerHTML = '';
+    if(reasonEl) reasonEl.textContent = '';
+    const circleEl = document.getElementById('prob-circle');
+    if(circleEl) circleEl.style.strokeDashoffset = '213.6';
 }
 
 </script>
