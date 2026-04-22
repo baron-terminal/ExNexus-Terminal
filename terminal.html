@@ -108,7 +108,7 @@
         .bot-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:9px 11px;margin-top:6px;}
 
         /* AI bubble */
-        #draggable-ai{min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
+        #draggable-ai{display:none!important;min-width:40px;height:40px;background:linear-gradient(135deg,#4285f4,#9b72cb);border-radius:10px;z-index:9999;position:absolute;bottom:200px;right:24px;box-shadow:0 0 18px rgba(66,133,244,0.3);cursor:move;transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:flex-start;}
         #ai-briefing{display:none;padding:10px;width:210px;font-size:10px;}
 
         /* Bot Cards */
@@ -1739,6 +1739,25 @@
         #aside-orderentry::-webkit-scrollbar { width: 3px; }
         #aside-orderentry::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
+
+        /* Bottom panel tab content scrollable */
+        .tab-panel {
+            overflow-y: auto !important;
+            overflow-x: auto !important;
+            height: 100% !important;
+        }
+        #bottom-section > div:last-child {
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+        /* Empty state - center the No orders message */
+        .tab-panel td[colspan] {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-dim);
+        }
+
 </style>
 </head>
 <body>
@@ -2090,7 +2109,7 @@
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')">⚡ Arb</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
         </div>
-        <div style="flex:1;overflow:hidden;">
+        <div style="flex:1;overflow:hidden;min-height:0;">
             <div id="bt-openorders" class="tab-panel active" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Filled</th><th class="r">Order Value</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="10"><div class="empty-state">No open orders</div></td></tr></tbody></table></div>
             <div id="bt-positions" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
             <div id="bt-orderhistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Avg Fill</th><th class="r">Qty</th><th class="r">Order Value</th><th>Status</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No order history</div></td></tr></tbody></table></div>
@@ -2204,7 +2223,7 @@
                     </div>
                 </div>
             </div>
-            <div id="bt-arb" class="tab-panel" style="height:100%;flex-direction:column;">
+            <div id="bt-arb" class="tab-panel" style="height:100%;overflow-y:auto;overflow-x:auto;flex-direction:column;">
                 <div class="arb-header">
                     <button class="arb-scan-btn" id="arb-scan-btn" onclick="startArbScan()">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
@@ -2614,12 +2633,7 @@
     </div>
 
 
-<!-- AI BUBBLE -->
-<div id="draggable-ai" onclick="toggleHelpChat()" style="cursor:pointer;" title="Ask Claude">
-    <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="0.7" fill="white"/><circle cx="12" cy="10" r="0.7" fill="white"/><circle cx="15" cy="10" r="0.7" fill="white"/></svg>
-    </div>
-</div>
+
 
 <!-- MOBILE BOTTOM NAV -->
 <nav id="mobile-nav">
