@@ -32,7 +32,7 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 180px;height:100vh;gap:3px;padding:3px;}
+        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 180px;height:100vh;min-height:600px;gap:3px;padding:3px;}
         ::-webkit-scrollbar{width:3px;height:3px;}
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
@@ -1756,6 +1756,21 @@
             text-align: center;
             padding: 20px;
             color: var(--text-dim);
+        }
+
+
+        /* Whole terminal gentle scroll */
+        html, body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            min-height: 100vh;
+            scrollbar-width: thin;
+        }
+        body::-webkit-scrollbar { width: 4px; }
+        body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        /* Keep app at least viewport height but allow slight scroll */
+        .app-container {
+            min-height: 100vh;
         }
 
 </style>
