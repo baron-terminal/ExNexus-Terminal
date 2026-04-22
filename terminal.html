@@ -28,11 +28,11 @@
             --blue:#4285f4; --yellow:#F0B429; --orange:#FF8C00; --purple:#9b72cb;
         }
         *{box-sizing:border-box;}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-bright);overflow:hidden;height:100vh;margin:0;font-size:11px;font-weight:400;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-bright);overflow-x:hidden;overflow-y:auto;min-height:100vh;margin:0;font-size:11px;font-weight:400;}
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px 1fr 180px;height:100vh;min-height:600px;gap:3px;padding:3px;}
+        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px minmax(400px,1fr) 180px;min-height:100vh;gap:3px;padding:3px;}
         ::-webkit-scrollbar{width:3px;height:3px;}
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
@@ -1760,6 +1760,18 @@
 
 
         /* body scroll removed - terminal is fixed viewport */
+
+
+        /* Page scroll */
+        html { overflow-x: hidden; }
+        body::-webkit-scrollbar { width: 4px; }
+        body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+        body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+        /* Mobile: keep fixed */
+        @media(max-width:768px){
+            body { overflow-y: hidden !important; }
+            .app-container { height: 100vh !important; min-height: unset; }
+        }
 
 </style>
 </head>
