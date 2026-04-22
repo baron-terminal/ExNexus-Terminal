@@ -1764,6 +1764,15 @@
 
 
 
+
+        /* Remove number input spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] { -moz-appearance: textfield; }
+
 </style>
 </head>
 <body>
@@ -8486,18 +8495,56 @@ function setOrderPct(pct) {
     pct = parseFloat(pct);
     const slider = document.getElementById('order-pct-slider');
     if(slider) slider.value = pct;
-    if(!_availBalance || !_lastPrice) return;
+
+    // Try to get balance from demo state or live
+    let avail = _availBalance;
+    if(!avail && typeof demoState !== 'undefined' && demoState?.balance) {
+        avail = demoState.balance;
+        _availBalance = avail;
+    }
+
     const price = parseFloat(document.getElementById('order-price')?.value) || _lastPrice;
-    if(!price) return;
-    const totalValue = (_availBalance * _leverage * pct / 100);
+    if(!avail || !price) {
+        // Show hint if no balance
+        const availEl = document.getElementById('order-avail');
+        if(availEl && !avail) availEl.textContent = 'Add API keys';
+        return;
+    }
+
+    const totalValue = (avail * _leverage * pct / 100);
     const qty = totalValue / price;
     const qtyEl = document.getElementById('order-qty');
     if(qtyEl) {
-        // Round to appropriate decimals based on price
-        const decimals = price > 1000 ? 3 : price > 10 ? 2 : 0;
+        const decimals = price > 10000 ? 3 : price > 100 ? 2 : price > 1 ? 1 : 0;
         qtyEl.value = qty.toFixed(decimals);
     }
     calcOrderValues();
+}
+
+/* Fetch available balance on panel open */
+async function fetchAvailableBalance() {
+    // Demo mode
+    if(typeof demoState !== 'undefined' && demoState?.balance) {
+        _availBalance = demoState.balance;
+        const el = document.getElementById('order-avail');
+        if(el) el.textContent = '$' + _availBalance.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' USDT';
+        return;
+    }
+    // Live - try to fetch from exchange
+    try {
+        const exch = window.EXCHANGES?.find(e => e.active);
+        if(!exch) return;
+        const res = await fetch(WORKER + '/bybit/v5/account/wallet-balance?accountType=UNIFIED', {
+            headers: { 'x-api-key': exch.apiKey, 'x-api-secret': exch.apiSecret }
+        });
+        const d = await res.json();
+        const usdt = d.result?.list?.[0]?.coin?.find(c => c.coin === 'USDT');
+        if(usdt) {
+            _availBalance = parseFloat(usdt.availableToWithdraw || usdt.walletBalance || 0);
+            const el = document.getElementById('order-avail');
+            if(el) el.textContent = '$' + _availBalance.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' USDT';
+        }
+    } catch(e) { console.log('Balance fetch:', e.message); }
 }
 
 /* ── Calculate Value / Cost / Liq ── */
@@ -8629,6 +8676,8 @@ function showOrderStatus(msg, type) {
 function updateOrderPanel(price, symbol) {
     _lastPrice = price;
     _currentSym = symbol || _currentSym;
+    // Fetch balance once on first price update
+    if(!_availBalance) fetchAvailableBalance();
 
     // Update last price display
     const lastEl = document.getElementById('order-last-price');
