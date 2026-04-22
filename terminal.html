@@ -3377,7 +3377,7 @@ function saveExch(name){
     setTimeout(syncSettingsToKV, 500);
 }
 function saveIntelKeys(){
-    ['altfins','nansen','coinglass','anthropic'].forEach(k=>{
+    ['exnexus_intel','nansen','coinglass','anthropic'].forEach(k=>{
         const v = document.getElementById(k+'-key')?.value||'';
         if(v) saveSetting(k+'-key', v);
     });
@@ -3418,7 +3418,7 @@ function loadSettings(){
         if(secret){ const el=document.getElementById(name+'-secret'); if(el) el.value=secret; }
         if(active){ const t=document.getElementById('toggle-'+name); if(t&&!t.classList.contains('on')) toggleExch(name); }
     });
-    ['altfins','nansen','coinglass','anthropic'].forEach(k=>{
+    ['exnexus_intel','nansen','coinglass','anthropic'].forEach(k=>{
         const v=getSetting(k+'-key'); const el=document.getElementById(k+'-key');
         if(v&&el) el.value=v;
     });
@@ -3958,7 +3958,7 @@ async function syncSettingsToKV() {
      'gate-key','gate-secret',
      'binance-key','binance-secret',
      'alpaca-key','alpaca-secret','alpaca-mode',
-     'altfins-key','nansen-key','coinglass-key','anthropic-key',
+     'exnexus_intel-key','nansen-key','coinglass-key','anthropic-key',
      'risk-leverage','risk-pct','risk-daily-loss',
      'arb-min-spread','arb-max-size','arb-interval'
     ].forEach(k => {
@@ -4807,7 +4807,7 @@ async function syncSettingsToKV() {
      'gate-key','gate-secret',
      'binance-key','binance-secret',
      'alpaca-key','alpaca-secret','alpaca-mode',
-     'altfins-key','nansen-key','coinglass-key','anthropic-key',
+     'exnexus_intel-key','nansen-key','coinglass-key','anthropic-key',
      'risk-leverage','risk-pct','risk-daily-loss',
      'arb-min-spread','arb-max-size','arb-interval'
     ].forEach(k => {
@@ -7332,8 +7332,7 @@ function showLoginScreen() {
                 <div class="dhub-icon" style="background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.18);">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </div>
-                <div class="dhub-name">AltFINS</div>
-                <div class="dhub-sub">RSI · MACD · Patterns · Signals</div>
+                <div class="dhub-name">Signal Engine</div><div class="dhub-sub">RSI · MACD · Patterns · Signals</div>
                 <div class="dhub-live"><span class="dhub-dot live"></span>Screener ready</div>
             </div>
             <div class="dhub-card" onclick="closePanel('datahub');togglePanel('smartmoney')">
@@ -7665,8 +7664,8 @@ function showLoginScreen() {
             <div class="set-section-title">Intelligence &amp; AI APIs</div>
             <div class="api-intel-row">
                 <div class="api-intel-icon" style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">AltFINS</div><div class="api-intel-sub">Technical signals · Screener</div></div>
-                <input class="api-intel-input" type="password" id="altfins-key" placeholder="API Key" style="max-width:140px;">
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">ExNexus Intelligence</div><div class="api-intel-sub">Technical signals · Screener</div></div>
+                <input class="api-intel-input" type="password" id="exnexus_intel-key" placeholder="API Key" style="max-width:140px;">
             </div>
             <div class="api-intel-row">
                 <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
