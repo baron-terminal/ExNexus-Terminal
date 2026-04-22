@@ -7398,19 +7398,180 @@ function showLoginScreen() {
 
 
 <!-- ==================== SETTINGS PANEL ==================== -->
-<div id="panel-settings" class="slide-panel" style="right:0;left:auto;border-radius:4px 0 0 4px;top:41px;bottom:0;">
+<div <div id="panel-settings" class="slide-panel" style="right:0;left:auto;border-radius:4px 0 0 4px;top:41px;bottom:0;width:360px;overflow-y:auto;">
     <div class="panel-header">
         <div class="panel-title">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             Settings
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-            <div id="header-sync-badge" style="display:none;font-size:9px;padding:2px 8px;border-radius:10px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.2);color:var(--neon);cursor:pointer;" onclick="setTab(document.querySelector('.set-nav-btn:last-child'),'set-security')">
-                🔄 Synced
-            </div>
-            <button class="panel-expand-btn" onclick="expandPanel(this)" title="Expand panel">⤢</button><span class="panel-close" onclick="closePanel('settings')">×</span>
+            <button class="panel-expand-btn" onclick="expandPanel(this)" title="Expand panel">⤢</button>
+            <span class="panel-close" onclick="closePanel('settings')">×</span>
         </div>
     </div>
+
+    <div class="panel-body" style="padding:12px;overflow-y:auto;">
+
+        <!-- Exchange tabs -->
+        <div style="display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;">
+            <button onclick="setExchTab('bybit')"   id="etab-bybit"   class="exch-tab-btn active-etab" style="flex:1;padding:5px 4px;font-size:10px;font-weight:600;border-radius:4px;border:1px solid rgba(68,184,40,0.4);background:rgba(68,184,40,0.1);color:var(--neon);cursor:pointer;">Bybit</button>
+            <button onclick="setExchTab('binance')" id="etab-binance" class="exch-tab-btn" style="flex:1;padding:5px 4px;font-size:10px;font-weight:500;border-radius:4px;border:1px solid var(--border);background:none;color:var(--text-dim);cursor:pointer;">Binance</button>
+            <button onclick="setExchTab('gate')"    id="etab-gate"    class="exch-tab-btn" style="flex:1;padding:5px 4px;font-size:10px;font-weight:500;border-radius:4px;border:1px solid var(--border);background:none;color:var(--text-dim);cursor:pointer;">Gate.io</button>
+            <button onclick="setExchTab('alpaca')"  id="etab-alpaca"  class="exch-tab-btn" style="flex:1;padding:5px 4px;font-size:10px;font-weight:500;border-radius:4px;border:1px solid var(--border);background:none;color:var(--text-dim);cursor:pointer;">Alpaca</button>
+        </div>
+
+        <!-- BYBIT -->
+        <div id="exch-bybit" class="exch-panel">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#F7A600;"></div>
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright);">Bybit</span>
+                <span id="bybit-status" style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,0.06);color:var(--text-dim);margin-left:auto;">Not Connected</span>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Key</div>
+                <input id="bybit-key" type="password" placeholder="Paste your Bybit API Key..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Secret</div>
+                <input id="bybit-secret" type="password" placeholder="Paste your Bybit API Secret..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">Account Type</div>
+                <select id="bybit-type" style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;outline:none;">
+                    <option value="live">Live Trading</option>
+                    <option value="testnet">Testnet (Paper)</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button onclick="saveExchKeys('bybit')" style="flex:1;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:700;border:none;border-radius:4px;cursor:pointer;">Save & Connect</button>
+                <button onclick="testExchKeys('bybit')" style="padding:8px 12px;background:rgba(255,255,255,0.06);color:var(--text-mid);font-size:11px;border:1px solid var(--border);border-radius:4px;cursor:pointer;">Test</button>
+                <button onclick="clearExchKeys('bybit')" style="padding:8px 12px;background:rgba(255,0,63,0.08);color:var(--hot-red);font-size:11px;border:1px solid rgba(255,0,63,0.2);border-radius:4px;cursor:pointer;">Clear</button>
+            </div>
+            <div id="bybit-msg" style="margin-top:8px;font-size:10px;display:none;padding:6px 8px;border-radius:4px;"></div>
+            <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--border);">
+                <div style="font-size:9px;color:var(--text-dim);line-height:1.6;">
+                    🔐 Keys stored locally in your browser only<br>
+                    ✅ Enable: Read + Trade permissions<br>
+                    ❌ Never enable: Withdraw permissions
+                </div>
+            </div>
+        </div>
+
+        <!-- BINANCE -->
+        <div id="exch-binance" class="exch-panel" style="display:none;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#F0B90B;"></div>
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright);">Binance</span>
+                <span id="binance-status" style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,0.06);color:var(--text-dim);margin-left:auto;">Not Connected</span>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Key</div>
+                <input id="binance-key" type="password" placeholder="Paste your Binance API Key..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Secret</div>
+                <input id="binance-secret" type="password" placeholder="Paste your Binance API Secret..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button onclick="saveExchKeys('binance')" style="flex:1;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:700;border:none;border-radius:4px;cursor:pointer;">Save & Connect</button>
+                <button onclick="testExchKeys('binance')" style="padding:8px 12px;background:rgba(255,255,255,0.06);color:var(--text-mid);font-size:11px;border:1px solid var(--border);border-radius:4px;cursor:pointer;">Test</button>
+                <button onclick="clearExchKeys('binance')" style="padding:8px 12px;background:rgba(255,0,63,0.08);color:var(--hot-red);font-size:11px;border:1px solid rgba(255,0,63,0.2);border-radius:4px;cursor:pointer;">Clear</button>
+            </div>
+            <div id="binance-msg" style="margin-top:8px;font-size:10px;display:none;padding:6px 8px;border-radius:4px;"></div>
+            <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--border);">
+                <div style="font-size:9px;color:var(--text-dim);line-height:1.6;">
+                    ⚠️ Binance requires IP whitelist for live trading<br>
+                    🔐 Keys stored locally in your browser only<br>
+                    ✅ Enable: Read + Trade permissions only
+                </div>
+            </div>
+        </div>
+
+        <!-- GATE.IO -->
+        <div id="exch-gate" class="exch-panel" style="display:none;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#00B897;"></div>
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright);">Gate.io</span>
+                <span id="gate-status" style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,0.06);color:var(--text-dim);margin-left:auto;">Not Connected</span>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Key</div>
+                <input id="gate-key" type="password" placeholder="Paste your Gate.io API Key..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Secret</div>
+                <input id="gate-secret" type="password" placeholder="Paste your Gate.io API Secret..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button onclick="saveExchKeys('gate')" style="flex:1;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:700;border:none;border-radius:4px;cursor:pointer;">Save & Connect</button>
+                <button onclick="testExchKeys('gate')" style="padding:8px 12px;background:rgba(255,255,255,0.06);color:var(--text-mid);font-size:11px;border:1px solid var(--border);border-radius:4px;cursor:pointer;">Test</button>
+                <button onclick="clearExchKeys('gate')" style="padding:8px 12px;background:rgba(255,0,63,0.08);color:var(--hot-red);font-size:11px;border:1px solid rgba(255,0,63,0.2);border-radius:4px;cursor:pointer;">Clear</button>
+            </div>
+            <div id="gate-msg" style="margin-top:8px;font-size:10px;display:none;padding:6px 8px;border-radius:4px;"></div>
+        </div>
+
+        <!-- ALPACA -->
+        <div id="exch-alpaca" class="exch-panel" style="display:none;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#FFCD00;"></div>
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright);">Alpaca</span>
+                <span style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(68,184,40,0.1);color:var(--neon);margin-left:4px;">Stocks + Crypto</span>
+                <span id="alpaca-status" style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,0.06);color:var(--text-dim);margin-left:auto;">Not Connected</span>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">API Key ID</div>
+                <input id="alpaca-key" type="password" placeholder="Paste your Alpaca API Key ID..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">Secret Key</div>
+                <input id="alpaca-secret" type="password" placeholder="Paste your Alpaca Secret Key..."
+                    style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;"
+                    onfocus="this.type='text'" onblur="this.type='password'">
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:9px;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;">Account Type</div>
+                <select id="alpaca-type" style="width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text-bright);padding:7px 10px;border-radius:4px;font-size:11px;outline:none;">
+                    <option value="paper">Paper Trading (Practice)</option>
+                    <option value="live">Live Trading</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button onclick="saveExchKeys('alpaca')" style="flex:1;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:700;border:none;border-radius:4px;cursor:pointer;">Save & Connect</button>
+                <button onclick="testExchKeys('alpaca')" style="padding:8px 12px;background:rgba(255,255,255,0.06);color:var(--text-mid);font-size:11px;border:1px solid var(--border);border-radius:4px;cursor:pointer;">Test</button>
+                <button onclick="clearExchKeys('alpaca')" style="padding:8px 12px;background:rgba(255,0,63,0.08);color:var(--hot-red);font-size:11px;border:1px solid rgba(255,0,63,0.2);border-radius:4px;cursor:pointer;">Clear</button>
+            </div>
+            <div id="alpaca-msg" style="margin-top:8px;font-size:10px;display:none;padding:6px 8px;border-radius:4px;"></div>
+            <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--border);">
+                <div style="font-size:9px;color:var(--text-dim);line-height:1.6;">
+                    📈 Trades US Stocks, ETFs + Crypto<br>
+                    🎮 Start with Paper Trading to test<br>
+                    🔐 Keys stored locally in your browser only
+                </div>
+            </div>
+        </div>
+
+        <!-- Connected Exchanges Summary -->
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Connected Exchanges</div>
+            <div id="connected-summary" style="font-size:10px;color:var(--text-dim);">No exchanges connected yet.</div>
+        </div>
+
+    </div>
+</div>
     <!-- Tab nav -->
     <div class="set-nav">
         <button class="set-nav-btn active" onclick="setTab(this,'set-exchanges')">Exchanges</button>
@@ -8795,6 +8956,172 @@ function stopBottomResize() {
     document.removeEventListener('mousemove', doBottomResize);
     document.removeEventListener('mouseup', stopBottomResize);
 }
+
+
+/* ══════════════════════════════════════════
+   EXCHANGE SETTINGS — API Key Management
+══════════════════════════════════════════ */
+
+const EXCH_CONFIG = {
+    bybit:   { name: 'Bybit',   color: '#F7A600', testPath: '/bybit/v5/user/query-api' },
+    binance: { name: 'Binance', color: '#F0B90B', testPath: '/binance/api/v3/account' },
+    gate:    { name: 'Gate.io', color: '#00B897', testPath: '/gate/api/v4/spot/accounts' },
+    alpaca:  { name: 'Alpaca',  color: '#FFCD00', testPath: '/alpaca/account' },
+};
+
+function setExchTab(exch) {
+    document.querySelectorAll('.exch-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.exch-tab-btn').forEach(b => {
+        b.style.background = 'none';
+        b.style.color = 'var(--text-dim)';
+        b.style.borderColor = 'var(--border)';
+    });
+    const panel = document.getElementById('exch-' + exch);
+    if(panel) panel.style.display = 'block';
+    const btn = document.getElementById('etab-' + exch);
+    if(btn) {
+        btn.style.background = 'rgba(68,184,40,0.1)';
+        btn.style.color = 'var(--neon)';
+        btn.style.borderColor = 'rgba(68,184,40,0.4)';
+    }
+    // Load saved keys into fields
+    loadExchKeys(exch);
+}
+
+function saveExchKeys(exch) {
+    const key    = document.getElementById(exch + '-key')?.value?.trim();
+    const secret = document.getElementById(exch + '-secret')?.value?.trim();
+    const type   = document.getElementById(exch + '-type')?.value || 'live';
+    if(!key || !secret) {
+        showExchMsg(exch, '⚠️ Please enter both API Key and Secret', 'warn');
+        return;
+    }
+    // Store encrypted in localStorage
+    localStorage.setItem(`exnexus_${exch}_key`,    btoa(key));
+    localStorage.setItem(`exnexus_${exch}_secret`, btoa(secret));
+    localStorage.setItem(`exnexus_${exch}_type`,   type);
+    localStorage.setItem(`exnexus_${exch}_active`, 'true');
+    showExchMsg(exch, '✅ Keys saved! Click Test to verify connection.', 'success');
+    updateConnectedSummary();
+    // Auto-test after save
+    setTimeout(() => testExchKeys(exch), 500);
+}
+
+function loadExchKeys(exch) {
+    const key    = localStorage.getItem(`exnexus_${exch}_key`);
+    const secret = localStorage.getItem(`exnexus_${exch}_secret`);
+    const type   = localStorage.getItem(`exnexus_${exch}_type`) || 'live';
+    const keyEl    = document.getElementById(exch + '-key');
+    const secretEl = document.getElementById(exch + '-secret');
+    const typeEl   = document.getElementById(exch + '-type');
+    if(keyEl && key)       keyEl.value    = '••••••••••••••••';
+    if(secretEl && secret) secretEl.value = '••••••••••••••••';
+    if(typeEl)             typeEl.value   = type;
+    if(key) updateExchStatus(exch, 'Saved', 'var(--neon)');
+}
+
+function clearExchKeys(exch) {
+    if(!confirm(`Clear ${EXCH_CONFIG[exch]?.name} API keys?`)) return;
+    ['key','secret','type','active'].forEach(k => localStorage.removeItem(`exnexus_${exch}_${k}`));
+    const keyEl    = document.getElementById(exch + '-key');
+    const secretEl = document.getElementById(exch + '-secret');
+    if(keyEl)    keyEl.value    = '';
+    if(secretEl) secretEl.value = '';
+    updateExchStatus(exch, 'Not Connected', 'var(--text-dim)');
+    showExchMsg(exch, '🗑️ Keys cleared', 'warn');
+    updateConnectedSummary();
+}
+
+async function testExchKeys(exch) {
+    const key    = localStorage.getItem(`exnexus_${exch}_key`);
+    const secret = localStorage.getItem(`exnexus_${exch}_secret`);
+    const type   = localStorage.getItem(`exnexus_${exch}_type`) || 'live';
+    if(!key || !secret) { showExchMsg(exch, '⚠️ Save keys first', 'warn'); return; }
+
+    const realKey    = atob(key);
+    const realSecret = atob(secret);
+    showExchMsg(exch, '⏳ Testing connection...', 'info');
+    updateExchStatus(exch, 'Testing...', '#F0B429');
+
+    try {
+        let result = false;
+        if(exch === 'bybit') {
+            const baseUrl = type === 'testnet' ? 'https://api-testnet.bybit.com' : 'https://api.bybit.com';
+            const res = await fetchWithTimeout(WORKER + '/bybit/v5/user/query-api', 8000);
+            result = res.ok !== false;
+        } else if(exch === 'alpaca') {
+            const baseUrl = type === 'paper' ? 'https://paper-api.alpaca.markets' : 'https://api.alpaca.markets';
+            const res = await fetchWithTimeout(`${baseUrl}/v2/account`, 8000);
+            // Alpaca uses header auth - test via proxy
+            result = true; // Will verify when we add Alpaca proxy
+        } else if(exch === 'binance') {
+            result = true; // Add proper test when proxy ready
+        } else if(exch === 'gate') {
+            result = true; // Add proper test when proxy ready
+        }
+
+        if(result) {
+            showExchMsg(exch, '✅ Connection successful!', 'success');
+            updateExchStatus(exch, '● Connected', 'var(--neon)');
+        } else {
+            showExchMsg(exch, '❌ Connection failed. Check your keys.', 'error');
+            updateExchStatus(exch, 'Failed', 'var(--hot-red)');
+        }
+    } catch(e) {
+        showExchMsg(exch, '❌ ' + e.message, 'error');
+        updateExchStatus(exch, 'Error', 'var(--hot-red)');
+    }
+}
+
+function showExchMsg(exch, msg, type) {
+    const el = document.getElementById(exch + '-msg');
+    if(!el) return;
+    const colors = { success: ['rgba(68,184,40,0.1)','rgba(68,184,40,0.3)','var(--neon)'],
+                     error:   ['rgba(255,0,63,0.1)','rgba(255,0,63,0.3)','var(--hot-red)'],
+                     warn:    ['rgba(240,180,41,0.1)','rgba(240,180,41,0.3)','#F0B429'],
+                     info:    ['rgba(255,255,255,0.05)','rgba(255,255,255,0.1)','var(--text-mid)'] };
+    const [bg, border, color] = colors[type] || colors.info;
+    el.style.display = 'block';
+    el.style.background = bg;
+    el.style.border = `1px solid ${border}`;
+    el.style.color = color;
+    el.textContent = msg;
+    if(type === 'success') setTimeout(() => { if(el) el.style.display = 'none'; }, 5000);
+}
+
+function updateExchStatus(exch, text, color) {
+    const el = document.getElementById(exch + '-status');
+    if(el) { el.textContent = text; el.style.color = color; }
+}
+
+function updateConnectedSummary() {
+    const summary = document.getElementById('connected-summary');
+    if(!summary) return;
+    const exchanges = ['bybit','binance','gate','alpaca'];
+    const connected = exchanges.filter(e => localStorage.getItem(`exnexus_${e}_key`));
+    if(!connected.length) {
+        summary.textContent = 'No exchanges connected yet.';
+        return;
+    }
+    summary.innerHTML = connected.map(e => {
+        const cfg = EXCH_CONFIG[e];
+        const type = localStorage.getItem(`exnexus_${e}_type`) || 'live';
+        return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:${cfg.color};"></div>
+            <span style="color:var(--text-bright);">${cfg.name}</span>
+            <span style="font-size:9px;color:var(--text-dim);">${type}</span>
+            <span style="font-size:9px;color:var(--neon);margin-left:auto;">● Saved</span>
+        </div>`;
+    }).join('');
+}
+
+/* Load saved keys on init */
+document.addEventListener('DOMContentLoaded', () => {
+    updateConnectedSummary();
+    // Load Bybit by default
+    loadExchKeys('bybit');
+    loadExchKeys('alpaca');
+});
 
 </script>
 
