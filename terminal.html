@@ -2808,22 +2808,134 @@ async function fetchFearGreed(){
 }
 
 /* ============ AI SCOUT (MOCK) ============ */
-function runScout(){
-    const coin = document.getElementById('scout-coin').value;
-    const signals=[
-        {id:'ss1',text:'Bullish · RSI 58, MACD Cross ↑',color:'var(--neon)'},
-        {id:'ss2',text:'Strong · Score 7.2/10',color:'#6fff4a'},
-        {id:'ss3',text:'Accumulation detected',color:'var(--yellow)'},
-        {id:'ss4',text:'Longs 63% / Shorts 37%',color:'var(--neon)'},
-        {id:'ss5',text:'$2.1M short liq. below market',color:'var(--yellow)'},
-    ];
-    signals.forEach(s=>{ const el=document.getElementById(s.id); el.textContent=s.text; el.style.color=s.color; });
-    const prob = 71;
-    document.getElementById('prob-circle').style.strokeDashoffset = 213.6-(prob/100)*213.6;
-    document.getElementById('prob-val').textContent = prob+'%';
-    document.getElementById('prob-summary').textContent = `${prob}% estimated win probability for ${coin} long based on bullish MACD, smart money accumulation, and long-dominant positioning.`;
-    document.getElementById('bot-rec').innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;font-weight:500;color:var(--neon);">Smart Trade · Long</span><span style="font-size:9.5px;color:var(--text-dim);">Bybit</span></div><div style="font-size:10px;color:var(--text-mid);line-height:1.6;">Entry: Market · TP1: +2.5% · TP2: +5.0%<br>Dynamic SL · Size: 2–3% portfolio</div>`;
-    document.getElementById('scout-reasoning').textContent = `${coin}: RSI at 58 with bullish MACD cross on 4H (Signal Intelligence). Smart money accumulation detected. ExNexus shows 63% long dominance + $2.1M short liquidation cluster below — squeeze fuel. Fear & Greed not in extreme — market not overheated. Recommendation: Smart Trade long via Bybit with staged TP exits.`;
+async function runScout(){
+    const rawCoin = (document.getElementById('scout-coin')?.value || 'BTC').trim().toUpperCase().replace('USDT','').replace('/','');
+    const sym = rawCoin + 'USDT';
+
+    // Show loading
+    ['ss1','ss2','ss3','ss4','ss5'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.textContent = 'Loading...'; el.style.color = 'rgba(255,255,255,0.3)'; }
+    });
+    const probEl   = document.getElementById('prob-val');
+    const circleEl = document.getElementById('prob-circle');
+    const summaryEl= document.getElementById('prob-summary');
+    const botEl    = document.getElementById('bot-rec');
+    const reasonEl = document.getElementById('scout-reasoning');
+    if(probEl)   probEl.textContent = '...';
+    if(summaryEl)summaryEl.textContent = 'Fetching live data...';
+    if(botEl)    botEl.innerHTML = '';
+    if(reasonEl) reasonEl.textContent = '';
+
+    try {
+        // Fetch all data in parallel
+        const [coinRes, lsRes, fundRes, oiRes, sentRes] = await Promise.allSettled([
+            fetch(`${MARKET}/coin?symbol=${rawCoin}`),
+            fetch(`${MARKET}/ls?symbol=${sym}`),
+            fetch(`${MARKET}/funding?symbol=${sym}`),
+            fetch(`${MARKET}/oi?symbol=${sym}`),
+            fetch(`${MARKET}/sentiment?symbol=${sym}`)
+        ]);
+
+        const coin = coinRes.status==='fulfilled' ? await coinRes.value.json() : {};
+        const ls   = lsRes.status==='fulfilled'   ? await lsRes.value.json()   : {};
+        const fund = fundRes.status==='fulfilled'  ? await fundRes.value.json() : {};
+        const oi   = oiRes.status==='fulfilled'    ? await oiRes.value.json()   : {};
+        const sent = sentRes.status==='fulfilled'  ? await sentRes.value.json() : {};
+
+        // Extract metrics — handle multiple response shapes
+        const price  = coin.price  || coin.quote?.USD?.price || 0;
+        const chg1h  = coin.change_1h  || coin.quote?.USD?.percent_change_1h  || 0;
+        const chg24h = coin.change_24h || coin.quote?.USD?.percent_change_24h || 0;
+        const chg7d  = coin.change_7d  || coin.quote?.USD?.percent_change_7d  || 0;
+        const vol24h = coin.volume_24h || coin.quote?.USD?.volume_24h || 0;
+        const mcap   = coin.mcap       || coin.quote?.USD?.market_cap || 0;
+
+        const longPct  = parseFloat(ls.longRatio  || ls.long_ratio  || ls.buyRatio  || 55);
+        const shortPct = parseFloat(ls.shortRatio || ls.short_ratio || ls.sellRatio || 45);
+        const funding  = parseFloat(fund.fundingRate || fund.funding_rate || fund.rate || 0);
+        const openInt  = oi.openInterest || oi.open_interest || oi.oi || 0;
+        const fg       = parseInt(sent.value || sent.score || 50);
+
+        // ── AI Score ──────────────────────────────────────────
+        let score = 50;
+        if(chg1h  > 0) score += Math.min(chg1h  * 3, 12);
+        if(chg24h > 0) score += Math.min(chg24h * 1.5, 15);
+        if(chg7d  > 0) score += Math.min(chg7d  * 0.5, 8);
+        if(chg1h  < 0) score += Math.max(chg1h  * 3, -12);
+        if(chg24h < 0) score += Math.max(chg24h * 1.5, -15);
+        if(longPct > 60) score += 8;
+        else if(longPct < 40) score -= 8;
+        const fundPct = funding * 100;
+        if(fundPct < -0.01) score += 6;
+        else if(fundPct > 0.05) score -= 5;
+        if(fg < 30) score += 5;
+        else if(fg > 75) score -= 5;
+        score = Math.max(5, Math.min(95, Math.round(score)));
+
+        const bias   = score >= 65 ? 'Bullish' : score <= 35 ? 'Bearish' : 'Neutral';
+        const bColor = score >= 65 ? 'var(--neon)' : score <= 35 ? 'var(--hot-red)' : '#F0B429';
+        const side   = score >= 50 ? 'Long' : 'Short';
+
+        // ── TP / SL ───────────────────────────────────────────
+        const atr = Math.abs(chg24h) * price / 100 * 1.5 || price * 0.015;
+        const tp1 = side==='Long' ? price + atr * 1.2 : price - atr * 1.2;
+        const tp2 = side==='Long' ? price + atr * 2.5 : price - atr * 2.5;
+        const sl  = side==='Long' ? price - atr * 0.8 : price + atr * 0.8;
+
+        const fp = n => n > 1000 ? '$'+n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
+                      : n > 1    ? '$'+n.toFixed(3)
+                      : '$'+n.toFixed(5);
+        const pct = (a,b) => ((Math.abs(a-b)/b)*100).toFixed(1)+'%';
+
+        // ── Update UI ─────────────────────────────────────────
+        const rows = [
+            {id:'ss1', text:`${bias} · 1H ${chg1h>=0?'+':''}${chg1h.toFixed(2)}% · 24H ${chg24h>=0?'+':''}${chg24h.toFixed(2)}%`, color:bColor},
+            {id:'ss2', text:`AI Score ${score}/100 · ${bias}`, color:score>=65?'#6fff4a':score<=35?'var(--hot-red)':'#F0B429'},
+            {id:'ss3', text:`L/S ${longPct.toFixed(1)}% / ${shortPct.toFixed(1)}% · ${longPct>55?'Long dominant':'Short dominant'}`, color:longPct>55?'var(--neon)':'#F0B429'},
+            {id:'ss4', text:`Funding ${(fundPct).toFixed(4)}% · F&G ${fg}/100`, color:fundPct<0?'var(--neon)':'rgba(255,255,255,0.6)'},
+            {id:'ss5', text:`Vol $${(vol24h/1e6).toFixed(0)}M · OI ${openInt?'$'+(openInt/1e6).toFixed(0)+'M':'N/A'} · MCap $${(mcap/1e9).toFixed(1)}B`, color:'rgba(255,255,255,0.6)'},
+        ];
+        rows.forEach(r => {
+            const el = document.getElementById(r.id);
+            if(el){ el.textContent = r.text; el.style.color = r.color; }
+        });
+
+        if(circleEl) circleEl.style.strokeDashoffset = 213.6 - (score/100)*213.6;
+        if(probEl)   probEl.textContent = score+'%';
+
+        if(summaryEl) summaryEl.textContent =
+            `${score}% win probability · ${rawCoin} ${side} · ${bias} momentum · ` +
+            `L/S ${longPct.toFixed(0)}/${shortPct.toFixed(0)} · F&G ${fg}`;
+
+        if(botEl) botEl.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:11px;font-weight:600;color:${bColor};">Smart Trade · ${side}</span>
+                <span style="font-size:9.5px;color:var(--text-dim);">Bybit · ExNexus AI</span>
+            </div>
+            <div style="font-size:10px;color:var(--text-mid);line-height:1.9;">
+                Entry: <b style="color:var(--text-bright);">${fp(price)}</b><br>
+                TP1: <b style="color:var(--neon);">${fp(tp1)}</b> <span style="color:var(--text-dim);">(+${pct(tp1,price)})</span><br>
+                TP2: <b style="color:var(--neon);">${fp(tp2)}</b> <span style="color:var(--text-dim);">(+${pct(tp2,price)})</span><br>
+                SL: <b style="color:var(--hot-red);">${fp(sl)}</b> <span style="color:var(--text-dim);">(-${pct(sl,price)})</span>
+            </div>`;
+
+        if(reasonEl) reasonEl.textContent =
+            `${rawCoin}: ${bias} bias · Score ${score}/100. ` +
+            `Price ${chg24h>=0?'up':'down'} ${Math.abs(chg24h).toFixed(2)}% in 24H. ` +
+            `Long/Short ${longPct.toFixed(0)}/${shortPct.toFixed(0)} — ${longPct>60?'longs dominant.':longPct<40?'shorts dominant.':'balanced.'} ` +
+            `Funding ${fundPct.toFixed(4)}% — ${fundPct<0?'negative favors longs.':fundPct>0.03?'elevated, longs paying premium.':'neutral.'} ` +
+            `F&G ${fg} — ${fg<30?'extreme fear, historically bullish.':fg>75?'extreme greed, caution.':'neutral sentiment.'} ` +
+            `Recommendation: ${side} ${rawCoin} · Entry ${fp(price)} · TP1 ${fp(tp1)} · TP2 ${fp(tp2)} · SL ${fp(sl)}.`;
+
+    } catch(err) {
+        console.error('runScout error:', err);
+        if(summaryEl) summaryEl.textContent = 'Error fetching live data. Check connection.';
+        ['ss1','ss2','ss3','ss4','ss5'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el){ el.textContent = 'Data unavailable'; el.style.color = 'rgba(255,255,255,0.3)'; }
+        });
+    }
 }
 
 /* ============ TABLET TRADE DRAWER ============ */
