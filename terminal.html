@@ -1946,12 +1946,12 @@
     <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions')">Positions</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions()">Positions</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-orderhistory')">Order History</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-tradehistory')">Trade History</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets');loadAllAssets()">Assets</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-borrowings')">Borrowings</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools')">Tools</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools');renderTPSLMonitors()">Tools</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-bots')">🤖 Bots</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')">⚡ Arb</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
@@ -2482,6 +2482,7 @@ function bootBrain() {
         if(typeof loadPositions === 'function') loadPositions();
         // Load assets
         if(typeof loadAllAssets === 'function') loadAllAssets();
+        if(typeof fetchAvailableBalance === 'function') fetchAvailableBalance();
         // Fear & Greed
         if(typeof fetchFearGreed === 'function') fetchFearGreed();
         // Update user header
@@ -7065,25 +7066,43 @@ function showLoginScreen() {
                 <div class="exch-header" onclick="toggleExchFields('alpaca')">
                     <div class="exch-left">
                         <span class="exch-dot off" id="dot-alpaca"></span>
-                        <div><div class="exch-name">Alpaca</div><div class="exch-tag">Stocks · Forex · Crypto · TradFi</div></div>
+                        <div><div class="exch-name">Alpaca</div><div class="exch-tag">Stocks · Crypto · Algorithmic Trading</div></div>
                     </div>
                     <div class="exch-toggle" id="toggle-alpaca" onclick="event.stopPropagation();toggleExch('alpaca')"><div class="exch-toggle-knob"></div></div>
                 </div>
                 <div class="exch-fields" id="fields-alpaca">
-                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('alpaca-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('alpaca-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="alpaca-mode"><option value="paper">Paper Trading</option><option value="live">Live Trading</option></select></div>
-                    <div class="exch-foot"><button class="btn-test" onclick="testConn('alpaca')">Test Connection</button><button class="btn-save-key" onclick="saveExch('alpaca')">Save</button><span class="conn-badge idle" id="status-alpaca">Not tested</span></div>
+                    <!-- Mode selector -->
+                    <div class="api-row">
+                        <div class="api-lbl">Mode</div>
+                        <select class="set-select" id="alpaca-mode" onchange="switchAlpacaMode(this.value)">
+                            <option value="paper">Paper Trading</option>
+                            <option value="live">Live Trading</option>
+                        </select>
+                    </div>
+
+                    <!-- Paper Trading Keys -->
+                    <div id="alpaca-paper-section">
+                        <div style="font-size:9px;color:var(--neon);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em;">📄 Paper Trading Keys</div>
+                        <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-paper-key" placeholder="Paper API Key"><button class="api-eye" onclick="toggleEye('alpaca-paper-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                        <div class="api-row"><div class="api-lbl">Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-paper-secret" placeholder="Paper Secret Key"><button class="api-eye" onclick="toggleEye('alpaca-paper-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    </div>
+
+                    <!-- Live Trading Keys -->
+                    <div id="alpaca-live-section" style="display:none;">
+                        <div style="font-size:9px;color:var(--hot-red);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em;">🔴 Live Trading Keys</div>
+                        <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-live-key" placeholder="Live API Key"><button class="api-eye" onclick="toggleEye('alpaca-live-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                        <div class="api-row"><div class="api-lbl">Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-live-secret" placeholder="Live Secret Key"><button class="api-eye" onclick="toggleEye('alpaca-live-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    </div>
+
+                    <div class="exch-foot">
+                        <button class="btn-test" onclick="testAlpaca()">Test Connection</button>
+                        <button class="btn-save-key" onclick="saveAlpacaKeys()">Save</button>
+                        <span class="conn-badge idle" id="status-alpaca">Not tested</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="margin-top:4px;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px;" onclick="alert('More exchanges coming soon: Kraken, OKX, Hyperliquid')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                Add Exchange (Kraken, OKX, Hyperliquid…)
-            </div>
-        </div></div>
-
-        <!-- INTELLIGENCE APIs -->
+<!-- INTELLIGENCE APIs -->
         <div id="set-apis" class="set-section">
             <div class="set-section-title">Intelligence &amp; AI APIs</div>
             <div class="api-intel-row">
@@ -7915,6 +7934,476 @@ document.addEventListener('click', e => {
     }
 });
 
+
+/* ── Alpaca Settings ── */
+function switchAlpacaMode(mode) {
+    const paperSection = document.getElementById('alpaca-paper-section');
+    const liveSection  = document.getElementById('alpaca-live-section');
+    if(paperSection) paperSection.style.display = mode === 'paper' ? '' : 'none';
+    if(liveSection)  liveSection.style.display  = mode === 'live'  ? '' : 'none';
+}
+
+function saveAlpacaKeys() {
+    const mode       = document.getElementById('alpaca-mode')?.value || 'paper';
+    const paperKey   = document.getElementById('alpaca-paper-key')?.value?.trim();
+    const paperSec   = document.getElementById('alpaca-paper-secret')?.value?.trim();
+    const liveKey    = document.getElementById('alpaca-live-key')?.value?.trim();
+    const liveSec    = document.getElementById('alpaca-live-secret')?.value?.trim();
+
+    if(paperKey)   saveSetting('alpaca-paper-key',    paperKey);
+    if(paperSec)   saveSetting('alpaca-paper-secret', paperSec);
+    if(liveKey)    saveSetting('alpaca-live-key',     liveKey);
+    if(liveSec)    saveSetting('alpaca-live-secret',  liveSec);
+    saveSetting('alpaca-mode', mode);
+
+    // Also save to legacy keys for compatibility
+    const activeKey = mode === 'paper' ? paperKey : liveKey;
+    const activeSec = mode === 'paper' ? paperSec : liveSec;
+    if(activeKey) saveSetting('alpaca-key', activeKey);
+    if(activeSec) saveSetting('alpaca-secret', activeSec);
+
+    showToast('Alpaca keys saved!');
+    setTimeout(() => testAlpaca(), 500);
+}
+
+async function testAlpaca() {
+    const mode   = getSetting('alpaca-mode','paper');
+    const key    = mode === 'paper' ? getSetting('alpaca-paper-key','') || getSetting('alpaca-key','')
+                                    : getSetting('alpaca-live-key','')  || getSetting('alpaca-key','');
+    const secret = mode === 'paper' ? getSetting('alpaca-paper-secret','') || getSetting('alpaca-secret','')
+                                    : getSetting('alpaca-live-secret','')  || getSetting('alpaca-secret','');
+    const statusEl = document.getElementById('status-alpaca');
+    const dotEl    = document.getElementById('dot-alpaca');
+
+    console.log('[Alpaca Test] mode:', mode, 'key present:', !!key);
+    if(!key || !secret) { 
+        if(statusEl) { statusEl.textContent='Enter keys first'; statusEl.className='conn-badge idle'; }
+        return; 
+    }
+    if(statusEl) { statusEl.textContent='Testing...'; statusEl.className='conn-badge idle'; }
+
+    try {
+        const res  = await fetch(WORKER + '/alpaca/v2/account?mode=' + mode, {
+            headers: { 'Content-Type':'application/json', 'x-api-key': key, 'x-api-secret': secret }
+        });
+        const data = await res.json();
+        console.log('[Alpaca Test] response:', data);
+
+        if(data.id || data.equity) {
+            if(statusEl) { statusEl.textContent='✅ Connected · $'+parseFloat(data.equity||0).toFixed(2); statusEl.className='conn-badge ok'; }
+            if(dotEl) dotEl.className='exch-dot on';
+            // Save active keys
+            saveSetting('alpaca-key',    key);
+            saveSetting('alpaca-secret', secret);
+            showToast('Alpaca connected!');
+        } else {
+            const msg = data.message || data.error || JSON.stringify(data).slice(0,60);
+            if(statusEl) { statusEl.textContent='❌ '+msg; statusEl.className='conn-badge fail'; }
+            if(dotEl) dotEl.className='exch-dot off';
+        }
+    } catch(e) {
+        console.error('[Alpaca Test] error:', e);
+        if(statusEl) { statusEl.textContent='❌ '+e.message; statusEl.className='conn-badge fail'; }
+    }
+}
+
+/* Update loadAlpacaAssets to use correct keys based on mode */
+
+
+/* ══════════════════════════════════════════════
+   GATE.IO CONNECTION
+══════════════════════════════════════════════ */
+async function loadGateAssets() {
+    const key      = getSetting('gate-key','');
+    const secret   = getSetting('gate-secret','');
+    const statusEl = document.getElementById('gate-asset-status');
+    if(!key || !secret) {
+        if(statusEl) statusEl.textContent = 'Add API keys in Settings ⚙️';
+        return;
+    }
+    if(statusEl) statusEl.textContent = 'Loading...';
+    try {
+        const headers = {'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret};
+        // Get futures account balance
+        const res  = await fetch(WORKER + '/gate/api/v4/futures/usdt/accounts', { headers });
+        const data = await res.json();
+        console.log('[Gate] response:', data);
+
+        if(data.label || data.message) {
+            if(statusEl){ statusEl.textContent='❌ '+(data.message||data.label); statusEl.style.color='var(--hot-red)'; }
+            return;
+        }
+        const fmt  = n => '$'+Math.abs(parseFloat(n)||0).toFixed(2);
+        const setEl= (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+        setEl('gate-balance', fmt(data.total));
+        setEl('gate-avail',   fmt(data.available));
+        if(statusEl){ statusEl.textContent='● Connected · $'+parseFloat(data.total||0).toFixed(2); statusEl.style.color='var(--neon)'; }
+
+        // Spot balances for coin rows
+        const spotRes  = await fetch(WORKER + '/gate/api/v4/spot/accounts', { headers });
+        const spotData = await spotRes.json();
+        const rowsEl   = document.getElementById('gate-coin-rows');
+        if(rowsEl && Array.isArray(spotData)) {
+            const active = spotData.filter(c => parseFloat(c.available||0)+parseFloat(c.locked||0) > 0);
+            rowsEl.innerHTML = active.slice(0,10).map(c => {
+                const bal = parseFloat(c.available||0)+parseFloat(c.locked||0);
+                return `<div class="exch-asset-row"><label>${c.currency}</label><span style="font-family:monospace;">${bal.toFixed(4)}</span></div>`;
+            }).join('') || '<div class="exch-asset-row" style="color:var(--text-dim);">No spot assets</div>';
+        }
+    } catch(e) {
+        console.error('[Gate] error:', e);
+        if(statusEl){ statusEl.textContent='Error: '+e.message; statusEl.style.color='var(--hot-red)'; }
+    }
+}
+
+/* ══════════════════════════════════════════════
+   TP/SL ENGINE
+   Monitors positions and auto-executes TP/SL
+══════════════════════════════════════════════ */
+let _tpslOrders   = [];   // active TP/SL monitors
+let _tpslInterval = null;
+
+function addTPSL(symbol, side, qty, tp, sl, exchange='bybit') {
+    // Remove existing for same symbol
+    _tpslOrders = _tpslOrders.filter(o => o.symbol !== symbol);
+    if(tp || sl) {
+        _tpslOrders.push({ symbol, side, qty, tp: parseFloat(tp)||0, sl: parseFloat(sl)||0, exchange, active: true });
+        showOrderStatus(`✅ TP/SL set for ${symbol} — TP: ${tp||'—'} SL: ${sl||'—'}`, 'success');
+        startTPSLMonitor();
+    }
+}
+
+function startTPSLMonitor() {
+    if(_tpslInterval) return; // already running
+    _tpslInterval = setInterval(checkTPSL, 5000); // check every 5s
+    console.log('[TP/SL] Monitor started');
+}
+
+function stopTPSLMonitor() {
+    if(_tpslInterval) { clearInterval(_tpslInterval); _tpslInterval = null; }
+}
+
+async function checkTPSL() {
+    if(!_tpslOrders.length) { stopTPSLMonitor(); return; }
+
+    for(const order of _tpslOrders) {
+        if(!order.active) continue;
+        try {
+            // Get current price from live ticker or Bybit
+            let price = _lastPrice;
+            if(order.symbol !== _currentSym) {
+                const r = await fetch(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${order.symbol}`);
+                const d = await r.json();
+                price = parseFloat(d.result?.list?.[0]?.lastPrice || 0);
+            }
+            if(!price) continue;
+
+            const isLong  = order.side === 'Buy'  || order.side === 'long';
+            const isShort = order.side === 'Sell' || order.side === 'short';
+
+            let triggered = null;
+
+            // Check TP
+            if(order.tp > 0) {
+                if(isLong  && price >= order.tp) triggered = 'TP';
+                if(isShort && price <= order.tp) triggered = 'TP';
+            }
+            // Check SL
+            if(order.sl > 0 && !triggered) {
+                if(isLong  && price <= order.sl) triggered = 'SL';
+                if(isShort && price >= order.sl) triggered = 'SL';
+            }
+
+            if(triggered) {
+                order.active = false;
+                console.log(`[TP/SL] ${triggered} triggered for ${order.symbol} at $${price}`);
+                await executeTPSL(order, triggered, price);
+            }
+        } catch(e) {
+            console.error('[TP/SL] check error:', e);
+        }
+    }
+    // Clean up inactive orders
+    _tpslOrders = _tpslOrders.filter(o => o.active);
+    if(!_tpslOrders.length) stopTPSLMonitor();
+}
+
+async function executeTPSL(order, type, price) {
+    const closeSide = (order.side === 'Buy' || order.side === 'long') ? 'Sell' : 'Buy';
+    const label     = type === 'TP' ? '🟢 Take Profit' : '🔴 Stop Loss';
+
+    // Show notification
+    showOrderStatus(`${label} triggered! ${order.symbol} @ $${price.toFixed(2)}`, type==='TP'?'success':'error');
+
+    // Execute close order via Bybit
+    try {
+        const result = await workerFetch('/bybit/v5/order/create', {
+            method: 'POST',
+            body: JSON.stringify({
+                category:    'linear',
+                symbol:      order.symbol,
+                side:        closeSide,
+                orderType:   'Market',
+                qty:         String(order.qty),
+                timeInForce: 'IOC',
+                reduceOnly:  true
+            })
+        });
+        if(result?.retCode === 0) {
+            console.log(`[TP/SL] ${type} order executed for ${order.symbol}`);
+            showOrderStatus(`✅ ${label} executed! ${order.symbol}`, type==='TP'?'success':'error');
+            setTimeout(loadAllAssets, 2000);
+        } else {
+            console.error('[TP/SL] order failed:', result);
+        }
+    } catch(e) {
+        console.error('[TP/SL] execute error:', e);
+    }
+}
+
+/* Wire TP/SL to order submission */
+const _origSubmitOrder = submitOrder;
+async function submitOrder(side) {
+    await _origSubmitOrder(side);
+    // After order placed, set TP/SL monitor
+    const tp  = parseFloat(document.getElementById('order-tp')?.value)  || 0;
+    const sl  = parseFloat(document.getElementById('order-sl')?.value)  || 0;
+    const qty = parseFloat(document.getElementById('order-qty')?.value) || 0;
+    if((tp || sl) && qty) {
+        setTimeout(() => addTPSL(_currentSym, side==='Buy'?'Buy':'Sell', qty, tp, sl), 1000);
+    }
+}
+
+/* Wire AI Scout TP/SL to order panel */
+function applyScoutTPSL(tp1, sl, price) {
+    const tpEl = document.getElementById('order-tp');
+    const slEl = document.getElementById('order-sl');
+    const prEl = document.getElementById('order-price');
+    if(tpEl) tpEl.value = parseFloat(tp1).toFixed(2);
+    if(slEl) slEl.value = parseFloat(sl).toFixed(2);
+    if(prEl && !prEl.value) prEl.value = parseFloat(price).toFixed(2);
+    calcOrderValues();
+    showOrderStatus('✅ TP/SL loaded from AI Scout — review and confirm', 'success');
+}
+
+/* Show active TP/SL monitors in Tools tab */
+function renderTPSLMonitors() {
+    const container = document.getElementById('bt-tools');
+    if(!container) return;
+    if(!_tpslOrders.length) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">No active TP/SL monitors</div>';
+        return;
+    }
+    const fmt = n => '$'+parseFloat(n).toFixed(2);
+    container.innerHTML = `<table class="data-table" style="width:100%;">
+        <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>TP</th><th>SL</th><th>Action</th></tr></thead>
+        <tbody>${_tpslOrders.map((o,i) => `
+            <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:6px 8px;font-weight:600;">${o.symbol}</td>
+                <td style="padding:6px 8px;color:${o.side==='Buy'?'var(--neon)':'var(--hot-red)'};">${o.side==='Buy'?'Long':'Short'}</td>
+                <td style="padding:6px 8px;font-family:monospace;">${o.qty}</td>
+                <td style="padding:6px 8px;color:var(--neon);">${o.tp?fmt(o.tp):'—'}</td>
+                <td style="padding:6px 8px;color:var(--hot-red);">${o.sl?fmt(o.sl):'—'}</td>
+                <td style="padding:6px 8px;">
+                    <button onclick="_tpslOrders[${i}].active=false;renderTPSLMonitors();" 
+                        style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.3);color:var(--hot-red);padding:2px 8px;border-radius:3px;font-size:10px;cursor:pointer;">
+                        Cancel
+                    </button>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+
+/* ══════════════════════════════════════════════
+   LOAD POSITIONS — All Exchanges
+══════════════════════════════════════════════ */
+async function loadPositions() {
+    const container = document.getElementById('bt-positions');
+    if(!container) return;
+
+    const bybitKey = getSetting('bybit-key','');
+    if(!bybitKey) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">Add API keys in Settings ⚙️</div>';
+        return;
+    }
+
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-dim);">Loading positions...</div>';
+
+    let allRows = '';
+
+    // ── Bybit Positions ──
+    try {
+        const data = await workerFetch('/bybit/v5/position/list?category=linear&settleCoin=USDT');
+        const positions = (data?.result?.list || []).filter(p => parseFloat(p.size||0) > 0);
+        positions.forEach(p => {
+            const side      = p.side === 'Buy' ? 'Long' : 'Short';
+            const sideColor = p.side === 'Buy' ? 'var(--neon)' : 'var(--hot-red)';
+            const pnl       = parseFloat(p.unrealisedPnl || 0);
+            const pnlColor  = pnl >= 0 ? 'var(--neon)' : 'var(--hot-red)';
+            const roe       = parseFloat(p.positionIM||1) > 0 ? pnl/parseFloat(p.positionIM)*100 : 0;
+            allRows += `<tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:6px 8px;font-weight:600;color:var(--text-bright);">${p.symbol} <span style="font-size:9px;color:#F7A600;">BY</span></td>
+                <td style="padding:6px 8px;color:${sideColor};font-weight:600;">${side} ${p.leverage||''}×</td>
+                <td style="padding:6px 8px;font-family:monospace;">${parseFloat(p.size).toFixed(3)}</td>
+                <td style="padding:6px 8px;font-family:monospace;">$${parseFloat(p.avgPrice||0).toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;">$${parseFloat(p.markPrice||0).toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:var(--hot-red);">$${parseFloat(p.liqPrice||0).toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:${pnlColor};font-weight:600;">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
+                <td style="padding:6px 8px;font-family:monospace;color:${pnlColor};">${pnl>=0?'+':''}${roe.toFixed(1)}%</td>
+                <td style="padding:6px 8px;">
+                    <button onclick="closePosition('${p.symbol}','${p.side}','${p.size}')"
+                        style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.3);color:var(--hot-red);padding:2px 8px;border-radius:3px;font-size:10px;cursor:pointer;">Close</button>
+                </td>
+            </tr>`;
+        });
+    } catch(e) { console.error('[Positions] Bybit error:', e); }
+
+    // ── Alpaca Positions ──
+    try {
+        const alpacaKey  = getSetting('alpaca-key','');
+        const alpacaMode = getSetting('alpaca-mode','paper');
+        if(alpacaKey) {
+            const positions = await fetch(WORKER+'/alpaca/v2/positions?mode='+alpacaMode, {
+                headers:{'Content-Type':'application/json','x-api-key':alpacaKey,'x-api-secret':getSetting('alpaca-secret','')}
+            }).then(r=>r.json());
+            if(Array.isArray(positions)) {
+                positions.forEach(p => {
+                    const upnl  = parseFloat(p.unrealized_pl||0);
+                    const col   = upnl>=0?'var(--neon)':'var(--hot-red)';
+                    const pct   = (parseFloat(p.unrealized_plpc||0)*100).toFixed(1);
+                    allRows += `<tr style="border-bottom:1px solid var(--border);">
+                        <td style="padding:6px 8px;font-weight:600;color:var(--text-bright);">${p.symbol} <span style="font-size:9px;color:#FFCD00;">AP</span></td>
+                        <td style="padding:6px 8px;color:${p.side==='long'?'var(--neon)':'var(--hot-red)'};font-weight:600;">${p.side.toUpperCase()} 1×</td>
+                        <td style="padding:6px 8px;font-family:monospace;">${parseFloat(p.qty).toFixed(4)}</td>
+                        <td style="padding:6px 8px;font-family:monospace;">$${parseFloat(p.avg_entry_price||0).toFixed(2)}</td>
+                        <td style="padding:6px 8px;font-family:monospace;">$${parseFloat(p.current_price||0).toFixed(2)}</td>
+                        <td style="padding:6px 8px;font-family:monospace;color:var(--text-dim);">—</td>
+                        <td style="padding:6px 8px;font-family:monospace;color:${col};font-weight:600;">${upnl>=0?'+':''}$${Math.abs(upnl).toFixed(2)}</td>
+                        <td style="padding:6px 8px;font-family:monospace;color:${col};">${upnl>=0?'+':''}${pct}%</td>
+                        <td style="padding:6px 8px;">
+                            <button onclick="closeAlpacaPosition('${p.symbol}')"
+                                style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.3);color:var(--hot-red);padding:2px 8px;border-radius:3px;font-size:10px;cursor:pointer;">Close</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+    } catch(e) { console.error('[Positions] Alpaca error:', e); }
+
+    if(!allRows) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">No open positions</div>';
+        return;
+    }
+
+    container.innerHTML = `<table class="data-table" style="width:100%;">
+        <thead><tr>
+            <th>Symbol</th><th>Side</th><th>Size</th>
+            <th>Entry</th><th>Mark</th><th>Liq.</th>
+            <th>PnL</th><th>ROE</th><th>Action</th>
+        </tr></thead>
+        <tbody>${allRows}</tbody>
+    </table>`;
+
+    // Update available balance
+    fetchAvailableBalance();
+}
+
+/* ── Close Position ── */
+async function closePosition(symbol, side, size) {
+    if(!confirm(`Close ${side==='Buy'?'Long':'Short'} ${symbol}?`)) return;
+    try {
+        const result = await workerFetch('/bybit/v5/order/create', {
+            method: 'POST',
+            body: JSON.stringify({
+                category:'linear', symbol,
+                side: side==='Buy'?'Sell':'Buy',
+                orderType:'Market', qty:String(size),
+                timeInForce:'IOC', reduceOnly:true
+            })
+        });
+        if(result?.retCode===0) {
+            showOrderStatus('✅ Position closed!','success');
+            setTimeout(()=>{ loadPositions(); loadAllAssets(); }, 1500);
+        } else {
+            showOrderStatus('❌ '+(result?.retMsg||'Failed'),'error');
+        }
+    } catch(e) { showOrderStatus('❌ '+e.message,'error'); }
+}
+
+async function closeAlpacaPosition(symbol) {
+    if(!confirm(`Close Alpaca position: ${symbol}?`)) return;
+    try {
+        const key    = getSetting('alpaca-key','');
+        const secret = getSetting('alpaca-secret','');
+        const mode   = getSetting('alpaca-mode','paper');
+        await fetch(WORKER+'/alpaca/v2/positions/'+symbol+'?mode='+mode, {
+            method:'DELETE',
+            headers:{'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret}
+        });
+        showOrderStatus('✅ Alpaca position closed!','success');
+        setTimeout(()=>{ loadPositions(); loadAllAssets(); }, 1500);
+    } catch(e) { showOrderStatus('❌ '+e.message,'error'); }
+}
+
+/* ── Fetch Available Balance ── */
+async function fetchAvailableBalance() {
+    // Demo mode
+    if(typeof demoMode!=='undefined' && demoMode) {
+        if(typeof demoState!=='undefined' && demoState?.balance) {
+            _availBalance = demoState.balance;
+            const el = document.getElementById('order-avail');
+            if(el) el.textContent = '$'+_availBalance.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT';
+        }
+        return;
+    }
+    try {
+        const data = await workerFetch('/bybit/v5/account/wallet-balance?accountType=UNIFIED');
+        const coins = data?.result?.list?.[0]?.coin || [];
+        const usdt  = coins.find(c=>c.coin==='USDT');
+        if(usdt) {
+            _availBalance = parseFloat(usdt.availableToWithdraw||usdt.walletBalance||0);
+            const el = document.getElementById('order-avail');
+            if(el) el.textContent = '$'+_availBalance.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT';
+        }
+    } catch(e) { console.log('[Balance]', e.message); }
+}
+
+/* ── Update Order Panel with live price ── */
+function updateOrderPanel(price, symbol) {
+    _lastPrice  = price;
+    _currentSym = symbol || _currentSym;
+    const lastEl = document.getElementById('order-last-price');
+    if(lastEl) lastEl.textContent = '$'+price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const priceEl = document.getElementById('order-price');
+    if(priceEl && !priceEl.value) priceEl.value = price.toFixed(2);
+    const unitEl = document.getElementById('order-qty-unit');
+    if(unitEl) unitEl.textContent = (_currentSym||'BTC').replace('USDT','');
+    const labelEl = document.getElementById('contract-label');
+    if(labelEl) labelEl.textContent = 'Contract Details '+_currentSym;
+    calcOrderValues();
+    if(!_availBalance) fetchAvailableBalance();
+}
+
+/* ── workerFetchBinance ── */
+async function workerFetchBinance(path, opts={}) {
+    const key    = getSetting('binance-key','');
+    const secret = getSetting('binance-secret','');
+    if(!key||!secret) return {error:'No Binance keys'};
+    const headers = {'Content-Type':'application/json','x-api-key':key,'x-api-secret':secret,...(opts.headers||{})};
+    try {
+        const res = await fetch(WORKER+path, {...opts, headers});
+        return await res.json();
+    } catch(e) { return {error:e.message}; }
+}
+
+/* ── Auto-refresh positions every 30s ── */
+setInterval(() => {
+    const posTab = document.getElementById('bt-positions');
+    if(posTab?.classList.contains('active')) loadPositions();
+}, 30000);
+
 </script>
 
 
@@ -8033,9 +8522,13 @@ async function loadBinanceAssets() {
 }
 
 async function loadAlpacaAssets() {
-    const key    = getSetting('alpaca-key','');
-    const secret = getSetting('alpaca-secret','');
     const mode   = getSetting('alpaca-mode','paper');
+    const key    = mode === 'paper'
+        ? getSetting('alpaca-paper-key','') || getSetting('alpaca-key','')
+        : getSetting('alpaca-live-key','')  || getSetting('alpaca-key','');
+    const secret = mode === 'paper'
+        ? getSetting('alpaca-paper-secret','') || getSetting('alpaca-secret','')
+        : getSetting('alpaca-live-secret','')  || getSetting('alpaca-secret','');
     const statusEl = document.getElementById('alpaca-asset-status');
     console.log('[Alpaca] key present:', !!key, 'mode:', mode);
     if(!key || !secret) {
@@ -8088,5 +8581,6 @@ async function loadAlpacaAssets() {
 async function loadAllAssets() {
     await loadAssets();
     loadBinanceAssets();
+    loadGateAssets();
     loadAlpacaAssets();
 }
