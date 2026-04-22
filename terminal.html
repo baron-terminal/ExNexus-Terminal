@@ -3377,7 +3377,7 @@ function saveExch(name){
     setTimeout(syncSettingsToKV, 500);
 }
 function saveIntelKeys(){
-    ['exnexus_intel','nansen','coinglass','anthropic'].forEach(k=>{
+    ['exchange_intel','nansen','coinglass','anthropic'].forEach(k=>{
         const v = document.getElementById(k+'-key')?.value||'';
         if(v) saveSetting(k+'-key', v);
     });
@@ -3418,7 +3418,7 @@ function loadSettings(){
         if(secret){ const el=document.getElementById(name+'-secret'); if(el) el.value=secret; }
         if(active){ const t=document.getElementById('toggle-'+name); if(t&&!t.classList.contains('on')) toggleExch(name); }
     });
-    ['exnexus_intel','nansen','coinglass','anthropic'].forEach(k=>{
+    ['exchange_intel','nansen','coinglass','anthropic'].forEach(k=>{
         const v=getSetting(k+'-key'); const el=document.getElementById(k+'-key');
         if(v&&el) el.value=v;
     });
@@ -7397,17 +7397,240 @@ function showLoginScreen() {
 
 
 <!-- ==================== SETTINGS PANEL ==================== -->
-<div <div id="panel-settings" class="slide-panel" style="right:0;left:auto;border-radius:4px 0 0 4px;top:41px;bottom:0;width:360px;overflow-y:auto;">
+<div <div <div id="panel-settings" class="slide-panel" style="right:0;left:auto;border-radius:4px 0 0 4px;top:41px;bottom:0;">
     <div class="panel-header">
         <div class="panel-title">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             Settings
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
+            <div id="header-sync-badge" style="display:none;font-size:9px;padding:2px 8px;border-radius:10px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.2);color:var(--neon);cursor:pointer;" onclick="setTab(document.querySelector('.set-nav-btn:last-child'),'set-security')">🔄 Synced</div>
             <button class="panel-expand-btn" onclick="expandPanel(this)" title="Expand panel">⤢</button>
             <span class="panel-close" onclick="closePanel('settings')">×</span>
         </div>
     </div>
+    <!-- Tab nav -->
+    <div class="set-nav">
+        <button class="set-nav-btn active" onclick="setTab(this,'set-exchanges')">Exchanges</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-apis')">Intelligence</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-arb')">Arbitrage</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-risk')">Risk</button>
+        <button class="set-nav-btn" onclick="setTab(this,'set-security')" id="set-nav-security">Security <span id="sync-nav-dot" style="display:none;width:5px;height:5px;border-radius:50%;background:var(--neon);display:inline-block;margin-left:3px;vertical-align:middle;"></span></button>
+    </div>
+    <div class="set-body">
+
+        <!-- EXCHANGES -->
+        <div id="set-exchanges" class="set-section active">
+            <div class="set-section-title">Trading Exchanges</div>
+            <div id="set-exchanges-dynamic"><!-- Built dynamically from EXCHANGE_REGISTRY --></div>
+            <div style="display:none;">
+
+            <!-- Bybit -->
+            <div class="exch-card" id="card-bybit">
+                <div class="exch-header" onclick="toggleExchFields('bybit')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-bybit"></span>
+                        <div><div class="exch-name">Bybit</div><div class="exch-tag">Futures · Spot · USDT Perp</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-bybit" onclick="event.stopPropagation();toggleExch('bybit')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-bybit">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('bybit-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('bybit-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="bybit-mode"><option value="live">Live</option><option value="testnet">Testnet</option></select></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('bybit')">Test Connection</button><button class="btn-save-key" onclick="saveExch('bybit')">Save</button><span class="conn-badge idle" id="status-bybit">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Gate.io -->
+            <div class="exch-card" id="card-gate">
+                <div class="exch-header" onclick="toggleExchFields('gate')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-gate"></span>
+                        <div><div class="exch-name">Gate.io</div><div class="exch-tag">Futures · Spot · Altcoins</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-gate" onclick="event.stopPropagation();toggleExch('gate')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-gate">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('gate-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('gate-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('gate')">Test Connection</button><button class="btn-save-key" onclick="saveExch('gate')">Save</button><span class="conn-badge idle" id="status-gate">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Binance -->
+            <div class="exch-card" id="card-binance">
+                <div class="exch-header" onclick="toggleExchFields('binance')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-binance"></span>
+                        <div><div class="exch-name">Binance</div><div class="exch-tag">Futures · Spot · Global</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-binance" onclick="event.stopPropagation();toggleExch('binance')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-binance">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('binance-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('binance-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('binance')">Test Connection</button><button class="btn-save-key" onclick="saveExch('binance')">Save</button><span class="conn-badge idle" id="status-binance">Not tested</span></div>
+                </div>
+            </div>
+
+            <!-- Alpaca -->
+            <div class="exch-card" id="card-alpaca">
+                <div class="exch-header" onclick="toggleExchFields('alpaca')">
+                    <div class="exch-left">
+                        <span class="exch-dot off" id="dot-alpaca"></span>
+                        <div><div class="exch-name">Alpaca</div><div class="exch-tag">Stocks · Forex · Crypto · TradFi</div></div>
+                    </div>
+                    <div class="exch-toggle" id="toggle-alpaca" onclick="event.stopPropagation();toggleExch('alpaca')"><div class="exch-toggle-knob"></div></div>
+                </div>
+                <div class="exch-fields" id="fields-alpaca">
+                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('alpaca-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('alpaca-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="alpaca-mode"><option value="paper">Paper Trading</option><option value="live">Live Trading</option></select></div>
+                    <div class="exch-foot"><button class="btn-test" onclick="testConn('alpaca')">Test Connection</button><button class="btn-save-key" onclick="saveExch('alpaca')">Save</button><span class="conn-badge idle" id="status-alpaca">Not tested</span></div>
+                </div>
+            </div>
+
+            <div style="margin-top:4px;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px;" onclick="alert('More exchanges coming soon: Kraken, OKX, Hyperliquid')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Add Exchange (Kraken, OKX, Hyperliquid…)
+            </div>
+        </div></div>
+
+        <!-- INTELLIGENCE APIs -->
+        <div id="set-apis" class="set-section">
+            <div class="set-section-title">Intelligence &amp; AI APIs</div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">ExChange Intelligence</div><div class="api-intel-sub">Technical signals · Screener</div></div>
+                <input class="api-intel-input" type="password" id="exnexus_intel-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Smart Money</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
+                <input class="api-intel-input" type="password" id="nansen-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row">
+                <div class="api-intel-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Market Depth</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
+                <input class="api-intel-input" type="password" id="coinglass-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div class="api-intel-row" style="border-bottom:none;">
+                <div class="api-intel-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.2);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.8"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">Anthropic (Claude)</div><div class="api-intel-sub">AI brain · Scout · Arbitrage AI</div></div>
+                <input class="api-intel-input" type="password" id="anthropic-key" placeholder="API Key" style="max-width:140px;">
+            </div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveIntelKeys()">Save All API Keys</button></div>
+        </div>
+
+        <!-- ARBITRAGE SETTINGS -->
+        <div id="set-arb" class="set-section">
+            <div class="set-section-title">Arbitrage Engine</div>
+            <div class="set-row"><div><div class="set-row-label">Auto Execute</div><div class="set-row-sub">AI executes trades automatically</div></div><div class="exch-toggle" id="toggle-autoarb" onclick="toggleExch('autoarb')"><div class="exch-toggle-knob"></div></div></div>
+            <div class="set-row"><div><div class="set-row-label">Min Net Spread</div><div class="set-row-sub">After fees — minimum to trigger</div></div><input class="set-inp-sm" type="number" id="arb-min-spread" value="0.08" step="0.01" min="0.01">%</div>
+            <div class="set-row"><div><div class="set-row-label">Max Order Size</div><div class="set-row-sub">Per arbitrage trade</div></div><input class="set-inp-sm" type="number" id="arb-max-size" value="500"> USDT</div>
+            <div class="set-row"><div><div class="set-row-label">AI Validation</div><div class="set-row-sub">Claude checks before executing</div></div><div class="exch-toggle on" id="toggle-arbai" onclick="toggleExch('arbai')"><div class="exch-toggle-knob" style="left:21px;"></div></div></div>
+            <div class="set-row"><div><div class="set-row-label">Scan Interval</div><div class="set-row-sub">How often to check spreads</div></div><select class="set-select" id="arb-interval"><option value="1">1 second</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select></div>
+            <div class="set-row" style="border-bottom:none;"><div><div class="set-row-label">Active Pairs</div><div class="set-row-sub">Coins to monitor for arb</div></div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;" id="arb-pairs-wrap">
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'BTC')">BTC</span>
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'ETH')">ETH</span>
+                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'SOL')">SOL</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'XRP')">XRP</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'ADA')">ADA</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'BNB')">BNB</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'DOGE')">DOGE</span>
+                <span class="arb-pair-tag" onclick="toggleArbPair(this,'AVAX')">AVAX</span>
+            </div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveArbSettings()">Save Arb Settings</button></div>
+        </div>
+
+        <!-- RISK -->
+        <div id="set-risk" class="set-section">
+            <div class="set-section-title">Risk Management</div>
+            <div class="set-row"><div><div class="set-row-label">Default Exchange</div><div class="set-row-sub">Primary for manual trades</div></div><select class="set-select" id="risk-default-exch"><option>Bybit</option><option>Gate.io</option><option>Binance</option><option>Alpaca</option></select></div>
+            <div class="set-row"><div><div class="set-row-label">Default Leverage</div><div class="set-row-sub">Applied to new positions</div></div><input class="set-inp-sm" type="number" id="risk-leverage" value="10" min="1" max="100">×</div>
+            <div class="set-row"><div><div class="set-row-label">Risk Per Trade</div><div class="set-row-sub">% of total portfolio</div></div><input class="set-inp-sm" type="number" id="risk-pct" value="2" min="0.1" max="100">%</div>
+            <div class="set-row"><div><div class="set-row-label">Daily Loss Limit</div><div class="set-row-sub">Stop trading if exceeded</div></div><input class="set-inp-sm" type="number" id="risk-daily-loss" value="5">%</div>
+            <div class="set-row"><div><div class="set-row-label">Default Order Type</div></div><select class="set-select" id="risk-order-type"><option>Market</option><option>Limit</option><option>Chase</option></select></div>
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveRiskSettings()">Save Risk Settings</button></div>
+        </div>
+
+        <!-- SECURITY -->
+        <div id="set-security" class="set-section">
+            <div class="set-section-title">Security &amp; Login</div>
+
+            <!-- DEMO MODE CARD -->
+            <div class="demo-toggle-card">
+                <div class="demo-toggle-title">
+                    🎮 Demo Trading Mode
+                </div>
+                <div class="demo-toggle-sub">
+                    Practice with $10,000 virtual USDT using real live prices. All features work — manual trading, bots, arbitrage — with zero risk. Perfect for learning ExNexus before going live.
+                </div>
+                <div class="demo-stats">
+                    <div class="demo-stat">
+                        <label>Balance</label>
+                        <span id="demo-bal-display" style="color:#F0B429;">$10,000</span>
+                    </div>
+                    <div class="demo-stat">
+                        <label>Trades</label>
+                        <span id="demo-trades-display">0</span>
+                    </div>
+                    <div class="demo-stat">
+                        <label>P/L</label>
+                        <span id="demo-pnl-display">$0.00</span>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-save-key" style="flex:1;background:#F0B429;color:#000;border:none;" onclick="enterDemoMode()">🎮 Enter Demo Mode</button>
+                    <button class="btn-test" onclick="resetDemo()">Reset</button>
+                </div>
+            </div>
+
+            <!-- SYNC CODE -->
+            <div class="sync-card">
+                <div class="sync-card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    Cross-Device Sync Code
+                </div>
+                <div class="sync-card-sub">
+                    Set a personal sync code to share your API keys and settings across all your devices — web, tablet, and mobile. Enter the same code on every device.
+                </div>
+                <div class="sync-inp-row">
+                    <input class="sync-inp" type="password" id="sync-code-inp" placeholder="Enter your sync code" maxlength="32" autocomplete="off">
+                    <button class="sync-btn" onclick="applySyncCode()">Apply</button>
+                </div>
+                <div class="sync-status" id="sync-status">
+                    <span class="sync-dot"></span>
+                    <span id="sync-status-text">Synced</span>
+                </div>
+                <div class="sync-devices" id="sync-devices-info"></div>
+            </div>
+            <div class="login-card">
+                <div class="login-card-title">🔐 App Login</div>
+                <div class="login-card-sub">Full login system with username/password, biometric support, and session management. Will be activated before final deployment.</div>
+                <div style="display:flex;gap:8px;"><button class="btn-primary" disabled style="opacity:.4;cursor:default;">Coming Soon</button></div>
+            </div>
+            <div class="login-card">
+                <div class="login-card-title">🔒 PIN Lock</div>
+                <div class="login-card-sub">Quick 4-digit PIN to lock the app when idle. Protects from unauthorized access on shared devices.</div>
+                <div class="set-row" style="border:none;padding:0;"><div class="set-row-label">Enable PIN Lock</div><div class="exch-toggle" id="toggle-pin" onclick="toggleExch('pin')"><div class="exch-toggle-knob"></div></div></div>
+            </div>
+            <div class="login-card">
+                <div class="login-card-title">⏱ Auto-Lock</div>
+                <div class="set-row" style="border:none;padding:6px 0 0;"><div class="set-row-label">Lock after</div><select class="set-select" id="lock-timer"><option>1 minute</option><option>5 minutes</option><option selected>15 minutes</option><option>30 minutes</option><option>Never</option></select></div>
+            </div>
+            <div style="margin-top:14px;padding:10px 12px;background:rgba(255,0,63,0.04);border:1px solid rgba(255,0,63,0.12);border-radius:7px;">
+                <div style="font-size:11px;font-weight:600;color:var(--hot-red);margin-bottom:4px;">⚠ Clear All Data</div>
+                <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Removes all API keys and settings from this device.</div>
+                <button style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.25);color:var(--hot-red);font-size:10px;padding:5px 14px;border-radius:4px;cursor:pointer;" onclick="clearAllData()">Clear All Keys &amp; Settings</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
 
     <div class="panel-body" style="padding:12px;overflow-y:auto;">
 
@@ -7571,227 +7794,7 @@ function showLoginScreen() {
 
     </div>
 </div>
-    <!-- Tab nav -->
-    <div class="set-nav">
-        <button class="set-nav-btn active" onclick="setTab(this,'set-exchanges')">Exchanges</button>
-        <button class="set-nav-btn" onclick="setTab(this,'set-apis')">Intelligence</button>
-        <button class="set-nav-btn" onclick="setTab(this,'set-arb')">Arbitrage</button>
-        <button class="set-nav-btn" onclick="setTab(this,'set-risk')">Risk</button>
-        <button class="set-nav-btn" onclick="setTab(this,'set-security')" id="set-nav-security">Security <span id="sync-nav-dot" style="display:none;width:5px;height:5px;border-radius:50%;background:var(--neon);display:inline-block;margin-left:3px;vertical-align:middle;"></span></button>
-    </div>
-    <div class="set-body">
-
-        <!-- EXCHANGES -->
-        <div id="set-exchanges" class="set-section active">
-            <div class="set-section-title">Trading Exchanges</div>
-            <div id="set-exchanges-dynamic"><!-- Built dynamically from EXCHANGE_REGISTRY --></div>
-            <div style="display:none;">
-
-            <!-- Bybit -->
-            <div class="exch-card" id="card-bybit">
-                <div class="exch-header" onclick="toggleExchFields('bybit')">
-                    <div class="exch-left">
-                        <span class="exch-dot off" id="dot-bybit"></span>
-                        <div><div class="exch-name">Bybit</div><div class="exch-tag">Futures · Spot · USDT Perp</div></div>
-                    </div>
-                    <div class="exch-toggle" id="toggle-bybit" onclick="event.stopPropagation();toggleExch('bybit')"><div class="exch-toggle-knob"></div></div>
-                </div>
-                <div class="exch-fields" id="fields-bybit">
-                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('bybit-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="bybit-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('bybit-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="bybit-mode"><option value="live">Live</option><option value="testnet">Testnet</option></select></div>
-                    <div class="exch-foot"><button class="btn-test" onclick="testConn('bybit')">Test Connection</button><button class="btn-save-key" onclick="saveExch('bybit')">Save</button><span class="conn-badge idle" id="status-bybit">Not tested</span></div>
-                </div>
-            </div>
-
-            <!-- Gate.io -->
-            <div class="exch-card" id="card-gate">
-                <div class="exch-header" onclick="toggleExchFields('gate')">
-                    <div class="exch-left">
-                        <span class="exch-dot off" id="dot-gate"></span>
-                        <div><div class="exch-name">Gate.io</div><div class="exch-tag">Futures · Spot · Altcoins</div></div>
-                    </div>
-                    <div class="exch-toggle" id="toggle-gate" onclick="event.stopPropagation();toggleExch('gate')"><div class="exch-toggle-knob"></div></div>
-                </div>
-                <div class="exch-fields" id="fields-gate">
-                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('gate-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="gate-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('gate-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="exch-foot"><button class="btn-test" onclick="testConn('gate')">Test Connection</button><button class="btn-save-key" onclick="saveExch('gate')">Save</button><span class="conn-badge idle" id="status-gate">Not tested</span></div>
-                </div>
-            </div>
-
-            <!-- Binance -->
-            <div class="exch-card" id="card-binance">
-                <div class="exch-header" onclick="toggleExchFields('binance')">
-                    <div class="exch-left">
-                        <span class="exch-dot off" id="dot-binance"></span>
-                        <div><div class="exch-name">Binance</div><div class="exch-tag">Futures · Spot · Global</div></div>
-                    </div>
-                    <div class="exch-toggle" id="toggle-binance" onclick="event.stopPropagation();toggleExch('binance')"><div class="exch-toggle-knob"></div></div>
-                </div>
-                <div class="exch-fields" id="fields-binance">
-                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('binance-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="binance-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('binance-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="exch-foot"><button class="btn-test" onclick="testConn('binance')">Test Connection</button><button class="btn-save-key" onclick="saveExch('binance')">Save</button><span class="conn-badge idle" id="status-binance">Not tested</span></div>
-                </div>
-            </div>
-
-            <!-- Alpaca -->
-            <div class="exch-card" id="card-alpaca">
-                <div class="exch-header" onclick="toggleExchFields('alpaca')">
-                    <div class="exch-left">
-                        <span class="exch-dot off" id="dot-alpaca"></span>
-                        <div><div class="exch-name">Alpaca</div><div class="exch-tag">Stocks · Forex · Crypto · TradFi</div></div>
-                    </div>
-                    <div class="exch-toggle" id="toggle-alpaca" onclick="event.stopPropagation();toggleExch('alpaca')"><div class="exch-toggle-knob"></div></div>
-                </div>
-                <div class="exch-fields" id="fields-alpaca">
-                    <div class="api-row"><div class="api-lbl">API Key</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-key" placeholder="Enter API key"><button class="api-eye" onclick="toggleEye('alpaca-key')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">API Secret</div><div class="api-wrap"><input class="api-inp" type="password" id="alpaca-secret" placeholder="Enter API secret"><button class="api-eye" onclick="toggleEye('alpaca-secret')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-                    <div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="alpaca-mode"><option value="paper">Paper Trading</option><option value="live">Live Trading</option></select></div>
-                    <div class="exch-foot"><button class="btn-test" onclick="testConn('alpaca')">Test Connection</button><button class="btn-save-key" onclick="saveExch('alpaca')">Save</button><span class="conn-badge idle" id="status-alpaca">Not tested</span></div>
-                </div>
-            </div>
-
-            <div style="margin-top:4px;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px;" onclick="alert('More exchanges coming soon: Kraken, OKX, Hyperliquid')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                Add Exchange (Kraken, OKX, Hyperliquid…)
-            </div>
-        </div></div>
-
-        <!-- INTELLIGENCE APIs -->
-        <div id="set-apis" class="set-section">
-            <div class="set-section-title">Intelligence &amp; AI APIs</div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">ExNexus Intelligence</div><div class="api-intel-sub">Technical signals · Screener</div></div>
-                <input class="api-intel-input" type="password" id="exnexus_intel-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Smart Money</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
-                <input class="api-intel-input" type="password" id="nansen-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Market Depth</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
-                <input class="api-intel-input" type="password" id="coinglass-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div class="api-intel-row" style="border-bottom:none;">
-                <div class="api-intel-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.2);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.8"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Anthropic (Claude)</div><div class="api-intel-sub">AI brain · Scout · Arbitrage AI</div></div>
-                <input class="api-intel-input" type="password" id="anthropic-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveIntelKeys()">Save All API Keys</button></div>
-        </div>
-
-        <!-- ARBITRAGE SETTINGS -->
-        <div id="set-arb" class="set-section">
-            <div class="set-section-title">Arbitrage Engine</div>
-            <div class="set-row"><div><div class="set-row-label">Auto Execute</div><div class="set-row-sub">AI executes trades automatically</div></div><div class="exch-toggle" id="toggle-autoarb" onclick="toggleExch('autoarb')"><div class="exch-toggle-knob"></div></div></div>
-            <div class="set-row"><div><div class="set-row-label">Min Net Spread</div><div class="set-row-sub">After fees — minimum to trigger</div></div><input class="set-inp-sm" type="number" id="arb-min-spread" value="0.08" step="0.01" min="0.01">%</div>
-            <div class="set-row"><div><div class="set-row-label">Max Order Size</div><div class="set-row-sub">Per arbitrage trade</div></div><input class="set-inp-sm" type="number" id="arb-max-size" value="500"> USDT</div>
-            <div class="set-row"><div><div class="set-row-label">AI Validation</div><div class="set-row-sub">Claude checks before executing</div></div><div class="exch-toggle on" id="toggle-arbai" onclick="toggleExch('arbai')"><div class="exch-toggle-knob" style="left:21px;"></div></div></div>
-            <div class="set-row"><div><div class="set-row-label">Scan Interval</div><div class="set-row-sub">How often to check spreads</div></div><select class="set-select" id="arb-interval"><option value="1">1 second</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select></div>
-            <div class="set-row" style="border-bottom:none;"><div><div class="set-row-label">Active Pairs</div><div class="set-row-sub">Coins to monitor for arb</div></div></div>
-            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;" id="arb-pairs-wrap">
-                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'BTC')">BTC</span>
-                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'ETH')">ETH</span>
-                <span class="arb-pair-tag on" onclick="toggleArbPair(this,'SOL')">SOL</span>
-                <span class="arb-pair-tag" onclick="toggleArbPair(this,'XRP')">XRP</span>
-                <span class="arb-pair-tag" onclick="toggleArbPair(this,'ADA')">ADA</span>
-                <span class="arb-pair-tag" onclick="toggleArbPair(this,'BNB')">BNB</span>
-                <span class="arb-pair-tag" onclick="toggleArbPair(this,'DOGE')">DOGE</span>
-                <span class="arb-pair-tag" onclick="toggleArbPair(this,'AVAX')">AVAX</span>
-            </div>
-            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveArbSettings()">Save Arb Settings</button></div>
-        </div>
-
-        <!-- RISK -->
-        <div id="set-risk" class="set-section">
-            <div class="set-section-title">Risk Management</div>
-            <div class="set-row"><div><div class="set-row-label">Default Exchange</div><div class="set-row-sub">Primary for manual trades</div></div><select class="set-select" id="risk-default-exch"><option>Bybit</option><option>Gate.io</option><option>Binance</option><option>Alpaca</option></select></div>
-            <div class="set-row"><div><div class="set-row-label">Default Leverage</div><div class="set-row-sub">Applied to new positions</div></div><input class="set-inp-sm" type="number" id="risk-leverage" value="10" min="1" max="100">×</div>
-            <div class="set-row"><div><div class="set-row-label">Risk Per Trade</div><div class="set-row-sub">% of total portfolio</div></div><input class="set-inp-sm" type="number" id="risk-pct" value="2" min="0.1" max="100">%</div>
-            <div class="set-row"><div><div class="set-row-label">Daily Loss Limit</div><div class="set-row-sub">Stop trading if exceeded</div></div><input class="set-inp-sm" type="number" id="risk-daily-loss" value="5">%</div>
-            <div class="set-row"><div><div class="set-row-label">Default Order Type</div></div><select class="set-select" id="risk-order-type"><option>Market</option><option>Limit</option><option>Chase</option></select></div>
-            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveRiskSettings()">Save Risk Settings</button></div>
-        </div>
-
-        <!-- SECURITY -->
-        <div id="set-security" class="set-section">
-            <div class="set-section-title">Security &amp; Login</div>
-
-            <!-- DEMO MODE CARD -->
-            <div class="demo-toggle-card">
-                <div class="demo-toggle-title">
-                    🎮 Demo Trading Mode
-                </div>
-                <div class="demo-toggle-sub">
-                    Practice with $10,000 virtual USDT using real live prices. All features work — manual trading, bots, arbitrage — with zero risk. Perfect for learning ExNexus before going live.
-                </div>
-                <div class="demo-stats">
-                    <div class="demo-stat">
-                        <label>Balance</label>
-                        <span id="demo-bal-display" style="color:#F0B429;">$10,000</span>
-                    </div>
-                    <div class="demo-stat">
-                        <label>Trades</label>
-                        <span id="demo-trades-display">0</span>
-                    </div>
-                    <div class="demo-stat">
-                        <label>P/L</label>
-                        <span id="demo-pnl-display">$0.00</span>
-                    </div>
-                </div>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn-save-key" style="flex:1;background:#F0B429;color:#000;border:none;" onclick="enterDemoMode()">🎮 Enter Demo Mode</button>
-                    <button class="btn-test" onclick="resetDemo()">Reset</button>
-                </div>
-            </div>
-
-            <!-- SYNC CODE -->
-            <div class="sync-card">
-                <div class="sync-card-title">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                    Cross-Device Sync Code
-                </div>
-                <div class="sync-card-sub">
-                    Set a personal sync code to share your API keys and settings across all your devices — web, tablet, and mobile. Enter the same code on every device.
-                </div>
-                <div class="sync-inp-row">
-                    <input class="sync-inp" type="password" id="sync-code-inp" placeholder="Enter your sync code" maxlength="32" autocomplete="off">
-                    <button class="sync-btn" onclick="applySyncCode()">Apply</button>
-                </div>
-                <div class="sync-status" id="sync-status">
-                    <span class="sync-dot"></span>
-                    <span id="sync-status-text">Synced</span>
-                </div>
-                <div class="sync-devices" id="sync-devices-info"></div>
-            </div>
-            <div class="login-card">
-                <div class="login-card-title">🔐 App Login</div>
-                <div class="login-card-sub">Full login system with username/password, biometric support, and session management. Will be activated before final deployment.</div>
-                <div style="display:flex;gap:8px;"><button class="btn-primary" disabled style="opacity:.4;cursor:default;">Coming Soon</button></div>
-            </div>
-            <div class="login-card">
-                <div class="login-card-title">🔒 PIN Lock</div>
-                <div class="login-card-sub">Quick 4-digit PIN to lock the app when idle. Protects from unauthorized access on shared devices.</div>
-                <div class="set-row" style="border:none;padding:0;"><div class="set-row-label">Enable PIN Lock</div><div class="exch-toggle" id="toggle-pin" onclick="toggleExch('pin')"><div class="exch-toggle-knob"></div></div></div>
-            </div>
-            <div class="login-card">
-                <div class="login-card-title">⏱ Auto-Lock</div>
-                <div class="set-row" style="border:none;padding:6px 0 0;"><div class="set-row-label">Lock after</div><select class="set-select" id="lock-timer"><option>1 minute</option><option>5 minutes</option><option selected>15 minutes</option><option>30 minutes</option><option>Never</option></select></div>
-            </div>
-            <div style="margin-top:14px;padding:10px 12px;background:rgba(255,0,63,0.04);border:1px solid rgba(255,0,63,0.12);border-radius:7px;">
-                <div style="font-size:11px;font-weight:600;color:var(--hot-red);margin-bottom:4px;">⚠ Clear All Data</div>
-                <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Removes all API keys and settings from this device.</div>
-                <button style="background:rgba(255,0,63,0.1);border:1px solid rgba(255,0,63,0.25);color:var(--hot-red);font-size:10px;padding:5px 14px;border-radius:4px;cursor:pointer;" onclick="clearAllData()">Clear All Keys &amp; Settings</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+    
 
 <!-- ==================== PERFORMANCE PANEL ==================== -->
 <div id="panel-performance" class="slide-panel">
