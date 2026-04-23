@@ -2501,48 +2501,16 @@ window.onload = () => {
     // No further init needed here — duplicating it caused the blank TradingView chart.
 };
 
-// ── Defensive handler wiring: ensures Performance and Globe always work ──
-// This re-attaches click handlers at DOM ready, in case the inline onclicks fail for any reason
-document.addEventListener('DOMContentLoaded', () => {
-    const navPerf = document.getElementById('nav-performance');
-    if(navPerf) {
-        navPerf.addEventListener('click', (e) => {
-            console.log('[nav-performance CLICK] event fired');
-            e.stopPropagation();
-            try { togglePanel('performance'); } 
-            catch(err) { console.error('[nav-performance] togglePanel threw:', err); }
-        });
-        console.log('[wiring] nav-performance handler attached');
-    } else {
-        console.warn('[wiring] nav-performance element NOT found');
-    }
-    const navGlobe = document.getElementById('nav-globe');
-    if(navGlobe) {
-        navGlobe.addEventListener('click', (e) => {
-            console.log('[nav-globe CLICK] event fired');
-            e.stopPropagation();
-            try { toggleGlobeMenu(); } 
-            catch(err) { console.error('[nav-globe] toggleGlobeMenu threw:', err); }
-        });
-        console.log('[wiring] nav-globe handler attached');
-    } else {
-        console.warn('[wiring] nav-globe element NOT found');
-    }
-});
-
 /* ============ PANEL SYSTEM ============ */
 let activePanel = null;
 function togglePanel(name){
-    console.log('[togglePanel] called with:', name, '| activePanel was:', activePanel);
     if(activePanel === name){ closePanel(name); return; }
     if(activePanel) closePanel(activePanel);
     const panel = document.getElementById('panel-'+name);
-    console.log('[togglePanel] panel element found:', !!panel);
-    if(!panel) { console.warn('[togglePanel] NO ELEMENT for panel-'+name); return; }
+    if(!panel) return;
     panel.classList.add('open');
     document.getElementById('nav-'+name)?.classList.add('active');
     activePanel = name;
-    console.log('[togglePanel] opened:', name, '| has .open class:', panel.classList.contains('open'));
     if(name === 'feargreed') fetchFearGreedLive();
     if(name === 'performance') setTimeout(renderPerformancePanel, 50);
     if(name === 'scout' && !getSetting('anthropic-key','')) {
@@ -8018,15 +7986,12 @@ document.addEventListener('click', e => {
 
 /* ── Globe Language Menu ── */
 function toggleGlobeMenu() {
-    console.log('[toggleGlobeMenu] called');
     const menu = document.getElementById('globe-menu');
     const btn  = document.getElementById('nav-globe');
-    console.log('[toggleGlobeMenu] menu element:', !!menu, '| nav-globe:', !!btn);
-    if(!menu) { console.warn('[toggleGlobeMenu] NO globe-menu element'); return; }
+    if(!menu) return;
     const isOpen = menu.style.display !== 'none';
     menu.style.display = isOpen ? 'none' : 'block';
     if(btn) btn.classList.toggle('active', !isOpen);
-    console.log('[toggleGlobeMenu] menu is now:', menu.style.display);
 }
 
 function setTerminalLang(lang) {
