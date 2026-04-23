@@ -1,5 +1,5 @@
-// ExNexus Service Worker v1.0
-const CACHE_NAME = 'exnexus-v1';
+// ExNexus Service Worker v1.1
+const CACHE_NAME = 'exnexus-v2';
 const STATIC_ASSETS = [
   '/',
   '/terminal.html',
@@ -30,8 +30,15 @@ self.addEventListener('activate', event => {
 
 // Fetch — network first, cache fallback
 self.addEventListener('fetch', event => {
-  // Skip non-GET and API calls
+  // Skip non-GET
   if(event.request.method !== 'GET') return;
+
+  // ✅ FIX: Only handle http(s) — ignore chrome-extension://, moz-extension://, ws://, etc.
+  // This prevents the "Request scheme 'chrome-extension' is unsupported" cache error.
+  const url = new URL(event.request.url);
+  if(url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+  // Skip API calls (don't cache live market data)
   if(event.request.url.includes('workers.dev')) return;
   if(event.request.url.includes('api.')) return;
   if(event.request.url.includes('binance.com')) return;
@@ -43,7 +50,12 @@ self.addEventListener('fetch', event => {
         // Cache successful responses
         if(response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          caches.open(CACHE_NAME).then(cache => {
+            // Safety net: swallow any future unsupported-scheme errors silently
+            cache.put(event.request, clone).catch(err => {
+              console.warn('[SW] Cache put skipped:', err.message);
+            });
+          });
         }
         return response;
       })
@@ -51,7 +63,7 @@ self.addEventListener('fetch', event => {
         // Fallback to cache when offline
         return caches.match(event.request).then(cached => {
           if(cached) return cached;
-          // Return offline page for navigation
+          // Return offline page for navigation requests
           if(event.request.mode === 'navigate') {
             return caches.match('/terminal.html');
           }
