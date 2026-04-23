@@ -2470,6 +2470,9 @@ function bootBrain() {
     try {
         // Start live ticker
         if(typeof startLiveTicker === 'function') startLiveTicker('BTCUSDT');
+        // Start live order book + recent trades (real Bybit WebSocket)
+        if(typeof startLiveOrderBook === 'function') startLiveOrderBook('BTCUSDT');
+        if(typeof startLiveTrades === 'function') startLiveTrades('BTCUSDT');
         // Start session timer
         if(typeof startSessionTimer === 'function') startSessionTimer();
         // Check demo mode
@@ -2493,39 +2496,27 @@ function bootBrain() {
 }
 
 window.onload = () => {
-    // Check auth first — if not logged in, show login screen
-    // bootBrain() called from completeLogin() → enterApp()
-    // Check for dev bypass
+    // ═══════════════════════════════════════════════════════════════
+    // TEMPORARY LOGIN BYPASS — auto-logs in as Developer.
+    // To re-enable the real login screen, comment out the next 2 lines.
+    // ═══════════════════════════════════════════════════════════════
+    completeLogin('dev_user', 'dev@exnexus.app', 'Developer');
+    return;
+    // ═══════════════════════════════════════════════════════════════
+
+    // --- Normal auth flow (unreachable while bypass is active) ---
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.get('dev') === '1') {
         completeLogin('dev_user', 'dev@exnexus.co', 'Developer');
+        return; // enterApp() runs all init
     }
     const isAuthed = checkAuthOnLoad();
     if(!isAuthed) {
         showLoginScreen();
-        return; // Stop here — bootBrain runs after login
+        return;
     }
-
-    try {
-        new TradingView.widget({
-            autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
-            container_id:"tradingview_widget",
-            overrides:{
-                "mainSeriesProperties.candleStyle.upColor":"#44B828",
-                "mainSeriesProperties.candleStyle.downColor":"#FF003F",
-                "mainSeriesProperties.candleStyle.borderUpColor":"#44B828",
-                "mainSeriesProperties.candleStyle.borderDownColor":"#FF003F",
-                "mainSeriesProperties.candleStyle.wickUpColor":"#44B828",
-                "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
-            }
-        });
-    } catch(e){ console.warn('Chart widget error:', e); }
-    renderOrderBook();
-    renderRecentTrades();
-    renderLSRows();
-    initResponsive();
-    renderMobBook();
-    bootBrain();
+    // If authed, checkAuthOnLoad() already called enterApp() which ran all init.
+    // No further init needed here — duplicating it caused the blank TradingView chart.
 };
 
 /* ============ PANEL SYSTEM ============ */
@@ -3472,6 +3463,110 @@ function updateTicker(price, chgPct) {
     // Mobile order book mid price
     const mid = document.getElementById('mob-mid');
     if(mid){ mid.textContent = fmt; }
+}
+
+// ── Live Order Book via Bybit public WebSocket ──────────────
+let orderBookWS = null;
+let obState = { bids: {}, asks: {} };
+
+function startLiveOrderBook(symbol = 'BTCUSDT') {
+    if(orderBookWS) { try{ orderBookWS.close(); }catch(_){} }
+    obState = { bids: {}, asks: {} };
+    orderBookWS = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+    orderBookWS.onopen = () => {
+        orderBookWS.send(JSON.stringify({ op:'subscribe', args:[`orderbook.50.${symbol}`] }));
+    };
+    orderBookWS.onmessage = (e) => {
+        try {
+            const msg = JSON.parse(e.data);
+            if(!msg.topic || !msg.data) return;
+            if(msg.type === 'snapshot') {
+                obState.bids = {}; obState.asks = {};
+                (msg.data.b || []).forEach(([p, s]) => { const n = parseFloat(s); if(n > 0) obState.bids[p] = n; });
+                (msg.data.a || []).forEach(([p, s]) => { const n = parseFloat(s); if(n > 0) obState.asks[p] = n; });
+            } else if(msg.type === 'delta') {
+                (msg.data.b || []).forEach(([p, s]) => { const n = parseFloat(s); if(n === 0) delete obState.bids[p]; else obState.bids[p] = n; });
+                (msg.data.a || []).forEach(([p, s]) => { const n = parseFloat(s); if(n === 0) delete obState.asks[p]; else obState.asks[p] = n; });
+            }
+            renderLiveOrderBook();
+        } catch(err){}
+    };
+    let _obRetry = false;
+    orderBookWS.onerror = () => { if(!_obRetry){ _obRetry=true; setTimeout(()=>{ _obRetry=false; startLiveOrderBook(symbol); }, 8000); } };
+    orderBookWS.onclose = () => { if(!_obRetry){ _obRetry=true; setTimeout(()=>{ _obRetry=false; startLiveOrderBook(symbol); }, 8000); } };
+}
+
+function renderLiveOrderBook() {
+    const asks = Object.entries(obState.asks).map(([p,s]) => [parseFloat(p), s]).sort((a,b)=>a[0]-b[0]).slice(0, 9);
+    const bids = Object.entries(obState.bids).map(([p,s]) => [parseFloat(p), s]).sort((a,b)=>b[0]-a[0]).slice(0, 9);
+    let askTotal = 0;
+    const askRows = asks.map(([p,s]) => { askTotal += s; return [p, s, askTotal]; });
+    let bidTotal = 0;
+    const bidRows = bids.map(([p,s]) => { bidTotal += s; return [p, s, bidTotal]; });
+    const maxT = Math.max(askTotal, bidTotal, 0.001);
+
+    const elA = document.getElementById('ob-asks');
+    const elB = document.getElementById('ob-bids');
+    if(elA) elA.innerHTML = askRows.map(([p,q,t]) =>
+        `<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+    ).join('');
+    if(elB) elB.innerHTML = bidRows.map(([p,q,t]) =>
+        `<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#44B828;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+    ).join('');
+
+    // Mirror to the mobile order book if present
+    const mA = document.getElementById('mob-asks');
+    const mB = document.getElementById('mob-bids');
+    if(mA) mA.innerHTML = askRows.slice(0,6).map(([p,q]) =>
+        `<div class="mbook-row"><span class="mono" style="color:#FF003F;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
+    ).join('');
+    if(mB) mB.innerHTML = bidRows.slice(0,6).map(([p,q]) =>
+        `<div class="mbook-row"><span class="mono" style="color:#44B828;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
+    ).join('');
+}
+
+// ── Live Recent Trades via Bybit public WebSocket ───────────
+let tradesWS = null;
+const tradeHistory = [];
+
+function startLiveTrades(symbol = 'BTCUSDT') {
+    if(tradesWS) { try{ tradesWS.close(); }catch(_){} }
+    tradeHistory.length = 0;
+    tradesWS = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+    tradesWS.onopen = () => {
+        tradesWS.send(JSON.stringify({ op:'subscribe', args:[`publicTrade.${symbol}`] }));
+    };
+    tradesWS.onmessage = (e) => {
+        try {
+            const msg = JSON.parse(e.data);
+            if(!msg.topic || !Array.isArray(msg.data)) return;
+            msg.data.forEach(t => {
+                const d = new Date(parseInt(t.T));
+                const hh = String(d.getHours()).padStart(2,'0');
+                const mm = String(d.getMinutes()).padStart(2,'0');
+                const ss = String(d.getSeconds()).padStart(2,'0');
+                tradeHistory.unshift({
+                    price: parseFloat(t.p),
+                    qty:   parseFloat(t.v),
+                    time:  `${hh}:${mm}:${ss}`,
+                    isBuy: t.S === 'Buy'
+                });
+            });
+            if(tradeHistory.length > 30) tradeHistory.length = 30;
+            renderLiveTrades();
+        } catch(err){}
+    };
+    let _trRetry = false;
+    tradesWS.onerror = () => { if(!_trRetry){ _trRetry=true; setTimeout(()=>{ _trRetry=false; startLiveTrades(symbol); }, 8000); } };
+    tradesWS.onclose = () => { if(!_trRetry){ _trRetry=true; setTimeout(()=>{ _trRetry=false; startLiveTrades(symbol); }, 8000); } };
+}
+
+function renderLiveTrades() {
+    const container = document.getElementById('recent-trades-list');
+    if(!container) return;
+    container.innerHTML = tradeHistory.slice(0, 20).map(t =>
+        `<div class="ob-row"><span class="mono" style="color:${t.isBuy?'#44B828':'#FF003F'};font-size:10.5px;">${t.price.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${t.qty.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.time}</span></div>`
+    ).join('');
 }
 
 // ── Live Assets (Bybit balance) ─────────────────────────────
