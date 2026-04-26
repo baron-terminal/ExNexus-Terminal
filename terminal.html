@@ -2935,13 +2935,31 @@ function testConn(name){
     }, 1200);
 }
 function saveExch(name){
-    const key = document.getElementById(name+'-key')?.value || '';
-    const secret = document.getElementById(name+'-secret')?.value || '';
-    const mode = document.getElementById(name+'-mode')?.value || 'live';
-    if(key) saveSetting(name+'-key', key);
-    if(secret) saveSetting(name+'-secret', secret);
+    const keyEl    = document.getElementById(name+'-key');
+    const secretEl = document.getElementById(name+'-secret');
+    const modeEl   = document.getElementById(name+'-mode');
+    const key    = keyEl?.value || '';
+    const secret = secretEl?.value || '';
+    const mode   = modeEl?.value || 'live';
+    if(!key || !secret){ showToast('Enter both API key and secret'); return; }
+    saveSetting(name+'-key', key);
+    saveSetting(name+'-secret', secret);
     if(mode) saveSetting(name+'-mode', mode);
+    // SECURITY: clear inputs immediately so plaintext doesn't linger in the DOM
+    if(keyEl)    keyEl.value    = '';
+    if(secretEl) secretEl.value = '';
     showToast('Saved '+name+' keys');
+    // Re-render the exchange card to show "Connected · ••••XXXX" state
+    if(typeof buildSettingsExchanges === 'function') buildSettingsExchanges();
+    setTimeout(syncSettingsToKV, 500);
+}
+function disconnectExch(name){
+    if(!confirm('Disconnect '+name+'? You will need to enter your API key and secret again to reconnect.')) return;
+    localStorage.removeItem('exnexus_'+name+'-key');
+    localStorage.removeItem('exnexus_'+name+'-secret');
+    showToast(name+' disconnected');
+    // Re-render the card back to empty input state
+    if(typeof buildSettingsExchanges === 'function') buildSettingsExchanges();
     setTimeout(syncSettingsToKV, 500);
 }
 function saveIntelKeys(){
@@ -2978,12 +2996,12 @@ function clearAllData(){
 function saveSetting(k,v){ try{ localStorage.setItem('exnexus_'+k,v); }catch(e){} }
 function getSetting(k,d=''){ try{ return localStorage.getItem('exnexus_'+k)||d; }catch(e){ return d; } }
 function loadSettings(){
+    // SECURITY: API keys are NEVER loaded back into the DOM after save.
+    // The exchange cards render in "Connected" state via buildSettingsExchanges()
+    // when a saved key exists — showing only the last 4 characters.
+    // To replace a key, the user clicks Disconnect and re-enters.
     ['bybit','gate','binance','alpaca'].forEach(name=>{
-        const key = getSetting(name+'-key');
-        const secret = getSetting(name+'-secret');
         const active = getSetting('exch-'+name+'-active')==='1';
-        if(key){ const el=document.getElementById(name+'-key'); if(el) el.value=key; }
-        if(secret){ const el=document.getElementById(name+'-secret'); if(el) el.value=secret; }
         if(active){ const t=document.getElementById('toggle-'+name); if(t&&!t.classList.contains('on')) toggleExch(name); }
     });
     ['altfins','nansen','coinglass','anthropic'].forEach(k=>{
@@ -4301,11 +4319,15 @@ async function runLiveArbScan() {
 function buildSettingsExchanges() {
     const container = document.getElementById('set-exchanges-dynamic');
     if(!container) return;
-    container.innerHTML = Object.entries(EXCHANGE_REGISTRY).map(([id, ex]) => `
+    container.innerHTML = Object.entries(EXCHANGE_REGISTRY).map(([id, ex]) => {
+        const savedKey = getSetting(id+'-key','');
+        const isConnected = !!savedKey;
+        const lastFour = isConnected ? savedKey.slice(-4) : '';
+        return `
         <div class="exch-card" id="card-${id}">
             <div class="exch-header" onclick="toggleExchFields('${id}')">
                 <div class="exch-left">
-                    <span class="exch-dot off" id="dot-${id}"></span>
+                    <span class="exch-dot ${isConnected?'on':'off'}" id="dot-${id}"></span>
                     <div>
                         <div class="exch-name">${ex.name}</div>
                         <div class="exch-tag">${ex.desc}</div>
@@ -4316,9 +4338,26 @@ function buildSettingsExchanges() {
                 </div>
             </div>
             <div class="exch-fields" id="fields-${id}">
+                ${isConnected ? `
+                <div class="api-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:8px;flex:1;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                        <div style="flex:1;">
+                            <div style="font-size:11px;color:var(--neon);font-weight:600;">Connected</div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;letter-spacing:0.5px;">Key ending ••••${lastFour}</div>
+                        </div>
+                    </div>
+                </div>
+                ${id==='bybit'||id==='alpaca' ? `<div class="api-row"><div class="api-lbl">Mode</div><select class="set-select" id="${id}-mode" disabled style="opacity:0.6;cursor:not-allowed;"><option value="${getSetting(id+'-mode','live')}">${getSetting(id+'-mode','live')==='paper'?'Paper Trading':getSetting(id+'-mode','live')==='testnet'?'Testnet':'Live'}</option></select></div>` : ''}
+                <div class="exch-foot" style="display:flex;gap:6px;">
+                    <button class="btn-test" onclick="testConn('${id}')">Test Connection</button>
+                    <button class="btn-save-key" onclick="disconnectExch('${id}')" style="background:rgba(255,90,90,0.1);border-color:rgba(255,90,90,0.3);color:#ff5a5a;">Disconnect</button>
+                    <span class="conn-badge idle" id="status-${id}">Active</span>
+                </div>
+                ` : `
                 <div class="api-row"><div class="api-lbl">API Key</div>
                     <div class="api-wrap">
-                        <input class="api-inp" type="password" id="${id}-key" placeholder="Enter API key">
+                        <input class="api-inp" type="password" id="${id}-key" placeholder="Enter API key" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                         <button class="api-eye" onclick="toggleEye('${id}-key')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
@@ -4326,7 +4365,7 @@ function buildSettingsExchanges() {
                 </div>
                 <div class="api-row"><div class="api-lbl">API Secret</div>
                     <div class="api-wrap">
-                        <input class="api-inp" type="password" id="${id}-secret" placeholder="Enter API secret">
+                        <input class="api-inp" type="password" id="${id}-secret" placeholder="Enter API secret" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                         <button class="api-eye" onclick="toggleEye('${id}-secret')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
@@ -4338,9 +4377,10 @@ function buildSettingsExchanges() {
                     <button class="btn-save-key" onclick="saveExch('${id}')">Save</button>
                     <span class="conn-badge idle" id="status-${id}">Not tested</span>
                 </div>
+                `}
             </div>
         </div>
-    `).join('') + `
+    `;}).join('') + `
         <div style="margin-top:4px;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.45);font-size:11px;" onclick="showToast('Add exchange to EXCHANGE_REGISTRY in code')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Add Exchange (Kraken, OKX, Hyperliquid…)
