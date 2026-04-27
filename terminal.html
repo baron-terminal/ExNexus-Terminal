@@ -32,7 +32,22 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        .app-container{display:grid;grid-template-columns:44px 1fr 260px 220px;grid-template-rows:38px calc(100vh - 310px) 500px;min-height:100vh;gap:3px;padding:3px;}
+        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px calc(100vh - 250px) 440px;min-height:100vh;gap:3px;padding:3px;}
+
+        /* Bottom panel fullscreen — maximized within app (Option B): hides chart/orderbook/trading panel, keeps top nav + sidebar */
+        .app-container.bottom-maxed > #bottom-section{
+            position:fixed; left:47px; right:3px; top:41px; bottom:3px;
+            z-index:50;
+            box-shadow:0 0 30px rgba(0,0,0,0.5);
+        }
+        .app-container.bottom-maxed > section:not(#bottom-section):not(:first-child),
+        .app-container.bottom-maxed > aside{
+            visibility:hidden;
+        }
+        /* Sidebar nav stays visible at all times */
+        .app-container.bottom-maxed > nav{ visibility:visible; }
+        /* Header stays visible at all times */
+        .app-container.bottom-maxed > header{ visibility:visible; }
         ::-webkit-scrollbar{width:3px;height:3px;}
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
@@ -1956,6 +1971,9 @@
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-bots')">🤖 Bots</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')">⚡ Arb</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
+            <button id="bottom-fullscreen-btn" title="Maximize (double-click for browser fullscreen, F to toggle, Esc to exit)" onclick="toggleBottomFullscreen()" ondblclick="toggleBottomBrowserFullscreen()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.55);cursor:pointer;padding:4px 8px;font-size:14px;display:flex;align-items:center;line-height:1;flex-shrink:0;" onmouseover="this.style.color='var(--text-bright)'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">
+                <svg id="bottom-fs-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
         </div>
         <div style="flex:1;overflow:hidden;">
             <div id="bt-openorders" class="tab-panel active" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Filled</th><th class="r">Order Value</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="10"><div class="empty-state">No open orders</div></td></tr></tbody></table></div>
@@ -2574,6 +2592,57 @@ function switchOT(btn){
     btn.closest('div').querySelectorAll('.ot-tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 }
+
+/* ============ BOTTOM PANEL FULLSCREEN ============
+   Two modes:
+     - Option B (single click): maximize within app — hide chart/orderbook/trading panel,
+       keep top nav + sidebar visible. Toggles .bottom-maxed on .app-container
+     - Option A (double click): true browser fullscreen — element.requestFullscreen()
+   Keyboard: F toggles maximize, Esc exits any fullscreen state. */
+function toggleBottomFullscreen() {
+    const app = document.querySelector('.app-container');
+    if (!app) return;
+    const wasMax = app.classList.contains('bottom-maxed');
+    app.classList.toggle('bottom-maxed');
+    // Update icon: maximize ⇄ minimize
+    const icon = document.getElementById('bottom-fs-icon');
+    if (icon) {
+        icon.innerHTML = wasMax
+            ? '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>'
+            : '<polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/>';
+    }
+}
+
+function toggleBottomBrowserFullscreen() {
+    const el = document.getElementById('bottom-section');
+    if (!el) return;
+    if (document.fullscreenElement) {
+        document.exitFullscreen?.();
+    } else {
+        el.requestFullscreen?.().catch(()=>{});
+    }
+}
+
+// Keyboard shortcuts: F to toggle maximize, Esc to exit
+document.addEventListener('keydown', (e) => {
+    // Don't fire when user is typing in inputs
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+    if (e.key === 'Escape') {
+        const app = document.querySelector('.app-container');
+        if (document.fullscreenElement) {
+            document.exitFullscreen?.();
+        } else if (app?.classList.contains('bottom-maxed')) {
+            toggleBottomFullscreen();
+        }
+    } else if (e.key === 'f' || e.key === 'F') {
+        // Only if no modifier keys (avoid Ctrl+F etc.)
+        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+        toggleBottomFullscreen();
+        e.preventDefault();
+    }
+});
 
 /* ============ ORDER BOOK DATA ============ */
 const askData=[[74245.10,0.124,2.841],[74240.30,0.067,2.717],[74238.90,0.891,2.650],[74237.50,0.045,1.759],[74236.20,0.312,1.714],[74235.00,0.178,1.402],[74233.80,0.224,1.224],[74232.40,0.551,1.000],[74231.90,0.449,0.449]];
@@ -4408,16 +4477,22 @@ async function loadAllAssets() {
         try {
             const bal = await ex.getBalance(key, secret);
             if(bal.ok) {
+                // CLAMP: Available semantics differ wildly across exchanges (futures buying-power
+                // bleeds in for Binance/Bybit, etc.). For now, never let avail exceed total at
+                // either per-exchange or aggregate level. Proper fix is the Unified Aggregator's
+                // standardized "free cash" definition (Phase B).
+                const clampedAvail = Math.min(bal.avail, bal.total);
+
                 // Skip exchanges flagged excludeFromTotal (e.g. paper accounts)
                 if(!ex.excludeFromTotal) {
                     totalPortfolio += bal.total;
-                    totalAvail     += bal.avail;
+                    totalAvail     += clampedAvail;
                     totalMargin    += bal.margin;
                     totalUpnl      += bal.upnl;
                 }
 
                 setTxt(exId+'-bal',    '$'+bal.total.toFixed(2));
-                setTxt(exId+'-avail',  '$'+bal.avail.toFixed(2));
+                setTxt(exId+'-avail',  '$'+clampedAvail.toFixed(2));
                 setTxt(exId+'-margin', '$'+bal.margin.toFixed(2));
                 const upEl = document.getElementById(exId+'-upnl');
                 if(upEl){ upEl.textContent=(bal.upnl>=0?'+':'')+'$'+bal.upnl.toFixed(2); upEl.style.color=bal.upnl>=0?'var(--neon)':'var(--hot-red)'; }
@@ -4429,6 +4504,9 @@ async function loadAllAssets() {
             updateAssetStatus(exId, '✗ Error: ' + e.message, 'var(--hot-red)');
         }
     }
+
+    // Final aggregate clamp — guarantees totalAvail never exceeds totalPortfolio
+    totalAvail = Math.min(totalAvail, totalPortfolio);
 
     // Update portfolio totals
     setTxt('asset-total',  '$'+totalPortfolio.toFixed(2));
