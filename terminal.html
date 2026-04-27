@@ -3435,6 +3435,59 @@ const DATA    = 'https://exnexus-data.drorbaron18.workers.dev';
 const MARKET  = 'https://exnexus-market.drorbaron18.workers.dev';
 const SITE_URL = window.location.hostname === 'exnexus.app' ? 'https://exnexus.co' : '../index.html';
 
+// ──────────────────────────────────────────────────────────────
+// MULTI-ASSET PRICE HELPER
+// Caches USD prices for 30 sec to avoid hammering the price endpoints.
+// Stablecoins return 1 instantly; other assets fetched from Binance public.
+// Returns 0 (which means "skip from total") if price can't be determined,
+// rather than crashing the whole balance fetch.
+// ──────────────────────────────────────────────────────────────
+const STABLECOINS = new Set(['USDT','USDC','BUSD','TUSD','USD','USDE','FDUSD','DAI','PYUSD','GUSD']);
+const _priceCache = {}; // { 'BTC': { price: 76700, fetchedAt: 1700000000000 } }
+const PRICE_TTL_MS = 30_000;
+
+async function getUsdPrice(asset) {
+    if (!asset) return 0;
+    const a = asset.toUpperCase();
+    if (STABLECOINS.has(a)) return 1;
+    // Check cache
+    const c = _priceCache[a];
+    if (c && (Date.now() - c.fetchedAt) < PRICE_TTL_MS) return c.price;
+    // Fetch live from Binance public ticker (no auth, fast, reliable)
+    try {
+        const symbol = a + 'USDT';
+        const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
+        if (!res.ok) {
+            // Try BUSD or USDC pair as fallback for less liquid coins
+            const altRes = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${a}BUSD`);
+            if (!altRes.ok) { _priceCache[a] = { price: 0, fetchedAt: Date.now() }; return 0; }
+            const altD = await altRes.json();
+            const altPrice = parseFloat(altD.price || 0);
+            _priceCache[a] = { price: altPrice, fetchedAt: Date.now() };
+            return altPrice;
+        }
+        const d = await res.json();
+        const price = parseFloat(d.price || 0);
+        _priceCache[a] = { price, fetchedAt: Date.now() };
+        return price;
+    } catch(e) {
+        // Cache the failure briefly so we don't retry-storm
+        _priceCache[a] = { price: 0, fetchedAt: Date.now() };
+        return 0;
+    }
+}
+
+// Sum all assets in an array of {asset, qty} into USD
+async function sumAssetsToUsd(positions) {
+    if (!Array.isArray(positions) || positions.length === 0) return 0;
+    // Fetch all prices in parallel
+    const priced = await Promise.all(positions.map(async p => {
+        const price = await getUsdPrice(p.asset);
+        return p.qty * price;
+    }));
+    return priced.reduce((sum, v) => sum + v, 0);
+}
+
 // Core fetch helper — attaches API keys from Settings
 async function workerFetch(path, opts = {}) {
     const key    = getSetting('bybit-key','');
@@ -4138,8 +4191,24 @@ const EXCHANGE_REGISTRY = {
             });
             const d = await res.json();
             if(!Array.isArray(d)) return { ok:false, error: d?.message || d?.label || 'Auth failed' };
-            const usdt = d.find(a=>a.currency==='USDT')||{};
-            return { ok:true, total:parseFloat(usdt.available||0)+parseFloat(usdt.locked||0), avail:parseFloat(usdt.available||0), margin:0, upnl:0 };
+            // Sum all non-zero assets converted to USD
+            const positions = d
+                .map(a => ({
+                    asset: a.currency,
+                    available: parseFloat(a.available||0),
+                    locked: parseFloat(a.locked||0)
+                }))
+                .filter(a => a.available + a.locked > 0);
+            const valued = await Promise.all(positions.map(async p => ({
+                ...p,
+                priceUsd: await getUsdPrice(p.asset)
+            })));
+            let total = 0, avail = 0;
+            for (const p of valued) {
+                total += (p.available + p.locked) * p.priceUsd;
+                avail += p.available * p.priceUsd;
+            }
+            return { ok:true, total, avail, margin:0, upnl:0 };
         },
         getPrice: async (symbol) => {
             const res = await fetch(`https://api.gateio.ws/api/v4/futures/usdt/tickers?contract=${symbol}_USDT`);
@@ -4179,30 +4248,55 @@ const EXCHANGE_REGISTRY = {
             let total = 0, avail = 0, upnl = 0;
             let okSpot = false, okFut = false, errMsg = '';
 
-            // SPOT — response shape: { balances: [{asset, free, locked}] }
+            // SPOT — sum ALL non-zero assets converted to USD (not just USDT)
+            // This catches BTC, BNB, SHIB, etc. that users hold in spot wallet
             if(spotRes.status === 'fulfilled') {
                 const d = spotRes.value;
                 if(Array.isArray(d?.balances)) {
                     okSpot = true;
-                    const usdt = d.balances.find(a=>a.asset==='USDT')||{};
-                    const free   = parseFloat(usdt.free||0);
-                    const locked = parseFloat(usdt.locked||0);
-                    total += free + locked;
-                    avail += free;
+                    // Build list of non-zero assets
+                    const positions = d.balances
+                        .map(b => ({
+                            asset: b.asset,
+                            free:  parseFloat(b.free||0),
+                            locked: parseFloat(b.locked||0)
+                        }))
+                        .filter(b => b.free + b.locked > 0)
+                        .map(b => ({ asset: b.asset, qty: b.free + b.locked, free: b.free }));
+                    // Convert each to USD via shared price helper (caches for 30sec)
+                    const usdValues = await Promise.all(positions.map(async p => ({
+                        ...p,
+                        priceUsd: await getUsdPrice(p.asset)
+                    })));
+                    for (const p of usdValues) {
+                        const valUsd = p.qty * p.priceUsd;
+                        total += valUsd;
+                        // For "available", only count free (not locked) USD value
+                        avail += p.free * p.priceUsd;
+                    }
                 } else if(d?.msg) {
                     errMsg = d.msg;
                 }
             }
 
             // FUTURES — response shape: [{asset, balance, availableBalance, unrealizedProfit}]
+            // For futures, sum across all collateral assets (typically USDT but can be BUSD/BNB/etc.)
             if(futRes.status === 'fulfilled') {
                 const d = futRes.value;
                 if(Array.isArray(d)) {
                     okFut = true;
-                    const usdt = d.find(a=>a.asset==='USDT')||{};
-                    total += parseFloat(usdt.balance||0);
-                    avail += parseFloat(usdt.availableBalance||0);
-                    upnl  += parseFloat(usdt.unrealizedProfit||0);
+                    const positions = d.filter(a => parseFloat(a.balance||0) !== 0);
+                    const usdValues = await Promise.all(positions.map(async a => ({
+                        balance: parseFloat(a.balance||0),
+                        availBal: parseFloat(a.availableBalance||0),
+                        upnl: parseFloat(a.unrealizedProfit||0),
+                        priceUsd: await getUsdPrice(a.asset)
+                    })));
+                    for (const p of usdValues) {
+                        total += p.balance  * p.priceUsd;
+                        avail += p.availBal * p.priceUsd;
+                        upnl  += p.upnl     * p.priceUsd;
+                    }
                 } else if(d?.msg && !errMsg) {
                     errMsg = d.msg;
                 }
