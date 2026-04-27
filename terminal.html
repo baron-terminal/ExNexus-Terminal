@@ -2945,21 +2945,37 @@ function saveExch(name){
     saveSetting(name+'-key', key);
     saveSetting(name+'-secret', secret);
     if(mode) saveSetting(name+'-mode', mode);
+    // Auto-activate this exchange now that it has valid keys
+    saveSetting('exch-'+name+'-active', '1');
     // SECURITY: clear inputs immediately so plaintext doesn't linger in the DOM
     if(keyEl)    keyEl.value    = '';
     if(secretEl) secretEl.value = '';
     showToast('Saved '+name+' keys');
     // Re-render the exchange card to show "Connected · ••••XXXX" state
     if(typeof buildSettingsExchanges === 'function') buildSettingsExchanges();
+    // FIX: re-render wipes toggle visual state — restore from localStorage for ALL active exchanges
+    Object.keys(EXCHANGE_REGISTRY).forEach(id => {
+        const active = getSetting('exch-'+id+'-active') === '1';
+        const t = document.getElementById('toggle-'+id);
+        if(active && t && !t.classList.contains('on')) toggleExch(id);
+    });
     setTimeout(syncSettingsToKV, 500);
 }
 function disconnectExch(name){
     if(!confirm('Disconnect '+name+'? You will need to enter your API key and secret again to reconnect.')) return;
     localStorage.removeItem('exnexus_'+name+'-key');
     localStorage.removeItem('exnexus_'+name+'-secret');
+    localStorage.removeItem('exnexus_exch-'+name+'-active');
     showToast(name+' disconnected');
     // Re-render the card back to empty input state
     if(typeof buildSettingsExchanges === 'function') buildSettingsExchanges();
+    // FIX: re-render wipes toggle visual state — restore it from localStorage for OTHER exchanges
+    Object.keys(EXCHANGE_REGISTRY).forEach(id => {
+        if(id === name) return;  // skip the one we just disconnected
+        const active = getSetting('exch-'+id+'-active') === '1';
+        const t = document.getElementById('toggle-'+id);
+        if(active && t && !t.classList.contains('on')) toggleExch(id);
+    });
     setTimeout(syncSettingsToKV, 500);
 }
 function saveIntelKeys(){
