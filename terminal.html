@@ -32,7 +32,23 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px calc(100vh - 250px) 440px;min-height:100vh;gap:3px;padding:3px;}
+        :root{ --bottom-h: 440px; } /* Bottom panel height — JS updates from localStorage on load */
+        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px calc(100vh - var(--bottom-h) - 60px) var(--bottom-h);min-height:100vh;gap:3px;padding:3px;}
+
+        /* Resize handle — sits at the top edge of bottom panel */
+        #bottom-resize-handle{
+            position:absolute; top:-3px; left:0; right:0; height:6px;
+            cursor:row-resize;
+            z-index:5;
+            background:transparent;
+            transition:background 0.15s;
+        }
+        #bottom-resize-handle:hover, #bottom-resize-handle.dragging{
+            background:rgba(0,255,153,0.3);
+        }
+        body.bottom-resizing{ cursor:row-resize !important; user-select:none !important; }
+        body.bottom-resizing iframe{ pointer-events:none; }
+        #bottom-section{ position:relative; }
 
         /* Bottom panel fullscreen — maximized within app (Option B): hides chart/orderbook/trading panel, keeps top nav + sidebar */
         .app-container.bottom-maxed > #bottom-section{
@@ -1960,6 +1976,7 @@
 
     <!-- BOTTOM TABS -->
     <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
+        <div id="bottom-resize-handle" title="Drag to resize panel"></div>
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions()">Positions</button>
@@ -2621,6 +2638,88 @@ function toggleBottomBrowserFullscreen() {
     } else {
         el.requestFullscreen?.().catch(()=>{});
     }
+}
+
+/* ============ BOTTOM PANEL RESIZE ============
+   Drag the top edge of the bottom panel to resize it. Persists to localStorage.
+   Constraints:
+     - Min: 200px (so tabs + a few rows still visible)
+     - Max: 80% of viewport (always leave some chart visible)
+   Disabled when panel is in maximized/fullscreen mode. */
+const BOTTOM_H_KEY = 'exnexus_bottom-panel-h';
+const BOTTOM_H_MIN = 200;
+
+function applyBottomHeight(px) {
+    const max = Math.floor(window.innerHeight * 0.8);
+    const clamped = Math.min(max, Math.max(BOTTOM_H_MIN, px));
+    document.documentElement.style.setProperty('--bottom-h', clamped + 'px');
+    return clamped;
+}
+
+// Restore saved height on load
+(function restoreBottomHeight() {
+    try {
+        const saved = parseInt(localStorage.getItem(BOTTOM_H_KEY) || '0', 10);
+        if (saved >= BOTTOM_H_MIN) applyBottomHeight(saved);
+    } catch(e) { /* ignore */ }
+})();
+
+// Re-clamp on window resize so the saved px doesn't overflow on small windows
+window.addEventListener('resize', () => {
+    const cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-h') || '440', 10);
+    applyBottomHeight(cur);
+});
+
+// Wire the drag handle (after DOM is ready)
+function initBottomResize() {
+    const handle = document.getElementById('bottom-resize-handle');
+    if (!handle) return;
+
+    let dragging = false;
+    let startY = 0;
+    let startH = 0;
+
+    handle.addEventListener('mousedown', (e) => {
+        // Don't allow resize while in maximized state
+        if (document.querySelector('.app-container')?.classList.contains('bottom-maxed')) return;
+        dragging = true;
+        startY = e.clientY;
+        startH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-h') || '440', 10);
+        handle.classList.add('dragging');
+        document.body.classList.add('bottom-resizing');
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        // Dragging UP = bigger panel, DOWN = smaller (since panel is anchored at bottom)
+        const newH = startH + (startY - e.clientY);
+        applyBottomHeight(newH);
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        handle.classList.remove('dragging');
+        document.body.classList.remove('bottom-resizing');
+        // Persist final height
+        try {
+            const cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-h') || '440', 10);
+            localStorage.setItem(BOTTOM_H_KEY, String(cur));
+        } catch(e) { /* ignore */ }
+    });
+
+    // Double-click handle = reset to default
+    handle.addEventListener('dblclick', () => {
+        applyBottomHeight(440);
+        try { localStorage.setItem(BOTTOM_H_KEY, '440'); } catch(e) {}
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBottomResize);
+} else {
+    initBottomResize();
 }
 
 // Keyboard shortcuts: F to toggle maximize, Esc to exit
