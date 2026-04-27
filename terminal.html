@@ -1893,8 +1893,49 @@
 
 
     <!-- CHART -->
-    <main id="main-chart" class="glass overflow-hidden relative">
-        <div id="tradingview_widget" class="w-full h-full"></div>
+    <main id="main-chart" class="glass overflow-hidden relative" style="display:flex;flex-direction:column;">
+        <!-- Chart Panel Tabs -->
+        <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:32px;gap:4px;flex-shrink:0;background:rgba(0,0,0,0.2);">
+            <button class="tab-btn active" onclick="switchChartTab(this,'cp-chart')">Chart</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Coin Overview</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-data')">Data Trading</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-news')">News</button>
+        </div>
+        <div style="flex:1;position:relative;overflow:hidden;">
+            <div id="cp-chart" class="cp-panel active" style="position:absolute;inset:0;display:block;">
+                <div id="tradingview_widget" class="w-full h-full"></div>
+            </div>
+            <div id="cp-overview" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
+                <div style="max-width:600px;margin:60px auto;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:12px;">📊</div>
+                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Coin Overview</div>
+                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+                        Market cap, supply, all-time high, project description, and key links — coming in next session.<br><br>
+                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will display data for the asset shown in the chart.</span>
+                    </div>
+                </div>
+            </div>
+            <div id="cp-data" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
+                <div style="max-width:600px;margin:60px auto;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:12px;">📈</div>
+                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Data Trading</div>
+                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+                        Open Interest, funding rates, liquidations, and volume comparison across exchanges — coming in next session.<br><br>
+                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will give AI Scout deeper signal context.</span>
+                    </div>
+                </div>
+            </div>
+            <div id="cp-news" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
+                <div style="max-width:600px;margin:60px auto;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:12px;">📰</div>
+                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">News</div>
+                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+                        Real-time market news filtered by the asset shown in the chart — coming in next session.<br><br>
+                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">News stream feeds AI Scout for sharper probability signals.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- ORDER BOOK -->
@@ -2597,6 +2638,27 @@ function switchBottomTab(btn, id){
     BT.forEach(p=>document.getElementById(p)?.classList.remove('active'));
     btn.closest('.glass').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById(id)?.classList.add('active');
+    btn.classList.add('active');
+}
+
+/* ============ CHART PANEL TABS ============
+   Switches between Chart / Coin Overview / Data Trading / News
+   above the main chart area. Only the chart tab actually has
+   real content right now — others are placeholders for next session. */
+function switchChartTab(btn, id){
+    // Hide all chart panel sections
+    document.querySelectorAll('.cp-panel').forEach(p => {
+        p.style.display = 'none';
+        p.classList.remove('active');
+    });
+    // Deactivate all chart tab buttons
+    btn.closest('main').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // Show selected
+    const target = document.getElementById(id);
+    if (target) {
+        target.style.display = 'block';
+        target.classList.add('active');
+    }
     btn.classList.add('active');
 }
 function switchObTab(btn, id){
@@ -5065,12 +5127,50 @@ function enterApp() {
     // Boot the app if not already booted
     if(!_appBooted) {
         _appBooted = true;
-        // Init Chart
+        // Init Chart — upgraded config: symbol search, left toolbar, details panel
         try {
             new TradingView.widget({
-                autosize:true, symbol:"BYBIT:BTCUSDT", interval:"15", theme:"dark",
-                container_id:"tradingview_widget",
-                overrides:{
+                autosize: true,
+                symbol: "BYBIT:BTCUSDT",
+                interval: "15",
+                theme: "dark",
+                container_id: "tradingview_widget",
+                // Enable symbol search (the magnifier icon in chart top bar)
+                symbol_search_request_delay: 500,
+                // Show the left side toolbar with measurement & drawing tools
+                hide_side_toolbar: false,
+                // Show the symbol details panel (price, change, market cap-like info)
+                details: true,
+                // Show the legend with full info
+                hide_legend: false,
+                // Allow user to enable/disable indicators easily
+                allow_symbol_change: true,
+                // Drawing toolbar fully accessible
+                hide_top_toolbar: false,
+                // Saved chart layouts
+                save_image: false,
+                // Enabled features (TradingView UI features that are normally disabled)
+                enabled_features: [
+                    "header_widget",
+                    "symbol_search_hot_key",
+                    "header_symbol_search",
+                    "header_resolutions",
+                    "header_chart_type",
+                    "header_indicators",
+                    "header_settings",
+                    "header_undo_redo",
+                    "header_screenshot",
+                    "header_fullscreen_button",
+                    "left_toolbar",
+                    "side_toolbar_in_fullscreen_mode",
+                    "show_chart_property_page",
+                    "support_multicharts",
+                    "use_localstorage_for_settings"
+                ],
+                disabled_features: [
+                    "go_to_date"
+                ],
+                overrides: {
                     "mainSeriesProperties.candleStyle.upColor":"#44B828",
                     "mainSeriesProperties.candleStyle.downColor":"#FF003F",
                     "mainSeriesProperties.candleStyle.borderUpColor":"#44B828",
