@@ -1975,21 +1975,21 @@
             </div>
             <div id="ob-book" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0;">
-                    <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
-                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
-                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Total(BTC)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);">Price(<span id="ob-h-quote">USDT</span>)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(<span id="ob-h-base1">BTC</span>)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Total(<span id="ob-h-base2">BTC</span>)</span>
                 </div>
                 <div id="ob-asks" style="flex:1;overflow-y:auto;display:flex;flex-direction:column-reverse;min-height:0;"></div>
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:#0f0f0f;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-shrink:0;">
-                    <span class="mono neon-text" style="font-size:12px;font-weight:500;">74,231.70</span>
-                    <span style="font-size:9.5px;color:var(--text-dim);">Spread <span class="mono">0.10</span></span>
+                    <span id="ob-midprice" class="mono neon-text" style="font-size:12px;font-weight:500;">74,231.70</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);">Spread <span id="ob-spread" class="mono">0.10</span></span>
                 </div>
                 <div id="ob-bids" style="flex:1;overflow-y:auto;min-height:0;"></div>
             </div>
             <div id="ob-trades" style="flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0;">
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);">
-                    <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
-                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);">Price(<span id="rt-h-quote">USDT</span>)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(<span id="rt-h-base">BTC</span>)</span>
                     <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Time</span>
                 </div>
                 <div id="recent-trades-list" style="flex:1;overflow-y:auto;min-height:0;"></div>
@@ -3997,9 +3997,67 @@ function startLiveTicker(symbol = 'BTCUSDT') {
         try {
             const d = JSON.parse(e.data);
             if(d.topic && d.data) {
-                const price = parseFloat(d.data.lastPrice || d.data.markPrice || 0);
-                const chg   = parseFloat(d.data.price24hPcnt || 0) * 100;
+                const data = d.data;
+                const price = parseFloat(data.lastPrice || data.markPrice || 0);
+                const chg   = parseFloat(data.price24hPcnt || 0) * 100;
                 if(price > 0) updateTicker(price, chg);
+
+                // Coin bar — Mark, Index, Funding, 24h H, 24h L, Vol, OI
+                const fmtNum = (v, dec=2) => v >= 1000
+                    ? Number(v).toLocaleString('en-US',{minimumFractionDigits:dec, maximumFractionDigits:dec})
+                    : Number(v).toFixed(dec);
+                const fmtCompact = (v) => {
+                    const n = Number(v);
+                    if (!isFinite(n) || n === 0) return '—';
+                    if (n >= 1e9)  return (n/1e9).toFixed(2)+'B';
+                    if (n >= 1e6)  return (n/1e6).toFixed(2)+'M';
+                    if (n >= 1e3)  return (n/1e3).toFixed(2)+'K';
+                    return n.toFixed(2);
+                };
+                const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+                if (data.markPrice !== undefined)   set('coin-bar-mark',    fmtNum(parseFloat(data.markPrice)));
+                if (data.indexPrice !== undefined)  set('coin-bar-index',   fmtNum(parseFloat(data.indexPrice)));
+                if (data.fundingRate !== undefined) set('coin-bar-funding', (parseFloat(data.fundingRate)*100).toFixed(4)+'%');
+                if (data.highPrice24h !== undefined) set('coin-bar-high', fmtNum(parseFloat(data.highPrice24h)));
+                if (data.lowPrice24h !== undefined)  set('coin-bar-low',  fmtNum(parseFloat(data.lowPrice24h)));
+                if (data.turnover24h !== undefined)  set('coin-bar-vol',  '$' + fmtCompact(parseFloat(data.turnover24h)));
+                if (data.openInterest !== undefined) set('coin-bar-oi',   fmtCompact(parseFloat(data.openInterest)));
+
+                // Stats panel — Day's Range slider position + 52WK is approximated from 24h
+                if (data.highPrice24h !== undefined && data.lowPrice24h !== undefined) {
+                    const hi = parseFloat(data.highPrice24h);
+                    const lo = parseFloat(data.lowPrice24h);
+                    set('stats-day-low',  fmtNum(lo));
+                    set('stats-day-high', fmtNum(hi));
+                    const marker = document.getElementById('stats-day-marker');
+                    if (marker && hi > lo) {
+                        const pct = Math.max(0, Math.min(100, ((price - lo) / (hi - lo)) * 100));
+                        marker.style.left = pct.toFixed(1) + '%';
+                    }
+                }
+
+                // Stats panel — Volume, OI, Funding key stats
+                if (data.turnover24h !== undefined) set('stats-volume', '$' + fmtCompact(parseFloat(data.turnover24h)));
+                if (data.openInterest !== undefined) set('stats-oi', fmtCompact(parseFloat(data.openInterest)) + ' ' + (window.MarketContext?.baseAsset || ''));
+                if (data.fundingRate !== undefined) {
+                    const fEl = document.getElementById('stats-funding');
+                    const fr = parseFloat(data.fundingRate)*100;
+                    if (fEl) {
+                        fEl.textContent = (fr >= 0 ? '+' : '') + fr.toFixed(4) + '%';
+                        fEl.style.color = fr >= 0 ? '#4ade80' : '#ff8888';
+                    }
+                }
+
+                // Stats panel — BID/ASK chips from bid1/ask1
+                if (data.bid1Price !== undefined) {
+                    const bidEl = document.getElementById('stats-bid');
+                    if (bidEl) bidEl.textContent = fmtNum(parseFloat(data.bid1Price)) + ' × ' + (parseFloat(data.bid1Size||0)).toFixed(3);
+                }
+                if (data.ask1Price !== undefined) {
+                    const askEl = document.getElementById('stats-ask');
+                    if (askEl) askEl.textContent = fmtNum(parseFloat(data.ask1Price)) + ' × ' + (parseFloat(data.ask1Size||0)).toFixed(3);
+                }
             }
         } catch(err){}
     };
@@ -4014,9 +4072,11 @@ function updateTicker(price, chgPct) {
         : price.toFixed(4);
     const sign = chgPct >= 0 ? '+' : '';
     const color = chgPct >= 0 ? 'var(--neon)' : 'var(--hot-red)';
-    // Desktop ticker
+
+    // Desktop ticker (top-right of coin bar — kept as-is)
     const t = document.getElementById('ticker');
     if(t){ t.textContent = '$' + fmt; t.style.color = color; }
+
     // Mobile price
     const mp = document.getElementById('mob-price');
     if(mp){ mp.textContent = fmt; mp.style.color = color; }
@@ -4028,6 +4088,37 @@ function updateTicker(price, chgPct) {
     // Mobile order book mid price
     const mid = document.getElementById('mob-mid');
     if(mid){ mid.textContent = fmt; }
+
+    // Coin info bar — left price + change %
+    const cbPrice = document.getElementById('coin-bar-price');
+    if(cbPrice){ cbPrice.textContent = '$' + fmt; cbPrice.style.color = color; }
+    const cbChg = document.getElementById('coin-bar-change');
+    if(cbChg){
+        cbChg.textContent = sign + chgPct.toFixed(2) + '%';
+        cbChg.style.color = color;
+    }
+
+    // Order book mid-price strip (between asks and bids)
+    const obMid = document.getElementById('ob-midprice');
+    if(obMid){ obMid.textContent = fmt; }
+
+    // Stats panel — big price + change line
+    const sPrice = document.getElementById('stats-price');
+    if(sPrice){
+        // Split price into integer + decimal for the styled display
+        const intPart = Math.floor(price).toLocaleString('en-US');
+        const decPart = (price - Math.floor(price)).toFixed(2).slice(1); // ".12"
+        sPrice.innerHTML = '<span class="mono">' + intPart + '</span>'
+                         + '<span style="color:rgba(255,255,255,0.55);" class="mono">' + decPart + '</span>'
+                         + ' <span style="font-size:9px;color:rgba(255,255,255,0.5);">USDT</span>';
+    }
+    const sChg = document.getElementById('stats-change');
+    if(sChg){
+        const cName = chgPct >= 0 ? 'var(--neon)' : 'var(--hot-red)';
+        const absDelta = (Math.abs(price * chgPct / 100)).toFixed(1);
+        sChg.innerHTML = '<span style="color:' + cName + ';">' + sign + absDelta + '</span>'
+                       + ' <span style="color:' + cName + ';">' + sign + chgPct.toFixed(2) + '%</span>';
+    }
 }
 
 // ── Live Order Book via Bybit public WebSocket ──────────────
@@ -4070,23 +4161,34 @@ function renderLiveOrderBook() {
     const bidRows = bids.map(([p,s]) => { bidTotal += s; return [p, s, bidTotal]; });
     const maxT = Math.max(askTotal, bidTotal, 0.001);
 
+    // Decide price precision based on the magnitude — BTC needs 2, low-cap alts may need 4-6
+    const samplePrice = (asks[0]?.[0] || bids[0]?.[0] || 0);
+    const priceDec = samplePrice >= 100 ? 2 : samplePrice >= 1 ? 4 : 6;
+
     const elA = document.getElementById('ob-asks');
     const elB = document.getElementById('ob-bids');
     if(elA) elA.innerHTML = askRows.map(([p,q,t]) =>
-        `<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+        `<div class="ob-row ob-ask"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#FF003F;font-size:10.5px;">${p.toFixed(priceDec)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
     ).join('');
     if(elB) elB.innerHTML = bidRows.map(([p,q,t]) =>
-        `<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#44B828;font-size:10.5px;">${p.toFixed(2)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
+        `<div class="ob-row ob-bid"><div class="ob-bar" style="width:${(t/maxT*100).toFixed(0)}%"></div><span class="mono" style="color:#44B828;font-size:10.5px;">${p.toFixed(priceDec)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-mid);">${q.toFixed(3)}</span><span class="mono" style="text-align:right;font-size:10.5px;color:var(--text-dim);">${t.toFixed(3)}</span></div>`
     ).join('');
+
+    // Live spread between best bid and best ask
+    if (asks.length && bids.length) {
+        const spread = asks[0][0] - bids[0][0];
+        const sEl = document.getElementById('ob-spread');
+        if (sEl) sEl.textContent = spread.toFixed(priceDec);
+    }
 
     // Mirror to the mobile order book if present
     const mA = document.getElementById('mob-asks');
     const mB = document.getElementById('mob-bids');
     if(mA) mA.innerHTML = askRows.slice(0,6).map(([p,q]) =>
-        `<div class="mbook-row"><span class="mono" style="color:#FF003F;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
+        `<div class="mbook-row"><span class="mono" style="color:#FF003F;">${p.toFixed(priceDec)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
     ).join('');
     if(mB) mB.innerHTML = bidRows.slice(0,6).map(([p,q]) =>
-        `<div class="mbook-row"><span class="mono" style="color:#44B828;">${p.toFixed(2)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
+        `<div class="mbook-row"><span class="mono" style="color:#44B828;">${p.toFixed(priceDec)}</span><span class="mono" style="color:var(--text-mid);">${q.toFixed(3)}</span></div>`
     ).join('');
 }
 
@@ -5476,6 +5578,49 @@ function enterApp() {
             if (ven) ven.textContent = ctx.exchange.toUpperCase();
         }
         MarketContext.subscribe(updateStatsDivider);
+
+        // ============================================================
+        // Order book column headers — show active base/quote assets
+        // ============================================================
+        function updateOrderBookHeaders(ctx) {
+            const obQ  = document.getElementById('ob-h-quote');
+            const obB1 = document.getElementById('ob-h-base1');
+            const obB2 = document.getElementById('ob-h-base2');
+            const rtQ  = document.getElementById('rt-h-quote');
+            const rtB  = document.getElementById('rt-h-base');
+            if (obQ)  obQ.textContent  = ctx.quoteAsset;
+            if (obB1) obB1.textContent = ctx.baseAsset;
+            if (obB2) obB2.textContent = ctx.baseAsset;
+            if (rtQ)  rtQ.textContent  = ctx.quoteAsset;
+            if (rtB)  rtB.textContent  = ctx.baseAsset;
+        }
+        MarketContext.subscribe(updateOrderBookHeaders);
+
+        // ============================================================
+        // Live data restart — Bybit WebSockets reconnect to new symbol
+        // ============================================================
+        // Stocks (Alpaca etc.) don't have a Bybit order book — skip the
+        // restart for those. Crypto only.
+        function restartLiveDataForSymbol(ctx) {
+            if (ctx.assetClass !== 'crypto') {
+                console.log('[MarketContext] non-crypto symbol — skipping Bybit live data restart');
+                return;
+            }
+            try {
+                if (typeof startLiveTicker     === 'function') startLiveTicker(ctx.symbol);
+                if (typeof startLiveOrderBook  === 'function') startLiveOrderBook(ctx.symbol);
+                if (typeof startLiveTrades     === 'function') startLiveTrades(ctx.symbol);
+            } catch(e) { console.warn('Live data restart:', e); }
+        }
+        MarketContext.subscribe(restartLiveDataForSymbol);
+
+        // ============================================================
+        // Coin info bar — price, change, mark, funding, etc.
+        // ============================================================
+        // The Bybit ticker WS already updates the global `ticker` element via
+        // updateTicker(). We extend that function below to also push the
+        // values into the coin bar IDs and into the stats panel.
+        // (See `updateTicker` enhancement near bottom of MarketContext block.)
 
         // Init Chart — upgraded config: symbol search, left toolbar, details panel
         try {
