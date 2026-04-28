@@ -1904,6 +1904,7 @@
             <div style="flex:1;"></div>
 
             <!-- Coin info (inline, same row as tabs) -->
+            <span id="coin-bar-symbol" style="background:rgba(127,114,221,0.15);color:#9b8be6;font-size:9.5px;padding:2px 7px;border-radius:3px;letter-spacing:0.3px;white-space:nowrap;">BTCUSDT · PERP</span>
             <span id="coin-bar-price" class="mono" style="color:var(--neon);font-size:11.5px;white-space:nowrap;">$74,231.70</span>
             <span id="coin-bar-change" style="color:var(--hot-red);font-size:10px;white-space:nowrap;">-1.64%</span>
             <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Mark <span id="coin-bar-mark" class="mono" style="color:#fff;">74,228.5</span></span>
@@ -5359,9 +5360,126 @@ function enterApp() {
     // Boot the app if not already booted
     if(!_appBooted) {
         _appBooted = true;
+
+        // ============================================================
+        // MarketContext — central source of truth for active symbol
+        // ============================================================
+        // The chart leads. When user picks a symbol on TradingView,
+        // MarketContext.update() fires and all subscribed panels react.
+        // ============================================================
+        window.MarketContext = window.MarketContext || {
+            symbol:       'BTCUSDT',
+            exchange:     'bybit',
+            market:       'futures',     // 'spot' | 'futures' | 'margin'
+            baseAsset:    'BTC',
+            quoteAsset:   'USDT',
+            contractType: 'PERP',        // 'PERP' | 'SPOT' | 'STOCK'
+            assetClass:   'crypto',      // 'crypto' | 'stock'
+            _subscribers: [],
+
+            // Subscribe a panel update function. Called whenever symbol changes.
+            subscribe(fn) {
+                if (typeof fn === 'function') this._subscribers.push(fn);
+            },
+
+            // Parse a TradingView symbol string like "BYBIT:BTCUSDT"
+            // Returns { exchange, ticker } or null if can't parse.
+            parseTV(tvSymbol) {
+                if (!tvSymbol || typeof tvSymbol !== 'string') return null;
+                const parts = tvSymbol.split(':');
+                if (parts.length !== 2) return null;
+                const exchange = parts[0].toLowerCase();
+                const ticker = parts[1].toUpperCase();
+                return { exchange, ticker };
+            },
+
+            // Decode a ticker like "ETHUSDT" into base + quote assets.
+            // Falls back to assuming the last 4 chars are the quote (USDT, USDC).
+            decodeTicker(ticker) {
+                if (!ticker) return { base: '', quote: '' };
+                const t = ticker.toUpperCase();
+                const quotes = ['USDT', 'USDC', 'BUSD', 'USD', 'BTC', 'ETH', 'EUR'];
+                for (const q of quotes) {
+                    if (t.endsWith(q) && t.length > q.length) {
+                        return { base: t.slice(0, -q.length), quote: q };
+                    }
+                }
+                // Fallback: treat as 1-letter asset (probably a stock)
+                return { base: t, quote: 'USD' };
+            },
+
+            // Update state from a TradingView symbol change event
+            update(opts) {
+                if (opts.tvSymbol) {
+                    const parsed = this.parseTV(opts.tvSymbol);
+                    if (parsed) {
+                        this.exchange = parsed.exchange;
+                        this.symbol   = parsed.ticker;
+                        const decoded = this.decodeTicker(parsed.ticker);
+                        this.baseAsset  = decoded.base;
+                        this.quoteAsset = decoded.quote;
+
+                        // Detect asset class — a stock-like ticker has no crypto-quote suffix
+                        const cryptoQuotes = ['USDT','USDC','BUSD','BTC','ETH'];
+                        const isStock = !cryptoQuotes.includes(decoded.quote)
+                                      && !['BYBIT','BINANCE','GATE','OKX','HYPERLIQUID']
+                                          .includes(parsed.exchange.toUpperCase());
+                        this.assetClass   = isStock ? 'stock' : 'crypto';
+                        this.contractType = isStock ? 'STOCK' : 'PERP';
+                    }
+                }
+                if (opts.market) this.market = opts.market;
+
+                // Notify all subscribers
+                this._subscribers.forEach(fn => {
+                    try { fn(this); }
+                    catch(e) { console.warn('MarketContext subscriber error:', e); }
+                });
+            }
+        };
+
+        // ============================================================
+        // Coin info bar updater — first panel wired to MarketContext
+        // ============================================================
+        function updateCoinBar(ctx) {
+            const symbolEl = document.getElementById('coin-bar-symbol');
+            if (symbolEl) {
+                symbolEl.textContent = ctx.symbol + ' · ' + ctx.contractType;
+            }
+            // The price/change/mark/index/funding/etc. values would refresh
+            // here from the appropriate exchange API. For now, the static
+            // placeholder values stay until S1's data wiring sub-task lands.
+            // What works NOW: symbol pill updates immediately on chart change.
+        }
+        MarketContext.subscribe(updateCoinBar);
+
+        // ============================================================
+        // Trading panel symbol pill — second wire, also instant feedback
+        // ============================================================
+        function updateTradingPanelSymbol(ctx) {
+            const pill = document.getElementById('te-symbol-pill');
+            if (pill) {
+                pill.textContent = ctx.symbol + ' · ' + ctx.contractType;
+            }
+        }
+        MarketContext.subscribe(updateTradingPanelSymbol);
+
+        // ============================================================
+        // Stats panel divider — third wire
+        // ============================================================
+        function updateStatsDivider(ctx) {
+            const sym = document.getElementById('stats-divider-symbol');
+            const typ = document.getElementById('stats-divider-type');
+            const ven = document.getElementById('stats-divider-venue');
+            if (sym) sym.textContent = ctx.symbol;
+            if (typ) typ.textContent = ctx.contractType;
+            if (ven) ven.textContent = ctx.exchange.toUpperCase();
+        }
+        MarketContext.subscribe(updateStatsDivider);
+
         // Init Chart — upgraded config: symbol search, left toolbar, details panel
         try {
-            new TradingView.widget({
+            window.tvWidget = new TradingView.widget({
                 autosize: true,
                 symbol: "BYBIT:BTCUSDT",
                 interval: "15",
@@ -5411,6 +5529,21 @@ function enterApp() {
                     "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
                 }
             });
+
+            // Hook TradingView's symbol-change event so chart leads.
+            // This is the core of S1 — chart picks symbol → MarketContext updates → all panels follow.
+            if (window.tvWidget && typeof window.tvWidget.onChartReady === 'function') {
+                window.tvWidget.onChartReady(() => {
+                    try {
+                        const chart = window.tvWidget.activeChart();
+                        chart.onSymbolChanged().subscribe(null, () => {
+                            const tvSym = chart.symbol();
+                            console.log('[MarketContext] chart symbol changed →', tvSym);
+                            MarketContext.update({ tvSymbol: tvSym });
+                        });
+                    } catch(e) { console.warn('TV symbol-change hook:', e); }
+                });
+            }
         } catch(e){ console.warn('TV widget:', e); }
         renderOrderBook();
         renderRecentTrades();
