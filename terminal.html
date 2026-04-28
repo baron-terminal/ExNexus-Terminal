@@ -1904,7 +1904,10 @@
             <div style="flex:1;"></div>
 
             <!-- Coin info (inline, same row as tabs) -->
-            <span id="coin-bar-symbol" style="background:rgba(127,114,221,0.15);color:#9b8be6;font-size:9.5px;padding:2px 7px;border-radius:3px;letter-spacing:0.3px;white-space:nowrap;">BTCUSDT · PERP</span>
+            <button id="coin-bar-symbol" onclick="toggleSymbolSearch()" style="background:rgba(127,114,221,0.15);color:#9b8be6;font-size:9.5px;padding:3px 9px;border-radius:3px;letter-spacing:0.3px;white-space:nowrap;border:1px solid rgba(127,114,221,0.35);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span id="coin-bar-symbol-text">BTCUSDT · PERP</span>
+            </button>
             <span id="coin-bar-price" class="mono" style="color:var(--neon);font-size:11.5px;white-space:nowrap;">$74,231.70</span>
             <span id="coin-bar-change" style="color:var(--hot-red);font-size:10px;white-space:nowrap;">-1.64%</span>
             <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Mark <span id="coin-bar-mark" class="mono" style="color:#fff;">74,228.5</span></span>
@@ -1924,6 +1927,19 @@
             <span id="exchange-status" style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;text-transform:uppercase;white-space:nowrap;">Connected</span>
         </div>
         <div style="flex:1;position:relative;overflow:hidden;">
+            <!-- SYMBOL SEARCH POPUP — shows when coin-bar-symbol is clicked -->
+            <div id="symbol-search-popup" style="display:none;position:absolute;top:8px;right:12px;width:300px;max-height:440px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.15);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.6);z-index:1000;overflow:hidden;flex-direction:column;">
+                <div style="padding:10px;border-bottom:1px solid var(--border);">
+                    <input id="symbol-search-input" type="text" placeholder="Search symbol (e.g. ETH, SOL, AAPL)…" oninput="onSymbolSearchInput(this.value)" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:12px;padding:7px 10px;border-radius:4px;outline:none;">
+                </div>
+                <div style="display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.3);">
+                    <button id="ss-tab-popular" onclick="setSymbolFilter('popular')" class="ss-tab-active" style="flex:1;background:transparent;border:none;color:#fff;font-size:10px;padding:6px 0;cursor:pointer;border-bottom:2px solid var(--neon);">Popular</button>
+                    <button id="ss-tab-all" onclick="setSymbolFilter('all')" style="flex:1;background:transparent;border:none;color:rgba(255,255,255,0.55);font-size:10px;padding:6px 0;cursor:pointer;border-bottom:2px solid transparent;">All Crypto</button>
+                    <button id="ss-tab-stocks" onclick="setSymbolFilter('stocks')" style="flex:1;background:transparent;border:none;color:rgba(255,255,255,0.55);font-size:10px;padding:6px 0;cursor:pointer;border-bottom:2px solid transparent;">Stocks</button>
+                </div>
+                <div id="symbol-search-results" style="flex:1;overflow-y:auto;max-height:340px;padding:4px 0;"></div>
+            </div>
+
             <div id="cp-chart" class="cp-panel active" style="position:absolute;inset:0;display:block;">
                 <div id="tradingview_widget" class="w-full h-full"></div>
             </div>
@@ -5544,7 +5560,7 @@ function enterApp() {
         // Coin info bar updater — first panel wired to MarketContext
         // ============================================================
         function updateCoinBar(ctx) {
-            const symbolEl = document.getElementById('coin-bar-symbol');
+            const symbolEl = document.getElementById('coin-bar-symbol-text');
             if (symbolEl) {
                 symbolEl.textContent = ctx.symbol + ' · ' + ctx.contractType;
             }
@@ -5675,20 +5691,11 @@ function enterApp() {
                 }
             });
 
-            // Hook TradingView's symbol-change event so chart leads.
-            // This is the core of S1 — chart picks symbol → MarketContext updates → all panels follow.
-            if (window.tvWidget && typeof window.tvWidget.onChartReady === 'function') {
-                window.tvWidget.onChartReady(() => {
-                    try {
-                        const chart = window.tvWidget.activeChart();
-                        chart.onSymbolChanged().subscribe(null, () => {
-                            const tvSym = chart.symbol();
-                            console.log('[MarketContext] chart symbol changed →', tvSym);
-                            MarketContext.update({ tvSymbol: tvSym });
-                        });
-                    } catch(e) { console.warn('TV symbol-change hook:', e); }
-                });
-            }
+            // NOTE: tv.js (free embed widget) does NOT expose onChartReady() or
+            // activeChart().onSymbolChanged() — those are paid Charting Library APIs.
+            // Instead, OUR search popup owns the symbol. The user clicks our search,
+            // chooseSymbol() updates MarketContext, then rebuildTradingViewWidget()
+            // recreates the chart with the new symbol. Chart is a slave to the search.
         } catch(e){ console.warn('TV widget:', e); }
         renderOrderBook();
         renderRecentTrades();
@@ -9439,6 +9446,181 @@ const TE = {
     exchange: 'bybit',        // currently selected exchange (when single)
     side: 'long',             // for risk calc
 };
+
+// ============================================================
+// SYMBOL SEARCH POPUP — clicking the symbol pill opens this
+// ============================================================
+window._popularSymbols = [
+    // Most-traded crypto perps + spot (Bybit-supported)
+    { sym: 'BTCUSDT',  name: 'Bitcoin',     cls: 'crypto' },
+    { sym: 'ETHUSDT',  name: 'Ethereum',    cls: 'crypto' },
+    { sym: 'SOLUSDT',  name: 'Solana',      cls: 'crypto' },
+    { sym: 'XRPUSDT',  name: 'XRP',         cls: 'crypto' },
+    { sym: 'BNBUSDT',  name: 'BNB',         cls: 'crypto' },
+    { sym: 'ADAUSDT',  name: 'Cardano',     cls: 'crypto' },
+    { sym: 'DOGEUSDT', name: 'Dogecoin',    cls: 'crypto' },
+    { sym: 'AVAXUSDT', name: 'Avalanche',   cls: 'crypto' },
+    { sym: 'LINKUSDT', name: 'Chainlink',   cls: 'crypto' },
+    { sym: 'MATICUSDT',name: 'Polygon',     cls: 'crypto' },
+    { sym: 'DOTUSDT',  name: 'Polkadot',    cls: 'crypto' },
+    { sym: 'TRXUSDT',  name: 'TRON',        cls: 'crypto' },
+    { sym: 'PEPEUSDT', name: 'Pepe',        cls: 'crypto' },
+    { sym: 'SHIBUSDT', name: 'Shiba Inu',   cls: 'crypto' },
+    { sym: 'LTCUSDT',  name: 'Litecoin',    cls: 'crypto' },
+];
+window._popularStocks = [
+    { sym: 'AAPL',  name: 'Apple',         cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'TSLA',  name: 'Tesla',         cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'MSFT',  name: 'Microsoft',     cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'NVDA',  name: 'NVIDIA',        cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'GOOGL', name: 'Alphabet',      cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'META',  name: 'Meta',          cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'AMZN',  name: 'Amazon',        cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'NFLX',  name: 'Netflix',       cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'AMD',   name: 'AMD',           cls: 'stock', tvPrefix: 'NASDAQ:' },
+    { sym: 'COIN',  name: 'Coinbase',      cls: 'stock', tvPrefix: 'NASDAQ:' },
+];
+window._currentSymbolFilter = 'popular';
+window._symbolSearchQuery = '';
+
+function toggleSymbolSearch() {
+    const popup = document.getElementById('symbol-search-popup');
+    if (!popup) return;
+    const isOpen = popup.style.display === 'flex';
+    if (isOpen) {
+        popup.style.display = 'none';
+    } else {
+        popup.style.display = 'flex';
+        renderSymbolSearchResults();
+        const inp = document.getElementById('symbol-search-input');
+        if (inp) { inp.value = ''; inp.focus(); }
+        window._symbolSearchQuery = '';
+    }
+}
+
+// Close popup if user clicks anywhere outside it
+document.addEventListener('click', (e) => {
+    const popup = document.getElementById('symbol-search-popup');
+    const trigger = document.getElementById('coin-bar-symbol');
+    if (!popup || popup.style.display !== 'flex') return;
+    if (popup.contains(e.target) || (trigger && trigger.contains(e.target))) return;
+    popup.style.display = 'none';
+});
+
+function setSymbolFilter(filter) {
+    window._currentSymbolFilter = filter;
+    ['popular','all','stocks'].forEach(f => {
+        const t = document.getElementById('ss-tab-'+f);
+        if (!t) return;
+        if (f === filter) {
+            t.style.color = '#fff';
+            t.style.borderBottomColor = 'var(--neon)';
+        } else {
+            t.style.color = 'rgba(255,255,255,0.55)';
+            t.style.borderBottomColor = 'transparent';
+        }
+    });
+    renderSymbolSearchResults();
+}
+
+function onSymbolSearchInput(value) {
+    window._symbolSearchQuery = (value || '').trim().toUpperCase();
+    renderSymbolSearchResults();
+}
+
+function renderSymbolSearchResults() {
+    const list = document.getElementById('symbol-search-results');
+    if (!list) return;
+    const q = window._symbolSearchQuery;
+    const filter = window._currentSymbolFilter;
+
+    let pool = [];
+    if (filter === 'popular')      pool = [...window._popularSymbols, ...window._popularStocks];
+    else if (filter === 'all')     pool = window._popularSymbols; // TODO: full Bybit list via REST
+    else if (filter === 'stocks')  pool = window._popularStocks;
+
+    const filtered = q
+        ? pool.filter(s => s.sym.includes(q) || s.name.toUpperCase().includes(q))
+        : pool;
+
+    if (filtered.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:24px 8px;font-size:11px;">No symbols match "' + q + '"</div>';
+        return;
+    }
+
+    list.innerHTML = filtered.map(s => {
+        const tvSym = s.tvPrefix ? (s.tvPrefix + s.sym) : ('BYBIT:' + s.sym);
+        const badge = s.cls === 'stock'
+            ? '<span style="background:rgba(127,114,221,0.15);color:#9b8be6;font-size:8px;padding:1px 5px;border-radius:2px;letter-spacing:0.3px;">STOCK</span>'
+            : '<span style="background:rgba(0,200,83,0.12);color:#4ade80;font-size:8px;padding:1px 5px;border-radius:2px;letter-spacing:0.3px;">PERP</span>';
+        return '<div onclick="chooseSymbol(\''+tvSym+'\')" style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid rgba(255,255,255,0.04);" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">'
+            + '<div style="flex:1;">'
+            +   '<div style="font-size:11px;color:#fff;">'+s.sym+'</div>'
+            +   '<div style="font-size:9.5px;color:rgba(255,255,255,0.5);">'+s.name+'</div>'
+            + '</div>'
+            + badge
+            + '</div>';
+    }).join('');
+}
+
+// ============================================================
+// chooseSymbol — the ONE function that reroutes everything.
+// Updates MarketContext, recreates TradingView widget for the new symbol.
+// ============================================================
+function chooseSymbol(tvSymbol) {
+    // 1) Update MarketContext — fires all subscribers (panels, headers, live data)
+    if (window.MarketContext) {
+        MarketContext.update({ tvSymbol: tvSymbol });
+    }
+    // 2) Tell TradingView to display this symbol.
+    //    The free tv.js embed widget has no setSymbol() — we recreate the widget.
+    rebuildTradingViewWidget(tvSymbol);
+    // 3) Close the search popup
+    const popup = document.getElementById('symbol-search-popup');
+    if (popup) popup.style.display = 'none';
+    // 4) Persist user's choice
+    try { localStorage.setItem('exnexus_active_symbol', tvSymbol); } catch(_){}
+}
+
+// Rebuild the TradingView widget with a new symbol
+function rebuildTradingViewWidget(tvSymbol) {
+    const container = document.getElementById('tradingview_widget');
+    if (!container) return;
+    // Clear the old widget's DOM
+    container.innerHTML = '';
+    try {
+        window.tvWidget = new TradingView.widget({
+            autosize: true,
+            symbol: tvSymbol,
+            interval: "15",
+            theme: "dark",
+            container_id: "tradingview_widget",
+            symbol_search_request_delay: 500,
+            hide_side_toolbar: false,
+            details: false,
+            hide_legend: false,
+            allow_symbol_change: true,
+            hide_top_toolbar: false,
+            save_image: false,
+            enabled_features: [
+                "header_widget","symbol_search_hot_key","header_symbol_search",
+                "header_resolutions","header_chart_type","header_indicators",
+                "header_settings","header_undo_redo","header_screenshot",
+                "header_fullscreen_button","left_toolbar","side_toolbar_in_fullscreen_mode",
+                "show_chart_property_page","support_multicharts","use_localstorage_for_settings"
+            ],
+            disabled_features: ["go_to_date"],
+            overrides: {
+                "mainSeriesProperties.candleStyle.upColor":"#44B828",
+                "mainSeriesProperties.candleStyle.downColor":"#FF003F",
+                "mainSeriesProperties.candleStyle.borderUpColor":"#44B828",
+                "mainSeriesProperties.candleStyle.borderDownColor":"#FF003F",
+                "mainSeriesProperties.candleStyle.wickUpColor":"#44B828",
+                "mainSeriesProperties.candleStyle.wickDownColor":"#FF003F"
+            }
+        });
+    } catch(e) { console.warn('TV widget rebuild:', e); }
+}
 
 function setTradeMode(mode) {
     TE.mode = mode;
