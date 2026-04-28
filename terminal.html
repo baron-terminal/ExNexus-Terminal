@@ -32,7 +32,7 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        :root{ --bottom-h: 440px; } /* Bottom panel height — JS updates from localStorage on load */
+        :root{ --bottom-h: 600px; } /* Bottom panel height — JS updates from localStorage on load */
         .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px calc(100vh - var(--bottom-h) - 60px) var(--bottom-h);min-height:100vh;gap:3px;padding:3px;}
 
         /* Resize handle — sits at the top edge of bottom panel */
@@ -2920,8 +2920,8 @@ function initBottomResize() {
 
     // Double-click handle = reset to default
     handle.addEventListener('dblclick', () => {
-        applyBottomHeight(440);
-        try { localStorage.setItem(BOTTOM_H_KEY, '440'); } catch(e) {}
+        applyBottomHeight(600);
+        try { localStorage.setItem(BOTTOM_H_KEY, '600'); } catch(e) {}
     });
 }
 
