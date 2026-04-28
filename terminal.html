@@ -33,7 +33,7 @@
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
         :root{ --bottom-h: 600px; } /* Default bottom panel height — auto/expandable */
-        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:700px auto;min-height:auto;gap:3px;padding:3px;}
+        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:32px 700px auto;min-height:auto;gap:3px;padding:3px;}
 
         /* Resize handle — sits at the top edge of bottom panel */
         #bottom-resize-handle{
@@ -1775,6 +1775,17 @@
 
 <div class="app-container">
 
+    <!-- LOGO STRIP (row 1) -->
+    <header class="glass flex items-center" style="grid-column:1/-1;grid-row:1;padding:0 12px;gap:10px;">
+        <!-- EN logo + ExNexus wordmark (left) -->
+        <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:22px;height:22px;background:#000;border:1.5px solid var(--neon);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--neon);font-size:10.5px;font-weight:600;letter-spacing:-0.5px;font-family:'JetBrains Mono',monospace;" title="ExNexus">EN</div>
+            <span style="color:#fff;font-size:13px;letter-spacing:0.3px;">ExNexus</span>
+        </div>
+        <!-- Right side reserved for website nav (Home/Features/Security/Pricing/Login) when terminal is embedded -->
+        <div style="flex:1;"></div>
+    </header>
+
     <!-- HEADER -->
 
     <!-- LEFT NAV -->
@@ -1812,10 +1823,7 @@
     <button class="demo-reset-btn" onclick="resetDemoAccount()">↺ Reset to $10,000</button>
 </div>
 
-<nav class="glass flex flex-col items-center py-4 gap-2" style="grid-column:1;grid-row:1;">
-        <!-- EN LOGO -->
-        <div style="width:30px;height:30px;background:#000;border:1.5px solid var(--neon);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--neon);font-size:13px;font-weight:600;letter-spacing:-0.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;" title="ExNexus">EN</div>
-        <div style="width:22px;height:1px;background:var(--border);margin:4px 0;"></div>
+<nav class="glass flex flex-col items-center py-4 gap-2" style="grid-column:1;grid-row:2;">
         <div style="color:var(--text-dim);cursor:pointer;padding:8px;" class="hover:text-white transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </div>
@@ -1854,7 +1862,7 @@
     </nav>
 
     <!-- BOTTOM NAV — aligned with Total Portfolio (row 3, col 1) -->
-    <nav class="glass flex flex-col items-center gap-2" style="grid-column:1;grid-row:2;padding:40px 0 16px 0;">
+    <nav class="glass flex flex-col items-center gap-2" style="grid-column:1;grid-row:3;padding:40px 0 16px 0;">
         <!-- Performance -->
         <div class="nav-item" id="nav-performance" style="cursor:pointer;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -1883,33 +1891,36 @@
 
 
     <!-- CHART -->
-    <main id="main-chart" class="glass overflow-hidden relative" style="display:flex;flex-direction:column;">
-        <!-- Coin Info Bar (replaces the old top header) -->
-        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding:0 14px;height:36px;gap:14px;flex-shrink:0;background:rgba(0,0,0,0.3);">
-            <!-- LEFT: symbol + price + key stats -->
-            <div style="display:flex;align-items:center;gap:14px;font-size:11px;flex-wrap:wrap;">
-                <span id="coin-bar-symbol" style="color:#fff;font-size:13px;letter-spacing:0.3px;">BTCUSDT · PERP</span>
-                <span id="coin-bar-price" class="mono" style="color:var(--neon);font-size:13px;">$74,231.70</span>
-                <span id="coin-bar-change" style="color:var(--hot-red);font-size:10.5px;">-1.64%</span>
-                <span style="color:rgba(255,255,255,0.55);font-size:9px;letter-spacing:0.4px;text-transform:uppercase;">·</span>
-                <span style="color:rgba(255,255,255,0.55);font-size:10px;">Mark <span id="coin-bar-mark" class="mono" style="color:#fff;">74,228.5</span></span>
-                <span style="color:rgba(255,255,255,0.55);font-size:10px;">Index <span id="coin-bar-index" class="mono" style="color:#fff;">74,222.1</span></span>
-                <span style="color:rgba(255,255,255,0.55);font-size:10px;">Funding <span id="coin-bar-funding" class="mono" style="color:#fff;">-0.0039%</span></span>
-                <span style="color:rgba(255,255,255,0.55);font-size:10px;">24h Vol <span id="coin-bar-vol" class="mono" style="color:#fff;">4.40B</span></span>
-            </div>
-            <!-- RIGHT: portfolio total + status -->
-            <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
-                <span style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;text-transform:uppercase;">Portfolio</span>
-                <span id="ticker" class="mono" style="color:var(--neon);font-size:13px;">$74,231.70</span>
-                <span id="exchange-status" style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;text-transform:uppercase;">Connected</span>
-            </div>
-        </div>
-        <!-- Chart Panel Tabs -->
-        <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:32px;gap:4px;flex-shrink:0;background:rgba(0,0,0,0.2);">
+    <main id="main-chart" class="glass overflow-hidden relative" style="grid-row:2;display:flex;flex-direction:column;">
+        <!-- Combined tabs + coin info row (one strip, like Gate's layout) -->
+        <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:32px;gap:14px;flex-shrink:0;background:rgba(0,0,0,0.25);overflow-x:auto;overflow-y:hidden;">
+            <!-- Chart panel tabs (left) -->
             <button class="tab-btn active" onclick="switchChartTab(this,'cp-chart')">Chart</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Coin Overview</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-data')">Data Trading</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-news')">News</button>
+
+            <!-- Spacer pushes the rest to the right -->
+            <div style="flex:1;"></div>
+
+            <!-- Coin info (inline, same row as tabs) -->
+            <span id="coin-bar-price" class="mono" style="color:var(--neon);font-size:11.5px;white-space:nowrap;">$74,231.70</span>
+            <span id="coin-bar-change" style="color:var(--hot-red);font-size:10px;white-space:nowrap;">-1.64%</span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Mark <span id="coin-bar-mark" class="mono" style="color:#fff;">74,228.5</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Index <span id="coin-bar-index" class="mono" style="color:#fff;">74,222.1</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Funding <span id="coin-bar-funding" class="mono" style="color:#fff;">-0.0039%</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">24h H <span id="coin-bar-high" class="mono" style="color:#fff;">77,480</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">24h L <span id="coin-bar-low" class="mono" style="color:#fff;">75,640</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">Vol <span id="coin-bar-vol" class="mono" style="color:#fff;">4.07B</span></span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;">OI <span id="coin-bar-oi" class="mono" style="color:#fff;">62K</span></span>
+
+            <!-- Divider -->
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+
+            <!-- Portfolio total (right) -->
+            <span style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;text-transform:uppercase;white-space:nowrap;">Portfolio</span>
+            <span id="ticker" class="mono" style="color:var(--neon);font-size:11.5px;white-space:nowrap;">$74,231.70</span>
+            <span id="exchange-status" style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;text-transform:uppercase;white-space:nowrap;">Connected</span>
         </div>
         <div style="flex:1;position:relative;overflow:hidden;">
             <div id="cp-chart" class="cp-panel active" style="position:absolute;inset:0;display:block;">
@@ -1949,7 +1960,7 @@
     </main>
 
     <!-- ORDER BOOK -->
-    <aside id="aside-orderbook" class="glass flex flex-col overflow-hidden">
+    <aside id="aside-orderbook" class="glass flex flex-col overflow-hidden" style="grid-row:2;">
         <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;align-items:center;">
             <button class="tab-btn active" onclick="switchObTab(this,'ob-book')">Order Book</button>
             <button class="tab-btn" onclick="switchObTab(this,'ob-trades')">Recent Trades</button>
@@ -1983,7 +1994,7 @@
     </aside>
 
     <!-- ORDER ENTRY -->
-    <aside id="aside-orderentry" class="glass flex flex-col" style="padding:10px;overflow-y:auto;">
+    <aside id="aside-orderentry" class="glass flex flex-col" style="grid-row:2;padding:10px;overflow-y:auto;">
 
         <!-- MANUAL / AUTOMATION MODE -->
         <div style="display:flex;gap:3px;padding:3px;background:rgba(255,255,255,0.04);border-radius:4px;margin-bottom:8px;">
@@ -2173,7 +2184,7 @@
     </aside>
 
     <!-- BOTTOM TABS -->
-    <section id="bottom-section" class="col-span-3 glass flex flex-col" style="min-height:var(--bottom-h);">
+    <section id="bottom-section" class="col-span-3 glass flex flex-col" style="grid-row:3;min-height:var(--bottom-h);">
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions()">Positions</button>
