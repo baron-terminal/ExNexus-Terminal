@@ -32,8 +32,8 @@
         .mono{font-family:'JetBrains Mono',monospace;}
         .glass{background:#0a0a0a;border:1px solid var(--border);}
         .neon-text{color:var(--neon);}
-        :root{ --bottom-h: 480px; } /* Bottom panel height — user can drag to resize, persists in localStorage */
-        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px calc(100vh - var(--bottom-h) - 60px) var(--bottom-h);min-height:100vh;gap:3px;padding:3px;}
+        :root{ --bottom-h: 600px; } /* Default bottom panel height — auto/expandable */
+        .app-container{display:grid;grid-template-columns:44px 1fr 280px 280px;grid-template-rows:38px 700px auto;min-height:auto;gap:3px;padding:3px;}
 
         /* Resize handle — sits at the top edge of bottom panel */
         #bottom-resize-handle{
@@ -2163,8 +2163,7 @@
     </aside>
 
     <!-- BOTTOM TABS -->
-    <section id="bottom-section" class="col-span-3 glass flex flex-col overflow-hidden">
-        <div id="bottom-resize-handle" title="Drag to resize panel"></div>
+    <section id="bottom-section" class="col-span-3 glass flex flex-col" style="min-height:var(--bottom-h);">
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions()">Positions</button>
@@ -2881,48 +2880,9 @@ window.addEventListener('resize', () => {
 
 // Wire the drag handle (after DOM is ready)
 function initBottomResize() {
-    const handle = document.getElementById('bottom-resize-handle');
-    if (!handle) return;
-
-    let dragging = false;
-    let startY = 0;
-    let startH = 0;
-
-    handle.addEventListener('mousedown', (e) => {
-        // Don't allow resize while in maximized state
-        if (document.querySelector('.app-container')?.classList.contains('bottom-maxed')) return;
-        dragging = true;
-        startY = e.clientY;
-        startH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-h') || '440', 10);
-        handle.classList.add('dragging');
-        document.body.classList.add('bottom-resizing');
-        e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!dragging) return;
-        // Dragging UP = bigger panel, DOWN = smaller (since panel is anchored at bottom)
-        const newH = startH + (startY - e.clientY);
-        applyBottomHeight(newH);
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (!dragging) return;
-        dragging = false;
-        handle.classList.remove('dragging');
-        document.body.classList.remove('bottom-resizing');
-        // Persist final height
-        try {
-            const cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-h') || '440', 10);
-            localStorage.setItem(BOTTOM_H_KEY, String(cur));
-        } catch(e) { /* ignore */ }
-    });
-
-    // Double-click handle = reset to default
-    handle.addEventListener('dblclick', () => {
-        applyBottomHeight(480);
-        try { localStorage.setItem(BOTTOM_H_KEY, '480'); } catch(e) {}
-    });
+    // Resize handle has been removed — bottom panel now grows naturally with content.
+    // Function kept as a no-op so existing init calls don't error.
+    return;
 }
 
 if (document.readyState === 'loading') {
