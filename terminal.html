@@ -1996,57 +1996,76 @@
     <!-- ORDER ENTRY -->
     <aside id="aside-orderentry" class="glass flex flex-col" style="grid-row:2;padding:10px;overflow-y:auto;">
 
-        <!-- MANUAL / AUTOMATION MODE -->
-        <div style="display:flex;gap:3px;padding:3px;background:rgba(255,255,255,0.04);border-radius:4px;margin-bottom:8px;">
-            <button id="mode-manual" class="mode-toggle active" onclick="setTradeMode('manual')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:5px 4px;border-radius:3px;font-size:10.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                Manual
-            </button>
-            <button id="mode-auto" class="mode-toggle" onclick="setTradeMode('auto')" style="flex:1;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.55);padding:5px 4px;border-radius:3px;font-size:10.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
-                Auto · AI Scout
-            </button>
+        <!-- TRADING MODE: Manual / Semi-Auto / Auto-Pilot -->
+        <div style="display:flex;gap:2px;padding:2px;background:rgba(255,255,255,0.04);border-radius:4px;margin-bottom:8px;">
+            <button id="mode-manual" class="mode-toggle active" onclick="setTradeMode('manual')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:5px 0;border-radius:3px;font-size:9.5px;cursor:pointer;text-align:center;white-space:nowrap;">Manual</button>
+            <button id="mode-semi" class="mode-toggle" onclick="setTradeMode('semi')" style="flex:1;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.55);padding:5px 0;border-radius:3px;font-size:9.5px;cursor:pointer;text-align:center;white-space:nowrap;">Semi-Auto</button>
+            <button id="mode-autopilot" class="mode-toggle" onclick="setTradeMode('autopilot')" style="flex:1;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.55);padding:5px 0;border-radius:3px;font-size:9.5px;cursor:pointer;text-align:center;white-space:nowrap;">Auto-Pilot</button>
+        </div>
+        <div id="te-mode-hint" style="font-size:8.5px;color:rgba(255,255,255,0.4);text-align:center;margin-bottom:8px;line-height:1.3;">You decide and execute every trade</div>
+
+        <!-- SEMI-AUTO: AI suggestion card (hidden in Manual; shown in Semi-Auto) -->
+        <div id="te-suggestion-card" style="display:none;background:rgba(127,114,221,0.06);border:1px solid rgba(127,114,221,0.3);border-radius:4px;padding:8px 9px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:9px;color:#9b8be6;letter-spacing:0.4px;">AI SUGGESTION</span>
+                <span style="font-size:9px;color:rgba(255,255,255,0.55);">Confidence <span style="color:#9b8be6;">73%</span></span>
+            </div>
+            <div style="font-size:10px;color:#fff;margin-bottom:4px;">Long BTC at <span class="mono">$74,200</span></div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-bottom:6px;">via <span style="color:#9b8be6;">Trend Bot</span> · size 0.05 BTC</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.55);line-height:1.4;margin-bottom:7px;">RSI oversold + volume spike + funding negative</div>
+            <div style="display:flex;gap:4px;">
+                <button onclick="approveSuggestion()" style="flex:2;background:rgba(127,114,221,0.85);color:#fff;border:none;padding:6px 0;border-radius:3px;font-size:10px;cursor:pointer;">Approve</button>
+                <button onclick="modifySuggestion()" style="flex:1;background:transparent;color:rgba(255,255,255,0.7);border:1px solid var(--border);padding:6px 0;border-radius:3px;font-size:10px;cursor:pointer;">Modify</button>
+                <button onclick="skipSuggestion()" style="flex:1;background:transparent;color:rgba(255,255,255,0.55);border:1px solid var(--border);padding:6px 0;border-radius:3px;font-size:10px;cursor:pointer;">Skip</button>
+            </div>
         </div>
 
-        <!-- SPOT / FUTURES / MARGIN -->
-        <div style="display:flex;gap:3px;margin-bottom:8px;">
+        <!-- AUTO-PILOT: Coming-soon notice (hidden unless Auto-Pilot tab selected) -->
+        <div id="te-autopilot-notice" style="display:none;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.3);border-radius:4px;padding:9px 9px;margin-bottom:8px;">
+            <div style="font-size:9px;color:#f5a623;letter-spacing:0.4px;margin-bottom:4px;">AUTO-PILOT — COMING SOON</div>
+            <div style="font-size:9.5px;color:rgba(255,255,255,0.85);line-height:1.4;margin-bottom:6px;">Hands-free trading 24/7 within rules you set.</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.55);line-height:1.4;">Requires Semi-Auto graduation: prove Scout's track record on your account first, then enable Auto-Pilot.</div>
+        </div>
+
+        <!-- MARKET TYPE: Spot / Futures / Margin -->
+        <div style="display:flex;gap:2px;margin-bottom:8px;">
+            <button id="market-spot" class="market-btn" onclick="setMarket('spot')" style="flex:1;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.55);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Spot</button>
             <button id="market-futures" class="market-btn active" onclick="setMarket('futures')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Futures</button>
-            <button id="market-spot" class="market-btn" onclick="setMarket('spot')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Spot</button>
-            <button id="market-margin" class="market-btn" onclick="setMarket('margin')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Margin</button>
+            <button id="market-margin" class="market-btn" onclick="setMarket('margin')" style="flex:1;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.55);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Margin</button>
         </div>
 
         <!-- SYMBOL + MARK PRICE -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:4px;">
-            <span id="te-symbol-pill" style="background:rgba(255,255,255,0.08);color:#fff;font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:0.4px;">BTCUSDT · PERP</span>
-            <span style="font-size:9px;color:var(--text-dim);">Mark: <span id="te-mark-price" class="mono" style="color:var(--text-mid);">—</span></span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:6px 9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:4px;">
+            <span id="te-symbol-pill" style="color:#fff;font-size:10px;letter-spacing:0.3px;">BTCUSDT · PERP</span>
+            <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Mark <span id="te-mark-price" class="mono" style="color:#fff;">—</span></span>
         </div>
 
         <!-- EXCHANGE ROUTING -->
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:4px;padding:7px 8px;margin-bottom:8px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:4px;padding:8px 9px;margin-bottom:8px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <span style="font-size:9px;color:var(--text-dim);letter-spacing:0.3px;">EXCHANGE ROUTING</span>
+                <span style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;">EXCHANGE ROUTING</span>
                 <span style="font-size:9px;color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2);" onclick="alert('Configure routing — coming soon')">Configure</span>
             </div>
-            <div style="display:flex;gap:3px;margin-bottom:6px;">
-                <button id="route-best" class="route-btn active" onclick="setRouting('best')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Best Price</button>
-                <button id="route-single" class="route-btn" onclick="setRouting('single')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-mid);font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Single</button>
-                <button id="route-split" class="route-btn" onclick="setRouting('split')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-mid);font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Split</button>
+            <div style="display:flex;gap:2px;margin-bottom:6px;">
+                <button id="route-best" class="route-btn active" onclick="setRouting('best')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:9.5px;padding:4px 0;border-radius:3px;cursor:pointer;">Best Price</button>
+                <button id="route-single" class="route-btn" onclick="setRouting('single')" style="flex:1;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.55);font-size:9.5px;padding:4px 0;border-radius:3px;cursor:pointer;">Single</button>
+                <button id="route-split" class="route-btn" onclick="setRouting('split')" style="flex:1;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.55);font-size:9.5px;padding:4px 0;border-radius:3px;cursor:pointer;">Split</button>
             </div>
             <div id="te-routing-table" style="display:flex;flex-direction:column;gap:3px;font-size:9px;">
-                <div style="text-align:center;color:var(--text-dim);padding:6px 0;font-style:italic;">Connect exchanges to see routing</div>
+                <div style="text-align:center;color:rgba(255,255,255,0.4);padding:6px 0;font-style:italic;">Connect exchanges to see routing</div>
             </div>
         </div>
 
-        <!-- MARGIN MODE + LEVERAGE -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
-            <select id="te-margin-mode" onchange="onMarginModeChange()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-bright);font-size:10px;padding:5px 7px;border-radius:3px;cursor:pointer;">
+        <!-- MARGIN MODE + LEVERAGE — both same height (28px) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;height:28px;">
+            <select id="te-margin-mode" onchange="onMarginModeChange()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;font-size:10px;padding:0 8px;border-radius:3px;cursor:pointer;height:100%;">
                 <option value="isolated">Isolated</option>
                 <option value="cross">Cross</option>
             </select>
-            <div style="display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:0 7px;border-radius:3px;">
-                <span style="font-size:9.5px;color:var(--text-dim);">Lev</span>
-                <input id="te-leverage" type="text" value="10" oninput="onLeverageChange()" style="flex:1;background:transparent;border:none;color:var(--text-bright);font-size:10px;outline:none;width:100%;padding:5px 0;text-align:right;">
-                <span style="font-size:9.5px;color:var(--text-dim);">x</span>
+            <div style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:0 8px;border-radius:3px;height:100%;">
+                <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Lev</span>
+                <input id="te-leverage" type="text" value="10" oninput="onLeverageChange()" style="flex:1;background:transparent;border:none;color:#fff;font-size:10px;outline:none;width:100%;text-align:right;">
+                <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">x</span>
             </div>
         </div>
 
@@ -2060,94 +2079,75 @@
 
         <!-- AVAILABLE -->
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-            <span style="font-size:9.5px;color:var(--text-dim);">Available</span>
+            <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Available</span>
             <span id="order-avail" style="font-size:10.5px;color:#fff;">—</span>
         </div>
 
         <!-- PRICE -->
         <div style="margin-bottom:7px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-                <span style="font-size:9.5px;color:var(--text-dim);">Price (USDT)</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Price (USDT)</span>
                 <div style="display:flex;gap:3px;">
-                    <button onclick="fillPriceFromLast()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:1px 5px;border-radius:3px;cursor:pointer;">Last</button>
-                    <button onclick="fillPriceFromBBO()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:1px 5px;border-radius:3px;cursor:pointer;">BBO</button>
+                    <button onclick="fillPriceFromLast()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">Last</button>
+                    <button onclick="fillPriceFromBBO()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">BBO</button>
                 </div>
             </div>
-            <div style="position:relative;">
-                <input id="order-price" class="ex-input" type="text" placeholder="0.00" oninput="calcOrderValues()">
-                <span id="order-last-price" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-dim);"></span>
-            </div>
+            <input id="order-price" class="ex-input" type="text" placeholder="0.00" oninput="calcOrderValues()">
         </div>
 
         <!-- QUANTITY -->
         <div style="margin-bottom:7px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-                <span style="font-size:9.5px;color:var(--text-dim);">Quantity</span>
-                <select id="te-qty-unit" onchange="onQtyUnitChange()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:8.5px;padding:1px 4px;border-radius:3px;cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Quantity</span>
+                <select id="te-qty-unit" onchange="onQtyUnitChange()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">
                     <option value="base">BTC</option>
                     <option value="usdt">USDT</option>
                 </select>
             </div>
             <div style="position:relative;">
                 <input id="order-qty" class="ex-input" type="text" placeholder="0.000" oninput="calcOrderValues()">
-                <span id="order-qty-unit" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-dim);">BTC</span>
+                <span id="order-qty-unit" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(255,255,255,0.55);pointer-events:none;">BTC</span>
             </div>
         </div>
 
         <!-- % BUTTONS -->
         <div style="display:flex;gap:3px;margin-bottom:8px;">
-            <button onclick="setQtyPct(25)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">25%</button>
-            <button onclick="setQtyPct(50)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">50%</button>
-            <button onclick="setQtyPct(75)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">75%</button>
-            <button onclick="setQtyPct(100)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">Max</button>
+            <button onclick="setQtyPct(25)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:4px 0;border-radius:3px;cursor:pointer;">25%</button>
+            <button onclick="setQtyPct(50)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:4px 0;border-radius:3px;cursor:pointer;">50%</button>
+            <button onclick="setQtyPct(75)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:4px 0;border-radius:3px;cursor:pointer;">75%</button>
+            <button onclick="setQtyPct(100)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:4px 0;border-radius:3px;cursor:pointer;">Max</button>
         </div>
 
         <!-- LIVE CALC BLOCK -->
-        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:6px 9px;margin-bottom:8px;font-size:9.5px;">
-            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Cost</span><span id="te-cost" class="mono" style="color:var(--text-mid);">— USDT</span></div>
-            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Initial Margin</span><span id="te-margin" class="mono" style="color:var(--text-mid);">— USDT</span></div>
-            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Liq. Price</span><span id="te-liq" class="mono" style="color:var(--text-mid);">—</span></div>
-            <div id="te-funding-row" style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Funding (8h)</span><span id="te-funding" class="mono" style="color:var(--text-mid);">—</span></div>
-            <!-- Spot-Short specific (hidden by default, revealed when spot+short context) -->
-            <div id="te-borrow-row" style="display:none;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Borrow rate (24h)</span><span id="te-borrow" class="mono" style="color:var(--amber, #f5a623);">—</span></div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:7px 9px;margin-bottom:8px;font-size:9.5px;">
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Cost</span><span id="te-cost" class="mono" style="color:#fff;">— USDT</span></div>
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Initial Margin</span><span id="te-margin" class="mono" style="color:#fff;">— USDT</span></div>
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Liq. Price</span><span id="te-liq" class="mono" style="color:#fff;">—</span></div>
+            <div id="te-funding-row" style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Funding (8h)</span><span id="te-funding" class="mono" style="color:#fff;">—</span></div>
+            <div id="te-borrow-row" style="display:none;justify-content:space-between;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Borrow rate (24h)</span><span id="te-borrow" class="mono" style="color:#f5a623;">—</span></div>
         </div>
 
         <!-- RISK WARNING -->
-        <div id="te-risk-warning" style="display:none;background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.3);border-radius:3px;padding:5px 8px;margin-bottom:8px;font-size:9px;color:#ff8888;">
+        <div id="te-risk-warning" style="display:none;background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.3);border-radius:3px;padding:6px 9px;margin-bottom:8px;font-size:9px;color:#ff8888;">
             <span id="te-risk-text">⚠ Risk warning</span>
         </div>
 
-        <!-- AUTOMATION CONFIG (hidden by default, shown in Auto mode) -->
-        <div id="te-auto-config" style="display:none;background:rgba(127,114,221,0.06);border:1px solid rgba(127,114,221,0.3);border-radius:4px;padding:7px 8px;margin-bottom:8px;">
-            <div style="font-size:9px;color:#9b8be6;letter-spacing:0.3px;margin-bottom:5px;">AI SCOUT SETTINGS</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                <span style="font-size:9.5px;color:var(--text-mid);">Min confidence</span>
-                <input type="text" value="75%" style="width:48px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:9.5px;padding:2px 6px;border-radius:3px;text-align:right;">
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:9.5px;color:var(--text-mid);">Time window</span>
-                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:9.5px;padding:2px 6px;border-radius:3px;">
-                    <option>30 min</option><option>1 hour</option><option>4 hours</option><option>1 day</option>
-                </select>
-            </div>
-        </div>
-
         <!-- ORDER MODIFIERS -->
-        <div style="margin-bottom:10px;font-size:10px;display:flex;flex-direction:column;gap:4px;">
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="te-tpsl-toggle" style="cursor:pointer;">
-                <span style="color:var(--text-mid);">TP/SL</span>
+        <div style="margin-bottom:10px;font-size:10px;display:flex;flex-direction:column;gap:5px;">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;">
+                <input type="checkbox" id="te-tpsl-toggle" style="cursor:pointer;flex-shrink:0;">
+                <span style="color:rgba(255,255,255,0.7);">TP/SL</span>
             </label>
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="te-reduce-only" style="cursor:pointer;">
-                <span style="color:var(--text-mid);">Reduce-Only</span>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;">
+                <input type="checkbox" id="te-reduce-only" style="cursor:pointer;flex-shrink:0;">
+                <span style="color:rgba(255,255,255,0.7);">Reduce-Only</span>
             </label>
             <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
-                <span style="display:flex;align-items:center;gap:6px;">
-                    <input type="checkbox" id="te-post-only" style="cursor:pointer;">
-                    <span style="color:var(--text-mid);">Post-Only</span>
+                <span style="display:flex;align-items:center;gap:7px;">
+                    <input type="checkbox" id="te-post-only" style="cursor:pointer;flex-shrink:0;">
+                    <span style="color:rgba(255,255,255,0.7);">Post-Only</span>
                 </span>
-                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:1px 4px;border-radius:3px;">
+                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:1px 5px;border-radius:3px;">
                     <option>GTC</option><option>IOC</option><option>FOK</option>
                 </select>
             </label>
@@ -2155,30 +2155,30 @@
 
         <!-- BUY / SELL BUTTONS -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">
-            <button id="btn-open-long" onclick="placeOrder('Buy')" style="background:var(--neon);color:#000;font-size:12px;font-weight:600;padding:10px 0;border-radius:4px;border:none;cursor:pointer;box-shadow:0 0 10px rgba(68,184,40,0.25);">Open Long</button>
-            <button id="btn-open-short" onclick="placeOrder('Sell')" style="background:var(--hot-red);color:#fff;font-size:12px;font-weight:600;padding:10px 0;border-radius:4px;border:none;cursor:pointer;">Open Short</button>
+            <button id="btn-open-long" onclick="placeOrder('Buy')" style="background:var(--neon);color:#000;font-size:12px;font-weight:600;padding:11px 0;border-radius:4px;border:none;cursor:pointer;box-shadow:0 0 10px rgba(68,184,40,0.25);">Open Long</button>
+            <button id="btn-open-short" onclick="placeOrder('Sell')" style="background:var(--hot-red);color:#fff;font-size:12px;font-weight:600;padding:11px 0;border-radius:4px;border:none;cursor:pointer;">Open Short</button>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.55);margin-bottom:10px;">
             <span id="te-max-long">Max long: —</span><span id="te-max-short">Max short: —</span>
         </div>
 
         <!-- CONTRACT DETAILS -->
-        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:7px 9px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--border);">
-                <span id="contract-label" style="font-size:10px;color:#fff;">Contract Details</span>
-                <select id="te-contract-exchange" onchange="updateContractDetails()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:1px 5px;border-radius:3px;">
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:8px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border);">
+                <span style="font-size:10px;color:#fff;">Contract Details</span>
+                <select id="te-contract-exchange" onchange="updateContractDetails()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:1px 6px;border-radius:3px;">
                     <option value="bybit">Bybit</option>
                     <option value="binance">Binance</option>
                     <option value="gate">Gate</option>
                 </select>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:9.5px;">
-                <span style="color:var(--text-dim);">Index</span><span id="te-cd-index" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
-                <span style="color:var(--text-dim);">Mark</span><span id="te-cd-mark" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
-                <span style="color:var(--text-dim);">Open Interest</span><span id="te-cd-oi" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
-                <span style="color:var(--text-dim);">24H Volume</span><span id="te-cd-vol" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
-                <span style="color:var(--text-dim);">Risk Limit</span><span id="te-cd-risk" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
-                <span style="color:var(--text-dim);">Contract Value</span><span id="te-cd-cv" class="mono" style="color:var(--text-mid);text-align:right;">1 BTC</span>
+                <span style="color:rgba(255,255,255,0.55);">Index</span><span id="te-cd-index" class="mono" style="color:#fff;text-align:right;">—</span>
+                <span style="color:rgba(255,255,255,0.55);">Mark</span><span id="te-cd-mark" class="mono" style="color:#fff;text-align:right;">—</span>
+                <span style="color:rgba(255,255,255,0.55);">Open Interest</span><span id="te-cd-oi" class="mono" style="color:#fff;text-align:right;">—</span>
+                <span style="color:rgba(255,255,255,0.55);">24H Volume</span><span id="te-cd-vol" class="mono" style="color:#fff;text-align:right;">—</span>
+                <span style="color:rgba(255,255,255,0.55);">Risk Limit</span><span id="te-cd-risk" class="mono" style="color:#fff;text-align:right;">—</span>
+                <span style="color:rgba(255,255,255,0.55);">Contract Value</span><span id="te-cd-cv" class="mono" style="color:#fff;text-align:right;">1 BTC</span>
             </div>
         </div>
     </aside>
@@ -5267,8 +5267,8 @@ function enterApp() {
                 symbol_search_request_delay: 500,
                 // Show the left side toolbar with measurement & drawing tools
                 hide_side_toolbar: false,
-                // Show the symbol details panel (price, change, market cap-like info)
-                details: true,
+                // Symbol details panel disabled — we have our own coin info bar above the chart
+                details: false,
                 // Show the legend with full info
                 hide_legend: false,
                 // Allow user to enable/disable indicators easily
@@ -9060,25 +9060,66 @@ const TE = {
 
 function setTradeMode(mode) {
     TE.mode = mode;
-    const m = document.getElementById('mode-manual');
-    const a = document.getElementById('mode-auto');
-    const cfg = document.getElementById('te-auto-config');
-    if (mode === 'manual') {
-        m.style.background = 'rgba(255,255,255,0.1)';
-        m.style.borderColor = 'rgba(255,255,255,0.25)';
-        m.style.color = '#fff';
-        a.style.background = 'transparent';
-        a.style.borderColor = 'transparent';
-        a.style.color = 'rgba(255,255,255,0.55)';
-        if (cfg) cfg.style.display = 'none';
+    const buttons = ['manual', 'semi', 'autopilot'];
+    const hint = document.getElementById('te-mode-hint');
+    const suggestionCard = document.getElementById('te-suggestion-card');
+    const autopilotNotice = document.getElementById('te-autopilot-notice');
+
+    // Reset all mode buttons to inactive style
+    buttons.forEach(b => {
+        const el = document.getElementById('mode-' + b);
+        if (!el) return;
+        el.style.background = 'transparent';
+        el.style.borderColor = 'transparent';
+        el.style.color = 'rgba(255,255,255,0.55)';
+    });
+
+    // Activate the selected one
+    const active = document.getElementById('mode-' + mode);
+    if (active) {
+        active.style.background = 'rgba(255,255,255,0.1)';
+        active.style.borderColor = 'rgba(255,255,255,0.25)';
+        active.style.color = '#fff';
+    }
+
+    // Update hint text
+    const hints = {
+        manual: 'You decide and execute every trade',
+        semi: 'AI suggests trades + bots — you approve each one',
+        autopilot: 'System trades 24/7 within your rules — coming soon'
+    };
+    if (hint) hint.textContent = hints[mode] || '';
+
+    // Show/hide auxiliary panels
+    if (suggestionCard) suggestionCard.style.display = (mode === 'semi') ? 'block' : 'none';
+    if (autopilotNotice) autopilotNotice.style.display = (mode === 'autopilot') ? 'block' : 'none';
+}
+
+// Semi-Auto suggestion handlers
+function approveSuggestion() {
+    // S2b: when wired, this will execute the suggested trade through the suggested bot
+    if (typeof showToast === 'function') {
+        showToast('Suggestion approved — execution coming in next sprint (S2b)');
     } else {
-        a.style.background = 'rgba(255,255,255,0.1)';
-        a.style.borderColor = 'rgba(255,255,255,0.25)';
-        a.style.color = '#fff';
-        m.style.background = 'transparent';
-        m.style.borderColor = 'transparent';
-        m.style.color = 'rgba(255,255,255,0.55)';
-        if (cfg) cfg.style.display = 'block';
+        alert('Suggestion approved — execution coming in next sprint');
+    }
+}
+function modifySuggestion() {
+    // Pre-fills the order panel with the suggestion values, lets user adjust before approving
+    const priceEl = document.getElementById('order-price');
+    const qtyEl = document.getElementById('order-qty');
+    if (priceEl) priceEl.value = '74200';
+    if (qtyEl) qtyEl.value = '0.05';
+    if (typeof calcOrderValues === 'function') calcOrderValues();
+    if (typeof showToast === 'function') {
+        showToast('Suggestion loaded into form — adjust as desired');
+    }
+}
+function skipSuggestion() {
+    const card = document.getElementById('te-suggestion-card');
+    if (card) card.style.display = 'none';
+    if (typeof showToast === 'function') {
+        showToast('Suggestion skipped — Scout will surface the next one');
     }
 }
 
