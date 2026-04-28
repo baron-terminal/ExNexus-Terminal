@@ -1973,44 +1973,191 @@
     </aside>
 
     <!-- ORDER ENTRY -->
-    <aside id="aside-orderentry" class="glass flex flex-col overflow-hidden" style="padding:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <div style="display:flex;gap:4px;"><button class="lev-badge">Cross</button><button class="lev-badge" style="color:var(--neon);border-color:rgba(68,184,40,0.2);">Isolated</button></div>
-            <button class="lev-badge" style="color:var(--text-bright);">10.00×</button>
+    <aside id="aside-orderentry" class="glass flex flex-col" style="padding:10px;overflow-y:auto;">
+
+        <!-- MANUAL / AUTOMATION MODE -->
+        <div style="display:flex;gap:3px;padding:3px;background:rgba(255,255,255,0.04);border-radius:4px;margin-bottom:8px;">
+            <button id="mode-manual" class="mode-toggle active" onclick="setTradeMode('manual')" style="flex:1;background:rgba(68,184,40,0.18);border:1px solid rgba(68,184,40,0.4);color:var(--neon);padding:5px 4px;border-radius:3px;font-size:10.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Manual
+            </button>
+            <button id="mode-auto" class="mode-toggle" onclick="setTradeMode('auto')" style="flex:1;background:transparent;border:1px solid transparent;color:var(--text-dim);padding:5px 4px;border-radius:3px;font-size:10.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+                Auto · AI Scout
+            </button>
         </div>
-        <div style="display:flex;gap:3px;margin-bottom:10px;">
-            <button class="ot-tab active" onclick="switchOT(this)">Limit</button>
-            <button class="ot-tab" onclick="switchOT(this)">Market</button>
-            <button class="ot-tab" onclick="switchOT(this)">Chase</button>
+
+        <!-- SPOT / FUTURES / MARGIN -->
+        <div style="display:flex;gap:3px;margin-bottom:8px;">
+            <button id="market-futures" class="market-btn active" onclick="setMarket('futures')" style="flex:1;background:rgba(68,184,40,0.18);border:1px solid rgba(68,184,40,0.4);color:var(--neon);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Futures</button>
+            <button id="market-spot" class="market-btn" onclick="setMarket('spot')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Spot</button>
+            <button id="market-margin" class="market-btn" onclick="setMarket('margin')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:4px 0;border-radius:3px;font-size:9.5px;cursor:pointer;">Margin</button>
         </div>
-        <div style="margin-bottom:6px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Price</span><span class="mono" style="font-size:9.5px;color:var(--text-dim);">Last 74,231.70</span></div>
-            <div style="position:relative;"><input class="ex-input" type="text" value="74231.70"><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9.5px;color:var(--text-dim);">USDT</span></div>
+
+        <!-- SYMBOL + MARK PRICE -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:4px;">
+            <span id="te-symbol-pill" style="background:rgba(68,184,40,0.15);color:var(--neon);font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:0.4px;">BTCUSDT · PERP</span>
+            <span style="font-size:9px;color:var(--text-dim);">Mark: <span id="te-mark-price" class="mono" style="color:var(--text-mid);">—</span></span>
         </div>
-        <div style="margin-bottom:6px;">
-            <div style="margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Qty</span></div>
-            <div style="position:relative;"><input class="ex-input" type="text" placeholder="0.000"><span style="font-size:9.5px;color:var(--text-dim);position:absolute;right:8px;top:50%;transform:translateY(-50%);">BTC</span></div>
-        </div>
-        <div style="margin-bottom:6px;">
-            <input type="range" min="0" max="100" value="0">
-            <div style="display:flex;justify-content:space-between;margin-top:2px;">
-                <span style="font-size:8.5px;color:var(--text-dim);">0%</span><span style="font-size:8.5px;color:var(--text-dim);">25%</span><span style="font-size:8.5px;color:var(--text-dim);">50%</span><span style="font-size:8.5px;color:var(--text-dim);">75%</span><span style="font-size:8.5px;color:var(--text-dim);">100%</span>
+
+        <!-- EXCHANGE ROUTING -->
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:4px;padding:7px 8px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:9px;color:var(--text-dim);letter-spacing:0.3px;">EXCHANGE ROUTING</span>
+                <span style="font-size:9px;color:var(--neon);cursor:pointer;" onclick="alert('Configure routing — coming soon')">Configure</span>
+            </div>
+            <div style="display:flex;gap:3px;margin-bottom:6px;">
+                <button id="route-best" class="route-btn active" onclick="setRouting('best')" style="flex:1;background:rgba(68,184,40,0.18);border:1px solid rgba(68,184,40,0.4);color:var(--neon);font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Best Price</button>
+                <button id="route-single" class="route-btn" onclick="setRouting('single')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-mid);font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Single</button>
+                <button id="route-split" class="route-btn" onclick="setRouting('split')" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-mid);font-size:9.5px;padding:4px 4px;border-radius:3px;cursor:pointer;">Split</button>
+            </div>
+            <div id="te-routing-table" style="display:flex;flex-direction:column;gap:3px;font-size:9px;">
+                <div style="text-align:center;color:var(--text-dim);padding:6px 0;font-style:italic;">Connect exchanges to see routing</div>
             </div>
         </div>
-        <div style="background:#0f0f0f;border:1px solid var(--border);border-radius:3px;padding:6px 8px;margin-bottom:10px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-dim);">Value</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Cost</span><span class="mono" style="font-size:10px;color:var(--text-mid);">— USDT</span></div>
+
+        <!-- MARGIN MODE + LEVERAGE -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
+            <select id="te-margin-mode" onchange="onMarginModeChange()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-bright);font-size:10px;padding:5px 7px;border-radius:3px;cursor:pointer;">
+                <option value="isolated">Isolated</option>
+                <option value="cross">Cross</option>
+            </select>
+            <div style="display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:0 7px;border-radius:3px;">
+                <span style="font-size:9.5px;color:var(--text-dim);">Lev</span>
+                <input id="te-leverage" type="text" value="10" oninput="onLeverageChange()" style="flex:1;background:transparent;border:none;color:var(--text-bright);font-size:10px;outline:none;width:100%;padding:5px 0;text-align:right;">
+                <span style="font-size:9.5px;color:var(--text-dim);">x</span>
+            </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-            <button style="width:100%;padding:8px;background:var(--neon);color:#000;font-size:11px;font-weight:600;border-radius:3px;border:none;cursor:pointer;box-shadow:0 0 14px rgba(68,184,40,0.28);">Open Long</button>
-            <button style="width:100%;padding:8px;background:transparent;color:var(--hot-red);font-size:11px;font-weight:600;border-radius:3px;border:1px solid rgba(255,0,63,0.35);cursor:pointer;">Open Short</button>
+
+        <!-- ORDER TYPE TABS -->
+        <div style="display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);">
+            <button class="ot-tab active" onclick="switchOT(this)">Limit</button>
+            <button class="ot-tab" onclick="switchOT(this)">Market</button>
+            <button class="ot-tab" onclick="switchOT(this)">Stop</button>
+            <button class="ot-tab" onclick="switchOT(this)">TP/SL</button>
         </div>
-        <div style="border-top:1px solid var(--border);padding-top:8px;">
-            <div style="font-size:10px;font-weight:500;color:var(--text-mid);margin-bottom:6px;">Contract Details BTCUSDT</div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Expiration</span><span class="mono" style="font-size:10px;color:var(--text-mid);">Perpetual</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Index Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,022.96</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--text-dim);">Mark Price</span><span class="mono" style="font-size:10px;color:var(--text-mid);">74,018.34</span></div>
+
+        <!-- AVAILABLE -->
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+            <span style="font-size:9.5px;color:var(--text-dim);">Available</span>
+            <span id="order-avail" style="font-size:10.5px;color:var(--text-bright);font-weight:500;">—</span>
+        </div>
+
+        <!-- PRICE -->
+        <div style="margin-bottom:7px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+                <span style="font-size:9.5px;color:var(--text-dim);">Price (USDT)</span>
+                <div style="display:flex;gap:3px;">
+                    <button onclick="fillPriceFromLast()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--neon);font-size:8.5px;padding:1px 5px;border-radius:3px;cursor:pointer;">Last</button>
+                    <button onclick="fillPriceFromBBO()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--neon);font-size:8.5px;padding:1px 5px;border-radius:3px;cursor:pointer;">BBO</button>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <input id="order-price" class="ex-input" type="text" placeholder="0.00" oninput="calcOrderValues()">
+                <span id="order-last-price" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-dim);"></span>
+            </div>
+        </div>
+
+        <!-- QUANTITY -->
+        <div style="margin-bottom:7px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+                <span style="font-size:9.5px;color:var(--text-dim);">Quantity</span>
+                <select id="te-qty-unit" onchange="onQtyUnitChange()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:8.5px;padding:1px 4px;border-radius:3px;cursor:pointer;">
+                    <option value="base">BTC</option>
+                    <option value="usdt">USDT</option>
+                </select>
+            </div>
+            <div style="position:relative;">
+                <input id="order-qty" class="ex-input" type="text" placeholder="0.000" oninput="calcOrderValues()">
+                <span id="order-qty-unit" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-dim);">BTC</span>
+            </div>
+        </div>
+
+        <!-- % BUTTONS -->
+        <div style="display:flex;gap:3px;margin-bottom:8px;">
+            <button onclick="setQtyPct(25)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">25%</button>
+            <button onclick="setQtyPct(50)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">50%</button>
+            <button onclick="setQtyPct(75)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">75%</button>
+            <button onclick="setQtyPct(100)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:3px;border-radius:3px;cursor:pointer;">Max</button>
+        </div>
+
+        <!-- LIVE CALC BLOCK -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:6px 9px;margin-bottom:8px;font-size:9.5px;">
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Cost</span><span id="te-cost" class="mono" style="color:var(--text-mid);">— USDT</span></div>
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Initial Margin</span><span id="te-margin" class="mono" style="color:var(--text-mid);">— USDT</span></div>
+            <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Liq. Price</span><span id="te-liq" class="mono" style="color:var(--text-mid);">—</span></div>
+            <div id="te-funding-row" style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Funding (8h)</span><span id="te-funding" class="mono" style="color:var(--text-mid);">—</span></div>
+            <!-- Spot-Short specific (hidden by default, revealed when spot+short context) -->
+            <div id="te-borrow-row" style="display:none;justify-content:space-between;padding:1px 0;"><span style="color:var(--text-dim);">Borrow rate (24h)</span><span id="te-borrow" class="mono" style="color:var(--amber, #f5a623);">—</span></div>
+        </div>
+
+        <!-- RISK WARNING -->
+        <div id="te-risk-warning" style="display:none;background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.3);border-radius:3px;padding:5px 8px;margin-bottom:8px;font-size:9px;color:#ff8888;">
+            <span id="te-risk-text">⚠ Risk warning</span>
+        </div>
+
+        <!-- AUTOMATION CONFIG (hidden by default, shown in Auto mode) -->
+        <div id="te-auto-config" style="display:none;background:rgba(127,114,221,0.06);border:1px solid rgba(127,114,221,0.3);border-radius:4px;padding:7px 8px;margin-bottom:8px;">
+            <div style="font-size:9px;color:#9b8be6;letter-spacing:0.3px;margin-bottom:5px;">AI SCOUT SETTINGS</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:9.5px;color:var(--text-mid);">Min confidence</span>
+                <input type="text" value="75%" style="width:48px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:9.5px;padding:2px 6px;border-radius:3px;text-align:right;">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:9.5px;color:var(--text-mid);">Time window</span>
+                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-bright);font-size:9.5px;padding:2px 6px;border-radius:3px;">
+                    <option>30 min</option><option>1 hour</option><option>4 hours</option><option>1 day</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ORDER MODIFIERS -->
+        <div style="margin-bottom:10px;font-size:10px;display:flex;flex-direction:column;gap:4px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" id="te-tpsl-toggle" style="cursor:pointer;">
+                <span style="color:var(--text-mid);">TP/SL</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" id="te-reduce-only" style="cursor:pointer;">
+                <span style="color:var(--text-mid);">Reduce-Only</span>
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="te-post-only" style="cursor:pointer;">
+                    <span style="color:var(--text-mid);">Post-Only</span>
+                </span>
+                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:1px 4px;border-radius:3px;">
+                    <option>GTC</option><option>IOC</option><option>FOK</option>
+                </select>
+            </label>
+        </div>
+
+        <!-- BUY / SELL BUTTONS -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">
+            <button id="btn-open-long" onclick="placeOrder('Buy')" style="background:var(--neon);color:#000;font-size:12px;font-weight:600;padding:10px 0;border-radius:4px;border:none;cursor:pointer;box-shadow:0 0 10px rgba(68,184,40,0.25);">Open Long</button>
+            <button id="btn-open-short" onclick="placeOrder('Sell')" style="background:var(--hot-red);color:#fff;font-size:12px;font-weight:600;padding:10px 0;border-radius:4px;border:none;cursor:pointer;">Open Short</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-bottom:10px;">
+            <span id="te-max-long">Max long: —</span><span id="te-max-short">Max short: —</span>
+        </div>
+
+        <!-- CONTRACT DETAILS -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:7px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--border);">
+                <span id="contract-label" style="font-size:10px;color:var(--text-bright);font-weight:500;">Contract Details</span>
+                <select id="te-contract-exchange" onchange="updateContractDetails()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-mid);font-size:9px;padding:1px 5px;border-radius:3px;">
+                    <option value="bybit">Bybit</option>
+                    <option value="binance">Binance</option>
+                    <option value="gate">Gate</option>
+                </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:9.5px;">
+                <span style="color:var(--text-dim);">Index</span><span id="te-cd-index" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
+                <span style="color:var(--text-dim);">Mark</span><span id="te-cd-mark" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
+                <span style="color:var(--text-dim);">Open Interest</span><span id="te-cd-oi" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
+                <span style="color:var(--text-dim);">24H Volume</span><span id="te-cd-vol" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
+                <span style="color:var(--text-dim);">Risk Limit</span><span id="te-cd-risk" class="mono" style="color:var(--text-mid);text-align:right;">—</span>
+                <span style="color:var(--text-dim);">Contract Value</span><span id="te-cd-cv" class="mono" style="color:var(--text-mid);text-align:right;">1 BTC</span>
             </div>
         </div>
     </aside>
@@ -8912,6 +9059,291 @@ async function workerFetchBinance(path, opts={}) {
         return await res.json();
     } catch(e) { return {error:e.message}; }
 }
+
+/* ===========================================================
+   TRADING PANEL — STATE + HANDLERS
+   ===========================================================
+   New trading panel (S2a): mode toggle, market type, exchange routing,
+   live calculations. Execution wiring is S2b (next session). */
+
+const TE = {
+    mode: 'manual',           // 'manual' | 'auto'
+    market: 'futures',        // 'futures' | 'spot' | 'margin'
+    routing: 'best',          // 'best' | 'single' | 'split'
+    leverage: 10,
+    marginMode: 'isolated',   // 'isolated' | 'cross'
+    qtyUnit: 'base',          // 'base' (BTC) | 'usdt'
+    exchange: 'bybit',        // currently selected exchange (when single)
+    side: 'long',             // for risk calc
+};
+
+function setTradeMode(mode) {
+    TE.mode = mode;
+    const m = document.getElementById('mode-manual');
+    const a = document.getElementById('mode-auto');
+    const cfg = document.getElementById('te-auto-config');
+    if (mode === 'manual') {
+        m.style.background = 'rgba(68,184,40,0.18)';
+        m.style.borderColor = 'rgba(68,184,40,0.4)';
+        m.style.color = 'var(--neon)';
+        a.style.background = 'transparent';
+        a.style.borderColor = 'transparent';
+        a.style.color = 'var(--text-dim)';
+        if (cfg) cfg.style.display = 'none';
+    } else {
+        a.style.background = 'rgba(127,114,221,0.18)';
+        a.style.borderColor = 'rgba(127,114,221,0.4)';
+        a.style.color = '#9b8be6';
+        m.style.background = 'transparent';
+        m.style.borderColor = 'transparent';
+        m.style.color = 'var(--text-dim)';
+        if (cfg) cfg.style.display = 'block';
+    }
+}
+
+function setMarket(market) {
+    TE.market = market;
+    ['futures','spot','margin'].forEach(m => {
+        const el = document.getElementById('market-'+m);
+        if (!el) return;
+        if (m === market) {
+            el.style.background = 'rgba(68,184,40,0.18)';
+            el.style.borderColor = 'rgba(68,184,40,0.4)';
+            el.style.color = 'var(--neon)';
+        } else {
+            el.style.background = 'transparent';
+            el.style.borderColor = 'var(--border)';
+            el.style.color = 'var(--text-dim)';
+        }
+    });
+    // Update symbol pill: PERP for futures, SPOT for spot, MARGIN for margin
+    const pill = document.getElementById('te-symbol-pill');
+    if (pill) {
+        const sym = (window._currentSym || 'BTCUSDT');
+        const suffix = market === 'futures' ? 'PERP' : (market === 'spot' ? 'SPOT' : 'MARGIN');
+        pill.textContent = sym + ' · ' + suffix;
+    }
+    // Hide funding row for spot (no funding on spot)
+    const fundingRow = document.getElementById('te-funding-row');
+    if (fundingRow) fundingRow.style.display = market === 'futures' ? 'flex' : 'none';
+    calcOrderValues();
+}
+
+function setRouting(mode) {
+    TE.routing = mode;
+    ['best','single','split'].forEach(r => {
+        const el = document.getElementById('route-'+r);
+        if (!el) return;
+        if (r === mode) {
+            el.style.background = 'rgba(68,184,40,0.18)';
+            el.style.borderColor = 'rgba(68,184,40,0.4)';
+            el.style.color = 'var(--neon)';
+        } else {
+            el.style.background = 'transparent';
+            el.style.borderColor = 'var(--border)';
+            el.style.color = 'var(--text-mid)';
+        }
+    });
+    refreshRoutingTable();
+}
+
+function refreshRoutingTable() {
+    const el = document.getElementById('te-routing-table');
+    if (!el) return;
+    // Build list of connected exchanges
+    const connected = [];
+    try {
+        const exchanges = ['bybit','gate','binance'];
+        const colors = { bybit:'#f0b90b', gate:'#02C076', binance:'#f3ba2f' };
+        exchanges.forEach(ex => {
+            const key = getSetting(ex+'-key','');
+            const active = getSetting('exch-'+ex+'-active','0') === '1';
+            if (key && active) {
+                connected.push({ name: ex, color: colors[ex] });
+            }
+        });
+    } catch(e) { /* ignore */ }
+
+    if (connected.length === 0) {
+        el.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:6px 0;font-style:italic;">Connect exchanges to see routing</div>';
+        return;
+    }
+
+    // For now, show connected exchanges with the live price (single-source) — multi-exchange
+    // price comparison is part of S2a-multi (the routing engine). UI is in place; data is mock-live.
+    const rows = connected.map((ex, i) => {
+        const price = window._lastPrice ? window._lastPrice.toFixed(1) : '—';
+        const isBest = i === 0; // placeholder: first connected exchange marked as best
+        const cap = ex.name.charAt(0).toUpperCase() + ex.name.slice(1);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;">
+            <span><span style="color:${ex.color};">▸ ${cap}</span> <span class="mono" style="color:var(--text-mid);">$${price}</span></span>
+            ${isBest ? '<span style="background:rgba(68,184,40,0.15);color:var(--neon);padding:1px 5px;border-radius:3px;font-size:8px;font-weight:500;">BEST</span>' : '<span style="color:var(--text-dim);font-size:8.5px;">—</span>'}
+        </div>`;
+    }).join('');
+    el.innerHTML = rows;
+}
+
+function onMarginModeChange() {
+    const sel = document.getElementById('te-margin-mode');
+    if (sel) TE.marginMode = sel.value;
+    calcOrderValues();
+}
+
+function onLeverageChange() {
+    const inp = document.getElementById('te-leverage');
+    if (!inp) return;
+    let lev = parseFloat(inp.value) || 1;
+    if (lev < 1) lev = 1;
+    if (lev > 200) lev = 200;
+    TE.leverage = lev;
+    calcOrderValues();
+}
+
+function onQtyUnitChange() {
+    const sel = document.getElementById('te-qty-unit');
+    if (!sel) return;
+    TE.qtyUnit = sel.value;
+    const unitEl = document.getElementById('order-qty-unit');
+    if (unitEl) {
+        const sym = (window._currentSym || 'BTCUSDT').replace('USDT','');
+        unitEl.textContent = sel.value === 'usdt' ? 'USDT' : sym;
+    }
+    calcOrderValues();
+}
+
+function fillPriceFromLast() {
+    const last = window._lastPrice;
+    if (!last) return;
+    const inp = document.getElementById('order-price');
+    if (inp) {
+        inp.value = last.toFixed(2);
+        calcOrderValues();
+    }
+}
+
+function fillPriceFromBBO() {
+    // BBO = Best Bid/Offer; for simplicity use last price ± tiny tick
+    fillPriceFromLast();
+}
+
+function setQtyPct(pct) {
+    const avail = window._availBalance || 0;
+    if (!avail) return;
+    const price = parseFloat(document.getElementById('order-price')?.value || window._lastPrice || 0);
+    if (!price) return;
+    // Calculate qty from % of available × leverage
+    const usdAmount = avail * (pct/100) * (TE.market === 'futures' ? TE.leverage : 1);
+    const qtyEl = document.getElementById('order-qty');
+    if (qtyEl) {
+        if (TE.qtyUnit === 'usdt') {
+            qtyEl.value = usdAmount.toFixed(2);
+        } else {
+            qtyEl.value = (usdAmount / price).toFixed(6);
+        }
+        calcOrderValues();
+    }
+}
+
+/* ── Live calculation: Cost / Margin / Liq Price / Risk ── */
+function calcOrderValues() {
+    const price = parseFloat(document.getElementById('order-price')?.value || 0);
+    const qty   = parseFloat(document.getElementById('order-qty')?.value || 0);
+    if (!price || !qty) {
+        setTxt('te-cost',   '— USDT');
+        setTxt('te-margin', '— USDT');
+        setTxt('te-liq',    '—');
+        clearRiskWarning();
+        return;
+    }
+
+    // Convert qty to base units if entered in USDT
+    const baseQty = TE.qtyUnit === 'usdt' ? (qty / price) : qty;
+
+    // Notional = base qty × price
+    const notional = baseQty * price;
+
+    // Margin: futures uses leverage, spot uses 1x
+    const lev = TE.market === 'futures' ? TE.leverage : 1;
+    const initialMargin = notional / lev;
+
+    // Cost: total exposure
+    setTxt('te-cost',   notional.toFixed(2) + ' USDT');
+    setTxt('te-margin', initialMargin.toFixed(2) + ' USDT');
+
+    // Liq price approximation (futures only). Real exchanges use complex maint margin calc.
+    // Simplified: long liq ≈ entry × (1 - 1/lev × 0.95). Short ≈ entry × (1 + 1/lev × 0.95).
+    if (TE.market === 'futures' && lev > 1) {
+        const longLiq  = price * (1 - 0.95/lev);
+        const shortLiq = price * (1 + 0.95/lev);
+        const liqEl = document.getElementById('te-liq');
+        if (liqEl) {
+            const longPct  = ((longLiq  - price)/price * 100).toFixed(1);
+            const shortPct = ((shortLiq - price)/price * 100).toFixed(1);
+            liqEl.innerHTML = `<span style="color:var(--hot-red);">L: $${longLiq.toFixed(0)} (${longPct}%)</span> · <span style="color:var(--hot-red);">S: $${shortLiq.toFixed(0)} (+${shortPct}%)</span>`;
+        }
+    } else {
+        setTxt('te-liq', 'N/A (spot)');
+    }
+
+    // Risk warning logic
+    const avail = window._availBalance || 0;
+    const positionPct = avail > 0 ? (initialMargin / avail) * 100 : 0;
+    const riskMessages = [];
+    if (TE.market === 'futures' && lev >= 25) {
+        riskMessages.push(`High leverage (${lev}x) — small price moves can liquidate`);
+    }
+    if (positionPct > 50) {
+        riskMessages.push(`Large position (${positionPct.toFixed(0)}% of available)`);
+    }
+    if (TE.market === 'futures' && lev > 1) {
+        const liqDistPct = Math.abs(0.95/lev * 100);
+        if (liqDistPct < 5) {
+            riskMessages.push(`Tight liq distance (${liqDistPct.toFixed(1)}%)`);
+        }
+    }
+    if (riskMessages.length > 0) showRiskWarning(riskMessages.join(' · '));
+    else clearRiskWarning();
+
+    // Update Max Long / Max Short displays
+    if (avail > 0 && price > 0) {
+        const maxBase = (avail * lev) / price;
+        setTxt('te-max-long',  'Max long: '  + maxBase.toFixed(4) + ' BTC');
+        setTxt('te-max-short', 'Max short: ' + maxBase.toFixed(4) + ' BTC');
+    }
+}
+
+function showRiskWarning(text) {
+    const w = document.getElementById('te-risk-warning');
+    const t = document.getElementById('te-risk-text');
+    if (w && t) {
+        w.style.display = 'block';
+        t.textContent = '⚠ ' + text;
+    }
+}
+function clearRiskWarning() {
+    const w = document.getElementById('te-risk-warning');
+    if (w) w.style.display = 'none';
+}
+
+function updateContractDetails() {
+    // Stub — populated by next session when we wire per-exchange contract data
+    const sel = document.getElementById('te-contract-exchange');
+    if (sel) TE.exchange = sel.value;
+}
+
+/* ── Initialize the new panel after DOM is ready ── */
+(function initTradingPanel() {
+    function init() {
+        refreshRoutingTable();
+        // Re-refresh routing every 5 sec to catch newly connected exchanges
+        setInterval(refreshRoutingTable, 5000);
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
 
 /* ── Auto-refresh positions every 30s ── */
 setInterval(() => {
