@@ -1961,56 +1961,53 @@
 
     <!-- ORDER BOOK -->
     <aside id="aside-orderbook" class="glass flex flex-col overflow-hidden" style="grid-row:2;">
-        <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;align-items:center;">
-            <button class="tab-btn active" onclick="switchObTab(this,'ob-book')">Order Book</button>
-            <button class="tab-btn" onclick="switchObTab(this,'ob-trades')">Recent Trades</button>
-            <button class="tab-btn" onclick="switchObTab(this,'ob-stats')">Stats</button>
-            <!-- Tablet: Trade drawer toggle -->
-            <button id="tablet-trade-btn" onclick="toggleTabletTrade()">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-                Trade
-            </button>
-        </div>
-        <div id="ob-book" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0;">
-                <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
-                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
-                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Total(BTC)</span>
+        <!-- TOP HALF: Order Book / Recent Trades (toggleable) -->
+        <div style="flex:1 1 55%;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+            <div style="display:flex;border-bottom:1px solid var(--border);padding:0 10px;height:32px;gap:12px;flex-shrink:0;align-items:center;">
+                <button class="tab-btn active" onclick="switchObTab(this,'ob-book')">Order Book</button>
+                <button class="tab-btn" onclick="switchObTab(this,'ob-trades')">Recent Trades</button>
+                <!-- Tablet: Trade drawer toggle -->
+                <button id="tablet-trade-btn" onclick="toggleTabletTrade()">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                    Trade
+                </button>
             </div>
-            <div id="ob-asks" style="flex:1;overflow-y:auto;display:flex;flex-direction:column-reverse;"></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:#0f0f0f;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-shrink:0;">
-                <span class="mono neon-text" style="font-size:12px;font-weight:500;">74,231.70</span>
-                <span style="font-size:9.5px;color:var(--text-dim);">Spread <span class="mono">0.10</span></span>
-            </div>
-            <div id="ob-bids" style="flex:1;overflow-y:auto;"></div>
-        </div>
-        <div id="ob-trades" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);">
-                <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
-                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
-                <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Time</span>
-            </div>
-            <div id="recent-trades-list" style="flex:1;overflow-y:auto;"></div>
-        </div>
-
-        <!-- STATS TAB: Symbol Details panel (Day's Range, Performance, Key Stats) -->
-        <div id="ob-stats" style="flex:1;display:none;flex-direction:column;overflow-y:auto;padding:10px 11px;gap:9px;">
-            <!-- Symbol header -->
-            <div>
-                <div style="font-size:11px;color:#fff;letter-spacing:0.3px;margin-bottom:3px;" id="stats-symbol-name">BTCUSDT</div>
-                <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:rgba(255,255,255,0.55);">
-                    <span style="background:rgba(127,114,221,0.15);color:#9b8be6;padding:1px 5px;border-radius:2px;font-size:8px;letter-spacing:0.3px;" id="stats-market-type">PERP</span>
-                    <span>·</span>
-                    <span id="stats-venue" style="color:#fff;">BYBIT</span>
+            <div id="ob-book" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0;">
+                    <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Total(BTC)</span>
                 </div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;" id="stats-asset-class">Crypto · Perpetual</div>
+                <div id="ob-asks" style="flex:1;overflow-y:auto;display:flex;flex-direction:column-reverse;min-height:0;"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:#0f0f0f;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-shrink:0;">
+                    <span class="mono neon-text" style="font-size:12px;font-weight:500;">74,231.70</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);">Spread <span class="mono">0.10</span></span>
+                </div>
+                <div id="ob-bids" style="flex:1;overflow-y:auto;min-height:0;"></div>
             </div>
+            <div id="ob-trades" style="flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 8px 4px;border-bottom:1px solid var(--border);">
+                    <span style="font-size:9.5px;color:var(--text-dim);">Price(USDT)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Qty(BTC)</span>
+                    <span style="font-size:9.5px;color:var(--text-dim);text-align:right;">Time</span>
+                </div>
+                <div id="recent-trades-list" style="flex:1;overflow-y:auto;min-height:0;"></div>
+            </div>
+        </div>
 
+        <!-- DIVIDER STRIP: Stats label -->
+        <div style="background:rgba(255,255,255,0.04);padding:4px 10px;border-top:1px solid rgba(255,255,255,0.1);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+            <span style="font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;">STATS · <span id="stats-divider-symbol" style="color:#fff;">BTCUSDT</span></span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.4);"><span id="stats-divider-type">PERP</span> · <span id="stats-divider-venue">BYBIT</span></span>
+        </div>
+
+        <!-- BOTTOM HALF: Stats panel (always visible, no longer a tab) -->
+        <div id="ob-stats" style="flex:1 1 45%;display:flex;flex-direction:column;overflow-y:auto;padding:9px 10px;gap:8px;min-height:0;">
             <!-- Big price display -->
             <div>
-                <div style="font-size:18px;color:#fff;line-height:1.1;" id="stats-price"><span class="mono">75,972</span><span style="color:rgba(255,255,255,0.55);" class="mono">.1</span> <span style="font-size:9px;color:rgba(255,255,255,0.5);">USDT</span></div>
-                <div style="font-size:10px;margin-top:3px;" id="stats-change"><span style="color:var(--hot-red);">−1,453.7</span> <span style="color:var(--hot-red);">−1.88%</span></div>
-                <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+                <div style="font-size:17px;color:#fff;line-height:1.1;" id="stats-price"><span class="mono">75,972</span><span style="color:rgba(255,255,255,0.55);" class="mono">.1</span> <span style="font-size:9px;color:rgba(255,255,255,0.5);">USDT</span></div>
+                <div style="font-size:10px;margin-top:2px;" id="stats-change"><span style="color:var(--hot-red);">−1,453.7</span> <span style="color:var(--hot-red);">−1.88%</span></div>
+                <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
                     <span style="width:6px;height:6px;border-radius:50%;background:#00c853;" id="stats-status-dot"></span>
                     <span style="font-size:9px;color:rgba(255,255,255,0.7);" id="stats-status">Market open</span>
                 </div>
@@ -2053,17 +2050,17 @@
             </div>
 
             <!-- Key Stats -->
-            <div style="border-top:1px solid var(--border);padding-top:8px;">
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:5px;">KEY STATS</div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:2px 0;"><span style="color:rgba(255,255,255,0.55);">Volume (24h)</span><span class="mono" style="color:#fff;" id="stats-volume">7.84K</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:2px 0;"><span style="color:rgba(255,255,255,0.55);">Avg Volume (30D)</span><span class="mono" style="color:#fff;" id="stats-avg-volume">10.44K</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:2px 0;"><span style="color:rgba(255,255,255,0.55);">Open Interest</span><span class="mono" style="color:#fff;" id="stats-oi">62.0K BTC</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:2px 0;"><span style="color:rgba(255,255,255,0.55);">Funding Rate</span><span class="mono" style="color:#4ade80;" id="stats-funding">+0.0055%</span></div>
+            <div style="border-top:1px solid var(--border);padding-top:7px;">
+                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:4px;">KEY STATS</div>
+                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Volume (24h)</span><span class="mono" style="color:#fff;" id="stats-volume">7.84K</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Avg Volume (30D)</span><span class="mono" style="color:#fff;" id="stats-avg-volume">10.44K</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Open Interest</span><span class="mono" style="color:#fff;" id="stats-oi">62.0K BTC</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Funding Rate</span><span class="mono" style="color:#4ade80;" id="stats-funding">+0.0055%</span></div>
             </div>
 
             <!-- Performance grid -->
-            <div style="border-top:1px solid var(--border);padding-top:8px;">
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:5px;">PERFORMANCE</div>
+            <div style="border-top:1px solid var(--border);padding-top:7px;">
+                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:4px;">PERFORMANCE</div>
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:3px;">
                     <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.15);padding:4px 0;text-align:center;border-radius:3px;">
                         <div style="font-size:9px;color:#4ade80;">+0.44%</div>
@@ -2092,11 +2089,6 @@
                         <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">3Y</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Note about live data -->
-            <div style="font-size:8px;color:rgba(255,255,255,0.35);text-align:center;font-style:italic;margin-top:auto;padding-top:6px;">
-                Currently showing placeholder values · live data wiring in next sprint
             </div>
         </div>
     </aside>
@@ -2937,7 +2929,8 @@ function switchChartTab(btn, id){
     btn.classList.add('active');
 }
 function switchObTab(btn, id){
-    ['ob-book','ob-trades','ob-stats'].forEach(p=>{
+    // Only ob-book and ob-trades toggle here. ob-stats is always visible (stacked below).
+    ['ob-book','ob-trades'].forEach(p=>{
         const el = document.getElementById(p);
         if (el) el.style.display = 'none';
     });
