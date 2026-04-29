@@ -5595,15 +5595,71 @@ function enterApp() {
         MarketContext.subscribe(updateCoinBar);
 
         // ============================================================
-        // Trading panel symbol pill — second wire, also instant feedback
+        // Trading panel symbol pill + asset-class handling
+        // ============================================================
+        // Reacts to MarketContext changes:
+        //  • Updates the symbol pill (BTCUSDT · PERP)
+        //  • Resets the mark-price element (real value comes via ticker WS in Step 2)
+        //  • Toggles "stock-mode" placeholder when assetClass === 'stock'
+        //    (Stock trading via Alpaca is on the roadmap but the panel UI
+        //     is futures-shaped, so we show a clear placeholder for now.)
         // ============================================================
         function updateTradingPanelSymbol(ctx) {
             const pill = document.getElementById('te-symbol-pill');
             if (pill) {
                 pill.textContent = ctx.symbol + ' · ' + ctx.contractType;
             }
+            // Mark price reset — placeholder until Step 2 wires the ticker
+            const mark = document.getElementById('te-mark-price');
+            if (mark) mark.textContent = '—';
+
+            // Stock-mode placeholder: show a "coming soon" overlay over the
+            // order-form area when the chart is on a stock symbol.
+            const isStock = ctx.assetClass === 'stock';
+            let overlay = document.getElementById('te-stock-overlay');
+            if (isStock) {
+                if (!overlay) {
+                    // Find the trade-execution panel container
+                    const panelHost = pill ? pill.closest('.trade-panel,.te-panel,[id*="trade"]') || pill.parentElement.parentElement : null;
+                    if (panelHost) {
+                        overlay = document.createElement('div');
+                        overlay.id = 'te-stock-overlay';
+                        overlay.style.cssText = 'position:absolute;inset:60px 0 0 0;background:rgba(10,10,10,0.92);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;z-index:5;border-radius:4px;text-align:center;pointer-events:auto;';
+                        overlay.innerHTML =
+                            '<div style="font-size:11px;letter-spacing:0.5px;color:var(--neon);font-weight:600;">STOCK TRADING</div>' +
+                            '<div style="font-size:13px;color:#fff;font-weight:600;">Coming soon via Alpaca</div>' +
+                            '<div style="font-size:10px;color:rgba(255,255,255,0.55);line-height:1.4;max-width:240px;">' +
+                              'You\'re viewing <strong style="color:#fff;">' + (ctx.symbol||'') + '</strong> — equity execution will land in v1.5. ' +
+                              'Switch the chart to a crypto symbol (e.g. BYBIT:BTCUSDT) to use the trading panel.' +
+                            '</div>';
+                        // Make sure the panel host is positioned so absolute overlay works
+                        const cs = window.getComputedStyle(panelHost);
+                        if (cs.position === 'static') panelHost.style.position = 'relative';
+                        panelHost.appendChild(overlay);
+                    }
+                } else {
+                    // Update the symbol mention in the existing overlay
+                    const sym = overlay.querySelector('strong');
+                    if (sym) sym.textContent = ctx.symbol || '';
+                    overlay.style.display = 'flex';
+                }
+            } else if (overlay) {
+                overlay.style.display = 'none';
+            }
         }
         MarketContext.subscribe(updateTradingPanelSymbol);
+
+        // ============================================================
+        // DEBUG: log every MarketContext change so we can verify
+        // subscribers are firing during testing. Cheap and removable.
+        // ============================================================
+        MarketContext.subscribe(function(ctx){
+            console.log('[MarketContext]',
+                ctx.symbol,
+                '· '+ctx.contractType,
+                '· exchange='+ctx.exchange,
+                '· assetClass='+ctx.assetClass);
+        });
 
         // ============================================================
         // Stats panel divider — third wire
