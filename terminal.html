@@ -3389,6 +3389,17 @@ function toggleExchFields(name){
 function toggleExch(name){
     const t = document.getElementById('toggle-'+name);
     if(!t) return;
+    // ── BUG FIX: prevent activation without saved keys (non-exchange toggles like 'pin', 'autoarb', 'arbai' bypass) ──
+    const isExchange = (typeof EXCHANGE_REGISTRY !== 'undefined') && EXCHANGE_REGISTRY[name];
+    const wantOn = !t.classList.contains('on');
+    if(isExchange && wantOn){
+        const hasKey    = !!getSetting(name+'-key','');
+        const hasSecret = !!getSetting(name+'-secret','');
+        if(!hasKey || !hasSecret){
+            showToast('Enter API key & secret, then click Save before activating');
+            return; // refuse to activate
+        }
+    }
     const on = t.classList.toggle('on');
     const k = t.querySelector('.exch-toggle-knob');
     if(k) k.style.left = on ? '21px' : '2px';
@@ -3520,6 +3531,18 @@ function loadSettings(){
     // The exchange cards render in "Connected" state via buildSettingsExchanges()
     // when a saved key exists — showing only the last 4 characters.
     // To replace a key, the user clicks Disconnect and re-enters.
+    // ── BUG FIX: clean orphan active flags (active='1' but no keys saved) — symptom of pre-fix toggle UX trap ──
+    Object.keys(EXCHANGE_REGISTRY).forEach(name=>{
+        const active = getSetting('exch-'+name+'-active')==='1';
+        if(!active) return;
+        const hasKey    = !!getSetting(name+'-key','');
+        const hasSecret = !!getSetting(name+'-secret','');
+        if(!hasKey || !hasSecret){
+            // Active flag exists but credentials don't — this is the orphan-flag bug. Clean it up.
+            localStorage.removeItem('exnexus_exch-'+name+'-active');
+            console.log('[ExNexus] Cleared orphan active flag for '+name+' (no saved credentials).');
+        }
+    });
     Object.keys(EXCHANGE_REGISTRY).forEach(name=>{
         const active = getSetting('exch-'+name+'-active')==='1';
         if(active){ const t=document.getElementById('toggle-'+name); if(t&&!t.classList.contains('on')) toggleExch(name); }
