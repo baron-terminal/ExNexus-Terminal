@@ -1,58 +1,54 @@
 {
-  "name": "ExNexus Trading Intelligence",
+  "name": "ExNexus",
   "short_name": "ExNexus",
-  "description": "Institutional trading terminal. CEX + DEX + AI. Stay slow. Trade smart.",
+  "description": "Institutional-grade multi-exchange trading aggregator",
   "start_url": "/terminal.html",
-  "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0a0a0a",
-  "theme_color": "#44B828",
-  "categories": [
-    "finance",
-    "productivity"
-  ],
-  "lang": "en",
-  "related_applications": [],
-  "prefer_related_applications": false,
+  "background_color": "#000000",
+  "theme_color": "#7BC85B",
   "icons": [
     {
-      "src": "Icon.png",
+      "src": "/favicon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "Icon.png",
+      "src": "/icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Trade",
-      "short_name": "Trade",
-      "description": "Open trading terminal",
-      "url": "/terminal.html",
-      "icons": [
-        {
-          "src": "Icon.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Demo Mode",
-      "short_name": "Demo",
-      "description": "Practice with $10K virtual funds",
-      "url": "/terminal.html?demo=1",
-      "icons": [
-        {
-          "src": "Icon.png",
-          "sizes": "192x192"
-        }
-      ]
     }
   ]
 }
