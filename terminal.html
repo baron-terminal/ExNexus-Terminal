@@ -542,6 +542,7 @@
         .dhub-dot{width:5px;height:5px;border-radius:50%;background:#555;}
         .dhub-dot.live{background:var(--neon);animation:blink 2s ease infinite;}
         @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+        @keyframes scoutPulse{0%,100%{transform:scale(1);opacity:1;box-shadow:0 0 0 0 rgba(123,200,91,0.5);}50%{transform:scale(1.15);opacity:0.85;box-shadow:0 0 0 4px rgba(123,200,91,0);}}
 
         
         /* ======== SETTINGS PANEL ======== */
@@ -1896,8 +1897,8 @@
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:32px;gap:14px;flex-shrink:0;background:rgba(0,0,0,0.25);overflow-x:auto;overflow-y:hidden;">
             <!-- Chart panel tabs (left) -->
             <button class="tab-btn active" onclick="switchChartTab(this,'cp-chart')">Chart</button>
-            <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Coin Overview</button>
-            <button class="tab-btn" onclick="switchChartTab(this,'cp-data')">Data Trading</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Overview</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-data')">Analytics</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-news')">News</button>
 
             <!-- Spacer pushes the rest to the right -->
@@ -1946,7 +1947,7 @@
             <div id="cp-overview" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
                 <div style="max-width:600px;margin:60px auto;text-align:center;">
                     <div style="font-size:32px;margin-bottom:12px;">📊</div>
-                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Coin Overview</div>
+                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Overview</div>
                     <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
                         Market cap, supply, all-time high, project description, and key links — coming in next session.<br><br>
                         <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will display data for the asset shown in the chart.</span>
@@ -1956,7 +1957,7 @@
             <div id="cp-data" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
                 <div style="max-width:600px;margin:60px auto;text-align:center;">
                     <div style="font-size:32px;margin-bottom:12px;">📈</div>
-                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Data Trading</div>
+                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Analytics</div>
                     <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
                         Open Interest, funding rates, liquidations, and volume comparison across exchanges — coming in next session.<br><br>
                         <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will give AI Scout deeper signal context.</span>
@@ -2112,6 +2113,18 @@
 
     <!-- ORDER ENTRY -->
     <aside id="aside-orderentry" class="glass flex flex-col" style="grid-column:4;grid-row:2 / span 2;padding:10px;overflow-y:auto;">
+
+        <!-- SCOUT WATCHING INDICATOR — ambient AI Scout presence -->
+        <div id="scout-watching" style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 8px;background:linear-gradient(180deg,rgba(123,200,91,0.08),rgba(123,200,91,0.02));border:1px solid rgba(123,200,91,0.2);border-radius:4px;margin-bottom:8px;cursor:pointer;" onclick="document.getElementById('ai-scout-fab')?.click()" title="Click to open AI Scout">
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span id="scout-icon" style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;color:#7BC85B;">
+                    <!-- placeholder sparkle icon — replace with sloth artwork when available -->
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 L13.5 9.5 L21 11 L13.5 12.5 L12 20 L10.5 12.5 L3 11 L10.5 9.5 Z" opacity="0.85"/><circle cx="12" cy="11" r="1" fill="rgba(255,255,255,0.4)"/></svg>
+                </span>
+                <span style="font-size:9.5px;color:#7BC85B;font-weight:500;letter-spacing:0.3px;">Scout watching</span>
+            </div>
+            <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#7BC85B;animation:scoutPulse 1.8s ease-in-out infinite;"></span>
+        </div>
 
         <!-- TRADING MODE: Manual / Semi-Auto / Auto-Pilot -->
         <div style="display:flex;gap:2px;padding:2px;background:rgba(255,255,255,0.04);border-radius:4px;margin-bottom:8px;">
