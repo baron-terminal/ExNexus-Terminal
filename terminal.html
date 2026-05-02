@@ -2206,12 +2206,10 @@
             </div>
         </div>
 
-        <!-- ORDER TYPE TABS -->
+        <!-- ORDER TYPE TABS — Limit + Market only (Stop / Conditional / TP/SL deferred to bot logic) -->
         <div style="display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);">
             <button class="ot-tab active" onclick="switchOT(this)">Limit</button>
             <button class="ot-tab" onclick="switchOT(this)">Market</button>
-            <button class="ot-tab" onclick="switchOT(this)">Stop</button>
-            <button class="ot-tab" onclick="switchOT(this)">TP/SL</button>
         </div>
 
         <!-- AVAILABLE -->
@@ -2224,10 +2222,7 @@
         <div style="margin-bottom:7px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Price (USDT)</span>
-                <div style="display:flex;gap:3px;">
-                    <button onclick="fillPriceFromLast()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">Last</button>
-                    <button onclick="fillPriceFromBBO()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">BBO</button>
-                </div>
+                <button onclick="fillPriceFromLast()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 8px;border-radius:3px;cursor:pointer;">Last</button>
             </div>
             <input id="order-price" class="ex-input" type="text" placeholder="0.00" oninput="calcOrderValues()">
         </div>
@@ -2236,15 +2231,12 @@
         <div style="margin-bottom:7px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:9.5px;color:rgba(255,255,255,0.55);">Quantity</span>
-                <select id="te-qty-unit" onchange="onQtyUnitChange()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:3px;cursor:pointer;">
-                    <option value="base">BTC</option>
-                    <option value="usdt">USDT</option>
-                </select>
             </div>
             <div style="position:relative;">
                 <input id="order-qty" class="ex-input" type="text" placeholder="0.000" oninput="calcOrderValues()">
                 <span id="order-qty-unit" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(255,255,255,0.55);pointer-events:none;">BTC</span>
             </div>
+            <input type="hidden" id="te-qty-unit" value="base">
         </div>
 
         <!-- % BUTTONS -->
@@ -2269,25 +2261,41 @@
             <span id="te-risk-text">⚠ Risk warning</span>
         </div>
 
-        <!-- ORDER MODIFIERS -->
-        <div style="margin-bottom:10px;font-size:10px;display:flex;flex-direction:column;gap:5px;">
+        <!-- TP/SL with Advanced expander -->
+        <div style="margin-bottom:10px;font-size:10px;">
             <label style="display:flex;align-items:center;gap:7px;cursor:pointer;">
-                <input type="checkbox" id="te-tpsl-toggle" style="cursor:pointer;flex-shrink:0;">
-                <span style="color:rgba(255,255,255,0.7);">TP/SL</span>
+                <input type="checkbox" id="te-tpsl-toggle" onchange="toggleTPSLAdvanced(this)" style="cursor:pointer;flex-shrink:0;">
+                <span style="color:rgba(255,255,255,0.8);font-weight:500;">TP/SL</span>
+                <span id="te-tpsl-arrow" style="margin-left:auto;color:rgba(255,255,255,0.4);font-size:9px;">▾</span>
             </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;">
-                <input type="checkbox" id="te-reduce-only" style="cursor:pointer;flex-shrink:0;">
-                <span style="color:rgba(255,255,255,0.7);">Reduce-Only</span>
-            </label>
-            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
-                <span style="display:flex;align-items:center;gap:7px;">
-                    <input type="checkbox" id="te-post-only" style="cursor:pointer;flex-shrink:0;">
-                    <span style="color:rgba(255,255,255,0.7);">Post-Only</span>
-                </span>
-                <select style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:9px;padding:1px 5px;border-radius:3px;">
-                    <option>GTC</option><option>IOC</option><option>FOK</option>
-                </select>
-            </label>
+
+            <!-- Advanced panel — shown when TP/SL enabled -->
+            <div id="te-tpsl-advanced" style="display:none;margin-top:8px;padding:8px 9px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;">ADVANCED</span>
+                    <span style="font-size:8.5px;color:rgba(255,255,255,0.4);">Take profit / Stop loss</span>
+                </div>
+                <!-- Take Profit -->
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
+                    <span style="font-size:9px;color:#5BD63F;width:55px;flex-shrink:0;">Take Profit</span>
+                    <input id="te-tp-price" type="text" placeholder="Price" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;font-size:9.5px;padding:4px 6px;border-radius:3px;outline:none;">
+                </div>
+                <!-- Stop Loss -->
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+                    <span style="font-size:9px;color:#FF1E5A;width:55px;flex-shrink:0;">Stop Loss</span>
+                    <input id="te-sl-price" type="text" placeholder="Price" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;font-size:9.5px;padding:4px 6px;border-radius:3px;outline:none;">
+                </div>
+                <!-- Quick % buttons -->
+                <div style="display:flex;gap:3px;">
+                    <button onclick="setTPSLPct(2,1)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:8.5px;padding:3px 0;border-radius:3px;cursor:pointer;">+2%/-1%</button>
+                    <button onclick="setTPSLPct(5,2)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:8.5px;padding:3px 0;border-radius:3px;cursor:pointer;">+5%/-2%</button>
+                    <button onclick="setTPSLPct(10,3)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-size:8.5px;padding:3px 0;border-radius:3px;cursor:pointer;">+10%/-3%</button>
+                </div>
+            </div>
+
+            <!-- Hidden inputs for backward compatibility — placeOrder() may reference these -->
+            <input type="hidden" id="te-reduce-only" value="">
+            <input type="hidden" id="te-post-only" value="">
         </div>
 
         <!-- BUY / SELL BUTTONS -->
@@ -8234,27 +8242,26 @@ function showLoginScreen() {
 <!-- INTELLIGENCE APIs -->
         <div id="set-apis" class="set-section">
             <div class="set-section-title">Intelligence &amp; AI APIs</div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">AltFINS</div><div class="api-intel-sub">Technical signals · Screener</div></div>
-                <input class="api-intel-input" type="password" id="altfins-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0B429" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Smart Money</div><div class="api-intel-sub">Smart money · On-chain flows</div></div>
-                <input class="api-intel-input" type="password" id="nansen-key" placeholder="API Key" style="max-width:140px;">
-            </div>
-            <div class="api-intel-row">
-                <div class="api-intel-icon" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Market Depth</div><div class="api-intel-sub">OI · Liquidations · Funding</div></div>
-                <input class="api-intel-input" type="password" id="coinglass-key" placeholder="API Key" style="max-width:140px;">
-            </div>
+
+            <!-- Anthropic — the only key actually consumed today -->
             <div class="api-intel-row" style="border-bottom:none;">
                 <div class="api-intel-icon" style="background:linear-gradient(135deg,rgba(66,133,244,0.12),rgba(155,114,203,0.12));border:1px solid rgba(155,114,203,0.2);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9b72cb" stroke-width="1.8"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg></div>
-                <div style="flex:1;min-width:0;"><div class="api-intel-name">Anthropic (Claude)</div><div class="api-intel-sub">AI brain · Scout · Arbitrage AI</div></div>
+                <div style="flex:1;min-width:0;"><div class="api-intel-name">AI Engine</div><div class="api-intel-sub">Powers AI Scout commentary</div></div>
                 <input class="api-intel-input" type="password" id="anthropic-key" placeholder="API Key" style="max-width:140px;">
             </div>
-            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveIntelKeys()">Save All API Keys</button></div>
+
+            <!-- Future intelligence sources — placeholder card (keys hidden until S7/S8 ships) -->
+            <div style="margin-top:14px;padding:10px 12px;background:rgba(155,114,203,0.04);border:1px solid rgba(155,114,203,0.15);border-radius:7px;">
+                <div style="font-size:11px;font-weight:600;color:#9b72cb;margin-bottom:4px;">⚹ Coming with AI Scout v1.5</div>
+                <div style="font-size:10px;color:var(--text-dim);line-height:1.4;">Technical signals, smart-money flows, and market depth feeds will plug in here as Scout's intelligence pipeline expands. No setup needed yet — Scout uses the AI Engine above to start.</div>
+            </div>
+
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveIntelKeys()">Save AI Engine Key</button></div>
+
+            <!-- Hidden inputs for backward compatibility — saveIntelKeys() still references these IDs -->
+            <input type="hidden" id="altfins-key" value="">
+            <input type="hidden" id="nansen-key" value="">
+            <input type="hidden" id="coinglass-key" value="">
         </div>
 
         <!-- ARBITRAGE SETTINGS -->
@@ -8282,12 +8289,23 @@ function showLoginScreen() {
         <!-- RISK -->
         <div id="set-risk" class="set-section">
             <div class="set-section-title">Risk Management</div>
+
+            <!-- Default Exchange — visual preference, used as a hint -->
             <div class="set-row"><div><div class="set-row-label">Default Exchange</div><div class="set-row-sub">Primary for manual trades</div></div><select class="set-select" id="risk-default-exch"><option>Bybit</option><option>Gate.io</option><option>Binance</option><option>Alpaca</option></select></div>
-            <div class="set-row"><div><div class="set-row-label">Default Leverage</div><div class="set-row-sub">Applied to new positions</div></div><input class="set-inp-sm" type="number" id="risk-leverage" value="10" min="1" max="100">×</div>
-            <div class="set-row"><div><div class="set-row-label">Risk Per Trade</div><div class="set-row-sub">% of total portfolio</div></div><input class="set-inp-sm" type="number" id="risk-pct" value="2" min="0.1" max="100">%</div>
-            <div class="set-row"><div><div class="set-row-label">Daily Loss Limit</div><div class="set-row-sub">Stop trading if exceeded</div></div><input class="set-inp-sm" type="number" id="risk-daily-loss" value="5">%</div>
-            <div class="set-row"><div><div class="set-row-label">Default Order Type</div></div><select class="set-select" id="risk-order-type"><option>Market</option><option>Limit</option><option>Chase</option></select></div>
-            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveRiskSettings()">Save Risk Settings</button></div>
+
+            <!-- Future risk parameters — honest "coming soon" treatment -->
+            <div style="margin-top:14px;padding:10px 12px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.15);border-radius:7px;">
+                <div style="font-size:11px;font-weight:600;color:var(--neon);margin-bottom:4px;">⚹ Coming with Auto-Pilot v1.5</div>
+                <div style="font-size:10px;color:var(--text-dim);line-height:1.4;">Per-trade risk %, daily loss limits, leverage defaults, and order-type defaults will be enforced by Scout's risk filter when Auto-Pilot ships. For now, set leverage and order type per trade in the Trading panel.</div>
+            </div>
+
+            <div style="margin-top:14px;"><button class="btn-save-key" style="width:100%;" onclick="saveRiskSettings()">Save Default Exchange</button></div>
+
+            <!-- Hidden inputs for backward compatibility — saveRiskSettings() still references these IDs -->
+            <input type="hidden" id="risk-leverage" value="10">
+            <input type="hidden" id="risk-pct" value="2">
+            <input type="hidden" id="risk-daily-loss" value="5">
+            <input type="hidden" id="risk-order-type" value="Market">
         </div>
 
         <!-- SECURITY -->
@@ -8347,13 +8365,9 @@ function showLoginScreen() {
                 <div style="display:flex;gap:8px;"><button class="btn-primary" disabled style="opacity:.4;cursor:default;">Coming Soon</button></div>
             </div>
             <div class="login-card">
-                <div class="login-card-title">🔒 PIN Lock</div>
-                <div class="login-card-sub">Quick 4-digit PIN to lock the app when idle. Protects from unauthorized access on shared devices.</div>
-                <div class="set-row" style="border:none;padding:0;"><div class="set-row-label">Enable PIN Lock</div><div class="exch-toggle" id="toggle-pin" onclick="toggleExch('pin')"><div class="exch-toggle-knob"></div></div></div>
-            </div>
-            <div class="login-card">
-                <div class="login-card-title">⏱ Auto-Lock</div>
-                <div class="set-row" style="border:none;padding:6px 0 0;"><div class="set-row-label">Lock after</div><select class="set-select" id="lock-timer"><option>1 minute</option><option>5 minutes</option><option selected>15 minutes</option><option>30 minutes</option><option>Never</option></select></div>
+                <div class="login-card-title">🔒 PIN Lock &amp; Auto-Lock</div>
+                <div class="login-card-sub">Quick PIN to lock the terminal when idle. Protects from unauthorized access on shared devices. Pairs with biometric login when App Login ships.</div>
+                <div style="display:flex;gap:8px;"><button class="btn-primary" disabled style="opacity:.4;cursor:default;">Coming Soon</button></div>
             </div>
             <div style="margin-top:14px;padding:10px 12px;background:rgba(255,0,63,0.04);border:1px solid rgba(255,0,63,0.12);border-radius:7px;">
                 <div style="font-size:11px;font-weight:600;color:var(--hot-red);margin-bottom:4px;">⚠ Clear All Data</div>
@@ -9066,8 +9080,9 @@ document.addEventListener('click', e => {
 });
 
 
-/* ── Alpaca Settings ── */
+/* ── Alpaca Settings (orphan helpers — kept for legacy compat, not called by current EXCHANGE_REGISTRY-driven UI) ── */
 function switchAlpacaMode(mode) {
+
     const paperSection = document.getElementById('alpaca-paper-section');
     const liveSection  = document.getElementById('alpaca-live-section');
     if(paperSection) paperSection.style.display = mode === 'paper' ? '' : 'none';
@@ -9909,6 +9924,38 @@ function fillPriceFromLast() {
 function fillPriceFromBBO() {
     // BBO = Best Bid/Offer; for simplicity use last price ± tiny tick
     fillPriceFromLast();
+}
+
+/* ── TP/SL advanced expander ── */
+function toggleTPSLAdvanced(checkbox) {
+    const panel = document.getElementById('te-tpsl-advanced');
+    const arrow = document.getElementById('te-tpsl-arrow');
+    if (!panel) return;
+    if (checkbox.checked) {
+        panel.style.display = 'block';
+        if (arrow) arrow.textContent = '▴';
+    } else {
+        panel.style.display = 'none';
+        if (arrow) arrow.textContent = '▾';
+        // Clear values when collapsed
+        const tp = document.getElementById('te-tp-price');
+        const sl = document.getElementById('te-sl-price');
+        if (tp) tp.value = '';
+        if (sl) sl.value = '';
+    }
+}
+
+/* ── Quick TP/SL preset buttons (+TP%/-SL% from current price) ── */
+function setTPSLPct(tpPct, slPct) {
+    const price = parseFloat(document.getElementById('order-price')?.value || window._lastPrice || 0);
+    if (!price) {
+        showToast('Set a price first');
+        return;
+    }
+    const tpInp = document.getElementById('te-tp-price');
+    const slInp = document.getElementById('te-sl-price');
+    if (tpInp) tpInp.value = (price * (1 + tpPct/100)).toFixed(2);
+    if (slInp) slInp.value = (price * (1 - slPct/100)).toFixed(2);
 }
 
 function setQtyPct(pct) {
