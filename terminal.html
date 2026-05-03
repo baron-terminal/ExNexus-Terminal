@@ -550,6 +550,8 @@
         .dhub-dot.live{background:var(--neon);animation:blink 2s ease infinite;}
         @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
         @keyframes scoutPulse{0%,100%{transform:scale(1);opacity:1;box-shadow:0 0 0 0 rgba(123,200,91,0.5);}50%{transform:scale(1.15);opacity:0.85;box-shadow:0 0 0 4px rgba(123,200,91,0);}}
+        .bot-card{transition:background .15s, border-color .15s;}
+        .bot-card:hover{background:rgba(255,255,255,0.045) !important;border-color:rgba(255,255,255,0.18) !important;}
 
         
         /* ======== SETTINGS PANEL ======== */
@@ -1904,7 +1906,7 @@
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:32px;gap:14px;flex-shrink:0;background:rgba(0,0,0,0.25);overflow-x:auto;overflow-y:hidden;">
             <!-- Chart panel tabs (left) -->
             <button class="tab-btn active" onclick="switchChartTab(this,'cp-chart')">Chart</button>
-            <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Overview</button>
+            <button class="tab-btn" onclick="switchChartTab(this,'cp-overview')">Coin Overview</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-data')">Analytics</button>
             <button class="tab-btn" onclick="switchChartTab(this,'cp-news')">News</button>
 
@@ -1951,13 +1953,143 @@
             <div id="cp-chart" class="cp-panel active" style="position:absolute;inset:0;display:block;">
                 <div id="tradingview_widget" class="w-full h-full"></div>
             </div>
-            <div id="cp-overview" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
-                <div style="max-width:600px;margin:60px auto;text-align:center;">
-                    <div style="font-size:32px;margin-bottom:12px;">📊</div>
-                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Overview</div>
-                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
-                        Market cap, supply, all-time high, project description, and key links — coming in next session.<br><br>
-                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will display data for the asset shown in the chart.</span>
+            <div id="cp-overview" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:20px;">
+                <!-- Header strip with symbol + venue -->
+                <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:18px;color:#fff;font-weight:600;letter-spacing:0.3px;" id="cv-symbol">BTCUSDT</div>
+                        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;"><span id="cv-type">PERP</span> · <span id="cv-venue">BYBIT</span></div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:24px;color:#fff;line-height:1.1;" id="cv-price"><span class="mono">75,972</span><span style="color:rgba(255,255,255,0.55);" class="mono">.1</span></div>
+                        <div style="font-size:12px;margin-top:3px;" id="cv-change"><span style="color:var(--hot-red);">−1,453.7</span> <span style="color:var(--hot-red);">−1.88%</span></div>
+                    </div>
+                </div>
+
+                <!-- Two column grid: left = stats, right = future asset metadata -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+                    <!-- LEFT COLUMN: Stats (relocated from under the order book) -->
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+
+                        <!-- Bid/Ask quick reference -->
+                        <div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:6px;">CURRENT QUOTE</div>
+                            <div style="display:flex;gap:6px;">
+                                <div style="flex:1;background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.2);padding:8px 10px;border-radius:4px;">
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;margin-bottom:3px;">BID</div>
+                                    <div class="mono" style="font-size:12px;color:#4ade80;" id="cv-bid">75,972.0 × 0.39</div>
+                                </div>
+                                <div style="flex:1;background:rgba(255,80,112,0.1);border:1px solid rgba(255,80,112,0.2);padding:8px 10px;border-radius:4px;">
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;margin-bottom:3px;">ASK</div>
+                                    <div class="mono" style="font-size:12px;color:#ff8888;" id="cv-ask">75,972.1 × 0.30</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day's Range -->
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.55);margin-bottom:6px;">
+                                <span class="mono" id="cv-day-low">75,640</span>
+                                <span style="color:rgba(255,255,255,0.4);letter-spacing:0.4px;">DAY'S RANGE</span>
+                                <span class="mono" id="cv-day-high">77,480</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;position:relative;">
+                                <div id="cv-day-marker" style="position:absolute;left:18%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);"></div>
+                            </div>
+                        </div>
+
+                        <!-- 52-Week Range -->
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.55);margin-bottom:6px;">
+                                <span class="mono" id="cv-52w-low">60,000</span>
+                                <span style="color:rgba(255,255,255,0.4);letter-spacing:0.4px;">52WK RANGE</span>
+                                <span class="mono" id="cv-52w-high">126,193</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;position:relative;">
+                                <div id="cv-52w-marker" style="position:absolute;left:24%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);"></div>
+                            </div>
+                        </div>
+
+                        <!-- Key Stats -->
+                        <div style="border-top:1px solid var(--border);padding-top:12px;">
+                            <div style="font-size:10px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:8px;">KEY STATS</div>
+                            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Volume (24h)</span><span class="mono" style="color:#fff;" id="cv-volume">7.84K</span></div>
+                            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Avg Volume (30D)</span><span class="mono" style="color:#fff;" id="cv-avg-volume">10.44K</span></div>
+                            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Open Interest</span><span class="mono" style="color:#fff;" id="cv-oi">62.0K BTC</span></div>
+                            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Funding Rate</span><span class="mono" style="color:#4ade80;" id="cv-funding">+0.0055%</span></div>
+                        </div>
+
+                        <!-- Performance grid -->
+                        <div style="border-top:1px solid var(--border);padding-top:12px;">
+                            <div style="font-size:10px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:8px;">PERFORMANCE</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px;">
+                                <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#4ade80;">+0.44%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">1W</div>
+                                </div>
+                                <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#4ade80;">+14.76%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">1M</div>
+                                </div>
+                                <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#ff8888;">−14.66%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">3M</div>
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+                                <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#ff8888;">−30.99%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">6M</div>
+                                </div>
+                                <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#ff8888;">−13.36%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">1Y</div>
+                                </div>
+                                <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:6px 0;text-align:center;border-radius:4px;">
+                                    <div style="font-size:11px;color:#ff8888;">−19.00%</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.5);">3Y</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Asset metadata (placeholder for future enrichment) -->
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                        <div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:6px;">ABOUT</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;padding:8px 10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;">
+                                Bitcoin is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer Bitcoin network without the need for intermediaries.
+                                <span style="display:block;margin-top:6px;font-size:9.5px;color:rgba(255,255,255,0.4);">Asset description loads per active symbol — connecting to data source in next session.</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:6px;">SUPPLY &amp; MARKET CAP</div>
+                            <div style="display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+                                <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Market Cap</span><span class="mono" style="color:#fff;">$1.50T</span></div>
+                                <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Circulating Supply</span><span class="mono" style="color:#fff;">19.7M BTC</span></div>
+                                <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">Max Supply</span><span class="mono" style="color:#fff;">21.0M BTC</span></div>
+                                <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:rgba(255,255,255,0.6);">All-Time High</span><span class="mono" style="color:#fff;">$108,135</span></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:6px;">LISTED ON</div>
+                            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                                <span style="background:rgba(123,200,91,0.08);color:#7BC85B;border:1px solid rgba(123,200,91,0.2);padding:3px 8px;border-radius:3px;font-size:10px;">Bybit</span>
+                                <span style="background:rgba(123,200,91,0.08);color:#7BC85B;border:1px solid rgba(123,200,91,0.2);padding:3px 8px;border-radius:3px;font-size:10px;">Binance</span>
+                                <span style="background:rgba(123,200,91,0.08);color:#7BC85B;border:1px solid rgba(123,200,91,0.2);padding:3px 8px;border-radius:3px;font-size:10px;">Gate.io</span>
+                                <span style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);border:1px solid var(--border);padding:3px 8px;border-radius:3px;font-size:10px;">Coinbase</span>
+                                <span style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);border:1px solid var(--border);padding:3px 8px;border-radius:3px;font-size:10px;">Kraken</span>
+                            </div>
+                            <div style="font-size:9.5px;color:rgba(255,255,255,0.4);margin-top:6px;line-height:1.4;">Green = connected · Grey = not connected (browse via routing card)</div>
+                        </div>
+
+                        <div style="margin-top:auto;padding:8px 10px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.15);border-radius:4px;">
+                            <div style="font-size:10px;font-weight:500;color:#7BC85B;margin-bottom:3px;">⚹ Coming with AI Scout v1.5</div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:1.4;">Live news headlines, social sentiment, on-chain holder distribution, recent dev activity — Scout uses these signals to dispatch the right bot.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2020,100 +2152,151 @@
             </div>
         </div>
 
-        <!-- DIVIDER STRIP: Stats label -->
-        <div style="background:rgba(255,255,255,0.04);padding:4px 10px;border-top:1px solid rgba(255,255,255,0.1);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-            <span style="font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;">STATS · <span id="stats-divider-symbol" style="color:#fff;">BTCUSDT</span></span>
-            <span style="font-size:9px;color:rgba(255,255,255,0.4);"><span id="stats-divider-type">PERP</span> · <span id="stats-divider-venue">BYBIT</span></span>
+        <!-- DIVIDER STRIP: Bots header -->
+        <div style="background:rgba(123,200,91,0.06);padding:5px 10px;border-top:1px solid rgba(123,200,91,0.18);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+            <span style="font-size:10px;color:#7BC85B;letter-spacing:0.5px;font-weight:500;">⚹ BOTS</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.5);">Scout dispatches → Bots execute → <span style="color:#7BC85B;">WIP</span> learns</span>
         </div>
 
-        <!-- BOTTOM HALF: Stats panel (always visible, no longer a tab) -->
-        <div id="ob-stats" style="flex:1 1 45%;display:flex;flex-direction:column;overflow-y:auto;padding:9px 10px;gap:8px;min-height:0;">
-            <!-- Big price display -->
-            <div>
-                <div style="font-size:17px;color:#fff;line-height:1.1;" id="stats-price"><span class="mono">75,972</span><span style="color:rgba(255,255,255,0.55);" class="mono">.1</span> <span style="font-size:9px;color:rgba(255,255,255,0.5);">USDT</span></div>
-                <div style="font-size:10px;margin-top:2px;" id="stats-change"><span style="color:var(--hot-red);">−1,453.7</span> <span style="color:var(--hot-red);">−1.88%</span></div>
-                <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-                    <span style="width:6px;height:6px;border-radius:50%;background:#00c853;" id="stats-status-dot"></span>
-                    <span style="font-size:9px;color:rgba(255,255,255,0.7);" id="stats-status">Market open</span>
+        <!-- BOTTOM HALF: Bots panel -->
+        <div id="ob-bots" style="flex:1 1 45%;display:flex;flex-direction:column;overflow-y:auto;padding:8px 10px;gap:5px;min-height:0;">
+
+            <!-- BOT CARD: Trend Bot -->
+            <div class="bot-card" data-bot="trend" onclick="openBotDetail('trend')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:background 0.15s;">
+                <div style="width:24px;height:24px;background:rgba(91,214,63,0.12);border:1px solid rgba(91,214,63,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5BD63F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
                 </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Trend Bot</span>
+                        <span class="bot-status" style="font-size:8px;color:#5BD63F;background:rgba(91,214,63,0.1);padding:1px 5px;border-radius:8px;">scanning</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Trend continuation · 0 active</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:#5BD63F;animation:scoutPulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
             </div>
 
-            <!-- Bid/Ask quick reference -->
-            <div style="display:flex;gap:4px;">
-                <div style="flex:1;background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.2);padding:4px 6px;border-radius:3px;">
-                    <div style="font-size:8px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">BID</div>
-                    <div class="mono" style="font-size:9.5px;color:#4ade80;" id="stats-bid">75,972.0 × 0.39</div>
+            <!-- BOT CARD: Mean Reversion Bot -->
+            <div class="bot-card" data-bot="meanrev" onclick="openBotDetail('meanrev')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(127,114,221,0.12);border:1px solid rgba(127,114,221,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9b8be6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-3 3-6 9-6s9 6 9 6-3 6-9 6-9-3-9-6z"/><circle cx="12" cy="12" r="2"/></svg>
                 </div>
-                <div style="flex:1;background:rgba(255,80,112,0.1);border:1px solid rgba(255,80,112,0.2);padding:4px 6px;border-radius:3px;">
-                    <div style="font-size:8px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">ASK</div>
-                    <div class="mono" style="font-size:9.5px;color:#ff8888;" id="stats-ask">75,972.1 × 0.30</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Mean Reversion</span>
+                        <span class="bot-status" style="font-size:8px;color:#9b8be6;background:rgba(127,114,221,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Range bounce · 0 active</div>
                 </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- Day's Range -->
-            <div>
-                <div style="display:flex;justify-content:space-between;font-size:8.5px;color:rgba(255,255,255,0.55);margin-bottom:4px;">
-                    <span class="mono" id="stats-day-low">75,640</span>
-                    <span style="color:rgba(255,255,255,0.4);letter-spacing:0.4px;">DAY'S RANGE</span>
-                    <span class="mono" id="stats-day-high">77,480</span>
+            <!-- BOT CARD: Breakout Bot -->
+            <div class="bot-card" data-bot="breakout" onclick="openBotDetail('breakout')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12L19 12"/><polyline points="13 6 19 12 13 18"/><path d="M3 18V6" stroke-dasharray="2 2"/></svg>
                 </div>
-                <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;position:relative;">
-                    <div id="stats-day-marker" style="position:absolute;left:18%;top:50%;transform:translate(-50%,-50%);width:9px;height:9px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);"></div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Breakout Bot</span>
+                        <span class="bot-status" style="font-size:8px;color:#f5a623;background:rgba(245,166,35,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">S/R break · 0 active</div>
                 </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- 52-Week Range -->
-            <div>
-                <div style="display:flex;justify-content:space-between;font-size:8.5px;color:rgba(255,255,255,0.55);margin-bottom:4px;">
-                    <span class="mono" id="stats-52w-low">60,000</span>
-                    <span style="color:rgba(255,255,255,0.4);letter-spacing:0.4px;">52WK RANGE</span>
-                    <span class="mono" id="stats-52w-high">126,193</span>
+            <!-- BOT CARD: DCA Bot -->
+            <div class="bot-card" data-bot="dca" onclick="openBotDetail('dca')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                 </div>
-                <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;position:relative;">
-                    <div id="stats-52w-marker" style="position:absolute;left:24%;top:50%;transform:translate(-50%,-50%);width:9px;height:9px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);"></div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">DCA Bot</span>
+                        <span class="bot-status" style="font-size:8px;color:#4285f4;background:rgba(66,133,244,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Time-based ladder · 0 active</div>
                 </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- Key Stats -->
-            <div style="border-top:1px solid var(--border);padding-top:7px;">
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:4px;">KEY STATS</div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Volume (24h)</span><span class="mono" style="color:#fff;" id="stats-volume">7.84K</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Avg Volume (30D)</span><span class="mono" style="color:#fff;" id="stats-avg-volume">10.44K</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Open Interest</span><span class="mono" style="color:#fff;" id="stats-oi">62.0K BTC</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:9.5px;padding:1px 0;"><span style="color:rgba(255,255,255,0.55);">Funding Rate</span><span class="mono" style="color:#4ade80;" id="stats-funding">+0.0055%</span></div>
+            <!-- BOT CARD: Grid Bot -->
+            <div class="bot-card" data-bot="grid" onclick="openBotDetail('grid')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00c896" stroke-width="2" stroke-linecap="round"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Grid Bot</span>
+                        <span class="bot-status" style="font-size:8px;color:#00c896;background:rgba(0,200,150,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Range grind · 0 active</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- Performance grid -->
-            <div style="border-top:1px solid var(--border);padding-top:7px;">
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;margin-bottom:4px;">PERFORMANCE</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:3px;">
-                    <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#4ade80;">+0.44%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">1W</div>
-                    </div>
-                    <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#4ade80;">+14.76%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">1M</div>
-                    </div>
-                    <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#ff8888;">−14.66%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">3M</div>
-                    </div>
+            <!-- BOT CARD: Arb Bot -->
+            <div class="bot-card" data-bot="arb" onclick="openBotDetail('arb')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(255,30,90,0.12);border:1px solid rgba(255,30,90,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ff5070" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10M7 12h10M7 17h6"/><path d="M3 7l2 2 2-2M3 12l2 2 2-2"/></svg>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;">
-                    <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#ff8888;">−30.99%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">6M</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Arb Bot</span>
+                        <span class="bot-status" style="font-size:8px;color:#ff5070;background:rgba(255,30,90,0.1);padding:1px 5px;border-radius:8px;">scanning</span>
                     </div>
-                    <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#ff8888;">−13.36%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">1Y</div>
-                    </div>
-                    <div style="background:rgba(255,80,112,0.08);border:1px solid rgba(255,80,112,0.15);padding:4px 0;text-align:center;border-radius:3px;">
-                        <div style="font-size:9px;color:#ff8888;">−19.00%</div>
-                        <div style="font-size:7.5px;color:rgba(255,255,255,0.5);">3Y</div>
-                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Cross-exchange · 0 active</div>
                 </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:#ff5070;animation:scoutPulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
+            </div>
+
+            <!-- BOT CARD: Funding Capture Bot -->
+            <div class="bot-card" data-bot="funding" onclick="openBotDetail('funding')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
+                <div style="width:24px;height:24px;background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffc850" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:5px;">
+                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Funding Capture</span>
+                        <span class="bot-status" style="font-size:8px;color:#ffc850;background:rgba(255,200,80,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Delta-neutral yield · 0 active</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                </div>
+                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
+            </div>
+
+            <!-- WIP link -->
+            <div onclick="openWIP()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 9px;background:rgba(123,200,91,0.04);border:1px dashed rgba(123,200,91,0.25);border-radius:4px;cursor:pointer;margin-top:3px;">
+                <span style="font-size:9.5px;color:#7BC85B;font-weight:500;">View WIP — Work In Process →</span>
             </div>
         </div>
     </aside>
@@ -4095,9 +4278,9 @@ function startLiveTicker(symbol = 'BTCUSDT') {
                 if (data.highPrice24h !== undefined && data.lowPrice24h !== undefined) {
                     const hi = parseFloat(data.highPrice24h);
                     const lo = parseFloat(data.lowPrice24h);
-                    set('stats-day-low',  fmtNum(lo));
-                    set('stats-day-high', fmtNum(hi));
-                    const marker = document.getElementById('stats-day-marker');
+                    set('cv-day-low',  fmtNum(lo));
+                    set('cv-day-high', fmtNum(hi));
+                    const marker = document.getElementById('cv-day-marker');
                     if (marker && hi > lo) {
                         const pct = Math.max(0, Math.min(100, ((price - lo) / (hi - lo)) * 100));
                         marker.style.left = pct.toFixed(1) + '%';
@@ -4105,10 +4288,10 @@ function startLiveTicker(symbol = 'BTCUSDT') {
                 }
 
                 // Stats panel — Volume, OI, Funding key stats
-                if (data.turnover24h !== undefined) set('stats-volume', '$' + fmtCompact(parseFloat(data.turnover24h)));
-                if (data.openInterest !== undefined) set('stats-oi', fmtCompact(parseFloat(data.openInterest)) + ' ' + (window.MarketContext?.baseAsset || ''));
+                if (data.turnover24h !== undefined) set('cv-volume', '$' + fmtCompact(parseFloat(data.turnover24h)));
+                if (data.openInterest !== undefined) set('cv-oi', fmtCompact(parseFloat(data.openInterest)) + ' ' + (window.MarketContext?.baseAsset || ''));
                 if (data.fundingRate !== undefined) {
-                    const fEl = document.getElementById('stats-funding');
+                    const fEl = document.getElementById('cv-funding');
                     const fr = parseFloat(data.fundingRate)*100;
                     if (fEl) {
                         fEl.textContent = (fr >= 0 ? '+' : '') + fr.toFixed(4) + '%';
@@ -4118,11 +4301,11 @@ function startLiveTicker(symbol = 'BTCUSDT') {
 
                 // Stats panel — BID/ASK chips from bid1/ask1
                 if (data.bid1Price !== undefined) {
-                    const bidEl = document.getElementById('stats-bid');
+                    const bidEl = document.getElementById('cv-bid');
                     if (bidEl) bidEl.textContent = fmtNum(parseFloat(data.bid1Price)) + ' × ' + (parseFloat(data.bid1Size||0)).toFixed(3);
                 }
                 if (data.ask1Price !== undefined) {
-                    const askEl = document.getElementById('stats-ask');
+                    const askEl = document.getElementById('cv-ask');
                     if (askEl) askEl.textContent = fmtNum(parseFloat(data.ask1Price)) + ' × ' + (parseFloat(data.ask1Size||0)).toFixed(3);
                 }
             }
@@ -4170,7 +4353,7 @@ function updateTicker(price, chgPct) {
     if(obMid){ obMid.textContent = fmt; }
 
     // Stats panel — big price + change line
-    const sPrice = document.getElementById('stats-price');
+    const sPrice = document.getElementById('cv-price');
     if(sPrice){
         // Split price into integer + decimal for the styled display
         const intPart = Math.floor(price).toLocaleString('en-US');
@@ -4179,7 +4362,7 @@ function updateTicker(price, chgPct) {
                          + '<span style="color:rgba(255,255,255,0.55);" class="mono">' + decPart + '</span>'
                          + ' <span style="font-size:9px;color:rgba(255,255,255,0.5);">USDT</span>';
     }
-    const sChg = document.getElementById('stats-change');
+    const sChg = document.getElementById('cv-change');
     if(sChg){
         const cName = chgPct >= 0 ? 'var(--neon)' : 'var(--hot-red)';
         const absDelta = (Math.abs(price * chgPct / 100)).toFixed(1);
@@ -5693,9 +5876,9 @@ function enterApp() {
         // Stats panel divider — third wire
         // ============================================================
         function updateStatsDivider(ctx) {
-            const sym = document.getElementById('stats-divider-symbol');
-            const typ = document.getElementById('stats-divider-type');
-            const ven = document.getElementById('stats-divider-venue');
+            const sym = document.getElementById('cv-symbol');
+            const typ = document.getElementById('cv-type');
+            const ven = document.getElementById('cv-venue');
             if (sym) sym.textContent = ctx.symbol;
             if (typ) typ.textContent = ctx.contractType;
             if (ven) ven.textContent = ctx.exchange.toUpperCase();
@@ -9956,6 +10139,26 @@ function setTPSLPct(tpPct, slPct) {
     const slInp = document.getElementById('te-sl-price');
     if (tpInp) tpInp.value = (price * (1 + tpPct/100)).toFixed(2);
     if (slInp) slInp.value = (price * (1 - slPct/100)).toFixed(2);
+}
+
+/* ── Bot panel handlers (under Order Book) ── */
+/* Bot dispatch architecture: Scout researches coin → dispatches to specialist bot → bot executes → WIP logs decision + outcome.
+   Each bot card opens a detail panel showing its current dispatches, win-rate, and config. Wired in next session. */
+function openBotDetail(botId) {
+    const labels = {
+        trend: 'Trend Bot',
+        meanrev: 'Mean Reversion Bot',
+        breakout: 'Breakout Bot',
+        dca: 'DCA Bot',
+        grid: 'Grid Bot',
+        arb: 'Arb Bot',
+        funding: 'Funding Capture Bot'
+    };
+    showToast(`${labels[botId] || botId} detail panel — opening in next session`);
+}
+
+function openWIP() {
+    showToast('WIP — Work In Process dashboard — opening in next session');
 }
 
 function setQtyPct(pct) {
