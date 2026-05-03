@@ -86,6 +86,80 @@
         .data-table th.r{text-align:right;}
         .data-table td{font-size:11px;color:rgba(255,255,255,0.82);padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.03);white-space:nowrap;}
         .data-table td.r{text-align:right;}
+
+        /* === Bottom panel restructure (May 3) === */
+        /* Sidebar layout for Detail tabs (Open Orders, Positions, History) */
+        .bt-detail{display:flex;height:100%;gap:0;}
+        .bt-sidebar{width:140px;flex-shrink:0;border-right:1px solid var(--border);padding:8px 6px;overflow-y:auto;}
+        .bt-sidebar-label{font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;padding:0 6px 6px;font-weight:500;}
+        .bt-sidebar-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:3px;font-size:10.5px;color:rgba(255,255,255,0.7);cursor:pointer;margin-bottom:1px;transition:background 0.12s;}
+        .bt-sidebar-item:hover{background:rgba(255,255,255,0.04);}
+        .bt-sidebar-item.active{background:rgba(123,200,91,0.08);color:#fff;border:1px solid rgba(123,200,91,0.2);padding:4px 7px;}
+        .bt-sidebar-item .count{color:rgba(255,255,255,0.45);font-size:10px;}
+        .bt-sidebar-item.active .count{color:#7BC85B;}
+        .bt-main{flex:1;min-width:0;overflow:auto;}
+
+        /* Bot attribution dot + label */
+        .bot-dot{display:inline-flex;align-items:center;gap:5px;font-size:10px;}
+        .bot-dot::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+        .bot-dot.b-trend::before{background:#1D9E75;}
+        .bot-dot.b-meanrev::before{background:#9b8be6;}
+        .bot-dot.b-breakout::before{background:#f5a623;}
+        .bot-dot.b-dca::before{background:#4285f4;}
+        .bot-dot.b-grid::before{background:#00c896;}
+        .bot-dot.b-arb::before{background:#ff5070;}
+        .bot-dot.b-funding::before{background:#ffc850;}
+        .bot-dot.b-manual::before{background:rgba(255,255,255,0.35);}
+        .bot-dot.b-manual{color:rgba(255,255,255,0.5);}
+
+        /* Recap table for Assets, P&L by exchange */
+        .recap-table{width:100%;border-collapse:collapse;}
+        .recap-table th{font-size:10px;font-weight:500;color:rgba(255,255,255,0.55);text-align:right;padding:8px 10px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
+        .recap-table th:first-child{text-align:left;color:rgba(255,255,255,0.7);font-weight:500;}
+        .recap-table th.total-col{color:#7BC85B;}
+        .recap-table td{font-size:11px;color:rgba(255,255,255,0.85);padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:right;font-variant-numeric:tabular-nums;}
+        .recap-table td:first-child{text-align:left;color:rgba(255,255,255,0.95);font-weight:500;font-size:11px;}
+        .recap-table td.total-col{font-weight:500;color:#7BC85B;}
+        .recap-table td.muted{color:rgba(255,255,255,0.35);}
+        .recap-table tr:hover td{background:rgba(255,255,255,0.015);}
+
+        /* View toggle pills (By Bot / By Exchange, Filled/Cancelled, etc.) */
+        .view-pills{display:flex;gap:4px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border);}
+        .view-pill{font-size:10.5px;padding:5px 12px;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.55);border-radius:4px;cursor:pointer;transition:all 0.12s;}
+        .view-pill:hover{color:rgba(255,255,255,0.85);}
+        .view-pill.active{background:rgba(123,200,91,0.06);border-color:rgba(123,200,91,0.25);color:#7BC85B;font-weight:500;}
+        .view-pill-spacer{flex:1;}
+        .view-pill-time{font-size:9.5px;padding:3px 9px;}
+
+        /* Bot row in Bots tab */
+        .bot-row{display:grid;grid-template-columns:24px 1fr 90px 90px 80px 80px 80px 70px;gap:10px;padding:9px 12px;align-items:center;border-bottom:1px solid var(--border);}
+        .bot-row-header{font-size:9.5px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;padding:7px 12px;background:rgba(255,255,255,0.02);}
+        .bot-row .name{font-weight:500;color:#fff;font-size:11.5px;}
+        .bot-row .name.off{color:rgba(255,255,255,0.5);font-weight:400;}
+        .bot-row .status{font-size:10px;}
+        .bot-row .status.scanning{color:#5BD63F;}
+        .bot-row .status.idle{color:rgba(255,255,255,0.55);}
+        .bot-row .status.off{color:rgba(255,255,255,0.35);}
+        .bot-row .num{text-align:right;font-size:11px;font-variant-numeric:tabular-nums;}
+        .bot-row .pnl-pos{color:#5BD63F;}
+        .bot-row .pnl-neg{color:#FF5070;}
+        .bot-row .muted{color:rgba(255,255,255,0.35);}
+        .bot-row .edit-link{font-size:10px;color:#7BC85B;cursor:pointer;text-align:right;}
+        .bot-row .edit-link:hover{text-decoration:underline;}
+        /* Bots tab footer */
+        .bots-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.02);border-top:1px solid var(--border);font-size:10.5px;}
+        .bots-footer-summary{color:rgba(255,255,255,0.65);}
+        .bots-footer-killswitch{color:#FF5070;font-weight:500;cursor:pointer;padding:4px 10px;border:1px solid rgba(255,80,112,0.25);border-radius:3px;}
+        .bots-footer-killswitch:hover{background:rgba(255,80,112,0.08);}
+
+        /* Bot toggle (smaller version of exch-toggle for the Bots tab) */
+        .bot-toggle{position:relative;width:28px;height:14px;background:rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;transition:background 0.15s;justify-self:end;}
+        .bot-toggle.on{background:#1D9E75;}
+        .bot-toggle.on.b-meanrev{background:#534AB7;}
+        .bot-toggle.on.b-breakout{background:#BA7517;}
+        .bot-toggle.on.b-arb{background:#A32D2D;}
+        .bot-toggle .knob{position:absolute;left:1px;top:1px;width:12px;height:12px;background:rgba(255,255,255,0.4);border-radius:50%;transition:left 0.15s;}
+        .bot-toggle.on .knob{left:15px;background:#fff;}
         .data-table tr:hover td{background:rgba(255,255,255,0.02);}
         .empty-state{color:rgba(255,255,255,0.45);font-size:11px;text-align:center;padding:28px 0;}
 
@@ -2516,120 +2590,232 @@
         <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 12px;height:34px;gap:4px;flex-shrink:0;overflow-x:auto;">
             <button class="tab-btn active" onclick="switchBottomTab(this,'bt-openorders')">Open Orders</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-positions');loadPositions()">Positions</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-orderhistory')">Order History</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tradehistory')">Trade History</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-history')">History</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-assets');loadAllAssets()">Assets</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-borrowings')">Borrowings</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-tools');renderTPSLMonitors()">Tools</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-bots')">🤖 Bots</button>
-            <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')">⚡ Arb</button>
             <button class="tab-btn" onclick="switchBottomTab(this,'bt-pnl')">P&amp;L</button>
+            <button class="tab-btn" onclick="switchBottomTab(this,'bt-arb')" style="margin-left:auto;font-size:10px;opacity:0.7;">⚡ Arb</button>
             <button id="bottom-fullscreen-btn" title="Maximize (double-click for browser fullscreen, F to toggle, Esc to exit)" onclick="toggleBottomFullscreen()" ondblclick="toggleBottomBrowserFullscreen()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.55);cursor:pointer;padding:4px 8px;font-size:14px;display:flex;align-items:center;line-height:1;flex-shrink:0;" onmouseover="this.style.color='var(--text-bright)'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">
                 <svg id="bottom-fs-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
             </button>
         </div>
         <div style="flex:1;overflow:hidden;">
-            <div id="bt-openorders" class="tab-panel active" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Filled</th><th class="r">Order Value</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="10"><div class="empty-state">No open orders</div></td></tr></tbody></table></div>
-            <div id="bt-positions" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Symbol</th><th class="r">Size</th><th class="r">Entry Price</th><th class="r">Mark Price</th><th class="r">Liq. Price</th><th class="r">Unrealized PNL</th><th class="r">Margin</th><th>Action</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr></tbody></table></div>
-            <div id="bt-orderhistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Side</th><th class="r">Avg Fill</th><th class="r">Qty</th><th class="r">Order Value</th><th>Status</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No order history</div></td></tr></tbody></table></div>
-            <div id="bt-tradehistory" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Fee</th><th class="r">Realized PNL</th></tr></thead><tbody><tr><td colspan="7"><div class="empty-state">No trade history</div></td></tr></tbody></table></div>
-            <div id="bt-assets" class="tab-panel" style="height:100%;overflow-y:auto;flex-direction:column;gap:0;">
-                <!-- Portfolio Hero -->
-                <div class="asset-hero">
-                    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:4px;">Total Portfolio</div>
-                    <div class="asset-hero-total" id="asset-total">$0.00</div>
-                    <div class="asset-hero-grid" style="margin-top:8px;">
-                        <div class="asset-hero-item"><label>Available</label><span id="asset-avail" style="color:var(--neon);">$0.00</span></div>
-                        <div class="asset-hero-item"><label>Margin Used</label><span id="asset-margin">$0.00</span></div>
-                        <div class="asset-hero-item"><label>Unr. P/L</label><span id="asset-upnl" style="color:var(--text-mid);">+$0.00</span></div>
+            <div id="bt-openorders" class="tab-panel active" style="height:100%;padding:0;">
+                <div class="bt-detail">
+                    <div class="bt-sidebar">
+                        <div class="bt-sidebar-label">EXCHANGES</div>
+                        <div class="bt-sidebar-item active" onclick="filterOrdersByExchange(this,'all')"><span>All</span><span class="count" id="oo-count-all">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterOrdersByExchange(this,'bybit')"><span>Bybit</span><span class="count" id="oo-count-bybit">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterOrdersByExchange(this,'gate')"><span>Gate.io</span><span class="count" id="oo-count-gate">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterOrdersByExchange(this,'binance')"><span>Binance</span><span class="count" id="oo-count-binance">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterOrdersByExchange(this,'alpaca-paper')"><span>Alpaca P</span><span class="count" id="oo-count-alpaca-paper">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterOrdersByExchange(this,'alpaca-live')"><span>Alpaca L</span><span class="count" id="oo-count-alpaca-live">0</span></div>
+                    </div>
+                    <div class="bt-main">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bot</th>
+                                    <th>Symbol</th>
+                                    <th>Type</th>
+                                    <th>Direction</th>
+                                    <th class="r">Price</th>
+                                    <th class="r">Filled / Qty</th>
+                                    <th class="r">Order Value</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="oo-tbody">
+                                <tr><td colspan="8"><div class="empty-state">No open orders</div></td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- Exchange cards -->
-                <div id="asset-exchanges" style="padding:4px 0;">
-                    <!-- Binance Card -->
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="var r=this.nextElementSibling;r.style.display=r.style.display==='none'?'block':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(240,185,11,0.15);color:#F0B90B;">B</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Binance</div><div class="exch-asset-status" id="binance-asset-status" style="color:var(--text-dim);">Not connected</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Wallet Balance</label><span id="binance-balance">—</span></div>
-                            <div class="exch-asset-row"><label>Available</label><span id="binance-avail">—</span></div>
-                            <div class="exch-asset-row"><label>Equity</label><span id="binance-equity">—</span></div>
-                            <div id="binance-coin-rows"></div>
-                        </div>
+            </div>
+            <div id="bt-positions" class="tab-panel" style="height:100%;padding:0;">
+                <div class="bt-detail">
+                    <div class="bt-sidebar">
+                        <div class="bt-sidebar-label">EXCHANGES</div>
+                        <div class="bt-sidebar-item active" onclick="filterPositionsByExchange(this,'all')"><span>All</span><span class="count" id="pos-count-all">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterPositionsByExchange(this,'bybit')"><span>Bybit</span><span class="count" id="pos-count-bybit">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterPositionsByExchange(this,'gate')"><span>Gate.io</span><span class="count" id="pos-count-gate">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterPositionsByExchange(this,'binance')"><span>Binance</span><span class="count" id="pos-count-binance">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterPositionsByExchange(this,'alpaca-paper')"><span>Alpaca P</span><span class="count" id="pos-count-alpaca-paper">0</span></div>
+                        <div class="bt-sidebar-item" onclick="filterPositionsByExchange(this,'alpaca-live')"><span>Alpaca L</span><span class="count" id="pos-count-alpaca-live">0</span></div>
                     </div>
-                    <!-- Alpaca Card -->
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="var r=this.nextElementSibling;r.style.display=r.style.display==='none'?'block':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(255,205,0,0.15);color:#FFCD00;">A</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Alpaca <span style="font-size:9px;color:var(--neon);">Stocks+Crypto</span></div><div class="exch-asset-status" id="alpaca-asset-status" style="color:var(--text-dim);">Not connected</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Equity</label><span id="alpaca-equity">—</span></div>
-                            <div class="exch-asset-row"><label>Cash</label><span id="alpaca-avail">—</span></div>
-                            <div class="exch-asset-row"><label>Buying Power</label><span id="alpaca-buypower">—</span></div>
-                            <div id="alpaca-coin-rows"></div>
-                        </div>
+                    <div class="bt-main">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bot</th>
+                                    <th>Symbol</th>
+                                    <th class="r">Qty</th>
+                                    <th class="r">Entry</th>
+                                    <th class="r">Mark</th>
+                                    <th class="r">Liq.</th>
+                                    <th class="r">P&amp;L (ROI)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pos-tbody">
+                                <tr><td colspan="8"><div class="empty-state">No open positions</div></td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(255,184,0,0.15);color:#FFB800;">B</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Bybit</div><div class="exch-asset-status" id="bybit-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Total Balance</label><span id="bybit-bal">—</span></div>
-                            <div class="exch-asset-row"><label>Available</label><span id="bybit-avail">—</span></div>
-                            <div class="exch-asset-row"><label>Wallet Balance</label><span id="bybit-wallet">—</span></div>
-                            <div class="exch-asset-row"><label>Margin Used</label><span id="bybit-margin">—</span></div>
-                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="bybit-upnl">—</span></div>
-                        </div>
+                </div>
+            </div>
+            <div id="bt-history" class="tab-panel" style="height:100%;padding:0;">
+                <div style="display:flex;flex-direction:column;height:100%;">
+                    <!-- Filter bar -->
+                    <div class="view-pills">
+                        <button class="view-pill active" onclick="filterHistoryStatus(this,'all')">All</button>
+                        <button class="view-pill" onclick="filterHistoryStatus(this,'filled')">Filled</button>
+                        <button class="view-pill" onclick="filterHistoryStatus(this,'cancelled')">Cancelled</button>
+                        <div class="view-pill-spacer"></div>
+                        <button class="view-pill view-pill-time active" onclick="filterHistoryTime(this,'7d')">7D</button>
+                        <button class="view-pill view-pill-time" onclick="filterHistoryTime(this,'30d')">30D</button>
+                        <button class="view-pill view-pill-time" onclick="filterHistoryTime(this,'all')">All</button>
                     </div>
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(0,200,150,0.12);color:#00C896;">G</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Gate.io</div><div class="exch-asset-status" id="gate-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <!-- Sidebar + main -->
+                    <div class="bt-detail" style="flex:1;min-height:0;">
+                        <div class="bt-sidebar">
+                            <div class="bt-sidebar-label">EXCHANGES</div>
+                            <div class="bt-sidebar-item active" onclick="filterHistoryExchange(this,'all')"><span>All</span><span class="count" id="hist-count-all">0</span></div>
+                            <div class="bt-sidebar-item" onclick="filterHistoryExchange(this,'bybit')"><span>Bybit</span><span class="count" id="hist-count-bybit">0</span></div>
+                            <div class="bt-sidebar-item" onclick="filterHistoryExchange(this,'gate')"><span>Gate.io</span><span class="count" id="hist-count-gate">0</span></div>
+                            <div class="bt-sidebar-item" onclick="filterHistoryExchange(this,'binance')"><span>Binance</span><span class="count" id="hist-count-binance">0</span></div>
+                            <div class="bt-sidebar-item" onclick="filterHistoryExchange(this,'alpaca-paper')"><span>Alpaca P</span><span class="count" id="hist-count-alpaca-paper">0</span></div>
+                            <div class="bt-sidebar-item" onclick="filterHistoryExchange(this,'alpaca-live')"><span>Alpaca L</span><span class="count" id="hist-count-alpaca-live">0</span></div>
                         </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Total Balance</label><span id="gate-bal">—</span></div>
-                            <div class="exch-asset-row"><label>Available</label><span id="gate-avail">—</span></div>
-                            <div class="exch-asset-row"><label>Margin Used</label><span id="gate-margin">—</span></div>
-                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="gate-upnl">—</span></div>
-                        </div>
-                    </div>
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(240,180,41,0.12);color:#F0B429;">N</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Binance</div><div class="exch-asset-status" id="binance-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Total Balance</label><span id="binance-bal">—</span></div>
-                            <div class="exch-asset-row"><label>Available</label><span id="binance-avail">—</span></div>
-                            <div class="exch-asset-row"><label>Margin Used</label><span id="binance-margin">—</span></div>
-                            <div class="exch-asset-row"><label>Unrealized P/L</label><span id="binance-upnl">—</span></div>
-                        </div>
-                    </div>
-                    <div class="exch-asset-card">
-                        <div class="exch-asset-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
-                            <div class="exch-asset-logo" style="background:rgba(66,133,244,0.12);color:#4285f4;">A</div>
-                            <div style="flex:1;"><div class="exch-asset-name">Alpaca</div><div class="exch-asset-status" id="alpaca-asset-status" style="color:var(--text-dim);">Not connected — add keys in Settings</div></div>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        <div class="exch-asset-rows" style="display:none;">
-                            <div class="exch-asset-row"><label>Total Balance</label><span id="alpaca-bal">—</span></div>
-                            <div class="exch-asset-row"><label>Cash Available</label><span id="alpaca-cash">—</span></div>
-                            <div class="exch-asset-row"><label>Portfolio Value</label><span id="alpaca-portfolio">—</span></div>
+                        <div class="bt-main">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bot</th>
+                                        <th>Symbol</th>
+                                        <th>Type</th>
+                                        <th>Direction</th>
+                                        <th class="r">Price</th>
+                                        <th class="r">Qty</th>
+                                        <th>Status</th>
+                                        <th class="r">When</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hist-tbody">
+                                    <tr><td colspan="8"><div class="empty-state">No history</div></td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="bt-borrowings" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Borrowed</th><th class="r">Interest</th><th class="r">Daily Rate</th><th>Due Date</th><th>Action</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No borrowings</div></td></tr></tbody></table></div>
-            <div id="bt-tools" class="tab-panel" style="height:100%;overflow-y:auto;">
+            <div id="bt-assets" class="tab-panel" style="height:100%;padding:0;display:flex;flex-direction:column;">
+                <!-- Portfolio hero header -->
+                <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(123,200,91,0.03);flex-shrink:0;">
+                    <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:3px;">Total Portfolio</div>
+                    <div style="display:flex;align-items:baseline;gap:14px;">
+                        <span class="mono" id="asset-total" style="font-size:20px;color:#fff;font-weight:500;">$0.00</span>
+                        <span style="font-size:11px;color:rgba(255,255,255,0.55);">Available <span id="asset-avail" class="mono" style="color:var(--neon);">$0.00</span></span>
+                        <span style="font-size:11px;color:rgba(255,255,255,0.55);">Margin Used <span id="asset-margin" class="mono" style="color:#fff;">$0.00</span></span>
+                        <span style="font-size:11px;color:rgba(255,255,255,0.55);">Unr. P/L <span id="asset-upnl" class="mono" style="color:#fff;">+$0.00</span></span>
+                    </div>
+                </div>
+
+                <!-- Recap table: exchanges as columns -->
+                <div style="flex:1;overflow:auto;padding:10px 14px;">
+                    <table class="recap-table">
+                        <thead>
+                            <tr>
+                                <th style="width:160px;">&nbsp;</th>
+                                <th>Bybit</th>
+                                <th>Gate.io</th>
+                                <th>Binance</th>
+                                <th style="color:rgba(255,255,255,0.4);">Alpaca P</th>
+                                <th>Alpaca L</th>
+                                <th class="total-col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="asset-recap-tbody">
+                            <tr>
+                                <td>Total Balance</td>
+                                <td><span id="bybit-bal">—</span></td>
+                                <td><span id="gate-bal">—</span></td>
+                                <td><span id="binance-bal">—</span></td>
+                                <td class="muted"><span id="alpaca-paper-bal">—</span></td>
+                                <td><span id="alpaca-bal">—</span></td>
+                                <td class="total-col"><span id="recap-total-bal">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Available</td>
+                                <td><span id="bybit-avail">—</span></td>
+                                <td><span id="gate-avail">—</span></td>
+                                <td><span id="binance-avail">—</span></td>
+                                <td class="muted"><span id="alpaca-paper-avail">—</span></td>
+                                <td><span id="alpaca-cash">—</span></td>
+                                <td class="total-col"><span id="recap-total-avail">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Margin Used</td>
+                                <td><span id="bybit-margin">—</span></td>
+                                <td><span id="gate-margin">—</span></td>
+                                <td><span id="binance-margin">—</span></td>
+                                <td class="muted">—</td>
+                                <td>—</td>
+                                <td class="total-col"><span id="recap-total-margin">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>In Bot Strategies</td>
+                                <td><span id="bybit-bot-cap">$0.00</span></td>
+                                <td><span id="gate-bot-cap">$0.00</span></td>
+                                <td><span id="binance-bot-cap">$0.00</span></td>
+                                <td class="muted">—</td>
+                                <td><span id="alpaca-bot-cap">$0.00</span></td>
+                                <td class="total-col"><span id="recap-total-bot-cap">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Unrealized P/L</td>
+                                <td><span id="bybit-upnl">—</span></td>
+                                <td><span id="gate-upnl">—</span></td>
+                                <td><span id="binance-upnl">—</span></td>
+                                <td class="muted">—</td>
+                                <td>—</td>
+                                <td class="total-col"><span id="recap-total-upnl">+$0.00</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Connection status row beneath the table -->
+                    <div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr 1fr 1fr 100px;gap:10px;margin-top:10px;padding:8px 10px 0;border-top:1px solid var(--border);font-size:9.5px;">
+                        <div style="color:rgba(255,255,255,0.5);">Status</div>
+                        <div style="text-align:right;color:rgba(255,255,255,0.55);" id="bybit-asset-status">Not connected</div>
+                        <div style="text-align:right;color:rgba(255,255,255,0.55);" id="gate-asset-status">Not connected</div>
+                        <div style="text-align:right;color:rgba(255,255,255,0.55);" id="binance-asset-status">Not connected</div>
+                        <div style="text-align:right;color:rgba(255,255,255,0.4);" id="alpaca-paper-status">Demo</div>
+                        <div style="text-align:right;color:rgba(255,255,255,0.55);" id="alpaca-asset-status">Not connected</div>
+                        <div></div>
+                    </div>
+
+                    <!-- Helper text -->
+                    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:8px;padding:0 10px;line-height:1.5;">
+                        Alpaca P (paper) shown grey — excluded from portfolio total. As more exchanges connect, additional columns appear here. "In Bot Strategies" shows capital tied up in active bot positions.
+                    </div>
+
+                    <!-- Hidden legacy elements for backward compat with existing JS -->
+                    <div style="display:none;">
+                        <span id="bybit-wallet">—</span>
+                        <span id="binance-equity">—</span>
+                        <span id="alpaca-equity">—</span>
+                        <span id="alpaca-buypower">—</span>
+                        <span id="alpaca-portfolio">—</span>
+                        <div id="binance-coin-rows"></div>
+                        <div id="alpaca-coin-rows"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Borrowings tab hidden in v1 — exchanges handle margin lending UX, not ExNexus's value-add. Markup preserved for legacy refs. -->
+            <div id="bt-borrowings" class="tab-panel" style="display:none;height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Coin</th><th class="r">Borrowed</th><th class="r">Interest</th><th class="r">Daily Rate</th><th>Due Date</th><th>Action</th></tr></thead><tbody><tr><td colspan="6"><div class="empty-state">No borrowings</div></td></tr></tbody></table></div>
+            <!-- Tools tab hidden in v1 — TWAP/Iceberg/Chase are power-user execution algos, not ExNexus's value-add. Calculator markup preserved for legacy refs. -->
+            <div id="bt-tools" class="tab-panel" style="display:none;height:100%;overflow-y:auto;">
                 <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
                     <button style="flex:1;padding:7px;font-size:10.5px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;" class="calc-tab-btn active-calc" id="calc-tab-pos" onclick="switchCalc('pos')">Position Size</button>
                     <button style="flex:1;padding:7px;font-size:10.5px;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;" class="calc-tab-btn" id="calc-tab-rrr" onclick="switchCalc('rrr')">RRR / P&amp;L</button>
@@ -2698,24 +2884,172 @@
                     </table>
                 </div>
             </div>
-            <div id="bt-bots" class="tab-panel" style="height:100%;overflow-y:auto;">
-                <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-                    <span style="font-size:11px;font-weight:600;color:var(--text-bright);">Trading Bots</span>
-                    <span style="font-size:9.5px;color:var(--text-dim);">Select a bot to configure and deploy</span>
+            <div id="bt-bots" class="tab-panel" style="height:100%;display:flex;flex-direction:column;padding:0;">
+                <!-- Header -->
+                <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                    <div>
+                        <div style="font-size:12px;font-weight:600;color:#fff;">Bot Control Center</div>
+                        <div style="font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:1px;">Scout dispatches → Bots execute → WIP learns</div>
+                    </div>
+                    <button onclick="openWIP()" style="background:rgba(123,200,91,0.06);border:1px solid rgba(123,200,91,0.25);color:#7BC85B;font-size:10px;padding:5px 12px;border-radius:3px;cursor:pointer;">View WIP →</button>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;padding:10px 14px;">
-                    <div class="bcard"><div class="bcard-name">Grid Scalper</div><div class="bcard-desc">Range-bound grid with auto-spacing</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">Trend Rider</div><div class="bcard-desc">Follows momentum with trailing stop</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">Smart Reversal</div><div class="bcard-desc">RSI + MACD counter-trend entries</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">DCA Bot</div><div class="bcard-desc">Dollar-cost averaging with zones</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">Scalp Hunter</div><div class="bcard-desc">High-frequency small profit scalper</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">Breakout Bot</div><div class="bcard-desc">Detects and trades range breakouts</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>Configure</div></div>
-                    <div class="bcard"><div class="bcard-name">AI Scout Bot</div><div class="bcard-desc">Claude-powered signal execution</div><div class="bcard-tag run"><span class="bcard-dot" style="background:var(--neon);"></span>Ready</div></div>
-                    <div class="bcard"><div class="bcard-name">Arb Bot</div><div class="bcard-desc">Cross-exchange arbitrage executor</div><div class="bcard-tag run"><span class="bcard-dot" style="background:var(--neon);"></span>Ready</div></div>
-                    <div class="bcard" style="border-color:rgba(68,184,40,0.15);cursor:pointer;" onclick="showToast('Custom bot builder coming soon')"><div class="bcard-name" style="color:var(--neon);">+ Custom Bot</div><div class="bcard-desc">Build your own strategy logic</div><div class="bcard-tag cfg"><span class="bcard-dot" style="background:var(--text-dim);"></span>New</div></div>
+
+                <!-- Column header row -->
+                <div class="bot-row bot-row-header" style="grid-template-columns:24px 1fr 90px 90px 80px 80px 80px 70px;">
+                    <div></div>
+                    <div>Bot</div>
+                    <div>Status</div>
+                    <div style="text-align:right;">Active</div>
+                    <div style="text-align:right;">7D win rate</div>
+                    <div style="text-align:right;">7D P&amp;L</div>
+                    <div style="text-align:right;">Toggle</div>
+                    <div></div>
+                </div>
+
+                <!-- Bot rows -->
+                <div style="flex:1;overflow-y:auto;">
+                    <!-- Trend Bot -->
+                    <div class="bot-row" data-bot="trend">
+                        <span style="width:8px;height:8px;background:#1D9E75;border-radius:50%;"></span>
+                        <span class="name">Trend Bot</span>
+                        <span class="status idle" id="bot-status-trend">idle</span>
+                        <span class="num" id="bot-active-trend">0 trades</span>
+                        <span class="num" id="bot-winrate-trend">—</span>
+                        <span class="num" id="bot-pnl-trend">—</span>
+                        <span class="bot-toggle" id="bot-toggle-trend" onclick="toggleBot('trend')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('trend')">Edit</span>
+                    </div>
+                    <!-- Mean Reversion -->
+                    <div class="bot-row" data-bot="meanrev">
+                        <span style="width:8px;height:8px;background:#9b8be6;border-radius:50%;"></span>
+                        <span class="name">Mean Reversion</span>
+                        <span class="status idle" id="bot-status-meanrev">idle</span>
+                        <span class="num" id="bot-active-meanrev">0 trades</span>
+                        <span class="num" id="bot-winrate-meanrev">—</span>
+                        <span class="num" id="bot-pnl-meanrev">—</span>
+                        <span class="bot-toggle b-meanrev" id="bot-toggle-meanrev" onclick="toggleBot('meanrev')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('meanrev')">Edit</span>
+                    </div>
+                    <!-- Breakout -->
+                    <div class="bot-row" data-bot="breakout">
+                        <span style="width:8px;height:8px;background:#f5a623;border-radius:50%;"></span>
+                        <span class="name">Breakout Bot</span>
+                        <span class="status idle" id="bot-status-breakout">idle</span>
+                        <span class="num" id="bot-active-breakout">0 trades</span>
+                        <span class="num" id="bot-winrate-breakout">—</span>
+                        <span class="num" id="bot-pnl-breakout">—</span>
+                        <span class="bot-toggle b-breakout" id="bot-toggle-breakout" onclick="toggleBot('breakout')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('breakout')">Edit</span>
+                    </div>
+                    <!-- DCA -->
+                    <div class="bot-row" data-bot="dca">
+                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <span class="name off">DCA Bot</span>
+                        <span class="status off" id="bot-status-dca">off</span>
+                        <span class="num muted" id="bot-active-dca">—</span>
+                        <span class="num muted" id="bot-winrate-dca">—</span>
+                        <span class="num muted" id="bot-pnl-dca">—</span>
+                        <span class="bot-toggle" id="bot-toggle-dca" onclick="toggleBot('dca')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('dca')">Edit</span>
+                    </div>
+                    <!-- Grid -->
+                    <div class="bot-row" data-bot="grid">
+                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <span class="name off">Grid Bot</span>
+                        <span class="status off" id="bot-status-grid">off</span>
+                        <span class="num muted" id="bot-active-grid">—</span>
+                        <span class="num muted" id="bot-winrate-grid">—</span>
+                        <span class="num muted" id="bot-pnl-grid">—</span>
+                        <span class="bot-toggle" id="bot-toggle-grid" onclick="toggleBot('grid')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('grid')">Edit</span>
+                    </div>
+                    <!-- Arb -->
+                    <div class="bot-row" data-bot="arb">
+                        <span style="width:8px;height:8px;background:#ff5070;border-radius:50%;"></span>
+                        <span class="name">Arb Bot</span>
+                        <span class="status idle" id="bot-status-arb">idle</span>
+                        <span class="num" id="bot-active-arb">0 trades</span>
+                        <span class="num" id="bot-winrate-arb">—</span>
+                        <span class="num" id="bot-pnl-arb">—</span>
+                        <span class="bot-toggle b-arb" id="bot-toggle-arb" onclick="toggleBot('arb')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('arb')">Edit</span>
+                    </div>
+                    <!-- Funding Capture -->
+                    <div class="bot-row" data-bot="funding">
+                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <span class="name off">Funding Capture</span>
+                        <span class="status off" id="bot-status-funding">off</span>
+                        <span class="num muted" id="bot-active-funding">—</span>
+                        <span class="num muted" id="bot-winrate-funding">—</span>
+                        <span class="num muted" id="bot-pnl-funding">—</span>
+                        <span class="bot-toggle" id="bot-toggle-funding" onclick="toggleBot('funding')"><span class="knob"></span></span>
+                        <span class="edit-link" onclick="openBotDetail('funding')">Edit</span>
+                    </div>
+                </div>
+
+                <!-- Footer: aggregate risk summary + master kill switch -->
+                <div class="bots-footer">
+                    <div class="bots-footer-summary">
+                        <span id="bots-active-count">0</span> of 7 bots active · Risk: <span id="bots-risk-pct">0%</span> portfolio committed · Daily loss budget: <span id="bots-daily-loss" style="color:#5BD63F;">$0</span>
+                    </div>
+                    <button class="bots-footer-killswitch" onclick="emergencyStopAllBots()">⏸ Pause all bots</button>
                 </div>
             </div>
-            <div id="bt-pnl" class="tab-panel" style="height:100%;overflow:auto;"><table class="data-table"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th class="r">Closed Size</th><th class="r">Entry Price</th><th class="r">Exit Price</th><th class="r">Realized PNL</th><th>Close Type</th></tr></thead><tbody><tr><td colspan="8"><div class="empty-state">No P&amp;L data</div></td></tr></tbody></table></div>
+
+            <!-- P&L tab — recap with By Bot / By Exchange views -->
+            <div id="bt-pnl" class="tab-panel" style="height:100%;padding:0;display:flex;flex-direction:column;">
+                <!-- View toggles + time filters -->
+                <div class="view-pills">
+                    <button class="view-pill active" id="pnl-view-bot" onclick="switchPnlView('bot')">By Bot</button>
+                    <button class="view-pill" id="pnl-view-exchange" onclick="switchPnlView('exchange')">By Exchange</button>
+                    <div class="view-pill-spacer"></div>
+                    <button class="view-pill view-pill-time active" onclick="switchPnlTime(this,'7d')">7D</button>
+                    <button class="view-pill view-pill-time" onclick="switchPnlTime(this,'30d')">30D</button>
+                    <button class="view-pill view-pill-time" onclick="switchPnlTime(this,'all')">All</button>
+                </div>
+
+                <!-- By Bot view -->
+                <div id="pnl-tbl-bot" style="flex:1;overflow:auto;padding:10px 14px;">
+                    <table class="recap-table">
+                        <thead>
+                            <tr>
+                                <th style="width:170px;">Bot</th>
+                                <th>Trades</th>
+                                <th>Win rate</th>
+                                <th>Realized P&amp;L</th>
+                                <th>Fees</th>
+                                <th class="total-col">Net</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pnl-bot-tbody">
+                            <tr><td colspan="6"><div class="empty-state">No P&amp;L data — bots will populate here as they trade</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- By Exchange view (hidden by default) -->
+                <div id="pnl-tbl-exchange" style="flex:1;overflow:auto;padding:10px 14px;display:none;">
+                    <table class="recap-table">
+                        <thead>
+                            <tr>
+                                <th style="width:160px;">&nbsp;</th>
+                                <th>Bybit</th>
+                                <th>Gate.io</th>
+                                <th>Binance</th>
+                                <th>Alpaca L</th>
+                                <th class="total-col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pnl-exch-tbody">
+                            <tr><td>Trades</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="total-col">0</td></tr>
+                            <tr><td>Win rate</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="total-col">—</td></tr>
+                            <tr><td>Realized P&amp;L</td><td>$0</td><td>$0</td><td>$0</td><td>$0</td><td class="total-col">$0</td></tr>
+                            <tr><td>Fees</td><td>$0</td><td>$0</td><td>$0</td><td>$0</td><td class="total-col">$0</td></tr>
+                            <tr><td>Net</td><td>$0</td><td>$0</td><td>$0</td><td>$0</td><td class="total-col">$0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 </div><!-- end .app-container -->
@@ -10159,6 +10493,126 @@ function openBotDetail(botId) {
 
 function openWIP() {
     showToast('WIP — Work In Process dashboard — opening in next session');
+}
+
+/* ── Bottom panel filter handlers (May 3 restructure) ── */
+function _switchSidebarItem(clickedEl) {
+    if (!clickedEl) return;
+    const sidebar = clickedEl.closest('.bt-sidebar');
+    if (!sidebar) return;
+    sidebar.querySelectorAll('.bt-sidebar-item').forEach(el => el.classList.remove('active'));
+    clickedEl.classList.add('active');
+}
+function filterOrdersByExchange(el, exch) { _switchSidebarItem(el); window._oo_filter = exch; /* TODO: wire to actual orders feed */ }
+function filterPositionsByExchange(el, exch) { _switchSidebarItem(el); window._pos_filter = exch; /* TODO: wire when positions populated */ }
+function filterHistoryExchange(el, exch) { _switchSidebarItem(el); window._hist_exch_filter = exch; }
+function filterHistoryStatus(el, status) {
+    const pills = el.parentElement.querySelectorAll('.view-pill:not(.view-pill-time)');
+    pills.forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    window._hist_status_filter = status;
+}
+function filterHistoryTime(el, time) {
+    const pills = el.parentElement.querySelectorAll('.view-pill-time');
+    pills.forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    window._hist_time_filter = time;
+}
+
+/* ── P&L view switcher (By Bot vs By Exchange) ── */
+function switchPnlView(view) {
+    const botBtn = document.getElementById('pnl-view-bot');
+    const exchBtn = document.getElementById('pnl-view-exchange');
+    const botTbl = document.getElementById('pnl-tbl-bot');
+    const exchTbl = document.getElementById('pnl-tbl-exchange');
+    if (view === 'bot') {
+        botBtn?.classList.add('active'); exchBtn?.classList.remove('active');
+        if (botTbl) botTbl.style.display = '';
+        if (exchTbl) exchTbl.style.display = 'none';
+    } else {
+        botBtn?.classList.remove('active'); exchBtn?.classList.add('active');
+        if (botTbl) botTbl.style.display = 'none';
+        if (exchTbl) exchTbl.style.display = '';
+    }
+}
+function switchPnlTime(el, time) {
+    const pills = el.parentElement.querySelectorAll('.view-pill-time');
+    pills.forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    window._pnl_time_filter = time;
+}
+
+/* ── Bot toggle on/off (Bots tab control center) ── */
+function toggleBot(botId) {
+    const toggle = document.getElementById('bot-toggle-' + botId);
+    if (!toggle) return;
+    const isOn = toggle.classList.toggle('on');
+    // Update UI: status, name color, active count display
+    const status = document.getElementById('bot-status-' + botId);
+    const nameEl = document.querySelector(`.bot-row[data-bot="${botId}"] .name`);
+    if (status) {
+        status.textContent = isOn ? 'scanning' : 'off';
+        status.classList.toggle('scanning', isOn);
+        status.classList.toggle('off', !isOn);
+    }
+    if (nameEl) nameEl.classList.toggle('off', !isOn);
+    // Save to localStorage so toggle persists
+    try {
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        enabled[botId] = isOn;
+        localStorage.setItem('exnexus_bots_enabled', JSON.stringify(enabled));
+    } catch(e) {}
+    // Update aggregate active count in footer
+    updateBotsAggregateFooter();
+    showToast((isOn ? 'Enabled' : 'Disabled') + ' ' + botId + ' bot');
+}
+
+function updateBotsAggregateFooter() {
+    const activeToggles = document.querySelectorAll('.bot-toggle.on').length;
+    const countEl = document.getElementById('bots-active-count');
+    if (countEl) countEl.textContent = activeToggles;
+    // Risk % is a stub for now — will be computed from actual bot positions in WIP
+    const riskEl = document.getElementById('bots-risk-pct');
+    if (riskEl) riskEl.textContent = activeToggles === 0 ? '0%' : (activeToggles * 1.5).toFixed(1) + '%';
+}
+
+/* ── Emergency stop: pause all bots ── */
+function emergencyStopAllBots() {
+    if (!confirm('Pause ALL active bots? Active trades will continue to be monitored but no new dispatches will occur.')) return;
+    document.querySelectorAll('.bot-toggle.on').forEach(t => {
+        const botId = t.id.replace('bot-toggle-', '');
+        toggleBot(botId);
+    });
+    showToast('All bots paused');
+}
+
+/* Restore bot toggle states from localStorage on page load */
+function _restoreBotToggles() {
+    try {
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        Object.keys(enabled).forEach(botId => {
+            if (enabled[botId]) {
+                const toggle = document.getElementById('bot-toggle-' + botId);
+                if (toggle && !toggle.classList.contains('on')) {
+                    toggle.classList.add('on');
+                    const status = document.getElementById('bot-status-' + botId);
+                    const nameEl = document.querySelector(`.bot-row[data-bot="${botId}"] .name`);
+                    if (status) {
+                        status.textContent = 'scanning';
+                        status.classList.add('scanning');
+                        status.classList.remove('off');
+                    }
+                    if (nameEl) nameEl.classList.remove('off');
+                }
+            }
+        });
+        if (document.querySelector('.bot-toggle')) updateBotsAggregateFooter();
+    } catch(e) {}
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _restoreBotToggles);
+} else {
+    _restoreBotToggles();
 }
 
 function setQtyPct(pct) {
