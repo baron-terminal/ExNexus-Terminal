@@ -627,6 +627,28 @@
         .bot-card{transition:background .15s, border-color .15s;}
         .bot-card:hover{background:rgba(255,255,255,0.045) !important;border-color:rgba(255,255,255,0.18) !important;}
 
+        /* === New bot cards under Order Book (May 3 redesign) === */
+        /* Featured row card — full width, info left, big robot right */
+        .bot-card-featured{display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(90deg,rgba(91,214,63,0.04),rgba(91,214,63,0.08));border:1px solid rgba(91,214,63,0.18);border-radius:5px;cursor:pointer;transition:background .15s, border-color .15s;}
+        .bot-card-featured:hover{background:linear-gradient(90deg,rgba(91,214,63,0.06),rgba(91,214,63,0.12));border-color:rgba(91,214,63,0.32);}
+        .bot-card-featured-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+        .bot-card-featured-row{display:flex;align-items:center;gap:6px;}
+        .bot-card-featured-name{font-size:13px;color:#fff;font-weight:600;letter-spacing:0.2px;}
+        .bot-card-featured-sub{font-size:10px;color:rgba(255,255,255,0.55);}
+        .bot-card-featured-stats{font-size:10px;display:flex;align-items:center;}
+        .bot-card-featured-mascot{position:relative;flex-shrink:0;width:64px;height:64px;display:flex;align-items:center;justify-content:center;}
+        .bot-pulse-dot{position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;animation:scoutPulse 1.8s ease-in-out infinite;}
+
+        /* Square card grid — 2 per row */
+        .bot-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+        .bot-card-sq{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:background .15s, border-color .15s;text-align:center;}
+        .bot-card-sq:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.18);}
+        .bot-card-sq-name{font-size:10.5px;color:#fff;font-weight:500;line-height:1.2;}
+        .bot-card-sq-sub{font-size:8.5px;color:rgba(255,255,255,0.45);line-height:1.2;}
+        .bot-card-sq-row{display:flex;align-items:center;gap:5px;justify-content:center;width:100%;margin-top:1px;}
+        .bot-card-sq-pnl{font-size:9px;color:rgba(255,255,255,0.85);font-variant-numeric:tabular-nums;font-family:var(--font-mono,monospace);}
+        .bot-status-pill{font-size:8px;padding:1px 6px;border-radius:8px;font-weight:500;letter-spacing:0.2px;line-height:1.4;}
+
         
         /* ======== SETTINGS PANEL ======== */
         #panel-settings{ width:min(480px,100vw); }
@@ -2226,150 +2248,105 @@
             </div>
         </div>
 
-        <!-- DIVIDER STRIP: Bots header -->
+        <!-- DIVIDER STRIP: Bots header with Expand button -->
         <div style="background:rgba(123,200,91,0.06);padding:5px 10px;border-top:1px solid rgba(123,200,91,0.18);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
             <span style="font-size:10px;color:#7BC85B;letter-spacing:0.5px;font-weight:500;">⚹ BOTS</span>
-            <span style="font-size:9px;color:rgba(255,255,255,0.5);">Scout dispatches → Bots execute → <span style="color:#7BC85B;">WIP</span> learns</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.5);flex:1;text-align:center;padding:0 6px;">Scout dispatches → Bots execute → <span style="color:#7BC85B;">WIP</span> learns</span>
+            <button onclick="expandBotsView()" title="Open Bots tab fullscreen" style="background:none;border:none;color:rgba(123,200,91,0.7);cursor:pointer;padding:2px 4px;display:flex;align-items:center;line-height:1;" onmouseover="this.style.color='#7BC85B'" onmouseout="this.style.color='rgba(123,200,91,0.7)'">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
         </div>
 
-        <!-- BOTTOM HALF: Bots panel -->
-        <div id="ob-bots" style="flex:1 1 45%;display:flex;flex-direction:column;overflow-y:auto;padding:8px 10px;gap:5px;min-height:0;">
+        <!-- BOTS PANEL: featured row + 2-col grid -->
+        <div id="ob-bots" style="flex:1 1 45%;display:flex;flex-direction:column;overflow-y:auto;padding:8px 10px;gap:6px;min-height:0;">
 
-            <!-- BOT CARD: Trend Bot -->
-            <div class="bot-card" data-bot="trend" onclick="openBotDetail('trend')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:background 0.15s;">
-                <div style="width:24px;height:24px;background:rgba(91,214,63,0.12);border:1px solid rgba(91,214,63,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#5BD63F" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#5BD63F"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#5BD63F" stroke="#2A7818" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#2A7818" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#5BD63F" stroke="#2A7818" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Trend Bot</span>
-                        <span class="bot-status" style="font-size:8px;color:#5BD63F;background:rgba(91,214,63,0.1);padding:1px 5px;border-radius:8px;">scanning</span>
+            <!-- FEATURED ROW: Trend Bot (info LEFT, big robot RIGHT) -->
+            <div class="bot-card-featured" data-bot="trend" onclick="openBotDetail('trend')">
+                <div class="bot-card-featured-info">
+                    <div class="bot-card-featured-row">
+                        <span class="bot-card-featured-name">Trend Bot</span>
+                        <span class="bot-status-pill" id="ob-status-trend" style="color:#5BD63F;background:rgba(91,214,63,0.1);">scanning</span>
                     </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Trend continuation · 0 active</div>
+                    <div class="bot-card-featured-sub">Trend continuation · <span id="ob-active-trend">0 active</span></div>
+                    <div class="bot-card-featured-stats">
+                        <span id="ob-pnl-trend" class="mono" style="color:#fff;font-size:11px;">+0.0%</span>
+                        <span style="font-size:9px;color:rgba(255,255,255,0.4);margin-left:8px;">7D win <span id="ob-winrate-trend">0/0</span></span>
+                    </div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                <div class="bot-card-featured-mascot">
+                    <img src="data:image/png;base64,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" width="64" height="64" alt="ExNexus Bot" style="display:block;filter:drop-shadow(0 0 8px rgba(91,214,63,0.4));" />
+                    <span class="bot-pulse-dot" style="background:#5BD63F;"></span>
                 </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:#5BD63F;animation:scoutPulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
             </div>
 
-            <!-- BOT CARD: Mean Reversion Bot -->
-            <div class="bot-card" data-bot="meanrev" onclick="openBotDetail('meanrev')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(127,114,221,0.12);border:1px solid rgba(127,114,221,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Mean Reversion</span>
-                        <span class="bot-status" style="font-size:8px;color:#9b8be6;background:rgba(127,114,221,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+            <!-- ROW 2: Mean Reversion + Breakout -->
+            <div class="bot-card-grid">
+                <div class="bot-card-sq" data-bot="meanrev" onclick="openBotDetail('meanrev')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">Mean Rev</div>
+                    <div class="bot-card-sq-sub">Range bounce</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#9b8be6;background:rgba(155,139,230,0.1);">idle</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-meanrev">+0.0%</span>
                     </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Range bounce · 0 active</div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                <div class="bot-card-sq" data-bot="breakout" onclick="openBotDetail('breakout')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">Breakout</div>
+                    <div class="bot-card-sq-sub">S/R break</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#f5a623;background:rgba(245,166,35,0.1);">idle</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-breakout">+0.0%</span>
+                    </div>
                 </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- BOT CARD: Breakout Bot -->
-            <div class="bot-card" data-bot="breakout" onclick="openBotDetail('breakout')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Breakout Bot</span>
-                        <span class="bot-status" style="font-size:8px;color:#f5a623;background:rgba(245,166,35,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+            <!-- ROW 3: DCA + Grid -->
+            <div class="bot-card-grid">
+                <div class="bot-card-sq" data-bot="dca" onclick="openBotDetail('dca')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#4285f4" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#4285f4"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#1A3F8A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">DCA Bot</div>
+                    <div class="bot-card-sq-sub">Time-based</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#4285f4;background:rgba(66,133,244,0.1);">idle</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-dca">+0.0%</span>
                     </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">S/R break · 0 active</div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
+                <div class="bot-card-sq" data-bot="grid" onclick="openBotDetail('grid')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#00c896" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#00c896"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#005A45" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">Grid Bot</div>
+                    <div class="bot-card-sq-sub">Range grind</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#00c896;background:rgba(0,200,150,0.1);">idle</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-grid">+0.0%</span>
+                    </div>
                 </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
-            <!-- BOT CARD: DCA Bot -->
-            <div class="bot-card" data-bot="dca" onclick="openBotDetail('dca')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#4285f4" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#4285f4"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#1A3F8A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">DCA Bot</span>
-                        <span class="bot-status" style="font-size:8px;color:#4285f4;background:rgba(66,133,244,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+            <!-- ROW 4: Arb + Funding -->
+            <div class="bot-card-grid">
+                <div class="bot-card-sq" data-bot="arb" onclick="openBotDetail('arb')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">Arb Bot</div>
+                    <div class="bot-card-sq-sub">Cross-exchange</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#ff5070;background:rgba(255,80,112,0.1);">scanning</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-arb">+0.0%</span>
                     </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Time-based ladder · 0 active</div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
-                </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
-            </div>
-
-            <!-- BOT CARD: Grid Bot -->
-            <div class="bot-card" data-bot="grid" onclick="openBotDetail('grid')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#00c896" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#00c896"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#00c896" stroke="#005A45" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#005A45" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Grid Bot</span>
-                        <span class="bot-status" style="font-size:8px;color:#00c896;background:rgba(0,200,150,0.1);padding:1px 5px;border-radius:8px;">idle</span>
+                <div class="bot-card-sq" data-bot="funding" onclick="openBotDetail('funding')">
+                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ffc850" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ffc850"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A5F0A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <div class="bot-card-sq-name">Funding</div>
+                    <div class="bot-card-sq-sub">Delta-neutral</div>
+                    <div class="bot-card-sq-row">
+                        <span class="bot-status-pill" style="color:#ffc850;background:rgba(255,200,80,0.1);">idle</span>
+                        <span class="bot-card-sq-pnl" id="ob-pnl-funding">+0.0%</span>
                     </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Range grind · 0 active</div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
-                </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
-            </div>
-
-            <!-- BOT CARD: Arb Bot -->
-            <div class="bot-card" data-bot="arb" onclick="openBotDetail('arb')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(255,30,90,0.12);border:1px solid rgba(255,30,90,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Arb Bot</span>
-                        <span class="bot-status" style="font-size:8px;color:#ff5070;background:rgba(255,30,90,0.1);padding:1px 5px;border-radius:8px;">scanning</span>
-                    </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Cross-exchange · 0 active</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
-                </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:#ff5070;animation:scoutPulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
-            </div>
-
-            <!-- BOT CARD: Funding Capture Bot -->
-            <div class="bot-card" data-bot="funding" onclick="openBotDetail('funding')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
-                <div style="width:24px;height:24px;background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ffc850" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ffc850"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A5F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <span style="font-size:10.5px;color:#fff;font-weight:500;">Funding Capture</span>
-                        <span class="bot-status" style="font-size:8px;color:#ffc850;background:rgba(255,200,80,0.1);padding:1px 5px;border-radius:8px;">idle</span>
-                    </div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:1px;">Delta-neutral yield · 0 active</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="mono" style="font-size:9.5px;color:#fff;">+0.0%</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.4);">7D win 0/0</div>
-                </div>
-                <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></span>
             </div>
 
             <!-- WIP link -->
-            <div onclick="openWIP()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 9px;background:rgba(123,200,91,0.04);border:1px dashed rgba(123,200,91,0.25);border-radius:4px;cursor:pointer;margin-top:3px;">
+            <div onclick="openWIP()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 9px;background:rgba(123,200,91,0.04);border:1px dashed rgba(123,200,91,0.25);border-radius:4px;cursor:pointer;margin-top:2px;">
                 <span style="font-size:9.5px;color:#7BC85B;font-weight:500;">View WIP — Work In Process →</span>
             </div>
         </div>
@@ -2886,10 +2863,11 @@
             </div>
             <div id="bt-bots" class="tab-panel" style="height:100%;display:flex;flex-direction:column;padding:0;">
                 <!-- Header -->
-                <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-                    <div>
-                        <div style="font-size:12px;font-weight:600;color:#fff;">Bot Control Center</div>
-                        <div style="font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:1px;">Scout dispatches → Bots execute → WIP learns</div>
+                <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;background:linear-gradient(90deg,rgba(91,214,63,0.04),rgba(91,214,63,0.01));">
+                    <img src="data:image/png;base64,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" width="64" height="64" alt="ExNexus Bot" style="flex-shrink:0;filter:drop-shadow(0 0 10px rgba(91,214,63,0.45));" />
+                    <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:600;color:#fff;letter-spacing:0.3px;">Bot Control Center</div>
+                        <div style="font-size:10.5px;color:rgba(255,255,255,0.55);margin-top:2px;">Scout dispatches → Bots execute → <span style="color:#7BC85B;">WIP</span> learns</div>
                     </div>
                     <button onclick="openWIP()" style="background:rgba(123,200,91,0.06);border:1px solid rgba(123,200,91,0.25);color:#7BC85B;font-size:10px;padding:5px 12px;border-radius:3px;cursor:pointer;">View WIP →</button>
                 </div>
@@ -10496,6 +10474,17 @@ function openBotDetail(botId) {
 
 function openWIP() {
     showToast('WIP — Work In Process dashboard — opening in next session');
+}
+
+/* Expand the bots panel: switch the bottom panel to the Bots tab + trigger fullscreen */
+function expandBotsView() {
+    // Click the Bots tab button programmatically
+    const botsTabBtn = document.querySelector('.tab-btn[onclick*="bt-bots"]');
+    if (botsTabBtn) botsTabBtn.click();
+    // Then trigger the existing fullscreen
+    if (typeof toggleBottomFullscreen === 'function') {
+        try { toggleBottomFullscreen(); } catch(e) { console.warn('Fullscreen toggle failed:', e); }
+    }
 }
 
 /* ── Bottom panel filter handlers (May 3 restructure) ── */
