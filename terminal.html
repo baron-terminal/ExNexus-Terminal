@@ -132,7 +132,7 @@
         .view-pill-time{font-size:9.5px;padding:3px 9px;}
 
         /* Bot row in Bots tab */
-        .bot-row{display:grid;grid-template-columns:24px 1fr 90px 90px 80px 80px 80px 70px;gap:10px;padding:9px 12px;align-items:center;border-bottom:1px solid var(--border);}
+        .bot-row{display:grid;grid-template-columns:32px 1fr 90px 90px 80px 80px 80px 70px;gap:10px;padding:9px 12px;align-items:center;border-bottom:1px solid var(--border);}
         .bot-row-header{font-size:9.5px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;padding:7px 12px;background:rgba(255,255,255,0.02);}
         .bot-row .name{font-weight:500;color:#fff;font-size:11.5px;}
         .bot-row .name.off{color:rgba(255,255,255,0.5);font-weight:400;}
@@ -2238,7 +2238,7 @@
             <!-- BOT CARD: Trend Bot -->
             <div class="bot-card" data-bot="trend" onclick="openBotDetail('trend')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:background 0.15s;">
                 <div style="width:24px;height:24px;background:rgba(91,214,63,0.12);border:1px solid rgba(91,214,63,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5BD63F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#5BD63F" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#5BD63F"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#5BD63F" stroke="#2A7818" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#2A7818" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#5BD63F" stroke="#2A7818" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2257,7 +2257,7 @@
             <!-- BOT CARD: Mean Reversion Bot -->
             <div class="bot-card" data-bot="meanrev" onclick="openBotDetail('meanrev')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(127,114,221,0.12);border:1px solid rgba(127,114,221,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9b8be6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-3 3-6 9-6s9 6 9 6-3 6-9 6-9-3-9-6z"/><circle cx="12" cy="12" r="2"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2276,7 +2276,7 @@
             <!-- BOT CARD: Breakout Bot -->
             <div class="bot-card" data-bot="breakout" onclick="openBotDetail('breakout')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12L19 12"/><polyline points="13 6 19 12 13 18"/><path d="M3 18V6" stroke-dasharray="2 2"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2295,7 +2295,7 @@
             <!-- BOT CARD: DCA Bot -->
             <div class="bot-card" data-bot="dca" onclick="openBotDetail('dca')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#4285f4" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#4285f4"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#1A3F8A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2314,7 +2314,7 @@
             <!-- BOT CARD: Grid Bot -->
             <div class="bot-card" data-bot="grid" onclick="openBotDetail('grid')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00c896" stroke-width="2" stroke-linecap="round"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#00c896" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#00c896"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#00c896" stroke="#005A45" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#005A45" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2333,7 +2333,7 @@
             <!-- BOT CARD: Arb Bot -->
             <div class="bot-card" data-bot="arb" onclick="openBotDetail('arb')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(255,30,90,0.12);border:1px solid rgba(255,30,90,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ff5070" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10M7 12h10M7 17h6"/><path d="M3 7l2 2 2-2M3 12l2 2 2-2"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2352,7 +2352,7 @@
             <!-- BOT CARD: Funding Capture Bot -->
             <div class="bot-card" data-bot="funding" onclick="openBotDetail('funding')" style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;cursor:pointer;">
                 <div style="width:24px;height:24px;background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffc850" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style="display:block;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ffc850" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ffc850"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A5F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:5px;">
@@ -2895,7 +2895,7 @@
                 </div>
 
                 <!-- Column header row -->
-                <div class="bot-row bot-row-header" style="grid-template-columns:24px 1fr 90px 90px 80px 80px 80px 70px;">
+                <div class="bot-row bot-row-header" style="grid-template-columns:32px 1fr 90px 90px 80px 80px 80px 70px;">
                     <div></div>
                     <div>Bot</div>
                     <div>Status</div>
@@ -2910,7 +2910,7 @@
                 <div style="flex:1;overflow-y:auto;">
                     <!-- Trend Bot -->
                     <div class="bot-row" data-bot="trend">
-                        <span style="width:8px;height:8px;background:#1D9E75;border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#5BD63F" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#5BD63F"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#5BD63F" stroke="#2A7818" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#2A7818" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#5BD63F" stroke="#2A7818" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name">Trend Bot</span>
                         <span class="status idle" id="bot-status-trend">idle</span>
                         <span class="num" id="bot-active-trend">0 trades</span>
@@ -2921,7 +2921,7 @@
                     </div>
                     <!-- Mean Reversion -->
                     <div class="bot-row" data-bot="meanrev">
-                        <span style="width:8px;height:8px;background:#9b8be6;border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name">Mean Reversion</span>
                         <span class="status idle" id="bot-status-meanrev">idle</span>
                         <span class="num" id="bot-active-meanrev">0 trades</span>
@@ -2932,7 +2932,7 @@
                     </div>
                     <!-- Breakout -->
                     <div class="bot-row" data-bot="breakout">
-                        <span style="width:8px;height:8px;background:#f5a623;border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name">Breakout Bot</span>
                         <span class="status idle" id="bot-status-breakout">idle</span>
                         <span class="num" id="bot-active-breakout">0 trades</span>
@@ -2943,7 +2943,7 @@
                     </div>
                     <!-- DCA -->
                     <div class="bot-row" data-bot="dca">
-                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name off">DCA Bot</span>
                         <span class="status off" id="bot-status-dca">off</span>
                         <span class="num muted" id="bot-active-dca">—</span>
@@ -2954,7 +2954,7 @@
                     </div>
                     <!-- Grid -->
                     <div class="bot-row" data-bot="grid">
-                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name off">Grid Bot</span>
                         <span class="status off" id="bot-status-grid">off</span>
                         <span class="num muted" id="bot-active-grid">—</span>
@@ -2965,7 +2965,7 @@
                     </div>
                     <!-- Arb -->
                     <div class="bot-row" data-bot="arb">
-                        <span style="width:8px;height:8px;background:#ff5070;border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name">Arb Bot</span>
                         <span class="status idle" id="bot-status-arb">idle</span>
                         <span class="num" id="bot-active-arb">0 trades</span>
@@ -2976,7 +2976,7 @@
                     </div>
                     <!-- Funding Capture -->
                     <div class="bot-row" data-bot="funding">
-                        <span style="width:8px;height:8px;background:rgba(255,255,255,0.25);border-radius:50%;"></span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
                         <span class="name off">Funding Capture</span>
                         <span class="status off" id="bot-status-funding">off</span>
                         <span class="num muted" id="bot-active-funding">—</span>
@@ -2992,7 +2992,10 @@
                     <div class="bots-footer-summary">
                         <span id="bots-active-count">0</span> of 7 bots active · Risk: <span id="bots-risk-pct">0%</span> portfolio committed · Daily loss budget: <span id="bots-daily-loss" style="color:#5BD63F;">$0</span>
                     </div>
-                    <button class="bots-footer-killswitch" onclick="emergencyStopAllBots()">⏸ Pause all bots</button>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="testScoutDispatch()" style="background:rgba(123,200,91,0.06);border:1px solid rgba(123,200,91,0.25);color:#7BC85B;font-size:10px;padding:4px 10px;border-radius:3px;cursor:pointer;font-weight:500;">▶ Test Scout dispatch</button>
+                        <button class="bots-footer-killswitch" onclick="emergencyStopAllBots()">⏸ Pause all bots</button>
+                    </div>
                 </div>
             </div>
 
@@ -10585,6 +10588,407 @@ function emergencyStopAllBots() {
     });
     showToast('All bots paused');
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   BOT INFRASTRUCTURE — May 3, 2026 (v0.1, demo-only)
+   ════════════════════════════════════════════════════════════════════
+   Architecture: Scout dispatches → Bot executes → WIP logs → UI reads from WIP
+
+   Components:
+     WIP — work-in-process log (localStorage). Schema-stable, written once,
+            read by the UI to populate Bots tab, History, P&L.
+     TrendBot — strategy logic for the Trend Bot. Manages trade lifecycle.
+     Scout — minimal stub dispatcher. Real intelligence comes later.
+     bot.dispatch(...) — public API used to test the pipeline.
+
+   v1 limitations (honest):
+     - Demo mode ONLY. Live execution is NOT wired.
+     - Scout has no real pattern detection. Hardcoded reasoning.
+     - Trade exit logic is simplified (fixed-target + fixed-stop, no trailing yet).
+     - WIP is localStorage; will move to server-side in S17.
+   ════════════════════════════════════════════════════════════════════ */
+const WIP = (function() {
+    const STORAGE_KEY = 'exnexus_wip_v1';
+
+    function _read() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return { dispatches: [], trades: [] };
+            const parsed = JSON.parse(raw);
+            // Defensive: ensure shape
+            if (!parsed.dispatches) parsed.dispatches = [];
+            if (!parsed.trades) parsed.trades = [];
+            return parsed;
+        } catch(e) {
+            console.warn('[WIP] read failed, returning empty:', e);
+            return { dispatches: [], trades: [] };
+        }
+    }
+    function _write(state) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        catch(e) { console.warn('[WIP] write failed:', e); }
+    }
+
+    /* Schema for a dispatch:
+       {
+         id, timestamp, dispatched_by ('scout-auto'|'scout-semi'|'user-manual'),
+         bot_id ('trend'|'meanrev'|...), symbol, exchange, direction,
+         entry_zone, stop, target, reasoning, status ('pending'|'filled'|'closed'|'cancelled')
+       }
+       Schema for a trade:
+       {
+         id, dispatch_id, bot_id, symbol, exchange, direction,
+         entry_price, entry_time, qty,
+         stop, target,
+         exit_price, exit_time, exit_reason,
+         pnl_usd, pnl_pct, fees, status ('open'|'closed')
+       }
+    */
+
+    return {
+        logDispatch(d) {
+            const state = _read();
+            const dispatch = Object.assign({
+                id: 'disp_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+                timestamp: Date.now(),
+                dispatched_by: 'scout-auto',
+                status: 'pending'
+            }, d);
+            state.dispatches.unshift(dispatch);
+            // Keep last 500 dispatches
+            if (state.dispatches.length > 500) state.dispatches = state.dispatches.slice(0,500);
+            _write(state);
+            console.log('[WIP] dispatch logged:', dispatch.id, dispatch.bot_id, dispatch.symbol);
+            return dispatch;
+        },
+        logTrade(t) {
+            const state = _read();
+            const trade = Object.assign({
+                id: 'trade_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+                status: 'open'
+            }, t);
+            state.trades.unshift(trade);
+            if (state.trades.length > 500) state.trades = state.trades.slice(0,500);
+            _write(state);
+            console.log('[WIP] trade logged:', trade.id, trade.symbol, trade.direction);
+            return trade;
+        },
+        updateTrade(tradeId, updates) {
+            const state = _read();
+            const idx = state.trades.findIndex(t => t.id === tradeId);
+            if (idx === -1) return null;
+            state.trades[idx] = Object.assign({}, state.trades[idx], updates);
+            _write(state);
+            return state.trades[idx];
+        },
+        getDispatches(filter) {
+            const state = _read();
+            let arr = state.dispatches;
+            if (filter && filter.bot_id) arr = arr.filter(d => d.bot_id === filter.bot_id);
+            return arr;
+        },
+        getTrades(filter) {
+            const state = _read();
+            let arr = state.trades;
+            if (filter) {
+                if (filter.bot_id) arr = arr.filter(t => t.bot_id === filter.bot_id);
+                if (filter.status) arr = arr.filter(t => t.status === filter.status);
+            }
+            return arr;
+        },
+        getStats(bot_id, days) {
+            const state = _read();
+            const cutoff = days ? Date.now() - (days * 86400000) : 0;
+            const trades = state.trades.filter(t =>
+                t.bot_id === bot_id && t.status === 'closed' && (t.exit_time || 0) >= cutoff
+            );
+            const wins = trades.filter(t => (t.pnl_usd || 0) > 0).length;
+            const losses = trades.filter(t => (t.pnl_usd || 0) <= 0).length;
+            const total_pnl = trades.reduce((s,t) => s + (t.pnl_usd || 0), 0);
+            const total_fees = trades.reduce((s,t) => s + (t.fees || 0), 0);
+            const open_count = state.trades.filter(t => t.bot_id === bot_id && t.status === 'open').length;
+            return {
+                trade_count: trades.length,
+                open_count,
+                wins, losses,
+                win_rate: trades.length ? (wins / trades.length) : 0,
+                total_pnl,
+                total_fees,
+                net_pnl: total_pnl - total_fees
+            };
+        },
+        clearAll() {
+            _write({ dispatches: [], trades: [] });
+            console.log('[WIP] all data cleared');
+        }
+    };
+})();
+
+/* ─── Trend Bot strategy ─── */
+const TrendBot = (function() {
+    const BOT_ID = 'trend';
+
+    /* Execute a Scout dispatch on demo mode.
+       For v0.1: place market entry, set fixed stop & target,
+       monitor in the background poll loop, close on stop/target hit.
+    */
+    function execute(dispatch) {
+        if (!window.demoMode) {
+            console.warn('[TrendBot] dispatch skipped — not in demo mode');
+            return null;
+        }
+        // Bot must be enabled
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        if (!enabled[BOT_ID]) {
+            console.log('[TrendBot] bot is OFF, skipping dispatch');
+            showToast('Trend Bot is OFF — enable it in the Bots tab first');
+            return null;
+        }
+
+        const symbol = dispatch.symbol || 'BTCUSDT';
+        const direction = dispatch.direction || 'Buy';
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) {
+            console.warn('[TrendBot] no current price for', symbol);
+            showToast('Could not fetch price for ' + symbol);
+            return null;
+        }
+
+        // Position size: small fixed for v0.1 demo
+        // Real version uses risk-% × portfolio ÷ stop-distance
+        const qty = Math.round((50 / currentPrice) * 1000) / 1000; // ~$50 notional
+        if (!qty || qty <= 0) {
+            console.warn('[TrendBot] qty calculation failed');
+            return null;
+        }
+
+        // Compute stop and target relative to current price
+        // For v0.1: fixed 1.5% stop, 3% target (R:R = 2)
+        const stopPct = 0.015;
+        const targetPct = 0.03;
+        let stop, target;
+        if (direction === 'Buy') {
+            stop = currentPrice * (1 - stopPct);
+            target = currentPrice * (1 + targetPct);
+        } else {
+            stop = currentPrice * (1 + stopPct);
+            target = currentPrice * (1 - targetPct);
+        }
+
+        // Place demo order — uses existing demo execution path
+        const ok = placeDemoOrder(symbol, direction, qty, 'Market', currentPrice);
+        if (!ok) {
+            console.warn('[TrendBot] demo order placement failed');
+            return null;
+        }
+
+        // Find the demo position we just created (it'll be the most recent one matching this symbol+side)
+        const demoPos = window.demoState?.positions?.find(p =>
+            p.symbol === symbol && p.side === direction
+        );
+
+        // Log the trade to WIP
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol,
+            exchange: 'demo',
+            direction,
+            entry_price: currentPrice,
+            entry_time: Date.now(),
+            qty,
+            stop,
+            target,
+            demo_position_id: demoPos?.id,
+            status: 'open'
+        });
+
+        // Mark the dispatch as filled
+        const wipState = JSON.parse(localStorage.getItem('exnexus_wip_v1') || '{}');
+        if (wipState.dispatches) {
+            const dispIdx = wipState.dispatches.findIndex(d => d.id === dispatch.id);
+            if (dispIdx >= 0) {
+                wipState.dispatches[dispIdx].status = 'filled';
+                wipState.dispatches[dispIdx].trade_id = trade.id;
+                localStorage.setItem('exnexus_wip_v1', JSON.stringify(wipState));
+            }
+        }
+
+        showToast('🤖 Trend Bot opened ' + direction + ' ' + qty + ' ' + symbol + ' @ ' + currentPrice.toFixed(2));
+        // Refresh Bots tab UI
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    /* Manage open trades — called from the polling loop.
+       Checks if any open trade has hit stop or target, closes it. */
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        if (!openTrades.length) return;
+
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+
+            let exitReason = null;
+            if (trade.direction === 'Buy') {
+                if (currentPrice <= trade.stop) exitReason = 'stop';
+                else if (currentPrice >= trade.target) exitReason = 'target';
+            } else {
+                if (currentPrice >= trade.stop) exitReason = 'stop';
+                else if (currentPrice <= trade.target) exitReason = 'target';
+            }
+
+            if (exitReason) {
+                _closeTrade(trade, currentPrice, exitReason);
+            }
+        }
+    }
+
+    function _closeTrade(trade, exitPrice, reason) {
+        // Calculate P&L
+        const direction_mult = trade.direction === 'Buy' ? 1 : -1;
+        const pnl_usd = (exitPrice - trade.entry_price) * trade.qty * direction_mult;
+        const pnl_pct = ((exitPrice - trade.entry_price) / trade.entry_price) * 100 * direction_mult;
+        const fees = (trade.entry_price + exitPrice) * trade.qty * 0.0006; // 0.06% per side approx
+
+        WIP.updateTrade(trade.id, {
+            exit_price: exitPrice,
+            exit_time: Date.now(),
+            exit_reason: reason,
+            pnl_usd,
+            pnl_pct,
+            fees,
+            status: 'closed'
+        });
+
+        // Close the matching demo position if it exists
+        if (trade.demo_position_id && window.demoState?.positions) {
+            const posIdx = window.demoState.positions.findIndex(p => p.id === trade.demo_position_id);
+            if (posIdx >= 0) {
+                // Realize the P&L into demo balance
+                window.demoState.balance = (window.demoState.balance || 0) + pnl_usd;
+                window.demoState.available = (window.demoState.available || 0) + window.demoState.positions[posIdx].margin + pnl_usd;
+                window.demoState.positions.splice(posIdx, 1);
+                if (typeof saveDemoState === 'function') saveDemoState();
+                if (typeof updateDemoUI === 'function') updateDemoUI();
+            }
+        }
+
+        const sign = pnl_usd >= 0 ? '+' : '';
+        showToast('🤖 Trend Bot closed ' + trade.symbol + ' (' + reason + ') ' + sign + '$' + pnl_usd.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+    }
+
+    return { execute, manageOpenTrades, BOT_ID };
+})();
+
+/* ─── Stub Scout (will be replaced by real intelligence in Phase 0) ─── */
+const Scout = (function() {
+    const COIN_POOL = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+
+    /* Pick a coin and dispatch the appropriate bot.
+       v0.1: random coin, random direction, always dispatches to Trend Bot,
+       always claims it saw "trend continuation" — pure stub. */
+    function pickAndDispatch() {
+        const symbol = COIN_POOL[Math.floor(Math.random() * COIN_POOL.length)];
+        const direction = Math.random() > 0.5 ? 'Buy' : 'Sell';
+        const dirText = direction === 'Buy' ? 'long' : 'short';
+
+        // Generate stub reasoning
+        const reasonings = [
+            `Detected continuation pattern on ${symbol} — ${dirText} side aligned with 4h trend, volume rising into the break.`,
+            `${symbol} showed bull flag breakout (stub) — dispatching Trend Bot for ${dirText} continuation.`,
+            `Higher highs + higher lows on ${symbol} 1h. Trend Bot ${dirText} entry.`,
+            `Pattern confidence 67% (stub) on ${symbol}. Trend continuation favored ${dirText}.`
+        ];
+        const reasoning = reasonings[Math.floor(Math.random() * reasonings.length)];
+
+        const dispatch = WIP.logDispatch({
+            bot_id: 'trend',
+            symbol,
+            exchange: 'demo',
+            direction,
+            reasoning,
+            dispatched_by: 'scout-auto'
+        });
+
+        // Execute dispatch on Trend Bot
+        const trade = TrendBot.execute(dispatch);
+        return { dispatch, trade };
+    }
+
+    return { pickAndDispatch, COIN_POOL };
+})();
+
+/* ─── UI: render bot stats from WIP into the Bots tab ─── */
+function renderBotsTabStats() {
+    const bots = ['trend', 'meanrev', 'breakout', 'dca', 'grid', 'arb', 'funding'];
+    bots.forEach(botId => {
+        const stats = WIP.getStats(botId, 7);
+        const enabled = (JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}'))[botId];
+
+        const activeEl = document.getElementById('bot-active-' + botId);
+        const winEl = document.getElementById('bot-winrate-' + botId);
+        const pnlEl = document.getElementById('bot-pnl-' + botId);
+        const statusEl = document.getElementById('bot-status-' + botId);
+
+        if (activeEl) {
+            if (!enabled) activeEl.textContent = '—';
+            else activeEl.textContent = stats.open_count + ' trade' + (stats.open_count === 1 ? '' : 's');
+        }
+        if (winEl) {
+            if (!enabled || stats.trade_count === 0) winEl.textContent = '—';
+            else winEl.textContent = (stats.win_rate * 100).toFixed(0) + '% (' + stats.wins + '/' + stats.trade_count + ')';
+        }
+        if (pnlEl) {
+            if (!enabled || stats.trade_count === 0) pnlEl.textContent = '—';
+            else {
+                const sign = stats.net_pnl >= 0 ? '+' : '';
+                pnlEl.textContent = sign + '$' + stats.net_pnl.toFixed(2);
+                pnlEl.className = 'num ' + (stats.net_pnl >= 0 ? 'pnl-pos' : 'pnl-neg');
+            }
+        }
+        if (statusEl && enabled) {
+            const isActive = stats.open_count > 0;
+            statusEl.textContent = isActive ? 'in trade' : 'scanning';
+            statusEl.classList.toggle('scanning', true);
+            statusEl.classList.toggle('off', false);
+        }
+    });
+}
+
+/* ─── Trade lifecycle polling (piggyback on existing 5s demo loop) ─── */
+setInterval(() => {
+    if (window.demoMode) {
+        try { TrendBot.manageOpenTrades(); } catch(e) { console.warn('[TrendBot] poll error', e); }
+    }
+}, 5000);
+
+/* ─── Refresh Bots tab when it's shown ─── */
+const _origSwitchBottomTab = window.switchBottomTab;
+if (typeof _origSwitchBottomTab === 'function') {
+    window.switchBottomTab = function(btn, id) {
+        _origSwitchBottomTab(btn, id);
+        if (id === 'bt-bots') {
+            try { renderBotsTabStats(); } catch(e) {}
+        }
+    };
+}
+
+/* ─── Public test API (browser console + button) ─── */
+window.testScoutDispatch = function() {
+    if (!window.demoMode) {
+        showToast('Enter Demo Mode first (Settings → Security → Enter Demo Mode)');
+        return;
+    }
+    const result = Scout.pickAndDispatch();
+    if (result && result.trade) {
+        console.log('[Test] Scout dispatched →', result.dispatch.symbol, result.dispatch.direction);
+        console.log('[Test] Trend Bot opened trade →', result.trade);
+    }
+    return result;
+};
 
 /* Restore bot toggle states from localStorage on page load */
 function _restoreBotToggles() {
