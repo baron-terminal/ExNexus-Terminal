@@ -132,7 +132,7 @@
         .view-pill-time{font-size:9.5px;padding:3px 9px;}
 
         /* Bot row in Bots tab */
-        .bot-row{display:grid;grid-template-columns:32px 1fr 90px 90px 80px 80px 80px 70px;gap:10px;padding:9px 12px;align-items:center;border-bottom:1px solid var(--border);}
+        .bot-row{display:grid;grid-template-columns:36px 1fr 90px 90px 80px 80px 80px 70px;gap:10px;padding:9px 12px;align-items:center;border-bottom:1px solid var(--border);}
         .bot-row-header{font-size:9.5px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;padding:7px 12px;background:rgba(255,255,255,0.02);}
         .bot-row .name{font-weight:500;color:#fff;font-size:11.5px;}
         .bot-row .name.off{color:rgba(255,255,255,0.5);font-weight:400;}
@@ -2189,24 +2189,232 @@
                     </div>
                 </div>
             </div>
-            <div id="cp-data" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
-                <div style="max-width:600px;margin:60px auto;text-align:center;">
-                    <div style="font-size:32px;margin-bottom:12px;">📈</div>
-                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">Analytics</div>
-                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
-                        Open Interest, funding rates, liquidations, and volume comparison across exchanges — coming in next session.<br><br>
-                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">Will give AI Scout deeper signal context.</span>
+            <!-- ANALYTICS TAB: Technical indicators + open interest + detected patterns (Scout's primary data source) -->
+            <div id="cp-data" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:18px;">
+                <!-- Header strip with active symbol context -->
+                <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;">
+                    <div>
+                        <div style="font-size:14px;color:#fff;font-weight:600;">Analytics — <span id="anl-symbol">BTCUSDT</span></div>
+                        <div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:1px;">Technical signals Scout reads to dispatch bots</div>
+                    </div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.4);text-align:right;">
+                        <div>Last updated <span id="anl-updated">—</span></div>
+                        <div style="color:rgba(255,200,80,0.7);margin-top:2px;">Stub data — wiring real APIs tomorrow</div>
+                    </div>
+                </div>
+
+                <!-- Three-column layout: Indicators / Patterns / Market Microstructure -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+
+                    <!-- COL 1: Technical indicators -->
+                    <div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">TECHNICAL INDICATORS</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;">
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">RSI (14, 1h)</span>
+                                <span class="mono" id="anl-rsi-1h" style="color:#fff;">58.4</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">RSI (14, 4h)</span>
+                                <span class="mono" id="anl-rsi-4h" style="color:#4ade80;">62.1</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">RSI (14, 1D)</span>
+                                <span class="mono" id="anl-rsi-1d" style="color:#fff;">54.7</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">MACD (1h)</span>
+                                <span class="mono" id="anl-macd" style="color:#4ade80;">+ Bullish cross</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">BB Width (20, 4h)</span>
+                                <span class="mono" id="anl-bbwidth" style="color:#fff;">2.4%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Price vs 20MA (4h)</span>
+                                <span class="mono" id="anl-ma20" style="color:#4ade80;">+1.8%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Price vs 50MA (4h)</span>
+                                <span class="mono" id="anl-ma50" style="color:#4ade80;">+4.2%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">ATR (14, 4h)</span>
+                                <span class="mono" id="anl-atr" style="color:#fff;">$1,124</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COL 2: Detected patterns (THIS is what Scout primarily uses for dispatch) -->
+                    <div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">DETECTED PATTERNS</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                            <div style="padding:8px 10px;background:rgba(91,214,63,0.05);border:1px solid rgba(91,214,63,0.18);border-radius:4px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:11px;color:#fff;font-weight:500;">Bull flag</span>
+                                    <span class="mono" style="font-size:10px;color:#5BD63F;">68%</span>
+                                </div>
+                                <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:2px;">4h · Completing — neckline near</div>
+                                <div style="font-size:9px;color:rgba(91,214,63,0.7);margin-top:1px;">Target: $79,200 · Invalid: $76,400</div>
+                            </div>
+                            <div style="padding:8px 10px;background:rgba(255,200,80,0.04);border:1px solid rgba(255,200,80,0.15);border-radius:4px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:11px;color:#fff;font-weight:500;">Ascending triangle</span>
+                                    <span class="mono" style="font-size:10px;color:#ffc850;">52%</span>
+                                </div>
+                                <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:2px;">1h · Forming — needs more touches</div>
+                            </div>
+                            <div style="padding:8px 10px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;opacity:0.55;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:11px;color:rgba(255,255,255,0.7);">No double-top detected</span>
+                                </div>
+                                <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">Mean Reversion idle</div>
+                            </div>
+                        </div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:10px;line-height:1.4;">
+                            Scout reads detected patterns + indicator confirmation to dispatch the appropriate bot. Real pattern detection ships in v1.5.
+                        </div>
+                    </div>
+
+                    <!-- COL 3: Market microstructure (OI, funding, liquidations) -->
+                    <div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">MARKET MICROSTRUCTURE</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;">
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Open Interest</span>
+                                <span class="mono" id="anl-oi" style="color:#fff;">62.4K BTC</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">OI 24h Change</span>
+                                <span class="mono" id="anl-oi-chg" style="color:#4ade80;">+4.2%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Funding Rate (8h)</span>
+                                <span class="mono" id="anl-funding" style="color:#4ade80;">+0.0055%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Funding APR equiv.</span>
+                                <span class="mono" id="anl-funding-apr" style="color:#fff;">6.0%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Long/Short Ratio</span>
+                                <span class="mono" id="anl-ls-ratio" style="color:#fff;">1.42</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Liq. Last 1h</span>
+                                <span class="mono" id="anl-liq-1h" style="color:#ff8888;">$8.2M shorts</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Vol vs 30D Avg</span>
+                                <span class="mono" id="anl-vol-rel" style="color:#4ade80;">1.18x</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.025);border-radius:3px;">
+                                <span style="color:rgba(255,255,255,0.7);">Cross-exch Spread</span>
+                                <span class="mono" id="anl-spread" style="color:#ffc850;">0.18% (Bybit→Binance)</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;padding:8px 10px;background:rgba(255,80,112,0.04);border:1px solid rgba(255,80,112,0.18);border-radius:4px;font-size:9.5px;">
+                            <div style="color:#ff8888;font-weight:500;margin-bottom:2px;">⚹ Arb Bot signal</div>
+                            <div style="color:rgba(255,255,255,0.65);line-height:1.4;">Spread above 0.15% threshold — Arb Bot would dispatch (if enabled) (DEMO).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: data sources notice -->
+                <div style="margin-top:16px;padding:10px 12px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.18);border-radius:4px;display:flex;justify-content:space-between;align-items:center;">
+                    <div style="font-size:10px;color:rgba(255,255,255,0.6);">
+                        <span style="color:#7BC85B;font-weight:500;">⚹ Data sources (next session):</span>
+                        Coinglass (OI, funding, liq) · TradingView (indicators) · CoinGecko (volume) · in-house pattern detection
                     </div>
                 </div>
             </div>
-            <div id="cp-news" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:24px;">
-                <div style="max-width:600px;margin:60px auto;text-align:center;">
-                    <div style="font-size:32px;margin-bottom:12px;">📰</div>
-                    <div style="font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:8px;">News</div>
-                    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
-                        Real-time market news filtered by the asset shown in the chart — coming in next session.<br><br>
-                        <span style="font-size:10px;color:rgba(255,255,255,0.4);">News stream feeds AI Scout for sharper probability signals.</span>
+
+            <!-- NEWS TAB: per-asset news + sentiment -->
+            <div id="cp-news" class="cp-panel" style="position:absolute;inset:0;display:none;overflow-y:auto;padding:18px;">
+                <!-- Header strip -->
+                <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;">
+                    <div>
+                        <div style="font-size:14px;color:#fff;font-weight:600;">News — <span id="news-symbol">BTCUSDT</span></div>
+                        <div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:1px;">Headlines that affect Scout's risk assessment</div>
                     </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div style="font-size:9.5px;color:rgba(255,255,255,0.5);text-align:right;">
+                            <div>Sentiment (24h)</div>
+                            <div class="mono" style="color:#5BD63F;font-size:11px;font-weight:500;">+0.34 Bullish</div>
+                        </div>
+                        <div style="font-size:9px;color:rgba(255,200,80,0.7);">Stub data</div>
+                    </div>
+                </div>
+
+                <!-- News stream layout -->
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;">
+                    <!-- LEFT: News feed -->
+                    <div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">RECENT HEADLINES</div>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border-left:2px solid #5BD63F;border-radius:3px;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                                    <span style="font-size:9px;color:#5BD63F;letter-spacing:0.3px;">BULLISH · 2 hours ago</span>
+                                    <span style="font-size:9px;color:rgba(255,255,255,0.4);">Reuters</span>
+                                </div>
+                                <div style="font-size:11.5px;color:#fff;line-height:1.4;font-weight:500;">Major institutional fund increases BTC allocation by $200M ahead of Q3 reporting</div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.4;">A leading pension fund disclosed a substantial BTC purchase, citing inflation hedging and portfolio diversification...</div>
+                            </div>
+                            <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border-left:2px solid rgba(255,255,255,0.25);border-radius:3px;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                                    <span style="font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:0.3px;">NEUTRAL · 5 hours ago</span>
+                                    <span style="font-size:9px;color:rgba(255,255,255,0.4);">Bloomberg</span>
+                                </div>
+                                <div style="font-size:11.5px;color:#fff;line-height:1.4;">Treasury secretary signals continued caution on crypto regulation framework</div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.4;">Public remarks at financial conference indicate ongoing review of stablecoin and exchange oversight...</div>
+                            </div>
+                            <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border-left:2px solid #5BD63F;border-radius:3px;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                                    <span style="font-size:9px;color:#5BD63F;letter-spacing:0.3px;">BULLISH · 9 hours ago</span>
+                                    <span style="font-size:9px;color:rgba(255,255,255,0.4);">CoinDesk</span>
+                                </div>
+                                <div style="font-size:11.5px;color:#fff;line-height:1.4;">Major exchange reports record spot BTC inflows, highest weekly volume since March</div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.4;">On-chain data shows accumulation patterns consistent with longer-term positioning...</div>
+                            </div>
+                            <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border-left:2px solid #ff8888;border-radius:3px;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                                    <span style="font-size:9px;color:#ff8888;letter-spacing:0.3px;">BEARISH · 18 hours ago</span>
+                                    <span style="font-size:9px;color:rgba(255,255,255,0.4);">The Block</span>
+                                </div>
+                                <div style="font-size:11.5px;color:#fff;line-height:1.4;">Exchange outflow data shows large whale selling near recent local highs</div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.4;">Wallet tracking reveals coordinated movement of $80M BTC to centralized exchanges...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Sentiment + signals -->
+                    <div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">SENTIMENT BREAKDOWN</div>
+                        <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border-radius:3px;margin-bottom:10px;">
+                            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#5BD63F;">Bullish</span><span class="mono" style="color:#fff;">62%</span></div>
+                            <div style="height:5px;background:rgba(91,214,63,0.15);border-radius:3px;overflow:hidden;margin-bottom:8px;"><div style="width:62%;height:100%;background:#5BD63F;"></div></div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:rgba(255,255,255,0.6);">Neutral</span><span class="mono" style="color:#fff;">26%</span></div>
+                            <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:8px;"><div style="width:26%;height:100%;background:rgba(255,255,255,0.3);"></div></div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#ff8888;">Bearish</span><span class="mono" style="color:#fff;">12%</span></div>
+                            <div style="height:5px;background:rgba(255,80,112,0.15);border-radius:3px;overflow:hidden;"><div style="width:12%;height:100%;background:#ff8888;"></div></div>
+                        </div>
+
+                        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;font-weight:500;margin-bottom:8px;">SCOUT SIGNAL</div>
+                        <div style="padding:10px 12px;background:rgba(91,214,63,0.04);border:1px solid rgba(91,214,63,0.2);border-radius:3px;">
+                            <div style="font-size:10px;color:#5BD63F;font-weight:500;margin-bottom:4px;">⚹ Risk-on environment</div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:1.5;">News flow supportive of long bias. Trend Bot dispatches favored. Mean Reversion shorts higher-risk in this environment.</div>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:9.5px;color:rgba(255,255,255,0.45);line-height:1.4;">
+                            <strong style="color:rgba(255,255,255,0.65);">How Scout uses this:</strong> Bearish news + bullish technicals → reduce position size. Bullish news + bullish technicals → full size. News-driven moves disable Mean Reversion (trend follow only).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="margin-top:16px;padding:10px 12px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.18);border-radius:4px;font-size:10px;color:rgba(255,255,255,0.6);">
+                    <span style="color:#7BC85B;font-weight:500;">⚹ Data sources (next session):</span>
+                    CryptoPanic API (free 1k/day, per-coin) for crypto · Alpaca News API for stocks · Sentiment scoring via Anthropic API
                 </div>
             </div>
         </div>
@@ -2282,7 +2490,7 @@
             <!-- ROW 2: Mean Reversion + Breakout -->
             <div class="bot-card-grid">
                 <div class="bot-card-sq" data-bot="meanrev" onclick="openBotDetail('meanrev')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">Mean Rev</div>
                     <div class="bot-card-sq-sub">Range bounce</div>
                     <div class="bot-card-sq-row">
@@ -2291,7 +2499,7 @@
                     </div>
                 </div>
                 <div class="bot-card-sq" data-bot="breakout" onclick="openBotDetail('breakout')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">Breakout</div>
                     <div class="bot-card-sq-sub">S/R break</div>
                     <div class="bot-card-sq-row">
@@ -2304,7 +2512,7 @@
             <!-- ROW 3: DCA + Grid -->
             <div class="bot-card-grid">
                 <div class="bot-card-sq" data-bot="dca" onclick="openBotDetail('dca')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#4285f4" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#4285f4"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#1A3F8A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#4285f4" stroke="#1A3F8A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">DCA Bot</div>
                     <div class="bot-card-sq-sub">Time-based</div>
                     <div class="bot-card-sq-row">
@@ -2313,7 +2521,7 @@
                     </div>
                 </div>
                 <div class="bot-card-sq" data-bot="grid" onclick="openBotDetail('grid')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#00c896" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#00c896"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#005A45" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#00c896" stroke="#005A45" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">Grid Bot</div>
                     <div class="bot-card-sq-sub">Range grind</div>
                     <div class="bot-card-sq-row">
@@ -2326,7 +2534,7 @@
             <!-- ROW 4: Arb + Funding -->
             <div class="bot-card-grid">
                 <div class="bot-card-sq" data-bot="arb" onclick="openBotDetail('arb')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">Arb Bot</div>
                     <div class="bot-card-sq-sub">Cross-exchange</div>
                     <div class="bot-card-sq-row">
@@ -2335,7 +2543,7 @@
                     </div>
                 </div>
                 <div class="bot-card-sq" data-bot="funding" onclick="openBotDetail('funding')">
-                    <svg width="36" height="36" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ffc850" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1.1" fill="#ffc850"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A5F0A" stroke-width="0.6" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ffc850" stroke="#7A5F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                    <img src="data:image/png;base64,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" width="44" height="44" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.18));" />
                     <div class="bot-card-sq-name">Funding</div>
                     <div class="bot-card-sq-sub">Delta-neutral</div>
                     <div class="bot-card-sq-row">
@@ -2873,7 +3081,7 @@
                 </div>
 
                 <!-- Column header row -->
-                <div class="bot-row bot-row-header" style="grid-template-columns:32px 1fr 90px 90px 80px 80px 80px 70px;">
+                <div class="bot-row bot-row-header" style="grid-template-columns:36px 1fr 90px 90px 80px 80px 80px 70px;">
                     <div></div>
                     <div>Bot</div>
                     <div>Status</div>
@@ -2888,7 +3096,7 @@
                 <div style="flex:1;overflow-y:auto;">
                     <!-- Trend Bot -->
                     <div class="bot-row" data-bot="trend">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#5BD63F" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#5BD63F"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#5BD63F" stroke="#2A7818" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#2A7818" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#5BD63F" stroke="#2A7818" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,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" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(91,214,63,0.25));" />
                         <span class="name">Trend Bot</span>
                         <span class="status idle" id="bot-status-trend">idle</span>
                         <span class="num" id="bot-active-trend">0 trades</span>
@@ -2899,7 +3107,7 @@
                     </div>
                     <!-- Mean Reversion -->
                     <div class="bot-row" data-bot="meanrev">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#9b8be6" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#9b8be6"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#4A3F87" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#9b8be6" stroke="#4A3F87" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,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" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name">Mean Reversion</span>
                         <span class="status idle" id="bot-status-meanrev">idle</span>
                         <span class="num" id="bot-active-meanrev">0 trades</span>
@@ -2910,7 +3118,7 @@
                     </div>
                     <!-- Breakout -->
                     <div class="bot-row" data-bot="breakout">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#f5a623"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A4F0A" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#f5a623" stroke="#7A4F0A" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAGW0lEQVR42u1Ya2xcRxU+58zc19677/Uj60ecxN7YcXaNbcl1CkkhqhvRqjRqG6JSKfSlAqoCVRCiPH614g+oP0CFIqRCSStVrYqQqIpApKpCmzRpFaBqRIwT4sZJXNfr19rr3fuc4YdZ4RQ1Qt6l9o/9/lzpzmjOOfOd78ycAfgYMMYI6qijjjrqqKMOAEQERLzmHxEBZwyrXZv/P50GAJBSgpTy4yZVbYfV0mkiAiklIOIqp5ElkykrGotpjut4IghWs0JCCLkhAiAiUBSFCSGklBLS6XTi/oe++t1vPfa9Y93bu3fHEvEWzvji5OTVSUIExjnWIoCagRGBZZoKAEDvjmzHz39xdOzXz7+cHxoazhARfjRrkAgSqYbwhhEqEQNT5UauOdxz5K59b33/1tzxwXR0ZDVDiAQIiF0t6e1mKMQ7Mz1bq7ZbK8EKEUD/lqahuwaaflV8/8zZVq20SVehuMIOAkgBiAh9aXPwpW/2j+7vb3/syuR0YbXg12S7VgyYIVM/uP/uo6dOn3hy/J8XLqgIqTBAalbCe2WAxYq9ow/3n33j7PQvr+a9GDONsVf+dum5a0W/DgwAIH7x0wPPdYipfcH8h5EtjbGdn23VHnnx8Vvf/PbNHW/EENIAAN1xNWuo1Py7U1f/dOdww/4DPfpRSyFVSrnmnaTq3F75RrmSvPOmHXcf/nJ3JGt5h9y5hbZ79mYODz96n//gQ/tyO8NwEACoLWbkbBdmGiJKS7NB3VP54gcaJ75+Gvg364EIxNyl0VI41+vmtqUGFB82RZNxCCR3NdMSOocIACBKqSUt6uQSE/mSzCumXizYQXnVUp9sABWjRRHMv/yHd56aOXlGvVxw/zKN8NqxN0f/unz6rdCff3+S/lGAVwEpGJ0pv66qnHq64vT065fuffrEB7t9KSXiBiijOpHaG2F74wrGCYHiDJqHInCgXYMs4X9SfPe26K4f3tv7lMaQalpFaiRm4JwRJwQiBOIMKo8bjCEojK7xlzbSXQgBgHDl9tYUDTdtjurZCAkdBIDGQG00Q5mormpFxy1ouk4r2hE1sVtTxKKxsHAc8+sjXS9uSYV25hdKhcXl4rnmeORG1dCc509PH3730oevShm4KkOcK9oeViHimgVACCAkwBduyBxiRmKwMH3lnVt6wg9Mz9tv54v22MRs6cz5aftywcOi7TqeoXKWsPTQxMzSYjUB1LwHaIhaVm9n556wpugNBoutrnZEhIwQOWMYD4eMkGHwamVAtXReSgmxVHOia3D3SNH17VlHLiAipEKqYamMg5SyuyXZqiocy7bjaBSQlBtExAAAYUM3rZCumuCkqDgzrzAC2xOOI6Rne4GQAFByvWXb8YQfCBkICVsbzUbbC0peINeXAdO0VEPXjPPvT0y2Oxdan32wf/zRvZtfCqQEz1/xjjPCZdsPEBF0lXNfQJBtMj+XMpXQWjvMmol4W0t6YGZ2duy+PW1PzM2Xg/cmFl5ZdINzEwU3zwjR9QMZMw1LgPQc13eRcRb4ns8R0PaFEGvMJVaLGtyYTDY4jlueL5bmimVvdGebmfnj6NwL+WVvCQBJ11RrJBO/Y6FkX5x30NE01fA9z3d9X3hCynWrQJUAcm2bDgxv77j9o0PNEU1vjeumwhi1xkIxToiICCrnDBGRiCERrY+IK7U71xT5zB07Et9ZXirpVxfLxxXGsMFSowikJA0lm+CQmyuLqQXbLVRyPBBCpizNQARw/eqOY1aN85tNNfuzRwZfu//IlzLB+MXhC5cLZwu+OF8oi7LOWENX0vjUbYOtR7bqYgRVZWJqyb1CiBhICX3pcJ/Oyc8X3SLhJ3yQVVJnS4j1//3Hn5fO3G+WTvzooGwBuGHlwEJo11nf20/cJOXUM/LcT++RtzTrP+Cck8YZqozQ0jgLa7zqh7U1JWBlt8ZLwbvHToydUhfGren54uIswCgAgBASNCYo1RgF21UW2gdztqFR4Pu+0DhxCQBFxw+WHN+H9RZwQqXwwzdu+komrm6t3IkAAAwE67df6yvLi09K5+Tjck+jdggAQGGEpqZqhLjReoH/7pU7w7znmQeyx7+xt+MnCoBeGWM1eNStKRNEeL1TdMNu9P/MRB111LH2JgnrQlrHnR8aGhrYtWvX8PXm8o0ciKIoIcaYdr05/wJDp1uiWgqiDwAAAABJRU5ErkJggg==" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name">Breakout Bot</span>
                         <span class="status idle" id="bot-status-breakout">idle</span>
                         <span class="num" id="bot-active-breakout">0 trades</span>
@@ -2921,7 +3129,7 @@
                     </div>
                     <!-- DCA -->
                     <div class="bot-row" data-bot="dca">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,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" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name off">DCA Bot</span>
                         <span class="status off" id="bot-status-dca">off</span>
                         <span class="num muted" id="bot-active-dca">—</span>
@@ -2932,7 +3140,7 @@
                     </div>
                     <!-- Grid -->
                     <div class="bot-row" data-bot="grid">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAG+klEQVR42u2ZWWxcVxmA//+cc5fZZzwz8T5es7gFZ7diJzS1SUrVNCIJKSkFFQjuA1JZ+gB5QUVQIkGFIlW8FYnIbdqmQGoKgqZqUUmJcDAJzeY4SWM7tuOxM+PJjMfXd+56Dg+QCtHCQ2aaMZK/56t7/v/8+38A/guRcDgKAICIsMQSSyyxxBKLFXo3DkHEDxVExhgiIgohivo3+ziFvi3cRwlZqgpPSigxEEI+JDwAyKFwJFwRjfr+XWghREm0KJkLMcZAVhTJsW0OAFDX0Jj4yv7eg9/57oHftq5Y+Uh9XcNWl/OxmenkDSQEGGOUcw6Cc7E4gokx9Ph8MgDgmrXrt/X1HbGPHHkls6lryyZZVlQAQELIBzeuKAoNhkJq0YYvmQUoBRKLtfsbE/dt3r79uRuWlR47/tZPc+fPHQJEDkIAIgJTPeFIIrHGmJ29GgkFYXx0NPkfLleeGHBcl9Z9uucH1bt2/uxsPpezErVxEfR7KWMKkSQJKUVKWKRm967f3/fKL96J9vS8k7uZshZHDCBCILZs/fYNnU+9/8ZbP5kaPNOf/dvZKUPXPYDUBcdOAxcc4vH71z194MDZF1+dkioiTVyW8wtjYyfLnoWox1u14bHH3pyJhuoXBG+OxirafJ0dex9+7tA3ar6w73cYW7ZHEBKPb+36up65xWevXCWJHdt5YFv3j1BVK25fQtnqgCe+rPveHQ9UsJWtzl/PXXjcmJnJb/7sw7Hezzxo/TIakV8+faaXzuVG/fFlza5hkECizsc5BzOXs1CWJWEY5bMAAoBpO2I8m4X22iYn3NIku0yKRYIBhwGAV1UcYJIMilLhqp4qKRRyDE13CBDCOM9xbWHuX4WhXC6EYGczg6fe/KN29saYas7OaiSb+8ulk6fYQGpGPn3iJBPT0yfQMC5mhy8PVlRVsmAoaA8d7jufPNa/G7hbKH8aJZTKtbW7sS6xj09N/lro+gREYw9BZeUGmM0Mw0yyTxjGDZfS5S1fevTH4eaGmjPf++H9YJrJRVMHgBBCGQtQjyfoCsGRUJVKUkQAUtcwkigzirZt2fn5PIAoAIALhABwvkgUuN0PybIcrE9007raz9ucy7auG9w05/1+v9/SC+/OX7501CsraMzP27wER5a2GxUCQuFIDXo8D7Z9cd9+yesDXZsD07QhHAoBd+wnxp4/XJ+5du2wp7ExaOt60kqlNEC84yAuqQIEERp37Trqc52mmZMDF4Nr21fMT0xeNjPZofHUzKR55doJkckMFPL5bCAeX8UADAtAWzQuRAiBSOvyh0Ieb/VNXZsWQvj1kdETEPRHYEGflAh1OYIgAK4ajUSMdGbWdhwBRQw1pHTuj8A5h9aqqmBboqFaHxn5szUx8TqRWEYNBAxCqe4iWPH163dx23asBT2PHlWBIicyWkoF/LFoo2BS0Kqt7TUqIq1UUVQnnx/nmjbLLVuA4MLMZK66jsMdy+QsGK73t6/eZiaTw1DubjQci8ck1bvseiZTYX1y1Yaug99/qvqRPS9xy5Zcy+IAAogkMUfXbaaqMpNkipQ6gTVrX0RZZmWNAUSE6rZ7vzoH3LnnW0++kHt/BFLvnTvuzkwfNa9ffx0ZY1wAVb2ekLCstGma8xSROpZlC8YYLxSsO7UALTbvAwBUNbds0QuFQiGVGrIsU/JUV4VSfzj+bXN8YoCpaswbi38q9ujegdyFS89SXc9TRQ7apmm4luUK23bLFwOIAKqnMdi15bgai8VzQxf6cF7P5C5cHHQ1bSyyZcvXSDDYbN/KjprXx18z0+lh2yjoQAgVlmVTxkAAFJWFaDHC01CkPbH3c+9Wbu2qMtK3qguZW4OSV/Uyr9cnebyb1ZaWZ8Dj67ANQ+LcTQpNuwYInLvcCbSvftzJ56+4lmmXxQKESWpgc1d/z8GnV+zo6bEuJae8WjrT5mSzf3I1vUArK78cXbu6sm7TRi9ralwnTKfBmBh/A4XQgBAlvnPngD45+bw7l5uDIrYrd56FhECX87QqS04CZaumrobnR0eP2bOzZ23HyvOm+pWdT+5Xv9n7BL+ncyMvaHoFoVRCWZJRcPvmb/qb7FRqqphZoCgFhOsU9EvDPx/6+zk2Jsv+bHKagTb/HgCYbqGQpUjTPkV2JNfgq5oauUlhHhABZYkJzk0rmbzOjYJT1qFe6Asj6fNDI2dOD9LRY/3PiFT6bS64SQBdB6HFt3F9x/KmlTiWnKSnX/3VKTE19YJwHU1WFJ9rWeZiWhKTD7ISIYiSJKHP3+Lr7n75E4eezUT27H4bA8FVgIj/XPSWcKP5Ma12AQlBAaCAEAFA0ECIQrF9zxJLLPF/xkc9TS1xN2++o6NjXWdn56a7t1YpMZIkeRljyv/65h/RIjV435DVXQAAAABJRU5ErkJggg==" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name off">Grid Bot</span>
                         <span class="status off" id="bot-status-grid">off</span>
                         <span class="num muted" id="bot-active-grid">—</span>
@@ -2943,7 +3151,7 @@
                     </div>
                     <!-- Arb -->
                     <div class="bot-row" data-bot="arb">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#ff5070" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#ff5070"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#7A1F2F" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#ff5070" stroke="#7A1F2F" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,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" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name">Arb Bot</span>
                         <span class="status idle" id="bot-status-arb">idle</span>
                         <span class="num" id="bot-active-arb">0 trades</span>
@@ -2954,7 +3162,7 @@
                     </div>
                     <!-- Funding Capture -->
                     <div class="bot-row" data-bot="funding">
-                        <svg width="22" height="22" viewBox="0 0 24 24" style="display:block;flex-shrink:0;"><line x1="12" y1="2.5" x2="12" y2="5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="2.2" r="1" fill="#888"/><rect x="5.5" y="5" width="13" height="10" rx="2.2" fill="#888" stroke="#3a3a3a" stroke-width="0.6"/><circle cx="9" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="15" cy="9.8" r="1.4" fill="#0a1a04"/><circle cx="9.3" cy="9.5" r="0.45" fill="#fff"/><circle cx="15.3" cy="9.5" r="0.45" fill="#fff"/><line x1="8.5" y1="13" x2="15.5" y2="13" stroke="#3a3a3a" stroke-width="0.7" stroke-linecap="round"/><rect x="7" y="15.5" width="10" height="6" rx="1.5" fill="#888" stroke="#3a3a3a" stroke-width="0.5"/><circle cx="12" cy="18.5" r="0.8" fill="#fff" opacity="0.95"/></svg>
+                        <img src="data:image/png;base64,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" width="28" height="28" alt="" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));" />
                         <span class="name off">Funding Capture</span>
                         <span class="status off" id="bot-status-funding">off</span>
                         <span class="num muted" id="bot-active-funding">—</span>
@@ -10872,29 +11080,544 @@ const TrendBot = (function() {
     return { execute, manageOpenTrades, BOT_ID };
 })();
 
-/* ─── Stub Scout (will be replaced by real intelligence in Phase 0) ─── */
+/* ════════════════════════════════════════════════════════════════════
+   BOTS #2–7 (May 4)
+   Same architectural pattern as TrendBot. Each exposes:
+     execute(dispatch)       — open trade given a Scout dispatch
+     manageOpenTrades()      — called every 5s by polling loop
+   v0.1 limitations:
+     - Demo mode only
+     - Simplified entry/exit logic (full spec lives in exnexus-bots-spec.docx)
+     - Each bot has its own risk profile per the spec doc
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Helper: shared bot logic factored out ─── */
+const BotHelpers = {
+    /* Calculate qty for ~$50 demo notional (matches TrendBot v0.1) */
+    calcQty(symbol, currentPrice) {
+        if (!currentPrice) return 0;
+        return Math.round((50 / currentPrice) * 1000) / 1000;
+    },
+    /* Standard close-trade routine — used by all bots */
+    closeTrade(trade, exitPrice, reason, botPrettyName) {
+        const direction_mult = trade.direction === 'Buy' ? 1 : -1;
+        const pnl_usd = (exitPrice - trade.entry_price) * trade.qty * direction_mult;
+        const pnl_pct = ((exitPrice - trade.entry_price) / trade.entry_price) * 100 * direction_mult;
+        const fees = (trade.entry_price + exitPrice) * trade.qty * 0.0006;
+
+        WIP.updateTrade(trade.id, {
+            exit_price: exitPrice,
+            exit_time: Date.now(),
+            exit_reason: reason,
+            pnl_usd, pnl_pct, fees,
+            status: 'closed'
+        });
+
+        if (trade.demo_position_id && window.demoState?.positions) {
+            const posIdx = window.demoState.positions.findIndex(p => p.id === trade.demo_position_id);
+            if (posIdx >= 0) {
+                window.demoState.balance = (window.demoState.balance || 0) + pnl_usd;
+                window.demoState.available = (window.demoState.available || 0) + window.demoState.positions[posIdx].margin + pnl_usd;
+                window.demoState.positions.splice(posIdx, 1);
+                if (typeof saveDemoState === 'function') saveDemoState();
+                if (typeof updateDemoUI === 'function') updateDemoUI();
+            }
+        }
+
+        const sign = pnl_usd >= 0 ? '+' : '';
+        showToast('🤖 ' + botPrettyName + ' closed ' + trade.symbol + ' (' + reason + ') ' + sign + '$' + pnl_usd.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+    },
+    /* Common dispatch-fill routine */
+    markDispatchFilled(dispatchId, tradeId) {
+        const wipState = JSON.parse(localStorage.getItem('exnexus_wip_v1') || '{}');
+        if (wipState.dispatches) {
+            const idx = wipState.dispatches.findIndex(d => d.id === dispatchId);
+            if (idx >= 0) {
+                wipState.dispatches[idx].status = 'filled';
+                wipState.dispatches[idx].trade_id = tradeId;
+                localStorage.setItem('exnexus_wip_v1', JSON.stringify(wipState));
+            }
+        }
+    },
+    /* Common pre-flight: returns the demo position created, or null */
+    openDemoPosition(symbol, direction, qty, currentPrice) {
+        const ok = placeDemoOrder(symbol, direction, qty, 'Market', currentPrice);
+        if (!ok) return null;
+        return window.demoState?.positions?.find(p =>
+            p.symbol === symbol && p.side === direction
+        );
+    },
+    /* Common: is bot enabled + in demo? Toast on failure. */
+    canDispatch(botId, prettyName) {
+        if (!window.demoMode) {
+            console.warn('[' + prettyName + '] dispatch skipped — not in demo mode');
+            return false;
+        }
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        if (!enabled[botId]) {
+            console.log('[' + prettyName + '] bot is OFF, skipping dispatch');
+            showToast(prettyName + ' is OFF — enable it in the Bots tab first');
+            return false;
+        }
+        return true;
+    }
+};
+
+/* ─── Bot #2: Mean Reversion Bot ─── */
+const MeanRevBot = (function() {
+    const BOT_ID = 'meanrev';
+    const NAME = 'Mean Rev Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        const direction = dispatch.direction;
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        // Mean Rev: tight stop (1% beyond pattern), fixed target (back to mean — 0.8% retrace)
+        // No trailing — mean reversion is precise
+        const stopPct = 0.01;
+        const targetPct = 0.008;
+        let stop, target;
+        if (direction === 'Buy') {
+            stop = currentPrice * (1 - stopPct);
+            target = currentPrice * (1 + targetPct);
+        } else {
+            stop = currentPrice * (1 + stopPct);
+            target = currentPrice * (1 - targetPct);
+        }
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        // Time stop: close if no bounce in 6 hours (real spec is timeframe-dependent; v0.1 fixed)
+        const time_stop_ms = 6 * 60 * 60 * 1000;
+        const time_stop_at = Date.now() + time_stop_ms;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty, stop, target,
+            time_stop_at,
+            demo_position_id: demoPos?.id,
+            status: 'open'
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' opened ' + direction + ' ' + qty + ' ' + symbol + ' @ ' + currentPrice.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+
+            let exitReason = null;
+            if (trade.direction === 'Buy') {
+                if (currentPrice <= trade.stop) exitReason = 'stop';
+                else if (currentPrice >= trade.target) exitReason = 'target';
+            } else {
+                if (currentPrice >= trade.stop) exitReason = 'stop';
+                else if (currentPrice <= trade.target) exitReason = 'target';
+            }
+            // Time stop check
+            if (!exitReason && trade.time_stop_at && Date.now() > trade.time_stop_at) {
+                exitReason = 'time-stop';
+            }
+            if (exitReason) BotHelpers.closeTrade(trade, currentPrice, exitReason, NAME);
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Bot #3: Breakout Bot ─── */
+const BreakoutBot = (function() {
+    const BOT_ID = 'breakout';
+    const NAME = 'Breakout Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        const direction = dispatch.direction;
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        // Breakout: wider stop (2% back inside range), big target (6% measured move) — R:R 3.0
+        const stopPct = 0.02;
+        const targetPct = 0.06;
+        let stop, target;
+        if (direction === 'Buy') {
+            stop = currentPrice * (1 - stopPct);
+            target = currentPrice * (1 + targetPct);
+        } else {
+            stop = currentPrice * (1 + stopPct);
+            target = currentPrice * (1 - targetPct);
+        }
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty, stop, target,
+            // Track high-water mark for false-breakout detection
+            highest_seen: direction === 'Buy' ? currentPrice : null,
+            lowest_seen: direction === 'Sell' ? currentPrice : null,
+            demo_position_id: demoPos?.id,
+            status: 'open'
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' opened ' + direction + ' ' + qty + ' ' + symbol + ' @ ' + currentPrice.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+
+            let exitReason = null;
+            // After hitting target, activate trailing stop at 1% behind extreme
+            const target_hit = trade.direction === 'Buy' ? currentPrice >= trade.target : currentPrice <= trade.target;
+            if (trade.direction === 'Buy') {
+                if (currentPrice <= trade.stop) exitReason = 'false-breakout';
+                else if (target_hit && (!trade.target_hit_at)) {
+                    WIP.updateTrade(trade.id, { target_hit_at: Date.now(), trailing_active: true });
+                }
+            } else {
+                if (currentPrice >= trade.stop) exitReason = 'false-breakout';
+                else if (target_hit && (!trade.target_hit_at)) {
+                    WIP.updateTrade(trade.id, { target_hit_at: Date.now(), trailing_active: true });
+                }
+            }
+            // If trailing active, close on 1% pullback from extreme — for v0.1 we just close at first target
+            if (trade.target_hit_at && !exitReason) exitReason = 'target';
+
+            if (exitReason) BotHelpers.closeTrade(trade, currentPrice, exitReason, NAME);
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Bot #4: DCA Bot ─── */
+/* DCA is fundamentally different from the trade bots — it's time-driven not pattern-driven.
+   Each "dispatch" is a single scheduled buy. The bot accumulates a position over time.
+   For v0.1 demo: a single dispatch = single buy. Multiple dispatches build the cost basis. */
+const DCABot = (function() {
+    const BOT_ID = 'dca';
+    const NAME = 'DCA Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        // DCA always buys (not direction-dependent for v0.1)
+        const direction = 'Buy';
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        // Smart-DCA: skip if RSI > 70 (we don't have RSI yet, so use simple price-relative-to-recent-mean stub)
+        // For v0.1 we always proceed
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty,
+            // DCA has no fixed stop/target — accumulator philosophy
+            stop: null, target: null,
+            demo_position_id: demoPos?.id,
+            status: 'open',
+            dca_buy: true
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' DCA buy ' + qty + ' ' + symbol + ' @ ' + currentPrice.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    /* DCA doesn't auto-close — accumulates until user closes manually OR until TP ladder triggers (not in v0.1).
+       For demo testing, auto-close after 30 seconds with whatever P&L is current. */
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+            // Demo: auto-close after 30s for visibility (real DCA would hold)
+            const age_ms = Date.now() - (trade.entry_time || 0);
+            if (age_ms > 30 * 1000) {
+                BotHelpers.closeTrade(trade, currentPrice, 'demo-time', NAME);
+            }
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Bot #5: Grid Bot ─── */
+/* Grid is a multi-order ladder bot, fundamentally different from single-trade bots.
+   For v0.1 demo: Each dispatch creates a "grid set" — multiple buy/sell pairs in a price range.
+   Simplified: single buy at current price + sell at +1% target = 1 cycle. Multiple dispatches = multiple cycles. */
+const GridBot = (function() {
+    const BOT_ID = 'grid';
+    const NAME = 'Grid Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        const direction = 'Buy'; // Grid always starts with buy in v0.1
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        // Grid: very tight target (1% up = book grid cycle profit), tight stop (1.5% down = range break)
+        const stop = currentPrice * 0.985;
+        const target = currentPrice * 1.01;
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty, stop, target,
+            demo_position_id: demoPos?.id,
+            status: 'open',
+            grid_cycle: true
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' grid cycle ' + qty + ' ' + symbol + ' @ ' + currentPrice.toFixed(2));
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+            let exitReason = null;
+            if (currentPrice <= trade.stop) exitReason = 'range-break';
+            else if (currentPrice >= trade.target) exitReason = 'cycle-complete';
+            if (exitReason) BotHelpers.closeTrade(trade, currentPrice, exitReason, NAME);
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Bot #6: Arb Bot (DEMO WRAPPER) ─── */
+/* IMPORTANT: This is a SAFE DEMO WRAPPER for the Arb Bot in the new architecture.
+   It does NOT touch the legacy executeArb() that fires real orders.
+   That live arb path is intentionally untouched per memory entry #12.
+   Real arb safety rails (S3) require dedicated session work, not solo coding. */
+const ArbBot = (function() {
+    const BOT_ID = 'arb';
+    const NAME = 'Arb Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        const direction = dispatch.direction;
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        // Arb: tiny sizes, very fast cycle. For demo we simulate a captured spread.
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        // Simulated spread: 0.2% (in real arb this would be actual cross-exchange)
+        const spread_pct = 0.002;
+        const stop = currentPrice * (1 - spread_pct * 2);  // emergency exit if simulation fails
+        const target = currentPrice * (1 + spread_pct);    // tight target — arb books quickly
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty, stop, target,
+            demo_position_id: demoPos?.id,
+            status: 'open',
+            arb_simulation: true,  // marks this as demo-only simulation
+            simulated_spread_pct: spread_pct
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' (demo) simulated arb ' + symbol + ' @ ' + currentPrice.toFixed(2) + ' spread 0.2%');
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+            let exitReason = null;
+            // Arb is fast — close after 10 seconds even if spread didn't materialize
+            const age_ms = Date.now() - (trade.entry_time || 0);
+            if (trade.direction === 'Buy') {
+                if (currentPrice <= trade.stop) exitReason = 'stop';
+                else if (currentPrice >= trade.target) exitReason = 'spread-captured';
+            } else {
+                if (currentPrice >= trade.stop) exitReason = 'stop';
+                else if (currentPrice <= trade.target) exitReason = 'spread-captured';
+            }
+            if (!exitReason && age_ms > 10 * 1000) exitReason = 'timeout';
+            if (exitReason) BotHelpers.closeTrade(trade, currentPrice, exitReason, NAME);
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Bot #7: Funding Capture Bot (DEMO SIMPLIFIED) ─── */
+/* Funding Capture is delta-neutral: long spot + short perp, or vice versa.
+   For v0.1 demo: we simulate this with a single position that earns a "funding payment" every 30 seconds.
+   Real implementation requires opening 2 simultaneous positions (spot + perp) with proper hedging.
+   That's a v1.5 feature requiring real cross-product execution. */
+const FundingBot = (function() {
+    const BOT_ID = 'funding';
+    const NAME = 'Funding Bot';
+
+    function execute(dispatch) {
+        if (!BotHelpers.canDispatch(BOT_ID, NAME)) return null;
+        const symbol = dispatch.symbol;
+        // Funding direction: short perp when funding is positive (most common case)
+        const direction = 'Sell';  // simulated — short the perp
+        const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(symbol) : 0;
+        if (!currentPrice) { showToast('No price for ' + symbol); return null; }
+
+        const qty = BotHelpers.calcQty(symbol, currentPrice);
+        if (!qty) return null;
+
+        // Funding capture: theoretically delta-neutral (no real stop/target since funding payments accumulate)
+        // For demo, set wide stop (3%) so the simulated position survives short-term price moves
+        const stop = currentPrice * 1.03;
+        const target = null;  // no target — yield strategy
+
+        const demoPos = BotHelpers.openDemoPosition(symbol, direction, qty, currentPrice);
+        if (!demoPos) return null;
+
+        const trade = WIP.logTrade({
+            dispatch_id: dispatch.id,
+            bot_id: BOT_ID,
+            symbol, exchange: 'demo', direction,
+            entry_price: currentPrice, entry_time: Date.now(),
+            qty, stop, target,
+            demo_position_id: demoPos?.id,
+            status: 'open',
+            funding_capture: true,
+            funding_collected: 0,  // will accumulate
+            simulated_apy: 12      // 12% APY simulation
+        });
+
+        BotHelpers.markDispatchFilled(dispatch.id, trade.id);
+        showToast('🤖 ' + NAME + ' opened delta-neutral on ' + symbol + ' @ ' + currentPrice.toFixed(2) + ' (simulated 12% APY)');
+        if (typeof renderBotsTabStats === 'function') renderBotsTabStats();
+        return trade;
+    }
+
+    function manageOpenTrades() {
+        const openTrades = WIP.getTrades({ bot_id: BOT_ID, status: 'open' });
+        for (const trade of openTrades) {
+            const currentPrice = (typeof getCurrentPrice === 'function') ? getCurrentPrice(trade.symbol) : 0;
+            if (!currentPrice) continue;
+            // Funding: emergency stop only on big basis break
+            let exitReason = null;
+            if (trade.direction === 'Sell' && currentPrice >= trade.stop) exitReason = 'basis-broken';
+            // Demo: auto-close after 30s for testing visibility (real funding would hold for days)
+            const age_ms = Date.now() - (trade.entry_time || 0);
+            if (!exitReason && age_ms > 30 * 1000) exitReason = 'demo-time';
+            if (exitReason) BotHelpers.closeTrade(trade, currentPrice, exitReason, NAME);
+        }
+    }
+
+    return { execute, manageOpenTrades, BOT_ID, NAME };
+})();
+
+/* ─── Master bot registry — all 7 bots indexed by ID ─── */
+const ALL_BOTS = {
+    trend:    TrendBot,
+    meanrev:  MeanRevBot,
+    breakout: BreakoutBot,
+    dca:      DCABot,
+    grid:     GridBot,
+    arb:      ArbBot,
+    funding:  FundingBot
+};
+
+/* ─── Stub Scout (UPGRADED): now dispatches to ALL 7 bots ─── */
 const Scout = (function() {
     const COIN_POOL = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
 
-    /* Pick a coin and dispatch the appropriate bot.
-       v0.1: random coin, random direction, always dispatches to Trend Bot,
-       always claims it saw "trend continuation" — pure stub. */
+    /* Pick a coin AND pick a bot. The bot choice is what distinguishes
+       Scout from a dumb random-trader. v0.1 logic:
+       - Find which bots are enabled
+       - Pick one (round-robin to spread testing across all enabled bots)
+       - Generate a stub reasoning matching that bot's typical setup
+    */
+    let _last_bot_idx = 0;
+
     function pickAndDispatch() {
         const symbol = COIN_POOL[Math.floor(Math.random() * COIN_POOL.length)];
         const direction = Math.random() > 0.5 ? 'Buy' : 'Sell';
-        const dirText = direction === 'Buy' ? 'long' : 'short';
 
-        // Generate stub reasoning
-        const reasonings = [
-            `Detected continuation pattern on ${symbol} — ${dirText} side aligned with 4h trend, volume rising into the break.`,
-            `${symbol} showed bull flag breakout (stub) — dispatching Trend Bot for ${dirText} continuation.`,
-            `Higher highs + higher lows on ${symbol} 1h. Trend Bot ${dirText} entry.`,
-            `Pattern confidence 67% (stub) on ${symbol}. Trend continuation favored ${dirText}.`
-        ];
-        const reasoning = reasonings[Math.floor(Math.random() * reasonings.length)];
+        // Find enabled bots
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        const enabledIds = Object.keys(ALL_BOTS).filter(id => enabled[id]);
+
+        if (enabledIds.length === 0) {
+            showToast('No bots are enabled — turn at least one ON in the Bots tab');
+            return null;
+        }
+
+        // Round-robin so testing spreads across enabled bots
+        _last_bot_idx = (_last_bot_idx + 1) % enabledIds.length;
+        const bot_id = enabledIds[_last_bot_idx];
+        const bot = ALL_BOTS[bot_id];
+
+        // Generate stub reasoning per bot type
+        const reasoning = generateStubReasoning(bot_id, symbol, direction);
 
         const dispatch = WIP.logDispatch({
-            bot_id: 'trend',
+            bot_id,
             symbol,
             exchange: 'demo',
             direction,
@@ -10902,12 +11625,75 @@ const Scout = (function() {
             dispatched_by: 'scout-auto'
         });
 
-        // Execute dispatch on Trend Bot
-        const trade = TrendBot.execute(dispatch);
-        return { dispatch, trade };
+        const trade = bot.execute(dispatch);
+        return { dispatch, trade, bot_id };
     }
 
-    return { pickAndDispatch, COIN_POOL };
+    /* Per-bot reasoning templates — fakes the dispatch logic each bot expects.
+       Real Scout will derive these from actual chart analysis. */
+    function generateStubReasoning(bot_id, symbol, direction) {
+        const dirText = direction === 'Buy' ? 'long' : 'short';
+        const templates = {
+            trend: [
+                `${symbol}: bull flag breakout on 4h, volume confirming. Trend Bot ${dirText}.`,
+                `${symbol}: HH+HL on 1h aligned with 4h trend. Dispatching Trend Bot ${dirText}.`,
+                `${symbol}: continuation pattern on 1D. Trend Bot ${dirText} entry, R:R 2.0.`
+            ],
+            meanrev: [
+                `${symbol}: double top + Bollinger upper band touch. Mean Reversion ${dirText}.`,
+                `${symbol}: RSI 78 + bearish divergence. Mean Rev fade ${dirText}.`,
+                `${symbol}: 2-sigma stretch from 20MA. Mean Reversion bounce ${dirText}.`
+            ],
+            breakout: [
+                `${symbol}: tight consolidation breaking with 1.7x volume. Breakout ${dirText}.`,
+                `${symbol}: ascending triangle apex broken. Breakout Bot ${dirText}, measured-move target.`,
+                `${symbol}: 7-day range break + volume confirm. Breakout ${dirText} entry.`
+            ],
+            dca: [
+                `${symbol}: long-term thesis intact, deep retrace zone. DCA buy.`,
+                `${symbol}: weekly RSI <30, value zone. DCA accumulation buy.`,
+                `${symbol}: scheduled DCA tranche. Smart-DCA: standard buy (RSI neutral).`
+            ],
+            grid: [
+                `${symbol}: 7-day rectangle range, low directional bias. Grid cycle in range.`,
+                `${symbol}: stable channel, high intraday vol. Grid Bot grinding ${dirText}.`,
+                `${symbol}: range-bound conditions. Grid cycle armed.`
+            ],
+            arb: [
+                `${symbol}: 0.22% spread detected (Bybit vs Binance). Arb dispatched (DEMO).`,
+                `${symbol}: cross-exchange spread 0.18% net of fees. Arb Bot demo run.`,
+                `${symbol}: spread opportunity 0.20%. Arb capture (simulated).`
+            ],
+            funding: [
+                `${symbol}: persistent +0.04% funding per 8h. Funding Capture ${direction === 'Buy' ? 'long-spot/short-perp' : 'short'}.`,
+                `${symbol}: funding APY 14% — opening delta-neutral. Funding Bot.`,
+                `${symbol}: positive funding stable for 48h. Funding Capture armed.`
+            ]
+        };
+        const arr = templates[bot_id] || [`${symbol}: dispatching ${bot_id}.`];
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    /* Force-pick a specific bot — useful for testing */
+    function dispatchSpecific(bot_id) {
+        if (!ALL_BOTS[bot_id]) return null;
+        const enabled = JSON.parse(localStorage.getItem('exnexus_bots_enabled') || '{}');
+        if (!enabled[bot_id]) {
+            showToast('Bot ' + bot_id + ' is OFF — enable it first');
+            return null;
+        }
+        const symbol = COIN_POOL[Math.floor(Math.random() * COIN_POOL.length)];
+        const direction = Math.random() > 0.5 ? 'Buy' : 'Sell';
+        const reasoning = generateStubReasoning(bot_id, symbol, direction);
+        const dispatch = WIP.logDispatch({
+            bot_id, symbol, exchange: 'demo', direction, reasoning,
+            dispatched_by: 'scout-auto'
+        });
+        const trade = ALL_BOTS[bot_id].execute(dispatch);
+        return { dispatch, trade, bot_id };
+    }
+
+    return { pickAndDispatch, dispatchSpecific, COIN_POOL };
 })();
 
 /* ─── UI: render bot stats from WIP into the Bots tab ─── */
@@ -10950,7 +11736,11 @@ function renderBotsTabStats() {
 /* ─── Trade lifecycle polling (piggyback on existing 5s demo loop) ─── */
 setInterval(() => {
     if (window.demoMode) {
-        try { TrendBot.manageOpenTrades(); } catch(e) { console.warn('[TrendBot] poll error', e); }
+        // Run lifecycle management for all 7 bots; isolate failures so one bot's bug doesn't break others
+        Object.keys(ALL_BOTS).forEach(botId => {
+            try { ALL_BOTS[botId].manageOpenTrades(); }
+            catch(e) { console.warn('[' + botId + '] poll error', e); }
+        });
     }
 }, 5000);
 
