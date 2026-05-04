@@ -2320,11 +2320,105 @@
                     </div>
                 </div>
 
+                <!-- ───── SMART MONEY FLOWS (full-width, smart-money intelligence feed) ───── -->
+                <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.65);letter-spacing:0.4px;font-weight:500;">SMART MONEY FLOWS</div>
+                            <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">What sophisticated wallets are doing — Scout uses this to weight dispatch confidence</div>
+                        </div>
+                        <div style="font-size:9px;color:rgba(255,200,80,0.7);text-align:right;">Stub data — wiring real-time feed in v1.5</div>
+                    </div>
+
+                    <!-- 4-column grid: Net Flow / Top Wallets / Token Activity / Holder Distribution -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+
+                        <!-- Smart Money Net Flow (24h) -->
+                        <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;">
+                            <div style="font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;margin-bottom:4px;">SMART NET FLOW (24H)</div>
+                            <div class="mono" id="sm-netflow" style="font-size:14px;color:#5BD63F;font-weight:500;">+$42.8M</div>
+                            <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px;">Inflow into <span id="sm-netflow-symbol">BTC</span> wallets</div>
+                            <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:9.5px;">
+                                <span style="color:rgba(255,255,255,0.55);">7D trend</span>
+                                <span class="mono" style="color:#5BD63F;">+$184M</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Smart Money Movers -->
+                        <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;">
+                            <div style="font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;margin-bottom:6px;">TOP MOVERS (24H)</div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.75);">Wintermute</span>
+                                <span class="mono" style="color:#5BD63F;">+$8.2M</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.75);">Jump Trading</span>
+                                <span class="mono" style="color:#5BD63F;">+$5.1M</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.75);">Cumberland DRW</span>
+                                <span class="mono" style="color:#ff8888;">−$2.4M</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.5);">Anonymous</span>
+                                <span class="mono" style="color:#5BD63F;">+$3.8M</span>
+                            </div>
+                        </div>
+
+                        <!-- Token Activity (Smart Money Token Holdings) -->
+                        <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;">
+                            <div style="font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;margin-bottom:6px;">SM POSITIONING</div>
+                            <div style="margin-bottom:6px;">
+                                <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px;"><span style="color:#5BD63F;">Accumulating</span><span class="mono" style="color:#fff;">68%</span></div>
+                                <div style="height:4px;background:rgba(91,214,63,0.15);border-radius:3px;overflow:hidden;"><div style="width:68%;height:100%;background:#5BD63F;"></div></div>
+                            </div>
+                            <div style="margin-bottom:6px;">
+                                <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px;"><span style="color:rgba(255,255,255,0.55);">Holding</span><span class="mono" style="color:#fff;">24%</span></div>
+                                <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;"><div style="width:24%;height:100%;background:rgba(255,255,255,0.3);"></div></div>
+                            </div>
+                            <div>
+                                <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px;"><span style="color:#ff8888;">Distributing</span><span class="mono" style="color:#fff;">8%</span></div>
+                                <div style="height:4px;background:rgba(255,80,112,0.15);border-radius:3px;overflow:hidden;"><div style="width:8%;height:100%;background:#ff8888;"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Holder Distribution -->
+                        <div style="padding:10px 12px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:4px;">
+                            <div style="font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;margin-bottom:6px;">HOLDER DISTRIBUTION</div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.7);">Whales (>1k BTC)</span>
+                                <span class="mono" style="color:#fff;">14.2%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.7);">Sharks (100-1k)</span>
+                                <span class="mono" style="color:#fff;">28.7%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.7);">Fish (10-100)</span>
+                                <span class="mono" style="color:#fff;">31.4%</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;">
+                                <span style="color:rgba(255,255,255,0.7);">Retail (&lt;10)</span>
+                                <span class="mono" style="color:#fff;">25.7%</span>
+                            </div>
+                            <div style="margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,0.06);font-size:9px;color:#5BD63F;">↗ Whales accumulating</div>
+                        </div>
+                    </div>
+
+                    <!-- Scout signal interpretation banner -->
+                    <div style="margin-top:10px;padding:9px 12px;background:rgba(91,214,63,0.04);border:1px solid rgba(91,214,63,0.2);border-radius:4px;display:flex;align-items:center;gap:10px;">
+                        <div style="font-size:10.5px;color:#5BD63F;font-weight:500;flex-shrink:0;">⚹ Scout signal:</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.7);line-height:1.4;">
+                            Smart money strongly accumulating with positive 7D net flow. Increases dispatch confidence for <span style="color:#fff;">Trend Bot longs</span> on BTC. Reduces confidence for <span style="color:#fff;">Mean Reversion shorts</span> (don't fight whale accumulation).
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Footer: data sources notice -->
                 <div style="margin-top:16px;padding:10px 12px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.18);border-radius:4px;display:flex;justify-content:space-between;align-items:center;">
                     <div style="font-size:10px;color:rgba(255,255,255,0.6);">
                         <span style="color:#7BC85B;font-weight:500;">⚹ Data sources (next session):</span>
-                        Coinglass (OI, funding, liq) · TradingView (indicators) · CoinGecko (volume) · in-house pattern detection
+                        Live derivatives data · Smart-money flow intelligence · Technical indicator engine · In-house pattern detection
                     </div>
                 </div>
             </div>
@@ -2414,7 +2508,7 @@
                 <!-- Footer -->
                 <div style="margin-top:16px;padding:10px 12px;background:rgba(123,200,91,0.04);border:1px solid rgba(123,200,91,0.18);border-radius:4px;font-size:10px;color:rgba(255,255,255,0.6);">
                     <span style="color:#7BC85B;font-weight:500;">⚹ Data sources (next session):</span>
-                    CryptoPanic API (free 1k/day, per-coin) for crypto · Alpaca News API for stocks · Sentiment scoring via Anthropic API
+                    Real-time news streams (crypto + stocks) · Sentiment scoring via AI engine
                 </div>
             </div>
         </div>
@@ -3618,7 +3712,7 @@ function togglePanel(name){
     if(name === 'scout' && !getSetting('anthropic-key','')) {
         setTimeout(()=>{
             const el = document.getElementById('scout-reasoning');
-            if(el) el.textContent = '⚠️ Add your Anthropic API key in Settings → Intelligence to enable AI Scout.';
+            if(el) el.textContent = '⚠️ Add your AI engine key in Settings → Intelligence to enable AI Scout.';
         }, 100);
     }
     // ── Market Intelligence auto-load ──────────────────────
@@ -8850,7 +8944,7 @@ function showLoginScreen() {
                 <div class="dhub-icon" style="background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.18);">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </div>
-                <div class="dhub-name">AltFINS</div>
+                <div class="dhub-name">Technical Signals</div>
                 <div class="dhub-sub">RSI · MACD · Patterns · Signals</div>
                 <div class="dhub-live"><span class="dhub-dot live"></span>Screener ready</div>
             </div>
