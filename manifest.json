@@ -2,7 +2,7 @@
   "name": "ExNexus",
   "short_name": "ExNexus",
   "description": "Institutional-grade multi-exchange trading aggregator",
-  "start_url": "/terminal.html",
+  "start_url": "/terminal",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#000000",
