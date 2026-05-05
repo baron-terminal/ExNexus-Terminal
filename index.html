@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <script>
+<script>
 (function(){
     var host     = window.location.hostname;
     var ua       = navigator.userAgent.toLowerCase();
     var w        = window.innerWidth || screen.width;
     var isMobile = w <= 1024 || /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
 
-    // exnexus.app → always go to terminal
+    // exnexus.app → redirect to .co (Cloudflare edge rule catches this first; JS fallback)
     if(host === 'exnexus.app' || host === 'www.exnexus.app'){
-        window.location.replace('terminal.html');
+        window.location.replace('https://www.exnexus.co' + window.location.pathname + window.location.search);
         return;
     }
 
-    // Mobile/tablet on any domain → go to terminal
+    // Mobile/tablet on .co → /terminal/ (temporary until landing is mobile-responsive)
     if(isMobile && host !== 'localhost' && host !== '127.0.0.1'){
-        window.location.replace('terminal.html');
+        window.location.replace('/terminal/');
         return;
     }
 
-    // exnexus.co on desktop → show landing page (do nothing)
-    // pages.dev on desktop → show landing page (do nothing)
+    // Desktop on .co → show landing page (do nothing)
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
