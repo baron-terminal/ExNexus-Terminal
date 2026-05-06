@@ -62,7 +62,7 @@ body.markets-active section:not(#markets-page){display:none !important;}
 body.markets-active footer{display:none !important;}
 body.markets-active .ticker-bar{display:none !important;}
 
-.mk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px;}
+.mk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px;}
 .mk-title{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:700;letter-spacing:-.02em;}
 .mk-title .accent{color:var(--neon);}
 .mk-search-wrap{position:relative;width:min(360px,100%);}
@@ -75,6 +75,23 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-search:focus{outline:none;border-color:var(--neon);}
 .mk-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none;}
 
+/* Asset class tabs (top-level) */
+.mk-asset-tabs{
+  display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.mk-asset-tab{
+  padding:12px 20px;background:transparent;border:none;border-bottom:2px solid transparent;
+  color:var(--text-mid);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:all .15s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;
+}
+.mk-asset-tab:hover{color:var(--text);}
+.mk-asset-tab.active{color:var(--neon);border-bottom-color:var(--neon);}
+.mk-asset-tab .mk-soon{
+  font-size:9px;background:rgba(155,114,203,0.15);color:#9b72cb;
+  padding:2px 6px;border-radius:4px;font-weight:700;letter-spacing:.04em;
+}
+
 /* hero card row */
 .mk-hero-row{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:36px;
@@ -82,13 +99,13 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-hero-card{
   background:linear-gradient(135deg,var(--bg2),var(--bg3));
   border:1px solid var(--border);border-radius:14px;padding:18px;
-  transition:border-color .2s,transform .2s;
+  transition:border-color .2s;
 }
 .mk-hero-card:hover{border-color:rgba(68,184,40,0.3);}
 .mk-hero-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .mk-hero-title{font-size:13px;color:var(--text-mid);font-weight:600;display:flex;align-items:center;gap:8px;}
 .mk-hero-title-icon{width:20px;height:20px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;}
-.mk-hero-link{font-size:11px;color:var(--text-dim);text-decoration:none;}
+.mk-hero-link{font-size:11px;color:var(--text-dim);text-decoration:none;cursor:pointer;}
 .mk-hero-link:hover{color:var(--neon);}
 .mk-hero-row-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
 .mk-hero-row-item:last-child{border-bottom:none;}
@@ -98,12 +115,12 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-hero-chg.pos{color:var(--neon);}
 .mk-hero-chg.neg{color:var(--red);}
 
-/* category filter row */
+/* category filter row (within an asset class) */
 .mk-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
 .mk-tab{
   padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;
   color:var(--text-mid);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;
-  transition:all .15s;
+  transition:all .15s;font-family:'DM Sans',sans-serif;
 }
 .mk-tab:hover{color:var(--text);border-color:var(--border2);}
 .mk-tab.active{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.4);color:var(--neon);}
@@ -130,7 +147,7 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-coin-icon{
   width:28px;height:28px;border-radius:50%;background:var(--bg3);
   display:inline-flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
+  font-size:13px;font-weight:700;flex-shrink:0;color:var(--text);
 }
 .mk-coin-icon img{width:100%;height:100%;border-radius:50%;}
 .mk-coin-name{font-weight:600;color:var(--text);}
@@ -148,7 +165,7 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-trade-btn:hover{background:rgba(68,184,40,0.2);border-color:rgba(68,184,40,0.5);}
 .mk-rank{color:var(--text-dim);font-size:13px;}
 
-/* loading + empty */
+/* loading + empty + coming soon */
 .mk-loading{padding:60px 20px;text-align:center;color:var(--text-dim);}
 .mk-loading-spinner{
   width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--neon);
@@ -156,22 +173,27 @@ body.markets-active .ticker-bar{display:none !important;}
 }
 @keyframes mk-spin{to{transform:rotate(360deg);}}
 .mk-empty{padding:60px 20px;text-align:center;color:var(--text-dim);}
-
-/* sparkline */
-.mk-sparkline{display:inline-block;height:32px;width:80px;}
-.mk-sparkline path{fill:none;stroke-width:1.5;}
-.mk-sparkline.pos path{stroke:var(--neon);}
-.mk-sparkline.neg path{stroke:var(--red);}
+.mk-coming-soon{
+  padding:80px 24px;text-align:center;background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;
+}
+.mk-coming-soon-icon{font-size:48px;margin-bottom:16px;opacity:.7;}
+.mk-coming-soon-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;}
+.mk-coming-soon-sub{color:var(--text-mid);max-width:480px;margin:0 auto 24px;line-height:1.6;}
+.mk-coming-soon-tag{
+  display:inline-block;padding:6px 14px;background:rgba(155,114,203,0.1);
+  border:1px solid rgba(155,114,203,0.3);border-radius:6px;color:#9b72cb;font-size:12px;
+  font-weight:600;letter-spacing:.04em;
+}
 
 /* responsive */
 @media (max-width: 900px){
   .mk-table th,.mk-table td{padding:10px 8px;font-size:12px;}
   .mk-coin-name{font-size:13px;}
-  .mk-rank,.mk-vol,.mk-mcap,.mk-sparkline{display:none;}
+  .mk-rank,.mk-vol,.mk-mcap{display:none;}
   .mk-table th:nth-child(1),.mk-table td:nth-child(1),
   .mk-table th:nth-child(5),.mk-table td:nth-child(5),
-  .mk-table th:nth-child(6),.mk-table td:nth-child(6),
-  .mk-table th:nth-child(7),.mk-table td:nth-child(7){display:none;}
+  .mk-table th:nth-child(6),.mk-table td:nth-child(6){display:none;}
 }
 
 /* ═══ LANGUAGE SWITCHER ═══ */
@@ -956,19 +978,23 @@ footer{
 
   <div class="nav-links" id="nav-links">
     <!-- Markets -->
-    <div class="nav-item" data-i18n="nav_markets">
+    <div class="nav-item" data-i18n="nav_markets" onclick="if(window.showMarkets){showMarkets();}" style="cursor:pointer;">
       <span>Markets</span><span class="nav-caret">▾</span>
       <div class="nav-dropdown">
-        <div class="dd-item" onclick="showMarkets()">
-          <div class="dd-icon" style="background:rgba(68,184,40,0.1);">📊</div>
-          <div><div class="dd-text-title" data-i18n="live_prices">Live Markets</div><div class="dd-text-sub" data-i18n="live_prices_sub">Real-time prices · 100+ coins</div></div>
+        <div class="dd-item" onclick="event.stopPropagation();if(window.showMarkets){showMarkets('crypto');}">
+          <div class="dd-icon" style="background:rgba(68,184,40,0.1);">🪙</div>
+          <div><div class="dd-text-title" data-i18n="crypto_markets">Crypto Markets</div><div class="dd-text-sub" data-i18n="crypto_markets_sub">100+ coins · Live prices</div></div>
         </div>
-        <div class="dd-item" onclick="goto('#intelligence')">
+        <div class="dd-item" onclick="event.stopPropagation();if(window.showMarkets){showMarkets('stocks');}">
+          <div class="dd-icon" style="background:rgba(66,133,244,0.1);">📈</div>
+          <div><div class="dd-text-title" data-i18n="stock_markets">Stock Markets</div><div class="dd-text-sub" data-i18n="stock_markets_sub">Equities · ETFs · Coming Soon</div></div>
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="event.stopPropagation();goto('#intelligence')">
           <div class="dd-icon" style="background:rgba(240,180,41,0.1);">🌊</div>
           <div><div class="dd-text-title" data-i18n="market_sentiment">Market Sentiment</div><div class="dd-text-sub" data-i18n="market_sentiment_sub">Fear & Greed + Smart Money Flow</div></div>
         </div>
-        <div class="dd-sep"></div>
-        <div class="dd-item" onclick="goto('#arbitrage')">
+        <div class="dd-item" onclick="event.stopPropagation();goto('#arbitrage')">
           <div class="dd-icon" style="background:rgba(66,133,244,0.1);">⚡</div>
           <div><div class="dd-text-title" data-i18n="arb_opportunities">Arb Opportunities</div><div class="dd-text-sub" data-i18n="arb_opportunities_sub">Live cross-exchange spreads</div></div>
         </div>
@@ -1092,75 +1118,129 @@ footer{
     </div>
   </div>
 
-  <!-- Hero row: Top Gainers / Top Losers / Trending / Market Stats -->
-  <div class="mk-hero-row">
-    <div class="mk-hero-card">
-      <div class="mk-hero-head">
-        <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(68,184,40,0.15);color:var(--neon);">▲</span>Top Gainers · 24h</div>
-        <a class="mk-hero-link" href="#" onclick="setMkCategory('gainers');return false;">View →</a>
+  <!-- Asset class tabs -->
+  <div class="mk-asset-tabs">
+    <button class="mk-asset-tab active" data-asset="crypto" onclick="setAssetClass('crypto')">
+      <span>🪙</span> Crypto
+    </button>
+    <button class="mk-asset-tab" data-asset="stocks" onclick="setAssetClass('stocks')">
+      <span>📈</span> Stocks <span class="mk-soon">SOON</span>
+    </button>
+    <button class="mk-asset-tab" data-asset="forex" onclick="setAssetClass('forex')">
+      <span>💱</span> Forex <span class="mk-soon">SOON</span>
+    </button>
+    <button class="mk-asset-tab" data-asset="futures" onclick="setAssetClass('futures')">
+      <span>⚡</span> Futures <span class="mk-soon">SOON</span>
+    </button>
+  </div>
+
+  <!-- ─── CRYPTO PANE ─── -->
+  <div id="mk-pane-crypto" class="mk-pane">
+    <!-- Hero row -->
+    <div class="mk-hero-row">
+      <div class="mk-hero-card">
+        <div class="mk-hero-head">
+          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(68,184,40,0.15);color:var(--neon);">▲</span>Top Gainers · 24h</div>
+          <span class="mk-hero-link" onclick="setMkCategory('gainers')">View →</span>
+        </div>
+        <div id="mk-top-gainers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
       </div>
-      <div id="mk-top-gainers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+      <div class="mk-hero-card">
+        <div class="mk-hero-head">
+          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(255,0,63,0.15);color:var(--red);">▼</span>Top Losers · 24h</div>
+          <span class="mk-hero-link" onclick="setMkCategory('losers')">View →</span>
+        </div>
+        <div id="mk-top-losers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+      </div>
+      <div class="mk-hero-card">
+        <div class="mk-hero-head">
+          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(240,180,41,0.15);color:var(--gold);">🔥</span>Trending</div>
+          <span class="mk-hero-link" onclick="setMkCategory('trending')">View →</span>
+        </div>
+        <div id="mk-trending"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+      </div>
+      <div class="mk-hero-card">
+        <div class="mk-hero-head">
+          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(66,133,244,0.15);color:var(--blue);">📊</span>Market Overview</div>
+        </div>
+        <div id="mk-overview"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+      </div>
     </div>
-    <div class="mk-hero-card">
-      <div class="mk-hero-head">
-        <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(255,0,63,0.15);color:var(--red);">▼</span>Top Losers · 24h</div>
-        <a class="mk-hero-link" href="#" onclick="setMkCategory('losers');return false;">View →</a>
-      </div>
-      <div id="mk-top-losers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+
+    <!-- Category filter -->
+    <div class="mk-tabs">
+      <button class="mk-tab active" data-cat="all" onclick="setMkCategory('all')">All</button>
+      <button class="mk-tab" data-cat="defi" onclick="setMkCategory('defi')">DeFi</button>
+      <button class="mk-tab" data-cat="meme" onclick="setMkCategory('meme')">Memes</button>
+      <button class="mk-tab" data-cat="ai" onclick="setMkCategory('ai')">AI</button>
+      <button class="mk-tab" data-cat="layer1" onclick="setMkCategory('layer1')">Layer 1</button>
+      <button class="mk-tab" data-cat="layer2" onclick="setMkCategory('layer2')">Layer 2</button>
+      <button class="mk-tab" data-cat="gainers" onclick="setMkCategory('gainers')">Top Gainers</button>
+      <button class="mk-tab" data-cat="losers" onclick="setMkCategory('losers')">Top Losers</button>
+      <button class="mk-tab" data-cat="trending" onclick="setMkCategory('trending')">Trending</button>
     </div>
-    <div class="mk-hero-card">
-      <div class="mk-hero-head">
-        <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(240,180,41,0.15);color:var(--gold);">🔥</span>Trending</div>
-        <a class="mk-hero-link" href="#" onclick="setMkCategory('trending');return false;">View →</a>
+
+    <!-- Main table -->
+    <div class="mk-table-wrap">
+      <div style="overflow-x:auto;">
+        <table class="mk-table" id="mk-table">
+          <thead>
+            <tr>
+              <th class="num" data-sort="rank">#</th>
+              <th data-sort="name">Coin</th>
+              <th class="num sort-active" data-sort="price">Price <span class="sort-arrow">▾</span></th>
+              <th class="num" data-sort="change">24h %<span class="sort-arrow">▾</span></th>
+              <th class="num" data-sort="volume">24h Volume <span class="sort-arrow">▾</span></th>
+              <th class="num" data-sort="mcap">Market Cap <span class="sort-arrow">▾</span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="mk-tbody">
+            <tr><td colspan="7"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading market data...</div></td></tr>
+          </tbody>
+        </table>
       </div>
-      <div id="mk-trending"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
     </div>
-    <div class="mk-hero-card">
-      <div class="mk-hero-head">
-        <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(66,133,244,0.15);color:var(--blue);">📊</span>Market Overview</div>
-      </div>
-      <div id="mk-overview"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
+
+    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-dim);">
+      Data updates every 60 seconds · <span id="mk-last-update">—</span>
     </div>
   </div>
 
-  <!-- Category filter -->
-  <div class="mk-tabs">
-    <button class="mk-tab active" data-cat="all" onclick="setMkCategory('all')">All</button>
-    <button class="mk-tab" data-cat="defi" onclick="setMkCategory('defi')">DeFi</button>
-    <button class="mk-tab" data-cat="meme" onclick="setMkCategory('meme')">Memes</button>
-    <button class="mk-tab" data-cat="ai" onclick="setMkCategory('ai')">AI</button>
-    <button class="mk-tab" data-cat="layer1" onclick="setMkCategory('layer1')">Layer 1</button>
-    <button class="mk-tab" data-cat="layer2" onclick="setMkCategory('layer2')">Layer 2</button>
-    <button class="mk-tab" data-cat="gainers" onclick="setMkCategory('gainers')">Top Gainers</button>
-    <button class="mk-tab" data-cat="losers" onclick="setMkCategory('losers')">Top Losers</button>
-    <button class="mk-tab" data-cat="trending" onclick="setMkCategory('trending')">Trending</button>
-  </div>
-
-  <!-- Main table -->
-  <div class="mk-table-wrap">
-    <div style="overflow-x:auto;">
-      <table class="mk-table" id="mk-table">
-        <thead>
-          <tr>
-            <th class="num" data-sort="rank">#</th>
-            <th data-sort="name">Coin</th>
-            <th class="num sort-active" data-sort="price">Price <span class="sort-arrow">▾</span></th>
-            <th class="num" data-sort="change">24h %<span class="sort-arrow">▾</span></th>
-            <th class="num" data-sort="volume">24h Volume <span class="sort-arrow">▾</span></th>
-            <th class="num" data-sort="mcap">Market Cap <span class="sort-arrow">▾</span></th>
-            <th>Last 7d</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="mk-tbody">
-          <tr><td colspan="8"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading market data...</div></td></tr>
-        </tbody>
-      </table>
+  <!-- ─── STOCKS PANE ─── -->
+  <div id="mk-pane-stocks" class="mk-pane" style="display:none;">
+    <div class="mk-coming-soon">
+      <div class="mk-coming-soon-icon">📈</div>
+      <div class="mk-coming-soon-title">Stock Markets · Coming Soon</div>
+      <div class="mk-coming-soon-sub">
+        US equities and ETFs powered by Alpaca Markets are wired into our trading terminal today. The dedicated Stocks Markets dashboard with screeners, sectors, and live quotes is launching next.
+      </div>
+      <span class="mk-coming-soon-tag">In Development</span>
     </div>
   </div>
 
-  <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-dim);">
-    Data updates every 60 seconds · <span id="mk-last-update">—</span>
+  <!-- ─── FOREX PANE ─── -->
+  <div id="mk-pane-forex" class="mk-pane" style="display:none;">
+    <div class="mk-coming-soon">
+      <div class="mk-coming-soon-icon">💱</div>
+      <div class="mk-coming-soon-title">Forex · Coming Soon</div>
+      <div class="mk-coming-soon-sub">
+        Major and minor currency pairs with real-time spreads. Trade USD, EUR, GBP, JPY, and more — all from the same ExNexus terminal you use for crypto.
+      </div>
+      <span class="mk-coming-soon-tag">Planned</span>
+    </div>
+  </div>
+
+  <!-- ─── FUTURES PANE ─── -->
+  <div id="mk-pane-futures" class="mk-pane" style="display:none;">
+    <div class="mk-coming-soon">
+      <div class="mk-coming-soon-icon">⚡</div>
+      <div class="mk-coming-soon-title">Futures · Coming Soon</div>
+      <div class="mk-coming-soon-sub">
+        Perpetuals across Bybit, Binance, and Gate — funding rates, open interest, long/short ratios, and liquidation maps in one unified view.
+      </div>
+      <span class="mk-coming-soon-tag">Planned</span>
+    </div>
   </div>
 </section>
 
@@ -2194,35 +2274,73 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 /* ── Markets Page ────────────────────────────────── */
 const MK_API = 'https://exnexus-market.drorbaron18.workers.dev';
 let mkData = []; // full coin list
+let mkAssetClass = 'crypto';
 let mkCategory = 'all';
 let mkSort = { col: 'mcap', dir: 'desc' };
 let mkSearch = '';
 let mkRefreshTimer = null;
+let mkInitialLoaded = false;
 
-function showMarkets(){
-  document.body.classList.add('markets-active');
-  document.getElementById('markets-page').classList.add('active');
-  history.pushState({page:'markets'}, '', '/markets');
-  window.scrollTo(0,0);
-  loadMarkets();
-  if(!mkRefreshTimer) mkRefreshTimer = setInterval(loadMarkets, 60000);
-}
-function hideMarkets(){
-  document.body.classList.remove('markets-active');
-  document.getElementById('markets-page').classList.remove('active');
-  if(mkRefreshTimer){clearInterval(mkRefreshTimer); mkRefreshTimer=null;}
-}
-window.addEventListener('popstate', (e)=>{
+window.showMarkets = function(assetClass){
+  try {
+    const page = document.getElementById('markets-page');
+    if(!page){ console.error('Markets page element not found'); return; }
+    document.body.classList.add('markets-active');
+    page.classList.add('active');
+    if(window.location.pathname !== '/markets'){
+      try { history.pushState({page:'markets'}, '', '/markets'); } catch(e){}
+    }
+    window.scrollTo(0,0);
+    if(assetClass) setAssetClass(assetClass);
+    if(mkAssetClass === 'crypto'){
+      loadMarkets();
+      if(!mkRefreshTimer) mkRefreshTimer = setInterval(loadMarkets, 60000);
+    }
+  } catch(err){
+    console.error('showMarkets error:', err);
+  }
+};
+
+window.hideMarkets = function(){
+  try {
+    document.body.classList.remove('markets-active');
+    const page = document.getElementById('markets-page');
+    if(page) page.classList.remove('active');
+    if(mkRefreshTimer){clearInterval(mkRefreshTimer); mkRefreshTimer=null;}
+  } catch(err){
+    console.error('hideMarkets error:', err);
+  }
+};
+
+window.setAssetClass = function(asset){
+  mkAssetClass = asset;
+  document.querySelectorAll('.mk-asset-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.asset === asset);
+  });
+  document.querySelectorAll('.mk-pane').forEach(p => {
+    p.style.display = (p.id === 'mk-pane-' + asset) ? 'block' : 'none';
+  });
+  // Crypto auto-loads + auto-refreshes; others are static "Coming Soon" panes
+  if(asset === 'crypto'){
+    if(!mkInitialLoaded) loadMarkets();
+    if(!mkRefreshTimer) mkRefreshTimer = setInterval(loadMarkets, 60000);
+  } else {
+    if(mkRefreshTimer){clearInterval(mkRefreshTimer); mkRefreshTimer=null;}
+  }
+};
+
+window.addEventListener('popstate', function(e){
   if(window.location.pathname === '/markets') showMarkets();
   else hideMarkets();
 });
-// Logo click → home
-document.addEventListener('click', (e)=>{
+
+// Logo click → home (only when on markets page)
+document.addEventListener('click', function(e){
   const logoEl = e.target.closest('.nav-logo');
   if(logoEl && document.body.classList.contains('markets-active')){
     e.preventDefault();
     hideMarkets();
-    history.pushState({page:'home'}, '', '/');
+    try { history.pushState({page:'home'}, '', '/'); } catch(err){}
   }
 });
 
@@ -2246,51 +2364,55 @@ function fmtChg(c){
   return (c>=0?'+':'') + c.toFixed(2) + '%';
 }
 function coinIconHtml(c){
-  if(c.logo) return '<div class="mk-coin-icon"><img src="'+c.logo+'" alt="'+c.symbol+'" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.textContent=\''+(c.symbol||'?').charAt(0)+'\';"></div>';
-  return '<div class="mk-coin-icon">'+(c.symbol||'?').charAt(0)+'</div>';
+  const sym = (c.symbol||'?').charAt(0);
+  if(c.logo) return '<div class="mk-coin-icon"><img src="'+c.logo+'" alt="'+c.symbol+'" loading="lazy" onerror="this.outerHTML=\''+sym+'\';"></div>';
+  return '<div class="mk-coin-icon">'+sym+'</div>';
 }
 
 async function loadMarkets(){
   try {
     const res = await fetch(MK_API + '/listings?limit=100');
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    if(!json.ok || !Array.isArray(json.data)) throw new Error('bad data');
+    if(!json.ok || !Array.isArray(json.data)) throw new Error('bad data shape');
     mkData = json.data.map(c => ({
       rank: c.cmc_rank || c.rank || 999,
       name: c.name,
       symbol: c.symbol,
-      price: c.quote?.USD?.price ?? c.price,
-      change: c.quote?.USD?.percent_change_24h ?? c.percent_change_24h,
-      volume: c.quote?.USD?.volume_24h ?? c.volume_24h,
-      mcap: c.quote?.USD?.market_cap ?? c.market_cap,
+      price: (c.quote && c.quote.USD && c.quote.USD.price) ?? c.price,
+      change: (c.quote && c.quote.USD && c.quote.USD.percent_change_24h) ?? c.percent_change_24h,
+      volume: (c.quote && c.quote.USD && c.quote.USD.volume_24h) ?? c.volume_24h,
+      mcap: (c.quote && c.quote.USD && c.quote.USD.market_cap) ?? c.market_cap,
       tags: c.tags || [],
       logo: c.logo || ('https://s2.coinmarketcap.com/static/img/coins/64x64/'+(c.id||'')+'.png')
     }));
+    mkInitialLoaded = true;
     renderMkTable();
     renderMkHero();
-    document.getElementById('mk-last-update').textContent = new Date().toLocaleTimeString();
+    const lu = document.getElementById('mk-last-update');
+    if(lu) lu.textContent = new Date().toLocaleTimeString();
   } catch(e){
-    document.getElementById('mk-tbody').innerHTML = '<tr><td colspan="8"><div class="mk-empty">Could not load market data. Please try again.</div></td></tr>';
+    console.error('loadMarkets failed:', e);
+    const tbody = document.getElementById('mk-tbody');
+    if(tbody) tbody.innerHTML = '<tr><td colspan="7"><div class="mk-empty">Could not load market data. Please try again later.</div></td></tr>';
   }
 }
 
-function setMkCategory(cat){
+window.setMkCategory = function(cat){
   mkCategory = cat;
-  document.querySelectorAll('.mk-tab').forEach(t => {
+  document.querySelectorAll('#mk-pane-crypto .mk-tab').forEach(t => {
     t.classList.toggle('active', t.dataset.cat === cat);
   });
   renderMkTable();
-}
+};
 
 function getMkFiltered(){
   let arr = mkData.slice();
-  // category filter
   if(mkCategory === 'gainers'){
     arr = arr.filter(c => c.change != null).sort((a,b)=>b.change-a.change).slice(0,30);
   } else if(mkCategory === 'losers'){
     arr = arr.filter(c => c.change != null).sort((a,b)=>a.change-b.change).slice(0,30);
   } else if(mkCategory === 'trending'){
-    // trending = top by 24h volume
     arr = arr.filter(c=>c.volume).sort((a,b)=>b.volume-a.volume).slice(0,30);
   } else if(mkCategory !== 'all'){
     const tagMap = {
@@ -2303,12 +2425,10 @@ function getMkFiltered(){
     const tags = tagMap[mkCategory] || [];
     arr = arr.filter(c => c.tags && c.tags.some(t => tags.includes(t)));
   }
-  // search filter
   if(mkSearch){
     const q = mkSearch.toLowerCase();
     arr = arr.filter(c => (c.name||'').toLowerCase().includes(q) || (c.symbol||'').toLowerCase().includes(q));
   }
-  // sort
   const dir = mkSort.dir === 'asc' ? 1 : -1;
   const col = mkSort.col;
   arr.sort((a,b)=>{
@@ -2324,8 +2444,9 @@ function getMkFiltered(){
 function renderMkTable(){
   const arr = getMkFiltered();
   const tbody = document.getElementById('mk-tbody');
+  if(!tbody) return;
   if(!arr.length){
-    tbody.innerHTML = '<tr><td colspan="8"><div class="mk-empty">No coins match your filters.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="mk-empty">No coins match your filters.</div></td></tr>';
     return;
   }
   tbody.innerHTML = arr.slice(0,100).map(c => `
@@ -2344,16 +2465,15 @@ function renderMkTable(){
       <td class="num mk-chg ${c.change>=0?'pos':'neg'}">${fmtChg(c.change)}</td>
       <td class="num mk-vol">${fmtBig(c.volume)}</td>
       <td class="num mk-mcap">${fmtBig(c.mcap)}</td>
-      <td><span style="color:var(--text-dim);font-size:11px;">—</span></td>
       <td class="num"><a class="mk-trade-btn" href="/terminal/?symbol=${encodeURIComponent((c.symbol||'')+'USDT')}">Trade</a></td>
     </tr>
   `).join('');
 }
 
 function renderMkHero(){
-  // Top gainers
   const gainers = mkData.filter(c=>c.change!=null).sort((a,b)=>b.change-a.change).slice(0,4);
-  document.getElementById('mk-top-gainers').innerHTML = gainers.map(c => `
+  const elG = document.getElementById('mk-top-gainers');
+  if(elG) elG.innerHTML = gainers.map(c => `
     <div class="mk-hero-row-item">
       <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">/USDT</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
@@ -2362,9 +2482,10 @@ function renderMkHero(){
       </div>
     </div>
   `).join('');
-  // Top losers
+
   const losers = mkData.filter(c=>c.change!=null).sort((a,b)=>a.change-b.change).slice(0,4);
-  document.getElementById('mk-top-losers').innerHTML = losers.map(c => `
+  const elL = document.getElementById('mk-top-losers');
+  if(elL) elL.innerHTML = losers.map(c => `
     <div class="mk-hero-row-item">
       <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">/USDT</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
@@ -2373,9 +2494,10 @@ function renderMkHero(){
       </div>
     </div>
   `).join('');
-  // Trending = top by volume
+
   const trending = mkData.filter(c=>c.volume).sort((a,b)=>b.volume-a.volume).slice(0,4);
-  document.getElementById('mk-trending').innerHTML = trending.map(c => `
+  const elT = document.getElementById('mk-trending');
+  if(elT) elT.innerHTML = trending.map(c => `
     <div class="mk-hero-row-item">
       <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">${fmtBig(c.volume)}</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
@@ -2384,12 +2506,13 @@ function renderMkHero(){
       </div>
     </div>
   `).join('');
-  // Overview: BTC dominance + total mcap (synthetic from data)
+
   const totalMcap = mkData.reduce((s,c)=>s+(c.mcap||0),0);
   const btc = mkData.find(c=>c.symbol==='BTC');
   const eth = mkData.find(c=>c.symbol==='ETH');
   const btcDom = (btc && totalMcap) ? (btc.mcap/totalMcap*100) : null;
-  document.getElementById('mk-overview').innerHTML = `
+  const elO = document.getElementById('mk-overview');
+  if(elO) elO.innerHTML = `
     <div class="mk-hero-row-item">
       <div class="mk-hero-coin">Total Market Cap</div>
       <div class="mk-hero-price">${fmtBig(totalMcap)}</div>
@@ -2409,9 +2532,8 @@ function renderMkHero(){
   `;
 }
 
-// Sort handlers
-document.addEventListener('click', (e)=>{
-  const th = e.target.closest('.mk-table th[data-sort]');
+document.addEventListener('click', function(e){
+  const th = e.target.closest('#mk-table th[data-sort]');
   if(!th) return;
   const col = th.dataset.sort;
   if(mkSort.col === col){
@@ -2420,26 +2542,28 @@ document.addEventListener('click', (e)=>{
     mkSort.col = col;
     mkSort.dir = 'desc';
   }
-  document.querySelectorAll('.mk-table th').forEach(t=>t.classList.remove('sort-active'));
+  document.querySelectorAll('#mk-table th').forEach(t=>t.classList.remove('sort-active'));
   th.classList.add('sort-active');
   renderMkTable();
 });
 
-// Search debounce
 let mkSearchTimer = null;
-document.addEventListener('input', (e)=>{
-  if(e.target.id === 'mk-search'){
+document.addEventListener('input', function(e){
+  if(e.target && e.target.id === 'mk-search'){
     clearTimeout(mkSearchTimer);
-    mkSearchTimer = setTimeout(()=>{
+    mkSearchTimer = setTimeout(function(){
       mkSearch = e.target.value.trim();
       renderMkTable();
     }, 200);
   }
 });
 
-// Auto-show if URL is /markets on load
 if(window.location.pathname === '/markets'){
-  document.addEventListener('DOMContentLoaded', showMarkets);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ showMarkets(); });
+  } else {
+    showMarkets();
+  }
 }
 
 /* ── Init ─────────────────────────────────────────── */
