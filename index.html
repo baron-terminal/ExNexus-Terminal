@@ -75,32 +75,14 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-search:focus{outline:none;border-color:var(--neon);}
 .mk-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none;}
 
-/* Asset class tabs (top-level) */
-.mk-asset-tabs{
-  display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--border);
-  overflow-x:auto;
-}
-.mk-asset-tab{
-  padding:12px 20px;background:transparent;border:none;border-bottom:2px solid transparent;
-  color:var(--text-mid);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;
-  transition:all .15s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;
-}
+.mk-asset-tabs{display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--border);overflow-x:auto;}
+.mk-asset-tab{padding:12px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-mid);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;}
 .mk-asset-tab:hover{color:var(--text);}
 .mk-asset-tab.active{color:var(--neon);border-bottom-color:var(--neon);}
-.mk-asset-tab .mk-soon{
-  font-size:9px;background:rgba(155,114,203,0.15);color:#9b72cb;
-  padding:2px 6px;border-radius:4px;font-weight:700;letter-spacing:.04em;
-}
+.mk-asset-tab .mk-soon{font-size:9px;background:rgba(155,114,203,0.15);color:#9b72cb;padding:2px 6px;border-radius:4px;font-weight:700;letter-spacing:.04em;}
 
-/* hero card row */
-.mk-hero-row{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:36px;
-}
-.mk-hero-card{
-  background:linear-gradient(135deg,var(--bg2),var(--bg3));
-  border:1px solid var(--border);border-radius:14px;padding:18px;
-  transition:border-color .2s;
-}
+.mk-hero-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:36px;}
+.mk-hero-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:14px;padding:18px;transition:border-color .2s;}
 .mk-hero-card:hover{border-color:rgba(68,184,40,0.3);}
 .mk-hero-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .mk-hero-title{font-size:13px;color:var(--text-mid);font-weight:600;display:flex;align-items:center;gap:8px;}
@@ -115,26 +97,14 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-hero-chg.pos{color:var(--neon);}
 .mk-hero-chg.neg{color:var(--red);}
 
-/* category filter row (within an asset class) */
 .mk-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
-.mk-tab{
-  padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;
-  color:var(--text-mid);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;
-  transition:all .15s;font-family:'DM Sans',sans-serif;
-}
+.mk-tab{padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-mid);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:'DM Sans',sans-serif;}
 .mk-tab:hover{color:var(--text);border-color:var(--border2);}
 .mk-tab.active{background:rgba(68,184,40,0.1);border-color:rgba(68,184,40,0.4);color:var(--neon);}
 
-/* table */
-.mk-table-wrap{
-  background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;
-}
+.mk-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
 .mk-table{width:100%;border-collapse:collapse;font-size:14px;}
-.mk-table th{
-  text-align:left;padding:14px 16px;font-size:11px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--text-dim);background:var(--bg3);border-bottom:1px solid var(--border);
-  cursor:pointer;user-select:none;white-space:nowrap;
-}
+.mk-table th{text-align:left;padding:14px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);background:var(--bg3);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap;}
 .mk-table th:hover{color:var(--text-mid);}
 .mk-table th .sort-arrow{opacity:0;margin-left:4px;font-size:10px;}
 .mk-table th.sort-active .sort-arrow{opacity:1;color:var(--neon);}
@@ -144,11 +114,7 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-table tbody tr:hover{background:rgba(68,184,40,0.04);}
 .mk-table tbody tr:last-child td{border-bottom:none;}
 .mk-coin-cell{display:flex;align-items:center;gap:10px;}
-.mk-coin-icon{
-  width:28px;height:28px;border-radius:50%;background:var(--bg3);
-  display:inline-flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;color:var(--text);
-}
+.mk-coin-icon{width:28px;height:28px;border-radius:50%;background:var(--bg3);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:var(--text);}
 .mk-coin-icon img{width:100%;height:100%;border-radius:50%;}
 .mk-coin-name{font-weight:600;color:var(--text);}
 .mk-coin-symbol{font-size:11px;color:var(--text-dim);text-transform:uppercase;}
@@ -157,36 +123,20 @@ body.markets-active .ticker-bar{display:none !important;}
 .mk-chg.pos{color:var(--neon);}
 .mk-chg.neg{color:var(--red);}
 .mk-vol,.mk-mcap{color:var(--text-mid);}
-.mk-trade-btn{
-  padding:6px 14px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);
-  border-radius:6px;color:var(--neon);font-size:12px;font-weight:600;cursor:pointer;
-  transition:all .15s;text-decoration:none;display:inline-block;
-}
+.mk-trade-btn{padding:6px 14px;background:rgba(68,184,40,0.1);border:1px solid rgba(68,184,40,0.3);border-radius:6px;color:var(--neon);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block;}
 .mk-trade-btn:hover{background:rgba(68,184,40,0.2);border-color:rgba(68,184,40,0.5);}
 .mk-rank{color:var(--text-dim);font-size:13px;}
 
-/* loading + empty + coming soon */
 .mk-loading{padding:60px 20px;text-align:center;color:var(--text-dim);}
-.mk-loading-spinner{
-  width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--neon);
-  border-radius:50%;margin:0 auto 16px;animation:mk-spin 0.8s linear infinite;
-}
+.mk-loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--neon);border-radius:50%;margin:0 auto 16px;animation:mk-spin 0.8s linear infinite;}
 @keyframes mk-spin{to{transform:rotate(360deg);}}
 .mk-empty{padding:60px 20px;text-align:center;color:var(--text-dim);}
-.mk-coming-soon{
-  padding:80px 24px;text-align:center;background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;
-}
+.mk-coming-soon{padding:80px 24px;text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:14px;}
 .mk-coming-soon-icon{font-size:48px;margin-bottom:16px;opacity:.7;}
 .mk-coming-soon-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;}
 .mk-coming-soon-sub{color:var(--text-mid);max-width:480px;margin:0 auto 24px;line-height:1.6;}
-.mk-coming-soon-tag{
-  display:inline-block;padding:6px 14px;background:rgba(155,114,203,0.1);
-  border:1px solid rgba(155,114,203,0.3);border-radius:6px;color:#9b72cb;font-size:12px;
-  font-weight:600;letter-spacing:.04em;
-}
+.mk-coming-soon-tag{display:inline-block;padding:6px 14px;background:rgba(155,114,203,0.1);border:1px solid rgba(155,114,203,0.3);border-radius:6px;color:#9b72cb;font-size:12px;font-weight:600;letter-spacing:.04em;}
 
-/* responsive */
 @media (max-width: 900px){
   .mk-table th,.mk-table td{padding:10px 8px;font-size:12px;}
   .mk-coin-name{font-size:13px;}
@@ -1118,56 +1068,21 @@ footer{
     </div>
   </div>
 
-  <!-- Asset class tabs -->
   <div class="mk-asset-tabs">
-    <button class="mk-asset-tab active" data-asset="crypto" onclick="setAssetClass('crypto')">
-      <span>🪙</span> Crypto
-    </button>
-    <button class="mk-asset-tab" data-asset="stocks" onclick="setAssetClass('stocks')">
-      <span>📈</span> Stocks <span class="mk-soon">SOON</span>
-    </button>
-    <button class="mk-asset-tab" data-asset="forex" onclick="setAssetClass('forex')">
-      <span>💱</span> Forex <span class="mk-soon">SOON</span>
-    </button>
-    <button class="mk-asset-tab" data-asset="futures" onclick="setAssetClass('futures')">
-      <span>⚡</span> Futures <span class="mk-soon">SOON</span>
-    </button>
+    <button class="mk-asset-tab active" data-asset="crypto" onclick="setAssetClass('crypto')"><span>🪙</span> Crypto</button>
+    <button class="mk-asset-tab" data-asset="stocks" onclick="setAssetClass('stocks')"><span>📈</span> Stocks <span class="mk-soon">SOON</span></button>
+    <button class="mk-asset-tab" data-asset="forex" onclick="setAssetClass('forex')"><span>💱</span> Forex <span class="mk-soon">SOON</span></button>
+    <button class="mk-asset-tab" data-asset="futures" onclick="setAssetClass('futures')"><span>⚡</span> Futures <span class="mk-soon">SOON</span></button>
   </div>
 
-  <!-- ─── CRYPTO PANE ─── -->
   <div id="mk-pane-crypto" class="mk-pane">
-    <!-- Hero row -->
     <div class="mk-hero-row">
-      <div class="mk-hero-card">
-        <div class="mk-hero-head">
-          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(68,184,40,0.15);color:var(--neon);">▲</span>Top Gainers · 24h</div>
-          <span class="mk-hero-link" onclick="setMkCategory('gainers')">View →</span>
-        </div>
-        <div id="mk-top-gainers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
-      </div>
-      <div class="mk-hero-card">
-        <div class="mk-hero-head">
-          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(255,0,63,0.15);color:var(--red);">▼</span>Top Losers · 24h</div>
-          <span class="mk-hero-link" onclick="setMkCategory('losers')">View →</span>
-        </div>
-        <div id="mk-top-losers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
-      </div>
-      <div class="mk-hero-card">
-        <div class="mk-hero-head">
-          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(240,180,41,0.15);color:var(--gold);">🔥</span>Trending</div>
-          <span class="mk-hero-link" onclick="setMkCategory('trending')">View →</span>
-        </div>
-        <div id="mk-trending"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
-      </div>
-      <div class="mk-hero-card">
-        <div class="mk-hero-head">
-          <div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(66,133,244,0.15);color:var(--blue);">📊</span>Market Overview</div>
-        </div>
-        <div id="mk-overview"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div>
-      </div>
+      <div class="mk-hero-card"><div class="mk-hero-head"><div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(68,184,40,0.15);color:var(--neon);">▲</span>Top Gainers · 24h</div><span class="mk-hero-link" onclick="setMkCategory('gainers')">View →</span></div><div id="mk-top-gainers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div></div>
+      <div class="mk-hero-card"><div class="mk-hero-head"><div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(255,0,63,0.15);color:var(--red);">▼</span>Top Losers · 24h</div><span class="mk-hero-link" onclick="setMkCategory('losers')">View →</span></div><div id="mk-top-losers"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div></div>
+      <div class="mk-hero-card"><div class="mk-hero-head"><div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(240,180,41,0.15);color:var(--gold);">🔥</span>Trending</div><span class="mk-hero-link" onclick="setMkCategory('trending')">View →</span></div><div id="mk-trending"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div></div>
+      <div class="mk-hero-card"><div class="mk-hero-head"><div class="mk-hero-title"><span class="mk-hero-title-icon" style="background:rgba(66,133,244,0.15);color:var(--blue);">📊</span>Market Overview</div></div><div id="mk-overview"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading...</div></div></div>
     </div>
 
-    <!-- Category filter -->
     <div class="mk-tabs">
       <button class="mk-tab active" data-cat="all" onclick="setMkCategory('all')">All</button>
       <button class="mk-tab" data-cat="defi" onclick="setMkCategory('defi')">DeFi</button>
@@ -1180,21 +1095,18 @@ footer{
       <button class="mk-tab" data-cat="trending" onclick="setMkCategory('trending')">Trending</button>
     </div>
 
-    <!-- Main table -->
     <div class="mk-table-wrap">
       <div style="overflow-x:auto;">
         <table class="mk-table" id="mk-table">
-          <thead>
-            <tr>
-              <th class="num" data-sort="rank">#</th>
-              <th data-sort="name">Coin</th>
-              <th class="num sort-active" data-sort="price">Price <span class="sort-arrow">▾</span></th>
-              <th class="num" data-sort="change">24h %<span class="sort-arrow">▾</span></th>
-              <th class="num" data-sort="volume">24h Volume <span class="sort-arrow">▾</span></th>
-              <th class="num" data-sort="mcap">Market Cap <span class="sort-arrow">▾</span></th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th class="num" data-sort="rank">#</th>
+            <th data-sort="name">Coin</th>
+            <th class="num sort-active" data-sort="price">Price <span class="sort-arrow">▾</span></th>
+            <th class="num" data-sort="change">24h %<span class="sort-arrow">▾</span></th>
+            <th class="num" data-sort="volume">24h Volume <span class="sort-arrow">▾</span></th>
+            <th class="num" data-sort="mcap">Market Cap <span class="sort-arrow">▾</span></th>
+            <th></th>
+          </tr></thead>
           <tbody id="mk-tbody">
             <tr><td colspan="7"><div class="mk-loading"><div class="mk-loading-spinner"></div>Loading market data...</div></td></tr>
           </tbody>
@@ -1202,46 +1114,12 @@ footer{
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-dim);">
-      Data updates every 60 seconds · <span id="mk-last-update">—</span>
-    </div>
+    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-dim);">Data updates every 60 seconds · <span id="mk-last-update">—</span></div>
   </div>
 
-  <!-- ─── STOCKS PANE ─── -->
-  <div id="mk-pane-stocks" class="mk-pane" style="display:none;">
-    <div class="mk-coming-soon">
-      <div class="mk-coming-soon-icon">📈</div>
-      <div class="mk-coming-soon-title">Stock Markets · Coming Soon</div>
-      <div class="mk-coming-soon-sub">
-        US equities and ETFs powered by Alpaca Markets are wired into our trading terminal today. The dedicated Stocks Markets dashboard with screeners, sectors, and live quotes is launching next.
-      </div>
-      <span class="mk-coming-soon-tag">In Development</span>
-    </div>
-  </div>
-
-  <!-- ─── FOREX PANE ─── -->
-  <div id="mk-pane-forex" class="mk-pane" style="display:none;">
-    <div class="mk-coming-soon">
-      <div class="mk-coming-soon-icon">💱</div>
-      <div class="mk-coming-soon-title">Forex · Coming Soon</div>
-      <div class="mk-coming-soon-sub">
-        Major and minor currency pairs with real-time spreads. Trade USD, EUR, GBP, JPY, and more — all from the same ExNexus terminal you use for crypto.
-      </div>
-      <span class="mk-coming-soon-tag">Planned</span>
-    </div>
-  </div>
-
-  <!-- ─── FUTURES PANE ─── -->
-  <div id="mk-pane-futures" class="mk-pane" style="display:none;">
-    <div class="mk-coming-soon">
-      <div class="mk-coming-soon-icon">⚡</div>
-      <div class="mk-coming-soon-title">Futures · Coming Soon</div>
-      <div class="mk-coming-soon-sub">
-        Perpetuals across Bybit, Binance, and Gate — funding rates, open interest, long/short ratios, and liquidation maps in one unified view.
-      </div>
-      <span class="mk-coming-soon-tag">Planned</span>
-    </div>
-  </div>
+  <div id="mk-pane-stocks" class="mk-pane" style="display:none;"><div class="mk-coming-soon"><div class="mk-coming-soon-icon">📈</div><div class="mk-coming-soon-title">Stock Markets · Coming Soon</div><div class="mk-coming-soon-sub">US equities and ETFs powered by Alpaca Markets are wired into our trading terminal today. The dedicated Stocks Markets dashboard is launching next.</div><span class="mk-coming-soon-tag">In Development</span></div></div>
+  <div id="mk-pane-forex" class="mk-pane" style="display:none;"><div class="mk-coming-soon"><div class="mk-coming-soon-icon">💱</div><div class="mk-coming-soon-title">Forex · Coming Soon</div><div class="mk-coming-soon-sub">Major and minor currency pairs with real-time spreads. Trade USD, EUR, GBP, JPY, and more.</div><span class="mk-coming-soon-tag">Planned</span></div></div>
+  <div id="mk-pane-futures" class="mk-pane" style="display:none;"><div class="mk-coming-soon"><div class="mk-coming-soon-icon">⚡</div><div class="mk-coming-soon-title">Futures · Coming Soon</div><div class="mk-coming-soon-sub">Perpetuals across Bybit, Binance, and Gate — funding rates, open interest, long/short ratios in one view.</div><span class="mk-coming-soon-tag">Planned</span></div></div>
 </section>
 
 <!-- Mobile Menu -->
@@ -2202,7 +2080,9 @@ function goto(hash) {
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function launchTerminal() {
-  window.location.href = window.location.hostname === 'exnexus.co' || window.location.hostname === 'www.exnexus.co' ? 'https://exnexus.app/terminal.html' : 'terminal.html';
+  // After domain migration: terminal lives at /terminal/ on exnexus.co (not terminal.html)
+  // Open in same tab, preserve any query string the user might have.
+  window.location.href = '/terminal/';
 }
 function toggleMobMenu() {
   const m = document.getElementById('mob-menu');
@@ -2272,18 +2152,18 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* ── Markets Page ────────────────────────────────── */
-const MK_API = 'https://exnexus-market.drorbaron18.workers.dev';
-let mkData = []; // full coin list
-let mkAssetClass = 'crypto';
-let mkCategory = 'all';
-let mkSort = { col: 'mcap', dir: 'desc' };
-let mkSearch = '';
-let mkRefreshTimer = null;
-let mkInitialLoaded = false;
+var MK_API = 'https://exnexus-market.drorbaron18.workers.dev';
+var mkData = [];
+var mkAssetClass = 'crypto';
+var mkCategory = 'all';
+var mkSort = { col: 'mcap', dir: 'desc' };
+var mkSearch = '';
+var mkRefreshTimer = null;
+var mkInitialLoaded = false;
 
 window.showMarkets = function(assetClass){
   try {
-    const page = document.getElementById('markets-page');
+    var page = document.getElementById('markets-page');
     if(!page){ console.error('Markets page element not found'); return; }
     document.body.classList.add('markets-active');
     page.classList.add('active');
@@ -2304,7 +2184,7 @@ window.showMarkets = function(assetClass){
 window.hideMarkets = function(){
   try {
     document.body.classList.remove('markets-active');
-    const page = document.getElementById('markets-page');
+    var page = document.getElementById('markets-page');
     if(page) page.classList.remove('active');
     if(mkRefreshTimer){clearInterval(mkRefreshTimer); mkRefreshTimer=null;}
   } catch(err){
@@ -2314,13 +2194,10 @@ window.hideMarkets = function(){
 
 window.setAssetClass = function(asset){
   mkAssetClass = asset;
-  document.querySelectorAll('.mk-asset-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.asset === asset);
-  });
-  document.querySelectorAll('.mk-pane').forEach(p => {
-    p.style.display = (p.id === 'mk-pane-' + asset) ? 'block' : 'none';
-  });
-  // Crypto auto-loads + auto-refreshes; others are static "Coming Soon" panes
+  var tabs = document.querySelectorAll('.mk-asset-tab');
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', tabs[i].getAttribute('data-asset') === asset);
+  var panes = document.querySelectorAll('.mk-pane');
+  for(var j=0;j<panes.length;j++) panes[j].style.display = (panes[j].id === 'mk-pane-' + asset) ? 'block' : 'none';
   if(asset === 'crypto'){
     if(!mkInitialLoaded) loadMarkets();
     if(!mkRefreshTimer) mkRefreshTimer = setInterval(loadMarkets, 60000);
@@ -2334,9 +2211,8 @@ window.addEventListener('popstate', function(e){
   else hideMarkets();
 });
 
-// Logo click → home (only when on markets page)
 document.addEventListener('click', function(e){
-  const logoEl = e.target.closest('.nav-logo');
+  var logoEl = e.target.closest ? e.target.closest('.nav-logo') : null;
   if(logoEl && document.body.classList.contains('markets-active')){
     e.preventDefault();
     hideMarkets();
@@ -2364,75 +2240,118 @@ function fmtChg(c){
   return (c>=0?'+':'') + c.toFixed(2) + '%';
 }
 function coinIconHtml(c){
-  const sym = (c.symbol||'?').charAt(0);
+  var sym = (c.symbol||'?').charAt(0);
   if(c.logo) return '<div class="mk-coin-icon"><img src="'+c.logo+'" alt="'+c.symbol+'" loading="lazy" onerror="this.outerHTML=\''+sym+'\';"></div>';
   return '<div class="mk-coin-icon">'+sym+'</div>';
 }
 
+// Format-agnostic extractor: accepts any reasonable JSON shape
+function extractCoinList(json){
+  if(!json) return null;
+  if(Array.isArray(json)) return json;
+  if(Array.isArray(json.data)) return json.data;
+  if(json.data && Array.isArray(json.data.data)) return json.data.data;
+  if(Array.isArray(json.listings)) return json.listings;
+  if(Array.isArray(json.coins)) return json.coins;
+  if(Array.isArray(json.result)) return json.result;
+  return null;
+}
+
+function getField(c, paths){
+  for(var i=0;i<paths.length;i++){
+    var path = paths[i];
+    var v = c;
+    var parts = path.split('.');
+    var ok = true;
+    for(var j=0;j<parts.length;j++){
+      if(v == null) { ok=false; break; }
+      v = v[parts[j]];
+    }
+    if(ok && v != null && v !== '') return v;
+  }
+  return null;
+}
+
 async function loadMarkets(){
   try {
-    const res = await fetch(MK_API + '/listings?limit=100');
+    var res = await fetch(MK_API + '/listings?limit=100');
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if(!json.ok || !Array.isArray(json.data)) throw new Error('bad data shape');
-    mkData = json.data.map(c => ({
-      rank: c.cmc_rank || c.rank || 999,
-      name: c.name,
-      symbol: c.symbol,
-      price: (c.quote && c.quote.USD && c.quote.USD.price) ?? c.price,
-      change: (c.quote && c.quote.USD && c.quote.USD.percent_change_24h) ?? c.percent_change_24h,
-      volume: (c.quote && c.quote.USD && c.quote.USD.volume_24h) ?? c.volume_24h,
-      mcap: (c.quote && c.quote.USD && c.quote.USD.market_cap) ?? c.market_cap,
-      tags: c.tags || [],
-      logo: c.logo || ('https://s2.coinmarketcap.com/static/img/coins/64x64/'+(c.id||'')+'.png')
-    }));
+    var json = await res.json();
+    var list = extractCoinList(json);
+    if(!list){
+      console.warn('Could not extract coin list from response. Top-level keys:', Object.keys(json||{}));
+      throw new Error('Unrecognized response shape');
+    }
+    if(!list.length){
+      console.warn('Coin list is empty');
+      throw new Error('Empty coin list');
+    }
+    mkData = list.map(function(c){
+      var symbol = getField(c, ['symbol','Symbol','sym']);
+      var id = getField(c, ['id','cmc_id','coin_id']);
+      return {
+        rank: getField(c, ['cmc_rank','rank','market_cap_rank']) || 999,
+        name: getField(c, ['name','Name','coin_name']) || symbol,
+        symbol: symbol,
+        price: getField(c, ['quote.USD.price','price','price_usd','current_price','last']),
+        change: getField(c, ['quote.USD.percent_change_24h','percent_change_24h','price_change_percentage_24h','change_24h','change_pct_24h','priceChangePercent']),
+        volume: getField(c, ['quote.USD.volume_24h','volume_24h','volume','total_volume','quoteVolume']),
+        mcap: getField(c, ['quote.USD.market_cap','market_cap','marketCap','market_cap_usd']),
+        tags: c.tags || c.categories || [],
+        logo: c.logo || c.image || c.logoURI || (id ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/'+id+'.png' : null)
+      };
+    });
     mkInitialLoaded = true;
     renderMkTable();
     renderMkHero();
-    const lu = document.getElementById('mk-last-update');
+    var lu = document.getElementById('mk-last-update');
     if(lu) lu.textContent = new Date().toLocaleTimeString();
   } catch(e){
-    console.error('loadMarkets failed:', e);
-    const tbody = document.getElementById('mk-tbody');
-    if(tbody) tbody.innerHTML = '<tr><td colspan="7"><div class="mk-empty">Could not load market data. Please try again later.</div></td></tr>';
+    console.error('loadMarkets failed:', e.message || e);
+    var tbody = document.getElementById('mk-tbody');
+    if(tbody) tbody.innerHTML = '<tr><td colspan="7"><div class="mk-empty">Could not load market data: ' + (e.message||'unknown error') + '. Open DevTools Network tab to see the API response.</div></td></tr>';
+    var els = ['mk-top-gainers','mk-top-losers','mk-trending','mk-overview'];
+    for(var i=0;i<els.length;i++){
+      var el = document.getElementById(els[i]);
+      if(el) el.innerHTML = '<div class="mk-empty" style="padding:20px;font-size:12px;">No data</div>';
+    }
   }
 }
 
 window.setMkCategory = function(cat){
   mkCategory = cat;
-  document.querySelectorAll('#mk-pane-crypto .mk-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.cat === cat);
-  });
+  var tabs = document.querySelectorAll('#mk-pane-crypto .mk-tab');
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', tabs[i].getAttribute('data-cat') === cat);
   renderMkTable();
 };
 
 function getMkFiltered(){
-  let arr = mkData.slice();
+  var arr = mkData.slice();
   if(mkCategory === 'gainers'){
-    arr = arr.filter(c => c.change != null).sort((a,b)=>b.change-a.change).slice(0,30);
+    arr = arr.filter(function(c){return c.change != null;}).sort(function(a,b){return b.change-a.change;}).slice(0,30);
   } else if(mkCategory === 'losers'){
-    arr = arr.filter(c => c.change != null).sort((a,b)=>a.change-b.change).slice(0,30);
+    arr = arr.filter(function(c){return c.change != null;}).sort(function(a,b){return a.change-b.change;}).slice(0,30);
   } else if(mkCategory === 'trending'){
-    arr = arr.filter(c=>c.volume).sort((a,b)=>b.volume-a.volume).slice(0,30);
+    arr = arr.filter(function(c){return c.volume;}).sort(function(a,b){return b.volume-a.volume;}).slice(0,30);
   } else if(mkCategory !== 'all'){
-    const tagMap = {
-      defi:['defi','decentralized-finance'],
-      meme:['memes','meme'],
-      ai:['ai-big-data','artificial-intelligence'],
-      layer1:['layer-1','smart-contracts'],
-      layer2:['layer-2','scaling']
-    };
-    const tags = tagMap[mkCategory] || [];
-    arr = arr.filter(c => c.tags && c.tags.some(t => tags.includes(t)));
+    var tagMap = {defi:['defi','decentralized-finance'],meme:['memes','meme'],ai:['ai-big-data','artificial-intelligence'],layer1:['layer-1','smart-contracts'],layer2:['layer-2','scaling']};
+    var tags = tagMap[mkCategory] || [];
+    arr = arr.filter(function(c){
+      if(!c.tags) return false;
+      for(var i=0;i<c.tags.length;i++) if(tags.indexOf(c.tags[i]) !== -1) return true;
+      return false;
+    });
   }
   if(mkSearch){
-    const q = mkSearch.toLowerCase();
-    arr = arr.filter(c => (c.name||'').toLowerCase().includes(q) || (c.symbol||'').toLowerCase().includes(q));
+    var q = mkSearch.toLowerCase();
+    arr = arr.filter(function(c){
+      return ((c.name||'').toLowerCase().indexOf(q) !== -1) || ((c.symbol||'').toLowerCase().indexOf(q) !== -1);
+    });
   }
-  const dir = mkSort.dir === 'asc' ? 1 : -1;
-  const col = mkSort.col;
-  arr.sort((a,b)=>{
-    const av = a[col], bv = b[col];
+  var dir = mkSort.dir === 'asc' ? 1 : -1;
+  var col = mkSort.col;
+  arr.sort(function(a,b){
+    var av = a[col], bv = b[col];
     if(av == null) return 1;
     if(bv == null) return -1;
     if(typeof av === 'string') return av.localeCompare(bv) * dir;
@@ -2442,117 +2361,81 @@ function getMkFiltered(){
 }
 
 function renderMkTable(){
-  const arr = getMkFiltered();
-  const tbody = document.getElementById('mk-tbody');
+  var arr = getMkFiltered();
+  var tbody = document.getElementById('mk-tbody');
   if(!tbody) return;
   if(!arr.length){
     tbody.innerHTML = '<tr><td colspan="7"><div class="mk-empty">No coins match your filters.</div></td></tr>';
     return;
   }
-  tbody.innerHTML = arr.slice(0,100).map(c => `
-    <tr>
-      <td class="num mk-rank">${c.rank}</td>
-      <td>
-        <div class="mk-coin-cell">
-          ${coinIconHtml(c)}
-          <div>
-            <div class="mk-coin-name">${c.name||c.symbol}</div>
-            <div class="mk-coin-symbol">${c.symbol||''}</div>
-          </div>
-        </div>
-      </td>
-      <td class="num mk-price">${fmtPrice(c.price)}</td>
-      <td class="num mk-chg ${c.change>=0?'pos':'neg'}">${fmtChg(c.change)}</td>
-      <td class="num mk-vol">${fmtBig(c.volume)}</td>
-      <td class="num mk-mcap">${fmtBig(c.mcap)}</td>
-      <td class="num"><a class="mk-trade-btn" href="/terminal/?symbol=${encodeURIComponent((c.symbol||'')+'USDT')}">Trade</a></td>
-    </tr>
-  `).join('');
+  var html = '';
+  arr.slice(0,100).forEach(function(c){
+    html += '<tr>'
+      + '<td class="num mk-rank">' + c.rank + '</td>'
+      + '<td><div class="mk-coin-cell">' + coinIconHtml(c) + '<div><div class="mk-coin-name">' + (c.name||c.symbol||'') + '</div><div class="mk-coin-symbol">' + (c.symbol||'') + '</div></div></div></td>'
+      + '<td class="num mk-price">' + fmtPrice(c.price) + '</td>'
+      + '<td class="num mk-chg ' + (c.change>=0?'pos':'neg') + '">' + fmtChg(c.change) + '</td>'
+      + '<td class="num mk-vol">' + fmtBig(c.volume) + '</td>'
+      + '<td class="num mk-mcap">' + fmtBig(c.mcap) + '</td>'
+      + '<td class="num"><a class="mk-trade-btn" href="/terminal/?symbol=' + encodeURIComponent((c.symbol||'')+'USDT') + '">Trade</a></td>'
+      + '</tr>';
+  });
+  tbody.innerHTML = html;
 }
 
 function renderMkHero(){
-  const gainers = mkData.filter(c=>c.change!=null).sort((a,b)=>b.change-a.change).slice(0,4);
-  const elG = document.getElementById('mk-top-gainers');
-  if(elG) elG.innerHTML = gainers.map(c => `
-    <div class="mk-hero-row-item">
-      <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">/USDT</span></div>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span class="mk-hero-price">${fmtPrice(c.price)}</span>
-        <span class="mk-hero-chg pos">${fmtChg(c.change)}</span>
-      </div>
-    </div>
-  `).join('');
-
-  const losers = mkData.filter(c=>c.change!=null).sort((a,b)=>a.change-b.change).slice(0,4);
-  const elL = document.getElementById('mk-top-losers');
-  if(elL) elL.innerHTML = losers.map(c => `
-    <div class="mk-hero-row-item">
-      <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">/USDT</span></div>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span class="mk-hero-price">${fmtPrice(c.price)}</span>
-        <span class="mk-hero-chg neg">${fmtChg(c.change)}</span>
-      </div>
-    </div>
-  `).join('');
-
-  const trending = mkData.filter(c=>c.volume).sort((a,b)=>b.volume-a.volume).slice(0,4);
-  const elT = document.getElementById('mk-trending');
-  if(elT) elT.innerHTML = trending.map(c => `
-    <div class="mk-hero-row-item">
-      <div><span class="mk-hero-coin">${c.symbol}</span> <span class="mk-hero-pair">${fmtBig(c.volume)}</span></div>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span class="mk-hero-price">${fmtPrice(c.price)}</span>
-        <span class="mk-hero-chg ${c.change>=0?'pos':'neg'}">${fmtChg(c.change)}</span>
-      </div>
-    </div>
-  `).join('');
-
-  const totalMcap = mkData.reduce((s,c)=>s+(c.mcap||0),0);
-  const btc = mkData.find(c=>c.symbol==='BTC');
-  const eth = mkData.find(c=>c.symbol==='ETH');
-  const btcDom = (btc && totalMcap) ? (btc.mcap/totalMcap*100) : null;
-  const elO = document.getElementById('mk-overview');
-  if(elO) elO.innerHTML = `
-    <div class="mk-hero-row-item">
-      <div class="mk-hero-coin">Total Market Cap</div>
-      <div class="mk-hero-price">${fmtBig(totalMcap)}</div>
-    </div>
-    <div class="mk-hero-row-item">
-      <div class="mk-hero-coin">BTC Dominance</div>
-      <div class="mk-hero-price">${btcDom!=null?btcDom.toFixed(2)+'%':'—'}</div>
-    </div>
-    <div class="mk-hero-row-item">
-      <div class="mk-hero-coin">BTC</div>
-      <div class="mk-hero-price">${btc?fmtPrice(btc.price):'—'}</div>
-    </div>
-    <div class="mk-hero-row-item">
-      <div class="mk-hero-coin">ETH</div>
-      <div class="mk-hero-price">${eth?fmtPrice(eth.price):'—'}</div>
-    </div>
-  `;
+  var gainers = mkData.filter(function(c){return c.change!=null;}).sort(function(a,b){return b.change-a.change;}).slice(0,4);
+  var elG = document.getElementById('mk-top-gainers');
+  if(elG){
+    elG.innerHTML = gainers.length ? gainers.map(function(c){
+      return '<div class="mk-hero-row-item"><div><span class="mk-hero-coin">'+c.symbol+'</span> <span class="mk-hero-pair">/USDT</span></div><div style="display:flex;gap:10px;align-items:center;"><span class="mk-hero-price">'+fmtPrice(c.price)+'</span><span class="mk-hero-chg pos">'+fmtChg(c.change)+'</span></div></div>';
+    }).join('') : '<div class="mk-empty" style="padding:20px;font-size:12px;">No data</div>';
+  }
+  var losers = mkData.filter(function(c){return c.change!=null;}).sort(function(a,b){return a.change-b.change;}).slice(0,4);
+  var elL = document.getElementById('mk-top-losers');
+  if(elL){
+    elL.innerHTML = losers.length ? losers.map(function(c){
+      return '<div class="mk-hero-row-item"><div><span class="mk-hero-coin">'+c.symbol+'</span> <span class="mk-hero-pair">/USDT</span></div><div style="display:flex;gap:10px;align-items:center;"><span class="mk-hero-price">'+fmtPrice(c.price)+'</span><span class="mk-hero-chg neg">'+fmtChg(c.change)+'</span></div></div>';
+    }).join('') : '<div class="mk-empty" style="padding:20px;font-size:12px;">No data</div>';
+  }
+  var trending = mkData.filter(function(c){return c.volume;}).sort(function(a,b){return b.volume-a.volume;}).slice(0,4);
+  var elT = document.getElementById('mk-trending');
+  if(elT){
+    elT.innerHTML = trending.length ? trending.map(function(c){
+      return '<div class="mk-hero-row-item"><div><span class="mk-hero-coin">'+c.symbol+'</span> <span class="mk-hero-pair">'+fmtBig(c.volume)+'</span></div><div style="display:flex;gap:10px;align-items:center;"><span class="mk-hero-price">'+fmtPrice(c.price)+'</span><span class="mk-hero-chg '+(c.change>=0?'pos':'neg')+'">'+fmtChg(c.change)+'</span></div></div>';
+    }).join('') : '<div class="mk-empty" style="padding:20px;font-size:12px;">No data</div>';
+  }
+  var totalMcap = mkData.reduce(function(s,c){return s+(c.mcap||0);},0);
+  var btc = mkData.find(function(c){return c.symbol==='BTC';});
+  var eth = mkData.find(function(c){return c.symbol==='ETH';});
+  var btcDom = (btc && totalMcap) ? (btc.mcap/totalMcap*100) : null;
+  var elO = document.getElementById('mk-overview');
+  if(elO){
+    elO.innerHTML = '<div class="mk-hero-row-item"><div class="mk-hero-coin">Total Market Cap</div><div class="mk-hero-price">'+fmtBig(totalMcap)+'</div></div>'
+      + '<div class="mk-hero-row-item"><div class="mk-hero-coin">BTC Dominance</div><div class="mk-hero-price">'+(btcDom!=null?btcDom.toFixed(2)+'%':'—')+'</div></div>'
+      + '<div class="mk-hero-row-item"><div class="mk-hero-coin">BTC</div><div class="mk-hero-price">'+(btc?fmtPrice(btc.price):'—')+'</div></div>'
+      + '<div class="mk-hero-row-item"><div class="mk-hero-coin">ETH</div><div class="mk-hero-price">'+(eth?fmtPrice(eth.price):'—')+'</div></div>';
+  }
 }
 
 document.addEventListener('click', function(e){
-  const th = e.target.closest('#mk-table th[data-sort]');
+  var th = e.target.closest ? e.target.closest('#mk-table th[data-sort]') : null;
   if(!th) return;
-  const col = th.dataset.sort;
-  if(mkSort.col === col){
-    mkSort.dir = mkSort.dir === 'asc' ? 'desc' : 'asc';
-  } else {
-    mkSort.col = col;
-    mkSort.dir = 'desc';
-  }
-  document.querySelectorAll('#mk-table th').forEach(t=>t.classList.remove('sort-active'));
+  var col = th.getAttribute('data-sort');
+  if(mkSort.col === col){ mkSort.dir = mkSort.dir === 'asc' ? 'desc' : 'asc'; }
+  else { mkSort.col = col; mkSort.dir = 'desc'; }
+  var ths = document.querySelectorAll('#mk-table th');
+  for(var i=0;i<ths.length;i++) ths[i].classList.remove('sort-active');
   th.classList.add('sort-active');
   renderMkTable();
 });
 
-let mkSearchTimer = null;
+var mkSearchTimer = null;
 document.addEventListener('input', function(e){
   if(e.target && e.target.id === 'mk-search'){
     clearTimeout(mkSearchTimer);
     mkSearchTimer = setTimeout(function(){
-      mkSearch = e.target.value.trim();
+      mkSearch = (e.target.value||'').trim();
       renderMkTable();
     }, 200);
   }
